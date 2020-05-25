@@ -1,0 +1,10 @@
+1.- Revisar saldos, débito principalmente
+
+2.- Ordenar Etiquetas Saldos.
+
+3.- Agregar campo número de tarjeta. (Código de barras)
+
+4.- Revisar los diarios que desglosen el método de Pago
+
+5.- Clientes podrán modificar los Saldos si no tienen contrato.
+

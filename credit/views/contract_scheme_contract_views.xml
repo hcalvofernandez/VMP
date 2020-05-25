@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+  <!--Form-->
+    <record id="contract_scheme_contract_view_form" model="ir.ui.view">
+      <field name="name">contract.scheme.contract.view.form</field>
+      <field name="model">contract.scheme.contract</field>
+      <field name="arch" type="xml">
+        <form string="Esquema de Subsidio">
+          <sheet string="Esquema de Subsidio">
+            <group col="4" string="Esquema de Subsidio">
+              <field name="name"/>
+              <field name="qty"/>
+            </group>
+            <group col="4">
+              <field name="type_sub"/>
+              <field name="product_id"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+      <!--View Tree-->
+    <record id="contract_scheme_contract_view_tree" model="ir.ui.view">
+      <field name="name">contract.scheme.contract_view.tree</field>
+      <field name="model">contract.scheme.contract</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="qty"/>
+          <field name="type_sub"/>
+          <field name="product_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <!--Action-->
+    <record id="contract_scheme_contract_action" model="ir.actions.act_window">
+      <field name="name">Esquema de Subsidio</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">contract.scheme.contract</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+            id="contract_scheme_contract_menu"
+            name="Esquema de Subsidio"
+            parent="sale.menu_sale_config"
+            action="contract_scheme_contract_action"
+            sequence="11"
+        />
+
+  </data>
+</odoo>

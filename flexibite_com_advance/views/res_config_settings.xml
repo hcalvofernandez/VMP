@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- vim:fdn=3:-->
+<odoo>
+
+    <record id="aspl_security_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]//div[@data-key='point_of_sale']" position="inside">
+                    <div id="business_documents" data-string="Point of sale" string="Point of Sale" data-key="point_of_sale">
+                        <h2>Flexibite Features</h2>
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="is_rfid_login"/>
+                                    <div class="text-muted">
+                                        Login with RDIF Inside Pos
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="mt16 row">
+                                            <label for="is_rfid_login" string="RFID POS Login" class="col-xs-3 col-md-3 o_light_label"/>
+                                            <field name="is_rfid_login" class="oe_inline" style="min-width: 65%;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="google_api_key"/>
+                                    <div class="text-muted">
+                                        Google API Key
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="mt16 row">
+                                            <label for="google_api_key" string="Google API Key" class="col-xs-3 col-md-3 o_light_label"/>
+                                            <field name="google_api_key" class="oe_inline" style="min-width: 65%;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="theme_selector"/>
+                                    <div class="text-muted">
+                                        Theme
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="mt16 row">
+                                            <label for="theme_selector" string="Theme" class="col-xs-3 col-md-3 o_light_label"/>
+                                            <field name="theme_selector" class="oe_inline" style="min-width: 65%;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="kitchen_screen_timer"/>
+                                    <div class="text-muted">
+                                        Timer In Kitchen Screen
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="mt16 row">
+                                            <label for="kitchen_screen_timer" string="Show Timer" class="col-xs-3 col-md-3 o_light_label"/>
+                                            <field name="kitchen_screen_timer" class="oe_inline"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="last_token_number"/>
+                                    <div class="text-muted">
+                                        Once pos order will create from pos then token number will start from 1. You just need to specify last
+                                        token number. Once complete till last token number then again token number will start from 1.
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="mt16 row">
+                                            <label for="last_token_number" string="Last Token Number" class="col-xs-3 col-md-3 o_light_label"/>
+                                            <field name="last_token_number" class="oe_inline"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+	<record id="res_config_groups_form" model="ir.ui.view">
+        <field name="name">res.config.settings.groups.view.form.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]//div[@id='production_lot_info']" position="after">
+                <h2>Non Moving Stock</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div>
+                            <label for="groups_ids"/>
+                            <field name="groups_ids" widget="many2many_tags"/>
+                            <div class="text-muted">
+                                Send mail to the users who belong to the groups
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

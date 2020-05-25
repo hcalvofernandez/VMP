@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets" name="Assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/eor_pos_utils/static/src/js/eor_screens.js"/>
+            <script type="text/javascript" src="/eor_pos_utils/static/src/js/cash_widget.js"/>
+            <script type="text/javascript" src="/eor_pos_utils/static/src/js/debit_widget.js"/>
+            <link rel="stylesheet" type="text/css" href="/eor_pos_utils/static/src/css/backend.css"/>
+        </xpath>
+    </template>
+
+    <template id="pos_assets" name="POS CSS Assets" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/css" href="/eor_pos_utils/static/src/css/screen.css"/>
+        </xpath>
+    </template>
+
+    <template id="pos_themes" name="POS Assets Themes" inherit_id="flexibite_com_advance.assets_themes">
+        <xpath expr="." position="inside">
+            <t t-if="pos_theme_selector == 'gray_scale'">
+                <link rel="stylesheet" type="text/css" href="/eor_pos_utils/static/src/css/gray_scale.css"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>

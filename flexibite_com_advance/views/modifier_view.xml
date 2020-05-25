@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="product_modifier_editable_tree" model="ir.ui.view">
+            <field name="name">Product Modifier</field>
+            <field name="model">product.modifier</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="product_id" />
+                    <field name="price" />
+                    <field name="icon" widget="" />
+                    <field name="active" />
+                </tree>
+            </field>
+        </record>
+        <record id="action_product_modifier" model="ir.actions.act_window">
+            <field name="name">Product Modifier</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.modifier</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <menuitem id="menu_product_modifier" name="Modifiers" parent="point_of_sale.menu_point_config_product" action="action_product_modifier" />
+    </data>
+</odoo>

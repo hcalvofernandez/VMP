@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="point_of_sale.template" xml:space="preserve">
+<t t-extend="OrderReceipt">
+    <t t-jquery=".orderlines" t-operation="append">       
+       <t t-set='simple' t-value='False' />
+    </t>
+</t>
+</templates>

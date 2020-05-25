@@ -1,0 +1,18 @@
+.orderline-unit-packs
+{
+    padding-left: 43px!important;
+}
+.update-unit-pos-active
+{
+    pointer-events: none;
+    color: green;
+    cursor: default;
+}
+.update-unit-pos-not-active {
+    cursor: pointer;  
+}
+.change_product_measure
+{
+    min-width: 22px!important;
+    max-width: 20px!important;
+}

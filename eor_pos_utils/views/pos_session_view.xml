@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_session_inherit_view_form" model="ir.ui.view">
+        <field name="name">pos.session.view.form.inherit</field>
+        <field name="model">pos.session</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='resume_journal']" position="replace">
+            </xpath>
+            <xpath expr="//div[@name='resume_real']" position="replace">
+            </xpath>
+            <field name="statement_ids" position="after">
+                <div name="resume_journal" attrs="{'invisible' : [('cash_control', '=', False)]}">
+                    <separator string="Resumen Diarios Efectivo"/>
+                    <group>
+                        <field name="cash_control_widget" widget="cash_widget" nolabel="1" class="cash_control_widget"/>
+                    </group>
+                    <group invisible="1">
+                        <field name="cash_register_balance_start" readonly="1" string="Saldo de apertura" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <label for="cash_register_total_entry_encoding" attrs="{'invisible' : [('state', '=', 'opening_control')]}" string="+ Transactions" class="oe_force_bold oe_opening_total"/>
+                        <field name="cash_register_total_entry_encoding" nolabel="1" attrs="{'invisible' : [('state', '=', 'opening_control')]}" class="oe_bold oe_pos_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="cash_register_tip" />
+                        <label for="cash_register_balance_end" attrs="{'invisible' : [('state', '=', 'opening_control')]}" string="= Theoretical Closing Balance" class="oe_force_bold oe_opening_total"/>
+                        <field name="cash_register_balance_end" nolabel="1" attrs="{'invisible' : [('state', '=', 'opening_control')]}" class="oe_bold oe_pos_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <separator/>
+                        <field attrs="{'invisible': ['|', ('cash_control', '=', False), ('state', '=', 'opening_control')]}" name="cash_register_balance_end_real" string="Real Closing Balance" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field attrs="{'invisible': ['|', ('cash_control', '=', False), ('state', '=', 'opening_control')]}" name="cash_register_difference" class="oe_subtotal_footer_separator oe_pos_total oe_pos_difference" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                    <div class="oe_clear"/>
+                    <div attrs="{'invisible' : ['|', ('cash_journal_id', '=', False), ('state', '!=', 'opening_control')]}" class="o_field_nocontent" groups="point_of_sale.group_pos_manager">
+                        <p>
+                            You can define another list of available currencies on the
+                            <i>Cash Registers</i> tab of the <b><field name="cash_journal_id" class="oe_inline"/></b>
+                            payment method.
+                        </p>
+                    </div>
+                </div>
+                <!--<div name="resume_real">
+                    <group attrs="{'invisible': ['|', ('cash_control', '=', False), ('state', '=', 'opening_control')]}">
+                        <field name="cash_register_balance_end_real" string="Real Closing Balance" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                    <group attrs="{'invisible': ['|', ('cash_control', '=', False), ('state', '=', 'opening_control')]}">
+                        <field name="cash_register_difference" class="oe_subtotal_footer_separator oe_right oe_pos_total oe_pos_difference" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                </div>-->
+                <separator string="Abono a débitos"/>
+                <field name="payment_debit_widget" widget="debit_widget"/>
+                <field name="payment_lines" invisible="1">
+                    <tree string="Pagos" default_order="journal_id">
+                        <field name="name"/>
+                        <field name="partner_id" />
+                        <field name="amount" sum="Total"/>
+                        <field name="journal_id" />
+                    </tree>
+                </field>
+                <separator string="Total Abonos a débito" invisible="1"/>
+                <field name="abono_total_debito" invisible="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+		<report id="non_moving_stock_report"
+                model="non.moving.stock"
+                string="Non Moving Stock"
+                report_type="qweb-pdf"
+                name="flexibite_com_advance.non_moving_stock_template"
+                file="flexibite_com_advance.non_moving_stock_template"
+        />
+
+        <report
+            id="report_pos_sales"
+            string="Z Report"
+            model="pos.session"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.pos_sales_report_template"
+            name="flexibite_com_advance.pos_sales_report_template"
+            menu="False"/>
+
+        <report
+            id="report_pos_sales_pdf"
+            string="Z Report(pdf)"
+            model="pos.session"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.pos_sales_report_pdf_template"
+            name="flexibite_com_advance.pos_sales_report_pdf_template"
+            menu="False"/>
+
+        <report
+            id="report_sales_details_pdf"
+            string="Sales Details"
+            model="wizard.sales.details"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.sales_details_pdf_template"
+            name="flexibite_com_advance.sales_details_pdf_template"
+            menu="False"
+        />
+
+        <report
+            id="report_sales_details_thermal"
+            string="Sales Details(Thermal)"
+            model="wizard.sales.details"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.sales_details_template"
+            name="flexibite_com_advance.sales_details_template"
+            menu="False"
+        />
+
+        <report
+            id="report_pos_sales_thermal_front"
+            string="X Report"
+            model="pos.session"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.front_sales_thermal_report_template"
+            name="flexibite_com_advance.front_sales_thermal_report_template"
+            menu="False"
+        />
+        <report
+            id="report_pos_sales_pdf_front"
+            string="X Report(pdf)"
+            model="pos.session"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.front_sales_report_pdf_template"
+            name="flexibite_com_advance.front_sales_report_pdf_template"
+            menu="False"
+        />
+
+        <record id="report_pos_inventory_session_pdf_front" model="ir.actions.report">
+            <field name="name">Inventory Report(pdf)</field>
+            <field name="model">pos.session</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">flexibite_com_advance.front_inventory_session_pdf_report_template</field>
+            <field name="print_report_name">'Inventory Report(pdf)'</field>
+        </record>
+
+        <record id="report_pos_inventory_session_thermal_front" model="ir.actions.report">
+            <field name="name">Inventory Report(Thermal)</field>
+            <field name="model">pos.session</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">flexibite_com_advance.front_inventory_session_thermal_report_template</field>
+            <field name="print_report_name">'Inventory Report(Thermal)'</field>
+        </record>
+
+        <record id="report_pos_inventory_location_pdf_front" model="ir.actions.report">
+            <field name="name">Inventory Report(pdf)</field>
+            <field name="model">stock.location</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">flexibite_com_advance.front_inventory_location_pdf_report_template</field>
+            <field name="print_report_name">'Inventory Report(pdf)'</field>
+        </record>
+
+        <record id="report_pos_inventory_location_thermal_front" model="ir.actions.report">
+            <field name="name">Inventory Report(Thermal)</field>
+            <field name="model">stock.location</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">flexibite_com_advance.front_inventory_location_thermal_report_template</field>
+            <field name="print_report_name">'Inventory Report(Thermal)'</field>
+        </record>
+
+        <record id="report_item_table_order_id" model="ir.actions.report">
+            <field name="name">Table Items Report</field>
+            <field name="model">pos.order.line</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">flexibite_com_advance.report_item_table_order</field>
+            <field name="print_report_name">'Table Items - %s' % (object.name)</field>
+        </record>
+
+        <record id="report_table_order_id" model="ir.actions.report">
+            <field name="name">Table Order Report</field>
+            <field name="model">pos.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">flexibite_com_advance.report_table_order</field>
+            <field name="print_report_name">'Table Order - %s' % (object.name)</field>
+        </record>
+
+        <report
+            id="action_report_pos_item_receipt1"
+            string="Table Order Item Report"
+            model="pos.order.line"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.report_item_table_order1"
+            name="flexibite_com_advance.report_item_table_order1"
+        />
+
+        <report
+            id="action_report_pos_order_receipt1"
+            string="Table Order Report"
+            model="pos.order"
+            report_type="qweb-pdf"
+            file="flexibite_com_advance.report_table_order_receipt"
+            name="flexibite_com_advance.report_table_order_receipt"
+        />
+
+        <record id="paperformat_session_receipt_pdf" model="report.paperformat">
+            <field name="name">Session Receipt PDF</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">80</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">1</field>
+            <field name="margin_bottom">1</field>
+            <field name="margin_left">1</field>
+            <field name="margin_right">1</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+            <field name="report_ids" eval="[(6,0,[ref('flexibite_com_advance.report_pos_sales_pdf'), 
+                                                  ref('flexibite_com_advance.report_sales_details_pdf'),
+                                                  ref('flexibite_com_advance.pos_x_report'),
+                                                  ref('flexibite_com_advance.pos_z_report'),
+                                                  ref('flexibite_com_advance.report_pos_sales_pdf_front'),
+                                                  ref('flexibite_com_advance.report_pos_sales_thermal_front'),
+                                                  ref('flexibite_com_advance.report_pos_inventory_session_pdf_front'),
+                                                  ref('flexibite_com_advance.report_pos_inventory_location_pdf_front')])]"/>
+        </record>
+
+        <record id="aces_paperformat_posreceipt" model="report.paperformat">
+            <field name="name">Point Of Sale Receipt</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">40</field>
+            <field name="page_width">60</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">3</field>
+            <field name="dpi">130</field>
+            <field name="report_ids" eval="[(6,0,[ref('flexibite_com_advance.action_report_pos_item_receipt1'), 
+                                                  ref('flexibite_com_advance.action_report_pos_order_receipt1')])]"/>
+        </record>
+        
+        
+        
+        <report 
+            id="report_tax"
+            model="tax.report.wiz"
+            string="Tax Report"
+            report_type="qweb-pdf"
+            name="flexibite_com_advance.tax_report_template"
+            file="flexibite_com_advance.tax_report_template"
+            />
+
+        <report 
+            id="report_trial_balance"
+            model="trial.balance.wiz"
+            string="Trial Balance"
+            report_type="qweb-pdf"
+            name="flexibite_com_advance.trial_balance_template"
+            file="flexibite_com_advance.trial_balance_template"
+            />
+
+        <report
+            id="report_aged_payble"
+            model="aged.payable"
+            string="Aged Payble"
+            report_type="qweb-pdf"
+            name="flexibite_com_advance.aged_payble_template"
+            file="flexibite_com_advance.aged_payble_template"
+            />
+
+        <report
+            id="report_aged_receivable"
+            model="aged.receivable"
+            string="Aged Receivable"
+            report_type="qweb-pdf"
+            name="flexibite_com_advance.aged_receivable_template"
+            file="flexibite_com_advance.aged_receivable_template"
+            />
+            
+         <report 
+            id="report_partner_ledger"
+            model="account.report.partner.ledger"
+            string="Partner Ledger"
+            report_type="qweb-pdf"
+            name="flexibite_com_advance.partner_ledger_template"
+            file="flexibite_com_advance.partner_ledger_template"
+            />
+
+
+        <report
+            id="action_report_financial"
+            model="account.financial.report"
+            string="Financial report"
+            menu="False"
+            report_type="qweb-pdf"
+            name="flexibite_com_advance.report_financial"
+            file="flexibite_com_advance.report_financial"
+            />
+            
+         <report 
+            id="report_general_ledger"
+            model="account.general.ledger.wiz"
+            string="General Ledger"
+            report_type="qweb-pdf"
+            name="flexibite_com_advance.general_ledger_template"
+            file="flexibite_com_advance.general_ledger_template"
+            />
+            
+           <report
+                id="product_expiry_report"
+                model="product.expiry.report"
+                string="product Expiry Report"
+                report_type="qweb-pdf"
+                name="flexibite_com_advance.product_exp_report_template"
+                file="flexibite_com_advance.product_exp_report_template"
+                menu="False"
+        />
+            
+
+    </data>
+</odoo>

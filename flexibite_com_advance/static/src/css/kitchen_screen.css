@@ -1,0 +1,241 @@
+/* .pos .kitchen-screen .order-list-scroll {
+	height: auto;
+	max-height: calc(100vh - 125px);
+} */
+
+.pos .kitchen-screen .disappear {
+	display: none;
+}
+
+/* #txt_del_add:active {
+	border: 1px solid;
+} */
+
+/*The Kitchen Order List Screen */
+.pos .kitchen-screen .order-line {
+	float: left;
+	width: 100%;
+	height: 43px;
+	margin: 0px 0px !important;
+	box-shadow: none;
+}
+
+.pos .kitchen-screen .order-line div {
+	float: left !important;
+	position: relative !important;
+	padding: 0 !important;
+	display: flex;
+	bottom: unset !important;
+	align-items: center;
+	height: 40px;
+	font-size: 17px;
+	font-weight: bold;
+	background: transparent;
+}
+
+.pos .kitchen-screen .top-content {
+	line-height: 40px;
+}
+
+.pos .kitchen-screen span.button.category {
+	cursor: pointer;
+	width: auto;
+	font-size: 16px;
+	cursor: pointer;
+	color: #f0f0f0;
+	display: inline-block;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	height: 37px;
+	padding: 0 8px;
+	background: #8b8b8b;
+	line-height: 37px;
+	text-align: center;
+	cursor: pointer;
+	padding: 0 8px;
+	margin: 12px 4px;
+}
+
+.pos .kitchen-screen .order-line .order-product {
+	width: 24% !important;
+	justify-content: left;
+}
+
+.pos .kitchen-screen .order-line .order-qty {
+	width: 11% !important;
+	justify-content: center;
+}
+
+.pos .kitchen-screen .order-line .order-table {
+	width: 16% !important;
+	justify-content: center;
+}
+
+.pos .kitchen-screen .order-line .order-time {
+	width: 20% !important;
+	justify-content: center;
+}
+
+.pos .kitchen-screen .order-line .order-state {
+	width: 7% !important;
+	text-transform: capitalize;
+}
+
+.pos .kitchen-screen .order-line .state-button {
+	width: 6.5% !important;
+	justify-content: flex-start;
+}
+
+.pos .kitchen-screen .order-line .cancel-order {
+	width: 8% !important;
+	justify-content: flex-start;
+}
+
+.pos .kitchen-screen .order-line .order-note {
+	width: 3% !important;
+	justify-content: center;
+}
+
+/*.pos .kitchen-screen .order-list-contents span:nth-child(even)
+    {
+    background: rgb(247, 247, 247);
+}*/
+
+/*The Kitchen Order kanban Screen */
+.pos .kitchen-screen .table-order-contents .table-order {
+	position: relative;
+	vertical-align: top;
+	display: inline-block;
+	width: 239px;
+	height: 300px;
+	font-size: 14px;
+	margin: 7px !important;
+	background: white;
+}
+
+.pos .kitchen-screen .table-order .order-title {
+	font-size: 16px;
+	padding: 6px;
+	background: #a3d5ae;
+}
+
+.pos .kitchen-screen .table-order .order-time {
+	padding: 9px;
+	float: left;
+}
+
+.pos .kitchen-screen .table-order .order-table {
+	float: right;
+}
+
+.pos .kitchen-screen .table-order .order-floor {
+	padding: 10px;
+	text-align: right;
+	height: 15px;
+}
+
+.pos .kitchen-screen .table-order .order-lines {
+	padding: 9px 4px 0 20px;
+	line-height: 20px;
+	height: 190px;
+	width: auto;
+}
+
+.pos .kitchen-screen .table-order li {
+	list-style-type: disc;
+	width: auto
+}
+
+.pos .kitchen-screen .table-order .table-line-state {
+	float: right;
+	width: 35%;
+	text-align: -webkit-right;
+	text-align: -moz-right;
+	text-transform: capitalize;
+}
+
+.pos .kitchen-screen .table-order .kitchen-order-note .note-popover {
+	display: none;
+	width: 418px;
+	height: 310px;
+	background: white;
+	z-index: 1;
+}
+
+.pos .kitchen-screen .table-order .kitchen-order-note {
+	padding: 8px 0 0 8px;;
+	font-size: 17px;
+}
+
+.pos .kitchen-screen .table-order .total-amount {
+	bottom: 0;
+	right: 0;
+	padding: 10px;
+	position: absolute;
+}
+
+.screen .top-content .btn-kanban {
+	right: 1%;
+}
+
+.screen .top-content .btn-list {
+	right: 5%;
+}
+
+.screen .top-content .btn-list:hover, .screen .top-content .btn-kanban:hover
+	{
+	color: #088000;
+	background: #7ac7879e
+}
+
+/*Kitchen Button for category*/
+.screen .kitchen-buttons {
+	width: 100%;
+	max-width: 490px;
+	float: left;
+	position: relative;
+	overflow-x: scroll;
+	height: 61px;
+	display: -webkit-flex;
+	overflow-x: auto;
+	overflow-y: hidden;
+	margin-left: 84px;
+	line-height: 50px;
+	padding: 0 0 0 0;
+}
+
+.screen .kitchen-buttons .button:hover {
+	background: #efefef;
+}
+
+.screen .kitchen-buttons .button {
+	position: initial;
+	margin: 5px;
+}
+
+@media only screen and (max-width: 768px) {
+	.pos .kitchen-screen .order-list-scroll {
+		height: auto;
+		max-height: 898px !important;
+	}
+	.screen .top-content .btn-list {
+		right: 7%;
+	}
+	.pos .kitchen-screen .order-line .order-table {
+		width: 14% !important;
+		justify-content: center;
+	}
+	.pos .kitchen-screen .order-line .order-state {
+		width: 9% !important;
+		text-transform: capitalize;
+	}
+	.pos .kitchen-screen .order-line .cancel-order {
+		width: 8% !important;
+		justify-content: flex-start;
+		margin-left: 2%;
+	}
+	.pos .kitchen-screen .order-line .order-note {
+		width: 3% !important;
+		justify-content: center;
+	}
+}

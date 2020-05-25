@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="fabricacion_insumo_product_template_only_form_view" model="ir.ui.view">
+        <field name="name">fabricacion.insumo.product.template.form.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <field name="sale_ok" position="before">
+                <div>
+                    <field name="es_insumo"/>
+                    <label for="es_insumo"/>
+                </div>
+            </field>
+        </field>
+    </record>
+
+    <record id="fabricacion_insumo_product_template_search_filters" model="ir.ui.view">
+        <field name="name">fabricacion.insumo.product.template.search.filters</field>
+        <field name="model">product.template</field>
+         <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <filter name="filter_to_purchase" position="after">
+                <filter string="Es Insumo" name="es_insumo" domain="[('es_insumo', '=', True)]"/>
+            </filter>
+        </field>
+    </record>
+
+    <!--Acciones Menu Inventario-->
+    <record id="action_insumos_catalogo_reporte" model="ir.actions.act_window">
+      <field name="name">Insumos</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">product.template</field>
+      <field name="view_mode">tree,form</field>
+			<field name="domain">[('es_insumo','=','True')]</field>
+    </record>
+
+    <!--Menus Inventario-->
+    <menuitem id="insumos_catalogo_reporte" action="action_insumos_catalogo_reporte" name="Insumos" parent="stock.menu_stock_root" sequence="451"/>    
+</odoo>

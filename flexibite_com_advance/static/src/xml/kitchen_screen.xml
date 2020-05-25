@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="kitchenScreenWidget">
+        <div class="kitchen-screen screen">
+            <div class="screen-content">
+                <section class="top-content">
+                    <div class="kitchen-buttons touch-scrollable scrollable-x">
+                        <t t-if="widget.pos.user.user_role === 'cook_manager'">
+                            <span class='button category selected' t-att-data-id='0' style="cursor:pointer">
+                                All
+                            </span>
+                        </t>
+                       	<t t-foreach="widget.category_list" t-as="categ">
+                       		<t t-if="categ">
+                       			<span class='button category' t-att-data-id='categ.id'>
+	                                <t t-esc="categ.name"/>
+	                            </span>
+                       		</t>
+                        </t>
+                    </div>
+                    <t t-if="widget.pos.user.user_role === 'cook_manager'">
+                        <span class='button back'>
+                            <i class='fa fa-angle-double-left'></i>
+                            Back
+                        </span>
+                        <span class="button btn-list" style="padding: 0px 13px;"><i class="fa fa-list-ul"></i></span>
+                        <span class="button btn-kanban selected" style="padding: 0px 13px;"><i class="fa fa-th-large"></i></span>
+                    </t>
+                </section>
+                <section class="full-content">
+                    <div class='window'>
+                        <section class='subwindow'>
+                            <div class='subwindow-container'>
+                                <div class='subwindow-container-fix touch-scrollable scrollable-y order-list-scroll kitchen-screen-view' style="overflow: auto !important;">
+                                    <div class="kitchen-orders">
+                                        <div class="order-list">
+                                            <span class="order-line header">
+                                                <div class="order-product">Name</div>
+                                                <div class="order-qty">Quantity</div>
+                                                <div class="order-table">Table</div>
+                                                <div class="order-time">Time</div>
+                                                <div class="order-state">State</div>
+                                                <div class="order-state"></div>
+                                                <div class="order-state"></div>
+                                                <div class="order-note">Note</div>
+                                            </span>
+                                            <div class='order-list-contents'>
+                                            </div>
+                                        </div>
+
+                                        <div class="order-kanban">
+                                            <div  class='table-order-contents'>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="KitchenOrderlistLine">
+         <span class='order-line' t-att-data-id='order_line_data.id'>
+             <div class="order-product"><t t-esc='order_line_data.name' /></div>
+             <div class="order-qty"><t t-esc='order_line_data.qty' /></div>
+             <div class="order-table">
+                 <t t-esc='order_line_data.table or " "' />
+                 <t t-if="order_line_data.floor">
+                    <span>( <t t-esc="order_line_data.floor"/> )</span>
+                 </t>
+             </div>
+             <div class="order-time"><t t-esc='order_line_data.time'/></div>
+             <div class="order-state"><t t-esc='order_line_data.state' /></div>
+             <div class="state-button" t-att-data-state="order_line_data.state" t-att-data-id='order_line_data.id'
+                  t-att-data-route='order_line_data.route_id'>
+                 <button class="btn">
+                     <t t-if="order_line_data.state == 'waiting'">Confirm</t>
+                     <t t-if="order_line_data.state == 'preparing'">Complete</t>
+                     <t t-if="order_line_data.state == 'delivering'">Send</t>
+                 </button>
+             </div>
+             <div class="cancel-order" t-att-data-id='order_line_data.id' style="display:none;">
+                 <t t-if="order_line_data.state == 'waiting'">
+                    <button class="button">Cancel</button>
+                 </t>
+             </div>
+             <div class="order-note">
+                 <t t-if="order_line_data.note">
+                    <span id="view_note" t-att-data-note='order_line_data.note' style="cursor:pointer">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    </span>
+                 </t>
+            </div>
+        </span>
+    </t>
+
+    <t t-name="TableOrders">
+        <t t-if="order_data.order_lines.length &gt; 0">
+            <div class="order-container" t-att-data-pos-order-id="order_data.order_id" style="width: 280px;min-height: 327px;position: relative;float: left;border: 1px solid #66cdff;border-radius: 15px;">
+                <div class="order-details">
+                    <div class="order-header" style="font-size: 16px;background: #050b0d73;color: #fff;font-weight: bold;border-top-left-radius: 14px;border-top-right-radius: 14px;padding: 5px;">
+                        Order <t t-esc="order_data.order_name"/>
+                    </div>
+                    <div style="position: absolute;top: 2px;right: 15px;font-size: 22px;cursor: pointer;color: #fff;"
+                         title="Print Thermal Receipt"
+                         class="order-print-receipt"
+                         t-att-data-pos-order-id="order_data.order_id">
+                        <i aria-hidden="true" class="fa fa-print"></i>
+                    </div>
+                    <div class="order-table" style="font-size: 14px;">
+                        <t t-if="order_data.table">
+                            <span>Tables: <t t-esc='order_data.table' /></span>
+                            <span class="order-time" style="padding: 5px;float: right;"><t t-esc='order_data.order_time' /></span>
+                        </t>
+                    </div>
+                    <t t-if="order_data.floor">
+                        <div class="order-floor" style="font-size: 14px;height: 20px;border-bottom: 2px solid #c4c4c433;"><t t-esc='order_data.floor or " " ' /></div>
+                    </t>
+                    <div class="order-body kichen_order_scroll">
+                        <t t-if="!order_data.stop_timer">
+	                        <div class="kitchen_timer">
+	                            <div style="float: left;">Timer:</div>
+	                            <div t-att-id="order_data.order_id"></div>
+	                        </div>
+                        </t>
+                        <t t-if="order_data.increment_number and order_data.increment_number &gt; 0">
+	                        <div style="font-size: 14px;height: 20px;border-bottom: 2px solid #c4c4c433;">
+	                            Token No: <t t-esc="order_data.increment_number"/>
+	                        </div>
+	                    </t>
+                        <div class="order-lines touch-scrollable scrollable-y">
+                            <ul>
+                                <t t-foreach="order_data.grouped_data" t-as="priority">
+                                    <li style="font-weight: bold;text-align: center;">
+                                        <t t-if="priority == 'low'">
+                                            <span>Priority: Low</span>
+                                        </t>
+                                        <t t-if="priority == 'medium'">
+                                            <span>Priority: Medium</span>
+                                        </t>
+                                        <t t-if="priority == 'high'">
+                                            <span>Priority: High</span>
+                                        </t>
+                                    </li>
+                                    <t t-foreach="order_data.grouped_data[priority]" t-as="line">
+                                        <t t-if="line.categ_id">
+                                         <li class="table-order-line">
+                                             <div style="float:left;width:65%;">
+                                                 <t t-esc="line.name" />-<t t-esc="line.qty"/><br/>
+                                             </div>
+                                             <div class="state-button" t-att-data-state="line.state" t-att-data-id='line.id'
+                                                 t-att-data-route='line.route_id'
+                                                 t-att-data-order-id="order_data.order_id"
+                                                 style="float: right;">
+                                                 <button class="btn">
+                                                     <t t-if="line.state == 'waiting'">Confirm</t>
+                                                     <t t-if="line.state == 'preparing'">Complete</t>
+                                                     <t t-if="line.state == 'delivering'">Send</t>
+                                                 </button>
+                                             </div>
+                                         </li>
+                                         <t t-foreach="line.modifier_list" t-as="m_line">
+                                             <div style="padding-left: 15px;">
+                                                 <t t-esc="m_line.name"/> - <t t-esc="m_line.qty"/>
+                                             </div>
+                                         </t>
+                                         <t t-foreach="line.combo_data" t-as="combo_info">
+                                             <div style="padding-left: 15px;">
+                                                 <t t-esc="combo_info.product.display_name"/> - <t t-esc="combo_info.qty"/>
+                                             </div>
+                                         </t>
+                                         <t t-if="line.note">
+                                             <div style="color:#ff0023c2;padding-left: 15px;"><t t-esc="line.note" /></div>
+                                         </t>
+                                         <t t-if="line.is_takeaway">
+                                             <div style="padding-left:15px;" class="blinking-kitchen-info">
+                                                 Take Away
+                                             </div>
+                                         </t>
+                                         <t t-if="line.is_deliver">
+                                             <div style="padding-left:15px;" class="blinking-kitchen-info">
+                                                 To Be Delivered
+                                             </div>
+                                         </t>
+                                     </t>
+                                    </t>
+                                </t>
+                                <!-- <t t-foreach="order_data.order_lines" t-as="line">
+                                    <t t-if="line.categ_id">
+                                        <li class="table-order-line">
+                                            <div style="float:left;width:65%;">
+                                                <t t-esc="line.name" />-<t t-esc="line.qty"/><br/>
+                                            </div>
+                                            <div class="state-button" t-att-data-state="line.state" t-att-data-id='line.id'
+                                                t-att-data-route='line.route_id'
+                                                t-att-data-order-id="order_data.order_id"
+                                                style="float: right;">
+                                                <button class="btn">
+                                                    <t t-if="line.state == 'waiting'">Confirm</t>
+                                                    <t t-if="line.state == 'preparing'">Complete</t>
+                                                    <t t-if="line.state == 'delivering'">Send</t>
+                                                </button>
+                                            </div>
+                                        </li>
+                                        <t t-foreach="line.modifier_list" t-as="m_line">
+                                            <div style="padding-left: 15px;">
+                                                <t t-esc="m_line.name"/> - <t t-esc="m_line.qty"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="line.note">
+                                            <div style="color:#ff0023c2;padding-left: 15px;"><t t-esc="line.note" /></div>
+                                        </t>
+                                        <t t-if="line.is_takeaway">
+                                            <div style="padding-left:15px;" class="blinking-kitchen-info">
+                                                Take Away
+                                            </div>
+                                        </t>
+                                        <t t-if="line.is_deliver">
+                                            <div style="padding-left:15px;" class="blinking-kitchen-info">
+                                                To Be Delivered
+                                            </div>
+                                        </t>
+                                    </t>
+                                </t> -->
+                            </ul>
+                        </div>
+                        <t t-if="order_data.note">
+                            <div class="kitchen-order-note" t-att-data-note='order_data.note' title="Order Note">
+                                <i class="fa fa-info-circle" aria-hidden="true" style="cursor:pointer"></i>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <!-- <t t-name="TableOrders">
+        <t t-if="order_data.order_lines.length &gt; 0">
+            <div class="order-container" t-att-data-pos-order-id="order_data.order_id" style="width: 280px;height: auto;position: relative;float: left;border: 1px solid #66cdff;border-radius: 15px;">
+                <div class="order-details">
+                    <div class="order-header" style="font-size: 16px;background: #050b0d73;color: #fff;font-weight: bold;border-top-left-radius: 14px;border-top-right-radius: 14px;padding: 5px;">
+                        Order <t t-esc="order_data.order_name"/>
+                    </div>
+                    <div class="order-table" style="font-size: 14px;">
+                        <t t-if="order_data.table">
+                            <span>Table: <t t-esc='order_data.table' /></span>
+                            <span class="order-time" style="padding: 5px;float: right;"><t t-esc='order_data.order_time' /></span>
+                        </t>
+                    </div>
+                    <div class="order-floor" style="font-size: 14px;height: 20px;border-bottom: 2px solid #c4c4c433;"><t t-esc='order_data.floor or " " ' /></div>
+                    <div class="order-body" style="min-height: 250px;padding: 5px;font-size: 14px;">
+                        <div class="order-lines touch-scrollable scrollable-y">
+                            <ul>
+                                <t t-foreach="order_data.order_lines" t-as="line">
+                                    <t t-if="line.categ_id">
+                                        <li class="table-order-line">
+                                            <div style="float:left;width:65%;">
+                                                <t t-esc="line.name" />-<t t-esc="line.qty"/><br/>
+                                            </div>
+                                            <div class="state-button" t-att-data-state="line.state" t-att-data-id='line.id'
+                                                t-att-data-route='line.route_id'
+                                                t-att-data-order-id="order_data.order_id"
+                                                style="float: right;">
+                                                <button class="btn">
+                                                    <t t-if="line.state == 'waiting'">Confirm</t>
+                                                    <t t-if="line.state == 'preparing'">Complete</t>
+                                                    <t t-if="line.state == 'delivering'">Send</t>
+                                                </button>
+                                            </div>
+                                        </li>
+                                        <t t-foreach="line.modifier_list" t-as="m_line">
+                                            <div style="padding-left: 15px;">
+                                                <t t-esc="m_line.name"/> - <t t-esc="m_line.qty"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="line.note">
+                                            <div style="color:#ff0023c2;padding-left: 15px;"><t t-esc="line.note" /></div>
+                                        </t>
+                                        <t t-if="line.is_takeaway">
+                                            <div style="padding-left:15px;" class="blinking-kitchen-info">
+                                                Take Away
+                                            </div>
+                                        </t>
+                                        <t t-if="line.is_deliver">
+                                            <div style="padding-left:15px;" class="blinking-kitchen-info">
+                                                To Be Delivered
+                                            </div>
+                                        </t>
+                                    </t>
+                                </t>
+                            </ul>
+                        </div>
+                        <t t-if="order_data.note">
+                            <div class="kitchen-order-note" t-att-data-note='order_data.note' title="Order Note">
+                                <i class="fa fa-info-circle" aria-hidden="true" style="cursor:pointer"></i>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t> -->
+
+    <t t-name="KitchenLineReceipt">
+        <receipt align='center' width='40' value-thousands-separator='' >
+            <line>
+                <left>Company</left>
+                <right><t t-esc='lines[0].company_id[1]' /></right>
+            </line>
+            <line>
+                <left>Receipt Ref</left>
+                <right><t t-esc='lines[0].pos_reference' /></right>
+            </line>
+            <t t-if="lines[0].table_str">
+                <line>
+                    <left>Table</left>
+                    <right><t t-esc='lines[0].table_str.slice(0, -1)' /></right>
+                </line>
+            </t>
+            <t t-if="lines[0].floor_id">
+                <line>
+                    <left>Floor</left>
+                    <right><t t-esc='lines[0].floor_id' /></right>
+                </line>
+            </t>
+            <br/>
+            <t t-foreach="lines" t-as="line">
+                <line>
+                    <left><t t-esc='line.product_id[1]' /></left>
+                    <right>
+                        <t t-if='line.state'>
+                           <t t-if="line.state == 'waiting'">
+                               Waiting
+                           </t>
+                           <t t-if="line.state == 'preparing'">
+                               Preparing
+                           </t>
+                           <t t-if="line.state == 'delivering'">
+                               Waiting/Deliver
+                           </t>
+                           <t t-if="line.state == 'done'">
+                               Done
+                           </t>
+                           <t t-if="line.state == 'cancel'">
+                               Cancel
+                           </t>
+                        </t>
+                    </right>
+                </line>
+                <line indent='1'>
+                   <left>
+                       <t t-esc='line.qty'/>
+                        <t t-if='line.uom_id'>
+                            <t t-esc='line.uom_id'/>
+                        </t>
+                   </left>
+                </line>
+                <t t-if="line.order_line_note">
+                    <line indent='1'><left>Note: <t t-esc='line.order_line_note' /></left></line>
+                </t>
+            </t>
+            <t t-if="lines[0].order_note">
+                <div font='b'>
+                    <br/>
+                    Order Note: <t t-esc="lines[0].order_note"/>
+                </div>
+            </t>
+            <div font='b'>
+                <div><t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/></div>
+            </div>
+        </receipt>
+    </t>
+
+</templates>

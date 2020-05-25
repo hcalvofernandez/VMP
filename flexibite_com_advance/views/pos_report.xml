@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- QWeb Reports -->
+
+<!--         <report -->
+<!--             id="pos_session_x_report" -->
+<!--             model="pos.session" -->
+<!--             string="X - Report" -->
+<!--             report_type="qweb-pdf" -->
+<!--             name="flexibite_com_advance.front_sales_report_pdf_template" -->
+<!--             file="flexibite_com_advance.front_sales_report_pdf_template" -->
+<!--             print_report_name="(object._get_printed_report_name())" -->
+<!--         /> -->
+
+    <!-- used from POS UI, no need to be in print menu -->
+    <record id="pos_x_report" model="ir.actions.report">
+        <field name="name">X-Report</field>
+        <field name="model">pos.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">flexibite_com_advance.front_sales_report_pdf_template</field>
+        <field name="print_report_name">'X-Report - %s' % (object.name)</field>
+    </record>
+
+    <record id="pos_z_report" model="ir.actions.report">
+        <field name="name">Z-Report</field>
+        <field name="model">pos.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">flexibite_com_advance.pos_z_report_template</field>
+        <field name="print_report_name">'Z-Report - %s' % (object.name)</field>
+    </record>
+
+	<!--<record id="paperformat_session_receipt_pdf" model="report.paperformat">
+        <field name="name">Session Receipt PDF</field>
+        <field name="default" eval="True" />
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">80</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">1</field>
+        <field name="margin_bottom">1</field>
+        <field name="margin_left">1</field>
+        <field name="margin_right">1</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+        <field name="report_ids" eval="[(6,0,[ref('flexibite_com_advance.pos_x_report'),
+                                              ref('flexibite_com_advance.pos_z_report')])]"/>
+    </record>-->
+	
+	
+    </data>
+</odoo>

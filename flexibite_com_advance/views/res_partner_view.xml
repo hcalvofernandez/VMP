@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="aspl_view_customer_form" model="ir.ui.view">
+			<field name="name">Customer Form</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/*" position="before">
+					<header>
+						<button name="get_transaction" type='object'
+							string='Payment' class="oe_highlight" />
+					</header>
+				</xpath>
+				<notebook>
+					<page name="limit_and_credit" string="Límites y Créditos">
+						<group>
+							<group string="Crédito">
+                				<field name="credit_limit" readonly="0"/>
+                				<field name="remaining_credit_limit" readonly="1"/>
+							</group>
+							<group string="Débito">
+								<field name="debit_limit" readonly="0"/>
+								<field name="remaining_debit_amount" readonly="1" string="Saldo disponible"/>
+							</group>
+							<group string="Meal Plan">
+								<field name="meal_plan_limit" readonly="0"/>
+								<field name="remaining_meal_plan_limit" readonly="1"/>
+							</group>
+						</group>
+					</page>
+					<page string="Cards">
+						<field name="card_ids" />
+					</page>
+					<page string="Used Cards">
+						<field name="used_ids" />
+					</page>
+					<page string="Recharged Cards">
+						<field name="recharged_ids" />
+					</page>
+					<page string = "Exchange Gift Card History">
+                        <field name="exchange_history_ids"/>
+                    </page>
+					<page string="Wallet">
+						<group>
+							<field name="remaining_wallet_amount" />
+						</group>
+						<group>
+							<field name="wallet_lines" nolabel='1'>
+								<tree create="true">
+									<field name="order_id" />
+									<field name="cashier_id" />
+									<field name="type" />
+									<field name="debit" />
+									<field name="credit" />
+								</tree>
+							</field>
+						</group>
+					</page>
+				</notebook>
+			</field>
+		</record>
+		<record id='parnter_payment_tranction_view' model='ir.ui.view'>
+			<field name="name">Patner Payment Transaction</field>
+			<field name="model">partner.payment.transaction</field>
+			<field name="arch" type='xml'>
+				<form name='Payment' create="false" edit="false" delete='false'>
+					<sheet>
+						<group cols='4'>
+							<group cols='3'>
+								<field name='partner_id' readonly='1'/>
+							</group>
+							<group cols='1'>
+								<button name="pay_amount" type='object' string='Pay'
+									class="oe_highlight" />
+							</group>
+						</group>
+						<notebook>
+							<page string="Paid POS Order">
+								<field name='paid_pos_order__paid_ids'>
+									<tree delete="false" create='false' editable='bottom'> 
+										<field name='name' readonly='1'/>
+										<field name='date_order' readonly='1'/>
+										<field name='amount_total' sum='amount_total' readonly='1'/>
+									</tree>
+								</field>
+							</page>
+							<page string="Open POS Order">
+								<field name='paid_pos_order_open_ids'>
+									<tree delete="false" create='false' editable='bottom'>
+										<field name='name' readonly='1'/>
+										<field name='date_order' readonly='1'/>
+										<field name='amount_total' sum='amount_total' readonly='1'/>
+									</tree>
+								</field>
+							</page>
+							<page string="Transaction">
+								<field name='partner_statment_ids'>
+									<tree delete="false" create='false' editable='bottom'>
+										<!-- <field name='statement_id'/> -->
+										<field name='name' readonly='1'/>
+										<field name='date' readonly='1'/>
+										<field name='amount' sum='amount' readonly='1'/>
+									</tree>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id='pos_order_details_view' model='ir.ui.view'>
+			<field name="name">Pos Order Details</field>
+			<field name="model">pos.order.details</field>
+			<field name="arch" type='xml'>
+				<form name='Pos Order'>
+					<sheet>
+						<group>
+							<field name='partner_payment_id' />
+							<field name='name' />
+							<field name='date_order' />
+							<field name='amount_due'/>
+							<field name='customer_id' />
+							<field name='amount_total' />
+							<field name='state' />
+							<field name="pos_order_id" />
+							<field name='partner_payment_id_open' />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id='partner_pos_statement_line_view' model='ir.ui.view'>
+			<field name="name">Partner Statement Line</field>
+			<field name="model">partner.pos.statement.line</field>
+			<field name="arch" type='xml'>
+				<form name='Statement'>
+					<sheet>
+						<group>
+							<field name='statement_id' />
+							<field name='name' />
+							<field name='date' />
+							<field name='amount' />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id='partner_payment_pay_view' model='ir.ui.view'>
+			<field name="name">Partner Payment</field>
+			<field name="model">partner.pay</field>
+			<field name="arch" type='xml'>
+				<form name='Statement'>
+						<group col='4'>
+							<field name='amount_due' readonly='1'/>
+							<field name='amount_to_paid' required='1'/>
+							<field name='config_id' class="oe_inline"/>
+							<field name='journal_id' attrs="{'invisible': [('config_id', '=', False)],
+																			'required': [('config_id', '!=', False)]}"
+												context="{'config_id_cr_dr': config_id}"/>
+						</group>
+					<footer>
+						<button name="payment" string="Proceed"
+							type="object" class='oe_highlight'/>
+						or
+						<button string="Cancel" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+	</data>
+</openerp>

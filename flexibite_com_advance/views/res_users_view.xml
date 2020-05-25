@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_users_form_view_inherit" model="ir.ui.view">
+            <field name="name">res.users.form.view</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('oe_title')]/group/field[@name='partner_id']" position="after">
+                    <field name="rfid_no"/>
+                </xpath>
+                <xpath expr = "//sheet//notebook//page[@name='access_rights']" position="inside">
+                    <group col="2">
+                        <field name="shop_ids" widget="many2many_tags" context="{'company_ids':company_ids}"
+                           options="{'no_create':True}"/>
+                    </group>
+                </xpath>
+                <field name="pos_security_pin" position="after">
+                    <field name = "user_role"/>
+                    <field name="default_pos_ids" widget="many2many_tags"/>
+                </field>
+                <xpath expr="//page[3]" position="inside">
+                    <group attrs="{'invisible': [('user_role', '=', 'delivery_user')]}">
+	                    <field name="default_pos" 
+	                           attrs="{'invisible': [('login_with_pos_screen', '=', False),('user_role', '!=', 'cook')],
+	                                   'required': ['|',('login_with_pos_screen', '=', True),('user_role', '=', 'cook')]}"/>
+	                    <field name = "pos_category_ids" widget="many2many_tags" attrs="{'invisible' : ['|','|',('user_role', '=', False),
+	                                                                                                    ('user_role', '=', 'cashier'),
+	                                                                                                    ('user_role','=','ass_cashier')],
+                                                                                      'required' : [('user_role', '!=', False),
+                                                                                                    ('user_role', '!=', 'delivery_user'),
+                                                                                                    ('user_role', '=', 'cashier'),
+                                                                                                    ('user_role','=','ass_cashier')]}"/>
+                        <field name="login_with_pos_screen" attrs="{'invisible' : [('user_role', '!=', False)]}" options="{'no_create':True}"/>
+                        <field name="sales_persons" widget="many2many_tags" attrs="{'invisible' : [('user_role' ,'!=', 'cashier')]}"
+                               context="{'from_sales_person': True}" options="{'no_create':True}"
+                               domain="[('user_role','=','ass_cashier')]"/>
+                        <field name="cook_user_ids" 
+                           attrs="{'invisible': [('user_role', '!=', 'cashier'),('user_role', '!=', 'ass_cashier'),('user_role', '!=', 'cook_manager')]}" 
+                           widget="many2many_tags"
+                           domain="[('user_role','=','cook')]" options="{'no_create':True}"/>
+                    </group>
+                    <group string="Flexibite" col="4">
+                        <field name="allow_switch_store"/>
+                    	<field name="access_pos_dashboard" />
+                        <field name="access_ereceipt" />
+                        <field name="access_quick_cash_payment" />
+                        <field name="access_order_note"/>
+                        <field name="access_product_note"/>
+                        <field name="access_pos_return"/>
+                        <field name="access_reorder"/>
+                        <field name="access_draft_order" invisible="1"/>
+                        <field name="access_rounding"/>
+                        <field name="access_bag_charges"/>
+                        <field name="access_delivery_charges"/>
+                        <field name="access_pos_lock"/>
+                        <field name="access_keyboard_shortcut"/>
+                        <field name="access_product_sync"/>
+                        <field name="access_display_warehouse_qty"/>
+                        <field name="access_pos_graph"/>
+                        <field name="access_x_report"/>
+                        <field name="access_pos_loyalty"/>
+                        <field name="access_today_sale_report"/>
+                        <field name="access_money_in_out"/>
+                        <field name="access_gift_card"/>
+                        <field name="access_gift_voucher"/>
+                        <field name="access_print_last_receipt"/>
+                        <field name="access_pos_promotion"/>
+                        <field name="lock_terminal"/>
+                    	<field name="delete_msg_log"/>
+                    	<field name="access_show_qty"/>
+                    	<field name="access_print_valid_days"/>
+                    	<field name="access_card_charges"/>
+                    	<field name="access_wallet"/>
+                    	<field name="access_send_order_kitchen"/>
+                    	<field name="access_modifiers"/>
+                    	<field name="access_combo"/>
+                    	<field name="access_takeaway"/>
+                    	<field name="access_merge_table"/>
+                    	<field name="access_out_of_stock_details"/>
+                    	<field name="access_int_trans"/>
+                    </group>
+                </xpath>
+                <field name="pos_security_pin" position="replace">
+                    <field name="pos_security_pin" password="True" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

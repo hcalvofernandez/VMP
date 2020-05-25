@@ -1,0 +1,206 @@
+.pos .leftpane .pads {
+	background: none none repeat scroll 0 0;
+	border-top: 3px solid #59697D;
+}
+
+.pos .actionpad .button.pay:hover .pay-circle .fa.fa-chevron-right {
+	color: #959595;
+}
+
+.pos .actionpad .button.pay:hover .pay-circle {
+	background: #fff none repeat scroll 0 0;
+}
+
+.pos *::-webkit-scrollbar-thumb {
+	background-color: #333;
+}
+
+.pos *::-webkit-scrollbar-track {
+	background-color: #fff;
+}
+
+.pos .rightpane-header {
+	background: #fff none repeat scroll 0 0;
+}
+
+.pos .categories {
+	position: relative;
+}
+
+.pos .screen .content-row {
+	background: #fff none repeat scroll 0 0;
+}
+
+.pos .screen {
+	background: #fff none repeat scroll 0 0;
+}
+
+.pos .searchbox input:focus {
+	outline: none;
+}
+
+.pos .pos-branding .username {
+	color: #333;
+}
+
+.pos .pos-topheader {
+	background: #fff none repeat scroll 0 0;
+	border-bottom: 1px solid #7BB046;
+}
+
+.pos .pos-content {
+	top: 50px;
+}
+
+.pos .pos-rightheader .header-button:last-child {
+	border-left: 1px solid #59697D;
+}
+
+.pos .pos-rightheader .header-button {
+	border-right: 1px solid #59697D;
+}
+
+.pos .pos-rightheader .header-button {
+	color: #333;
+}
+
+.pos .leftpane {
+	border-right: none;
+}
+
+
+
+.pos .paymentline.selected .edit {
+	box-shadow: 0px 0px 0px 3px #59697d;
+	color: #59697d;
+}
+
+.payment-screen .payment-buttons .button {
+	background: #fff;
+}
+
+.paymentmethods .button {
+	background: #fff;
+}
+
+.pos .modal-dialog .popup {
+	background-color: #fff;
+}
+
+.pos .popup.popup-selection .selection-item {
+	background: #fff;
+	border-bottom: 1px solid #eee;
+}
+
+.pos .popup.popup-selection .selection-item:nth-child(even) {
+	background: #fff;
+}
+
+.pos .popup .button {
+	color: #fff;
+}
+
+.payment-screen .payment-buttons .button:hover {
+	color: #fff;
+	border-color: #fff;
+}
+
+.button.paymentmethod:hover {
+	color: #fff;
+}
+
+.pos .breadcrumb-button.breadcrumb-home {
+	color: rgb(86, 86, 86);
+}
+
+.pos .clientlist-screen .client-list thead>tr {
+	color: #fff;
+}
+
+.pos .popup .title {
+	color: #fff;
+	padding: 15px;
+}
+
+.control-button.paymentmethod {
+	background: #fff;
+}
+
+.pos .control-button {
+	background: #fff;
+}
+
+.payment-buttons .control-button {
+	background: #dedbdb;
+}
+
+.quickpay .control-button {
+	color: #fff;
+}
+
+.quickpay .control-button:hover {
+	background: #fff none repeat scroll 0 0;
+}
+
+.quickpay_credit .control-button:hover {
+	background: #fff none repeat scroll 0 0;
+}
+
+.pos .paymentline .col-change.highlight {
+	color: #fff;
+}
+
+.paymentline.extra td.col-due {
+	background: #eee;
+}
+
+.footer .button.confirm {
+	color: #fff;
+}
+
+.payment-buttons .control-button {
+	color: #fff;
+}
+
+.quickpay .control-button {
+	color: #fff;
+	float: left;
+	margin: 5px;
+	padding: 0;
+	width: 70px;
+}
+
+.quickpay .control-button:hover {
+	background: #fff none repeat scroll 0 0;
+	float: left;
+}
+
+.quickpay_credit .control-button {
+	color: #fff;
+	float: left;
+	margin: 5px;
+	padding: 0;
+	width: 70px;
+}
+
+.quickpay_credit .control-button:hover {
+	background: #fff none repeat scroll 0 0;
+	float: left;
+}
+
+.paymentline.extra td.col-due {
+	background: #eee;
+}
+
+.screen .top-content .button.back {
+	color: #fff;
+	left: 0;
+}
+
+.pos .clientlist-screen .client-list tr.lowlight {
+	background: rgba(172, 206, 69, 0.3) !important;
+}
+
+.pos .popup.popup-selection .selection-item.selected {
+	color: #333;
+}

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo> 
+    <record id="product_template_attribute_value_view_tree_inerith" model="ir.ui.view">
+        <field name="name">product.template.attribute.value.view.tree.inerith</field>
+        <field name="model">product.template.attribute.value</field>
+         <field name="inherit_id" ref="product.product_template_attribute_value_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="variant_puom" />
+            </field> 
+            <field name="price_extra" position="before">
+                <field name="cost_price" widget='monetary'/>
+            </field>           
+        </field>
+    </record>
+    <record id="product_template_attribute_value_view_form_inerith" model="ir.ui.view">
+        <field name="name">product.template.attribute.value.view.form.inerith</field>
+        <field name="model">product.template.attribute.value</field>
+         <field name="inherit_id" ref="product.product_template_attribute_value_view_form"/>
+        <field name="arch" type="xml">
+            <field name="price_extra" position="after">
+                <field name="cost_price" string="Costo" widget='monetary'/>
+                <field name="variant_puom" string="Unidad de medida"/>   
+                <field name="variant_ratio" string="Rendimiento"/>             
+            </field>            
+        </field>
+    </record>  
+
+    <record model="ir.ui.view" id="purchase_order_line_form2">
+    <field name="name">purchase_discount.order.line.form2</field>
+    <field name="model">purchase.order.line</field>
+    <field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
+    <field name="arch" type="xml">
+      <field name="product_qty" position="before">
+        <field name="qty_custom"/>
+        <field name="rendimiento"/>    
+        <field name="cost_price"/>     
+      </field>
+
+      <field name="price_unit" position="before">
+        <field name="cost_price"/>       
+      </field>
+
+      <xpath expr="//field[@name='product_qty']" position="attributes">
+          <attribute name="string">Rendimiento</attribute>
+      </xpath>
+
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="purchase_order_line_tree">
+    <field name="name">purchase_discount.order.line.tree</field>
+    <field name="model">purchase.order.line</field>
+    <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
+    <field name="arch" type="xml">
+      <field name="product_qty" position="before">
+        <field name="qty_custom"/>
+        <field name="rendimiento"/> 
+        <field name="cost_price"/>        
+      </field>
+
+      <field name="price_unit" position="before">
+        <field name="cost_price"/>       
+      </field>
+
+      <xpath expr="//field[@name='product_qty']" position="attributes">
+          <attribute name="string">Rendimiento</attribute>
+      </xpath>
+
+    </field>
+  </record>
+
+ 
+
+  <record model="ir.ui.view" id="purchase_order_form">
+    <field name="name">purchase_discount.purchase.order.form</field>
+    <field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.purchase_order_form"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="before">
+        <field name="qty_custom"/>
+        <field name="rendimiento"  invisible="1"/>
+        <field name="cost_price"/> 
+      </xpath>
+
+      <xpath expr="//field[@name='order_line']/form//field[@name='product_qty']" position="before">
+        <field name="qty_custom"/>
+        <field name="rendimiento" invisible="1"/>
+        <field name="cost_price"/> 
+      </xpath>
+
+     <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="before">
+        <field name="cost_price"/>   
+      </xpath>
+
+      <xpath expr="//field[@name='product_qty']" position="attributes">
+          <attribute name="string">Rendimiento</attribute>
+      </xpath>
+      
+    </field>
+  </record>
+</odoo>

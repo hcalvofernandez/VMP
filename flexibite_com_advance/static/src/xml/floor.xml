@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="BackToFloorButton">
+        <t t-jquery=".table-name" t-operation="after">
+            <span class="table-name">
+                <t t-if="merged_tables and merged_tables.length > 0">
+                    <t t-foreach="merged_tables" t-as="merged_table">
+                        <t t-esc="merged_table.name" />
+                    </t>
+                </t>
+            </span>
+        </t>
+    </t>
+
+    <t t-extend="TableWidget">
+        <t t-jquery="[t-if='widget.order_count']" t-operation="after">
+            <t t-if="widget.table.parent_linked_table and !widget.table.is_parent">
+                <span class='order-table-merge'><t t-esc="widget.table.parent_linked_table.name"/></span>
+            </t>
+        </t>
+        <t t-jquery=".table-seats" t-operation="replace">
+            <div class="table-seats-details">
+                <div class="left-table-details">
+                    <strong><t t-esc="widget.table.seats" /></strong>
+                </div>
+                <div class="right-table-details">
+                    <strong><t t-esc="widget.table.seats - widget.customer_count" /></strong>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="FloorScreenWidget">
+        <t t-jquery="div.edit-bar" t-operation="after">
+            <div style="position: absolute;bottom: 0;height: 30px;line-height: 30px;background: darkslategray;color: #fff;width: 100%;text-align: center;">
+                <div class="floor-bottom-button" data-button-name="take_away">
+                    <span>
+                        Take Away
+                    </span>
+                </div>
+                <div class="floor-bottom-button" data-button-name="delivery">
+                    <span>
+                        Delivery
+                    </span>
+                </div>
+            </div>
+        </t>
+    </t>
+
+	<t t-name="FloorButton">
+		<span class="order-button floor-button floor-button-back">
+            <i class='fa fa-angle-double-left' role="img" aria-label="Back to floor" title="Back to floor"/>
+            Floors
+        </span>
+	</t>
+
+	<t t-name="TakeAwayName">
+		<span class="take-away-name">
+            <t t-esc="takeaway_note or 'Take Away'"/>
+        </span>
+	</t>
+
+</templates>

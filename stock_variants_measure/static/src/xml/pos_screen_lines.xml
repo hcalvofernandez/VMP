@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="point_of_sale.template" xml:space="preserve">
+ <t t-name="ProductMeasure">
+        <span class="control-button change_product_measure">
+            <i class="fa fa-balance-scale"></i>
+        </span>
+    </t>
+<t t-extend="Orderline">
+    <t t-jquery=".info-list" t-operation="append">       
+        <!--<li class="info orderline-unit-packs">
+            <t t-name="CustomButton">
+                <button name="custom_button"><i class='fa fa-arrow-up update-bigger update-unit-pos-not-active' aria-label="Cambiar" title="Medida"/></button>
+            </t>
+            <i class='fa fa-arrow-down update-reference update-unit-pos-active' aria-label="Cambiar" title="Medida"/>
+            <div style="display:none;"><t t-esc="line.get_unit().id" /></div>
+        </li>-->
+    </t>
+</t>
+</templates>

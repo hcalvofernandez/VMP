@@ -1,0 +1,32 @@
+.o_form_view .o_field_widget .o_list_view > tfoot > tr > td{
+    color: white !important;
+}
+
+.o_form_view .o_bold_label{
+    font-weight: 900;
+}
+
+.o_form_view .ml40{
+    margin-left: 40px;
+}
+
+.o_form_view .cash_control{
+    width: 220px;
+}
+
+.o_form_view .cash_control_widget{
+    display: inline-table;
+}
+
+.o_form_view .debit_widget{
+    display: inline-flex;
+}
+
+.o_form_view .journal_debit {
+    width: 250px;
+}
+
+.o_form_view .amount_debit {
+    border-left: 1px solid #cecece;
+    padding-left: 10px;
+}

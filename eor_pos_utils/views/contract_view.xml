@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="contract_contract_inherit_view_form" model="ir.ui.view">
+        <field name="name">contract.contract.inherit.view.form</field>
+        <field name="model">contract.contract</field>
+        <field name="inherit_id" ref="contract.contract_contract_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='info']" position="after">
+                <page name="esquema_subsidio" string="Esquema de Subsidio" attrs="{'invisible': [('type_contract', '!=', 'subsidio')]}">
+                    <separator string="Esquema de Subsidios"/>
+                    <field name="esquema_subsidio_ids">
+                        <tree string="Esquema de subsidio">
+                            <field name="name" />
+                            <field name="qty" />
+                            <field name="type_sub" />
+                        </tree>
+                    </field>
+                </page>
+                <page name="product_scheme" string="Productos" attrs="{'invisible': [('type_contract', '!=', 'subsidio')]}">
+                    <field name="product_ids">
+                        <tree string="Productos">
+                            <field name="name" />
+                            <field name="lst_price" />
+                        </tree>
+                    </field>
+                </page>
+                <page name="limite_credito" string="Limite de Crédito" attrs="{'invisible': [('type_contract', '!=', 'credito')]}">
+                    <field name="limit_credit" string="Limite Crédito"/>
+                </page>
+                <page name="limite_meal" string="Limite de Meal Plan" attrs="{'invisible': [('type_contract', '!=', 'mealplan')]}">
+                    <field name="meal_plan_credit" string="Limite Meal Plan"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

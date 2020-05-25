@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_table_order_receipt">
+
+            <receipt align='center' width='40' value-thousands-separator='' >
+                <t t-foreach="docs" t-as="receipt">
+                    <line>
+                        <left t-field='receipt.name'/>
+                        <right t-field='receipt.table_id.name'/>
+                        <pre> | </pre>
+                        <right t-field='receipt.partner_id.name'/>
+                    </line>
+                    <t t-foreach="receipt.lines" t-as="o">
+
+                        <line>
+                                <left t-field="o.product_id.name" />
+                                <right t-esc="int(o.qty)" />
+                        </line>
+
+                        <line t-if="o.line_note">
+                            <left>
+                                <pre>NOTE: </pre> <pre t-field="o.line_note" />
+                            </left>
+                        </line>
+
+                        <t t-foreach="o.mod_lines" t-as="m">
+                            <line>
+                            <left>
+                                <pre>EXTRA INFO</pre>
+                            </left>
+                            </line>
+                            <line t-if="o.line_note">
+                                <left t-field="m.name" />:
+                                <right t-field="m.qty" />
+                            </line>
+                        </t>
+                    </t>
+                </t>
+            </receipt>
+       </template>
+
+
+    </data>
+</odoo>

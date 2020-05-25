@@ -1,0 +1,303 @@
+.pos .page_containerset_main{
+    background: #262534;
+    /*background-image: url(../img/hamburg.svg);*/
+    background-size: 30%;
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
+.pos .pos-topheader{
+    /*background: #383838;*/
+    background: #BEBDBD;
+}
+
+.pos .pos-login-topheader{
+    background: #383838;
+}
+
+.pos .left_option_menu{
+    background: #CFCFCF;
+}
+
+.pos .rightpane-header{
+    background: #e2e2e2;
+    z-index: 1111;
+}
+
+.pos .rightpane-header input{
+    background-color: transparent;
+    border: none;   
+    border-radius: 30px;
+    font-weight: 700 !important;
+}
+
+.pos .rightpane-header input:focus{
+    box-shadow: none;
+    color: #121314;
+    background-color: #b4b3b3;
+}
+
+header.rightpane-header .listview{
+    border: none !important;
+}
+
+.pos .panel-container{
+    box-shadow: none;
+    width: 520px;
+}
+
+.pos .login-fields .input-fields > input::placeholder{
+    color: #121314;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+.pos .login-fields .input-fields > input{
+    padding: 30px;
+    border: none;
+    border-radius: 90px;
+    font-size: 20px;
+}
+
+.pos .login-fields .action > button{
+    background: #e42f3f;
+    border-radius: 30px;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+
+.pos .virtual-keyboard button{
+    color: #202020 !important;
+    font-size: 23px !important;
+    font-weight: 900;
+}
+
+
+.pos .control-button.highlight, .pos .button.highlight,
+.pos .button.next,
+.pos .button.back{
+    background: #434343 !important;
+    border: solid 1px #434343 !important;
+    font-size: 14px;
+    font-weight: 900;
+    border-radius: 25px;
+    padding: 0px 25px !important;
+    text-transform: uppercase;
+    color: white;
+}
+
+#wrapper #slidemenubtn{
+    background: #7a7a7a;
+}
+
+.sidebar-nav li a{
+    border-left: 5px solid transparent;
+    font-weight: 700;
+}
+
+.sidebar-nav li a:hover{
+    /*background: #7E7E7E;*/
+    border-left: 5px solid #AAA;
+    background: transparent;
+    color: #454545;
+}
+
+.buttton.back{
+    color: #343434;
+}
+
+.client-amount-available{
+    color: #666666;
+}
+
+.selected-menu{
+    background: #858585;
+    color: white;
+    /*border-left: 5px solid #787878 !important;*/
+}
+
+.btn_icon_set{
+    border-left: 5px solid transparent !important;
+}
+
+.btn_icon_set:hover,
+.btn_icon_set:active{
+    background: #919191;
+    color: white;
+}
+
+.summary{
+    background: rgb(121, 121, 121);
+}
+
+.pos .order{
+    background: transparent !important;
+}
+
+.pos .order .order-empty{
+    color: #858585;
+}
+
+.pos .order-container{
+    background: #e3e3e3;
+}
+
+.pos .product-list{
+    background: #d0d5d5;
+}
+
+.pos .screen{
+    background: #c6c6c6;
+}
+
+.pos .popup .footer .button{
+    background-color: #121314;
+}
+
+.pos .clientlist-screen .client-detail > .label{
+    width: 150px !important;
+}
+
+.pos .popup .title{
+    color: #121314 !important;
+    font-weight: 900 !important;
+}
+
+.pos .payment-screen .payment-numpad .numpad {
+    max-width: 350px !important;
+}
+
+.pos .payment-screen .payment-numpad .numpad button{
+    width: 87.5px !important;
+    height: 86px;
+}
+
+.pos .numpad button{
+    font-size: 18px !important;
+}
+
+.pos .product .price-tag{
+    background: rgb(111,111,111);
+}
+
+.pos .product .product-qty-low{
+    /*background: #859dba;*/
+    background: #cc7474;
+}
+
+.pos .mode-button.selected-mode{
+    background: #5f5f5f;
+}
+
+.pos .clientlist-screen .client-list thead > tr{
+    background: #787878;
+}
+
+.pos .client-details{
+    background: #DEDEDE;
+}
+
+/*
+.pos .popup {
+    max-height: 400px !important;
+}
+*/
+.pos .left_option_menu{
+    width: 175px !important;
+}
+
+.pos .button.js_set_customer{
+    height: 60px !important;
+    line-height: 60px !important;
+    top: -13px;
+}
+
+.pos .quickpay .control-button{
+    color: #898989;
+    font-weight: 900;
+}
+
+.pos .disabled{
+     pointer-events: none !important;
+}
+
+.pos .paymentmethod-right:nth-child(3){
+    margin-top: 30px;
+}
+
+.pos .paymentmethod-right:nth-child(7)
+{
+    display: none;
+}
+
+
+
+.pos .popup-numpad {
+    width: 354px !important;
+}
+
+.pos .popup.popup-number {
+    width: 350px !important;
+}
+
+.pos .invalid{
+    color: red;
+}
+
+.pos .hidden{
+    display: none !important;
+}
+
+.paymentmethods-container .paymentmethods .control-button.paymentmethod {
+    max-width: 190px !important;
+    padding: 20px !important;
+}
+
+.pos .button-add-sub{
+    padding: 10px;
+    color: #dddddd;
+    font-size: 14px;
+    font-weight: 700;
+    background: #419f6f;
+    cursor: pointer;
+}
+
+
+.pos .popup-cashcontrol-structure table{
+    text-align: left;
+}
+
+.pos .cash_paymentmethods table th,
+.pos .cash_paymentmethods table td{
+    padding: 5px 20px !important;
+}
+
+.pos .balance_end_real{
+    padding: 5px 20px !important;
+}
+
+.pos .print_report_x{
+    width: 130px !important;
+    float: left !important;
+    margin-left: 25px !important;
+}
+
+.pos .popup-cashcontrol-structure {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+}
+
+.pos .popup-cashcontrol-structure .footer{
+    bottom: 15px !important;
+}
+
+#cashbox_data_table.coins,
+#cashbox_data_table.cash{
+    width: 50%;
+}
+
+.cash_paymentmethods {
+    margin-top: 20px;
+}

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cash_payment_acesh" model="ir.ui.view">
+        <field name="name">cash_payment_amt_form_view</field>
+        <field name="model">quick.cash.payment</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="order_inherited_form_view" model="ir.ui.view">
+        <field name="name">pos.order.inherited.view</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <field name="table_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <xpath expr="//group[@name='order_fields']" position="inside">
+                <field name="order_mode" readonly="1"/>
+                <field name="table_ids" widget="many2many_tags" readonly="1"/>
+                <field name="rest_table_reservation_id" invisible="1"/>
+            </xpath>
+            <field name="amount" position="after">
+				<field name="order_state" invisible="1"/>
+				<button style="border: solid 1px;background: #7c7bad;color: white;border-radius: 10px;" 
+					name="action_modify_paid_order" string="Change Method" type="object" 
+					attrs="{'invisible': [('order_state', '!=', 'paid')]}"></button>
+            </field>
+
+            <field name="price_unit" position="before">
+                <field name="line_note"/>
+                <field name="cost_price"/>
+                <field name="deliver"/>
+                <field name="is_takeaway"/>
+                <field name="drive_through_mode"/>
+                <field name="dine_in_mode"/>
+                <field name="online_mode"/>
+                <field name="state"/>
+                <field name="priority"/>
+            </field>
+            <field name="product_id" position="after">
+                <field name="back_order"/>
+            </field>
+            <field name="pos_reference" position="after">
+               <field name="back_order" readonly="1"/>
+               <field name="partial_pay" readonly="1"/>
+               <field name="is_debit" readonly="1"/>
+               <field name="rating" readonly="1"/>
+               <field name="increment_number" readonly="1"/>
+               <field name="asst_cashier_id" readonly="1"/>
+            </field>
+            <field name="amount_tax" position="after">
+                <field name="rounding"/>
+            </field>
+            <field name="amount_total" position="after">
+                <field name="amount_due"/>
+            </field>
+            <button name="%(point_of_sale.action_pos_payment)d" position="replace">
+                <button name="%(point_of_sale.action_pos_payment)d" string="Payment"
+                        class="oe_highlight" attrs="{'invisible': [('state','!=', 'draft')]}"
+                        type="action" context="{'pos_session_id' : session_id}"/>
+            </button>
+             <notebook>
+                 <page string="Loyalty">
+                     <group col="4">
+	                     <field name="total_loyalty_earned_points" />
+		                 <field name="total_loyalty_earned_amount" />
+		                 <field name="total_loyalty_redeem_points" />
+		                 <field name="total_loyalty_redeem_amount" />
+	                 </group>
+                 </page>
+                 <page string="Delivery Details">
+                     <group col="4">
+                         <field name="is_delivery" readonly="1"/>
+                         <field name="delivery_type" readonly="1"/>
+			             <field name="delivery_date" readonly="1"/>
+			             <field name="delivery_user_id" readonly="1"/>
+			             <field name="delivery_time" readonly="1"/>
+			             <field name="delivery_address" readonly="1"/>
+                     </group>
+                 </page>
+                 <page string="Return Details">
+                     <field name="return_cust_mobile" readonly="1"/>
+                     <field name="reason_of_return" readonly="1"/>
+                 </page>
+             </notebook>
+             <field name="fiscal_position_id" position="after">
+                 <field name="shop_id" options="{'no_create':True}"/>
+                 <field name="online_order_ref" readonly="1"/>
+             </field>
+            <!-- <field name="picking_id" position="after">
+                <field name="picking_ids" widget="many2many_tags" readonly="1"/>
+            </field>
+            <field name="picking_id" position="replace"/> -->
+        </field>
+    </record>
+
+    <record id="restaurant_floor_view_form_aspl" model="ir.ui.view">
+        <field name="name">restaurant.floor.form.aspl</field>
+        <field name="model">restaurant.floor</field>
+        <field name="inherit_id" ref="pos_restaurant.view_restaurant_floor_form"/>
+        <field name="arch" type="xml">
+            <field name="background_color" position="after">
+                <field name="shop_id"/>
+            </field>
+        </field>
+    </record>
+	
+    <record id="return_view_pos_tree" model="ir.ui.view" >
+        <field name="name">ret.pos.order.tree</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+           <field name="pos_reference" position="after">
+               <field name="back_order"/>
+            </field>
+        </field>
+    </record>
+
+	<record id="view_pos_session_form" model="ir.ui.view">
+        <field name="name">pos.session.form.view.inherit</field>
+        <field name="model">pos.session</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+        <field name="arch" type="xml">
+<!--             <field name="start_at" position="after"> -->
+<!--                 <field name="current_cashier_id"/> -->
+<!--                 <field name="locked_by_user_id"/> -->
+<!--                 <field name="locked" /> -->
+<!--             </field> -->
+            <field name="config_id" position="after">
+                <field name="increment_number"/>
+            </field>
+            <field name="statement_ids" position="after">
+                <separator string="Cash Control Line"/>
+                <field name="cashcontrol_ids">
+                    <tree editable="bottom">
+                        <field name="coin_value"/>
+                        <field name="number_of_coins"/>
+                        <field name="subtotal"/>
+                        <field name="pos_session_id"/>
+                    </tree>
+                </field>
+            </field>
+        </field>
+    </record>
+
+    <record id="acespritech_retail9_account_journal_form" model="ir.ui.view">
+        <field name="name">acespritech.retail9.account.journal.form</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='amount_authorized']" position="after">
+                <group>
+                    <field name="apply_charges" />
+                    <field name="fees_amount" attrs="{'invisible':[('apply_charges' ,'!=',True)],'required':[('apply_charges' ,'=',True)]}"/>
+                </group>
+                <group>
+                <field name="fees_type" attrs="{'invisible':[('apply_charges' ,'!=',True)],'required':[('apply_charges' ,'=',True)]}"/>
+                    <field name="optional" attrs="{'invisible':[('apply_charges' ,'!=',True)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="order_pre_notes_tree_view" model="ir.ui.view">
+        <field name="name">pos.order.pre.note.view</field>
+        <field name="model">pos.order.pre.note</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="shortcut_name"/>
+                <field name="name"/>
+                <field name="type" required="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_order_pre_notes" model="ir.actions.act_window">
+        <field name="name">Order Pre Notes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pos.order.pre.note</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <menuitem 
+        action="action_order_pre_notes"
+        id="order_pre_notes_menu_id"
+        name="Pre Notes" 
+        parent="point_of_sale.menu_point_config_product" 
+        sequence='2'
+        groups="point_of_sale.group_pos_manager"/>
+
+    <record id="tag_dashboard_id" model="ir.actions.client">
+        <field name="name">Dashboard</field>
+        <field name="tag">tag_dashboard</field>
+    </record>
+    <menuitem id="menu_point_dashboard" action="flexibite_com_advance.tag_dashboard_id" name="POS Dashboard"
+        parent="point_of_sale.menu_point_root" sequence="99" groups="point_of_sale.group_pos_user"/>
+
+</odoo>

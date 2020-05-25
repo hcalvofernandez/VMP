@@ -1,0 +1,255 @@
+.pos .variant-screen .screen-content {
+	border: none !important;
+}
+
+.pos .variant-screen .variant-title {
+	height: 8%;
+}
+
+.pos .variant-screen .variant-title #variant-popup-cancel {
+	margin: -10px 3px 3px 3px;
+}
+
+.variant-qty-low {
+	position: absolute;
+	top: 0;
+	left: 0;
+	vertical-align: top;
+	color: white;
+	line-height: 13px;
+	background: red;
+	padding: 2px 5px;
+	border-radius: 2px;
+	float: left;
+}
+
+.variant-qty {
+	position: absolute;
+	top: 0;
+	left: 0;
+	vertical-align: top;
+	color: white;
+	line-height: 13px;
+	background: #333;
+	padding: 2px 5px;
+	border-radius: 2px;
+	float: left;
+}
+
+.pos .variant-screen .container-attribute-list {
+	width: 100%;
+	height: auto;
+	max-height: calc(100vh - 255px);
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.pos .variant-screen .container-variant-list {
+	width: 100%;
+	height: auto;
+	max-height: calc(100vh - 320px);
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.pos .variant-list {
+	padding: 10px;
+	text-align: left;
+	-webkit-transform: translate3d(0, 0, 0);
+}
+
+/*  ********* Attribut Display  ******************************************** */
+.pos .attribute {
+	position: relative;
+	width: 100%;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.pos .attribute .attribute-name {
+	float: left;
+	font-size: 18px;
+	width: 20%;
+	overflow: hidden;
+	padding: 8px;
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+.pos .attribute .value-list-container {
+	width: 98%;
+	float: left;
+	margin-left: 2%;
+}
+
+.pos .attribute .selected {
+	font-weight: bold !important;
+	font-size: 18px;
+}
+
+.pos .attribute .attribute-value {
+	float: left;
+	width: 135px;
+	padding-right: 10px;
+	cursor: pointer;
+}
+
+.pos .attribute .attribute-value .button {
+	width: 100%;
+	background: #FFF;
+	margin-top: 5px;
+}
+
+.pos .attribute .attribute-value .attribute-value-header {
+	width: 100%;
+	height: 15px;
+	text-align: right;
+}
+
+.pos .attribute .attribute-value .attribute-value-name {
+	width: 100%;
+	height: 25px;
+	line-height: 25px;
+	overflow: hidden;
+	text-align: left;
+	/*     font-weight: normal; */
+	padding: 2px;
+}
+
+.pos .attribute .attribute-value .variant-quantity {
+	position: relative;
+	top: 2px;
+	right: 0px;
+	vertical-align: top;
+	color: #FFF;
+	line-height: 13px;
+	padding: 2px 5px;
+	border-radius: 2px;
+	font-size: 9px;
+	margin-right: 3px;
+}
+
+/*  ********* Variant Display  ********************************************* */
+/* This part is a copy paste from Odoo Project, with some values changed     */
+.pos .variant {
+	position: relative;
+	vertical-align: top;
+	display: inline-block;
+	line-height: 170px;
+	font-size: 11px;
+	margin: 5px !important;
+	width: 95px;
+	height: 110px;
+	background: #fff;
+	border: 1px solid #e2e2e2;
+	border-radius: 3px;
+	border-bottom-width: 3px;
+	overflow: hidden;
+	cursor: pointer;
+	width: 120px;
+	height: 100px;
+}
+
+.pos .variant .variant-header {
+	position: relative;
+	width: 95px;
+	height: 30px;
+	background: white;
+	text-align: center;
+}
+
+.pos .variant .price-tag {
+	position: absolute;
+	top: 2px;
+	right: -22px;
+	vertical-align: top;
+	line-height: 13px;
+	padding: 2px 5px;
+	border-radius: 2px;
+}
+
+.pos .variant img {
+	width: 120px;
+	height: 100px;
+}
+
+.variant_modifier_button {
+	position: relative;
+	vertical-align: top;
+	display: inline-block;
+	font-size: 11px;
+	margin: 8px !important;
+	width: 120px;
+	height: 100px;
+	background: #fff;
+	border: 1px solid #d7d7d7;
+	border-bottom-width: 1px;
+	border-bottom-width: 1px;
+	border-radius: 3px;
+	border-bottom-width: 3px;
+	cursor: pointer;
+}
+
+.pos .variant .variant-name, .modifier-name {
+	font-weight: normal;
+	position: absolute;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+	bottom: 0;
+	top: auto;
+	line-height: 14px;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background: -webkit-linear-gradient(-90deg, rgba(255, 255, 255, 0),
+		rgba(255, 255, 255, 1), rgba(255, 255, 255, 1));
+	background: -moz-linear-gradient(-90deg, rgba(255, 255, 255, 0),
+		rgba(255, 255, 255, 1), rgba(255, 255, 255, 1));
+	background: -ms-linear-gradient(-90deg, rgba(255, 255, 255, 0),
+		rgba(255, 255, 255, 1), rgba(255, 255, 255, 1));
+	padding: 3px;
+	padding-top: 15px;
+	font-size: 16px;
+}
+
+.pos .variant-screen .top-content #variant-title-name {
+	vertical-align: middle;
+	font-size: 20px;
+}
+
+.variant-virtual-cart {
+	width: 70%;
+	margin: 0 auto;
+	overflow-y: auto;
+	height: calc(100vh - 459px);
+}
+
+.variant-virtual-cart-container {
+	float: left;
+	width: 100%;
+	position: relative;
+}
+
+.varient-attribute-container {
+	width: 100%;
+	float: left;
+	max-height: calc(100vh - 155px);
+}
+
+.modifier-tag {
+	padding: 3px;
+	font-size: 12px;
+	border: 1px solid #c4c4c4;
+	background: #fff;
+	text-align: center;
+	float: left;
+	margin: 2px;
+	color: #555;
+	font-weight: bold;
+}
+
+.variant-cart-line {
+	cursor: pointer;
+}

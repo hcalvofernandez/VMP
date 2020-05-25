@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="CashControlWidget">
+        <div class="o_group_col_6" style="text-align: right;padding-right: 20px;">
+            <label class="o_bold_label">Saldo de apertura</label>
+        </div>
+        <div class="o_group_col_6">
+            <label class="o_bold_label"><t t-esc="values.currency"/> <t t-esc="values.balance_start" /></label>
+        </div>
+
+        <div class="o_group_col_6" style="text-align: right;padding-right: 20px;">
+            <label class="o_bold_label">(+) Ventas en Efectivo </label>
+        </div>
+        <div class="o_group_col_6">
+            <label class="o_bold_label"><t t-esc="values.currency"/> <t t-esc="values.ventas" /></label>
+        </div>
+
+        <div class="o_group_col_6" style="text-align: right; padding-right: 20px;">
+            <label class="o_bold_label">(+) Ingresos en Efectivo </label>
+        </div>
+
+        <div class="o_group_col_6">
+            <label class="o_bold_label"><t t-esc="values.currency"/> <t t-esc="values.ingresos" /></label>
+        </div>
+
+        <div class="o_group_col_6" style="text-align: right; padding-right: 20px;">
+            <label class="o_bold_label">(-) Retiros de Efectivo </label>
+        </div>
+        <div class="o_group_col_6">
+            <label class="o_bold_label"><t t-esc="values.currency"/> <t t-esc="values.retiros" /></label>
+        </div>
+        <div class="o_group_col_6" style="text-align: right; padding-right: 20px;">
+            <label class="o_bold_label">(=) Transacciones </label>
+        </div>
+        <div class="o_group_col_6">
+            <label class="o_bold_label"><t t-esc="values.currency"/> <t t-esc="values.transacciones" /></label>
+        </div>
+    </t>
+
+    <t t-name="PaymentDebitWidget">
+        <div class="debit_widget o_bold_label">
+            <div t-foreach="values.journal_id" t-as="journal" class="journal_debit">
+                <t t-esc="journal" />
+            </div>
+            <div class="amount_debit">
+                <t t-esc="values.currency" /><t t-esc="values.amount" />
+            </div>
+        </div>
+    </t>
+</templates>

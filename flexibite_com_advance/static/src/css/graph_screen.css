@@ -1,0 +1,142 @@
+#container {
+	display: -webkit-box;
+}
+
+#left {
+	width: 19%;
+	height: 551px;
+	position: relative;
+}
+
+#right {
+	width: 80%;
+	height: 551px;
+	position: relative;
+}
+
+.custom_button {
+	top: 0px;
+	line-height: 32px;
+	padding: 3px 13px;
+	font-size: 20px;
+	background: rgb(230, 230, 230);
+	margin: 12px;
+	border-radius: 3px;
+	border: solid 1px rgb(209, 209, 209);
+	cursor: pointer;
+	transition: all 150ms linear;
+}
+/* menu */
+#divMenu, ul, li, li li {
+	margin: 0;
+	padding: 0;
+}
+
+#divMenu {
+	width: 150px;
+	height: 27px;
+}
+
+#divMenu ul {
+	line-height: 25px;
+}
+
+#divMenu li {
+	list-style: none;
+	position: relative;
+	background: #bcc574;
+	border: 1px solid #bcc574;
+}
+
+#divMenu li li {
+	list-style: none;
+	position: relative;
+	background: rgb(230, 230, 230);
+	left: 148px;
+	top: -27px;
+}
+
+#divMenu ul li {
+	width: 170px;
+}
+
+#divMenu ul li a {
+	width: 169px;
+	height: 30px;
+	display: block;
+	text-decoration: none;
+	text-align: center;
+	color: #555555;
+	border: 2px solid #eee;
+	font-size: 15px;
+}
+
+#divMenu ul ul {
+	position: absolute;
+	visibility: hidden;
+	top: 27px;
+}
+
+#divMenu ul li:hover ul {
+	visibility: visible;
+}
+
+#divMenu li:hover {
+	background-color: #d2ca7a;
+}
+
+#divMenu ul li:hover ul li a:hover {
+	background-color: #6EC89B;
+}
+
+/* #divMenu a:hover {
+	font-weight: bold;
+} */
+/* .selected_chart{
+    background: #8d3a67 !important;
+    color: white !important;
+} */
+.product-detail .label {
+	color: #959595;
+}
+
+#duration_selection, #limit_selection {
+	top: 0px;
+	line-height: 32px;
+	padding: 0px 5px;
+	font-size: 14px;
+	background: #d0d7bb;
+	margin: 12px 0px;
+	border-radius: 0px;
+	border: 1px solid #af3226;
+	cursor: pointer;
+	transition: all 150ms linear 0s;
+	touch-action: none;
+	color: #333;
+	height: 35px;
+	width: auto;
+}
+
+.graph-screen.screen .top-content .button.back {
+	float: left;
+	left: 0;
+	margin-left: 16px;
+	position: relative;
+}
+
+.graph-screen.screen .top-content .button {
+	float: left;
+	margin-left: 0;
+	position: relative;
+}
+
+.input-textbox {
+	width: 82px;
+	line-height: 19px;
+	padding: 0px 15px;
+	font-size: 14px;
+	border-radius: 0px;
+	color: #333;
+	border: 1px solid #333;
+	height: 35px;
+}

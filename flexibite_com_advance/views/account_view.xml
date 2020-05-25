@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="acespritech_view_account_journal_form" model="ir.ui.view">
+            <field name="name">acespritech.account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="inbound_payment_method_ids" position="before">
+                    <field name="shortcut_key"/>
+                    <field name="jr_use_for"/>
+                    <field name="show_in_pos"/>
+                </field>
+                <field name="journal_user" position="after">
+                    <field name="is_online_journal"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_pos_payment_inheirted" model="ir.ui.view">
+            <field name="name">pos.make.payment.form</field>
+            <field name="model">pos.make.payment</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_payment" />
+            <field name="arch" type="xml">
+                <field name="journal_id" position="attributes">
+                    <attribute name="context">{'from_delivery': context.get('from_delivery', False)}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="action_pos_payment_flexibite" model="ir.actions.act_window">
+            <field name="name">Payment</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos.make.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'from_delivery': True}</field>
+        </record>
+
+         <record id="view_pos_payment_inheirted" model="ir.ui.view">
+            <field name="name">account.payment.abonar.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form" />
+            <field name="arch" type="xml">
+                <field name="payment_type" position="before">
+                    <field name="es_abono"  attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                    <field name="abono_para" attrs="{'invisible':[('es_abono','=',False)], 'readonly':[('state','not in',['draft'])]}"/>
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

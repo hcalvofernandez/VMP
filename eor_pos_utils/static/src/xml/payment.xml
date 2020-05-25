@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="PaymentScreenWidget">
+        <t t-jquery=".right-content" t-operation="append">
+            <div style="padding-left: 40px;padding-top:10px;">
+                <t t-if="widget.pos.config.enable_debit">
+                    <span id="pos-debit" class='control-button rounding_btn' style="margin-top: 30px;">
+                        Prepago - Débito
+                    </span>
+                </t>
+                <t t-if="widget.pos.config.enable_credit">
+                    <span id="pos-credit" class='control-button rounding_btn'>
+                        Crédito
+                    </span>
+                </t>
+                <t t-if="widget.pos.config.enable_meal_plan">
+                    <span id="pos-meal-plan" class='control-button rounding_btn'>
+                        Meal Plan
+                    </span>
+                </t>
+                <t	t-if="widget.pos.config and widget.pos.config.enable_gift_voucher">
+                    <div class="control-button js_gift_voucher" style="margin-top: 30px;">
+                        <i class="fa fa-credit-card" aria-hidden="true"></i>
+                            <a>Vales</a>
+                    </div>
+                </t>
+            </div>
+        </t>
+
+        <t t-jquery=".control-button.js_tip" t-operation="attributes">
+            <attribute name="class">control-button js_tip disabled</attribute>
+        </t>
+
+        <t t-jquery=".control-button.js_tip" t-operation="after">
+            <t t-foreach="widget.pos.cashregisters" t-as="cashregister">
+                <t t-if="!cashregister.journal.jr_use_for">
+	                <div t-attf-class="control-button paymentmethod-right #{(cashregister.journal_id[0] == 29 or cashregister.journal_id[0] == 31 or cashregister.journal_id[0] == 22 or cashregister.journal_id[0] == 27) ? '': ''}" t-att-data-id="cashregister.journal_id[0]">
+                        <!--#{cashregister.journal_id[0] != 22 ? 'hidden': ''}-->
+	                    <t t-esc="cashregister.journal_id[1]" />
+	                    <t t-if="cashregister.journal.type == 'cash'">
+	                        <i class="fa fa-money" aria-hidden="true"></i>
+	                    </t>
+	                    <t t-if="cashregister.journal.type == 'bank'">
+	                        <i class="fa fa-university" aria-hidden="true"></i>
+	                    </t>
+	                </div>
+	            </t>
+            </t>
+        </t>
+    </t>
+
+    <t t-name="Payment-Sub">
+        <div style="padding-left: 20px;font-size:18px;">
+            <div style="padding: 10px;">Subsidio: <strong><t t-esc="data.name"/></strong></div>
+            <div style="padding: 10px;">Monto: <span class="button-add-sub" t-att-data="data.qty" data-id="27"><t t-esc="data.qty"/></span></div>
+        </div>
+    </t>
+</templates>

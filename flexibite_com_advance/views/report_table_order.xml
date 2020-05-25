@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<template id="report_table_order">
+			<t t-call="web.basic_layout">
+				<t t-foreach="docs" t-as="o">
+					<div class="page" style="font-size:20px">
+						<div>
+							<t t-if="o.partner_id">
+								<div align="center">
+									Customer Name :-
+									<span t-field="o.partner_id" />
+								</div>
+							</t>
+							<br />
+							<table>
+								<tr>
+									<td width="180">
+										<strong>
+											Order :
+											<span t-field="o.name" />
+										</strong>
+									</td>
+									<td class="text-right">
+										<t t-if="o.table_id">
+											Table:
+											<span t-field="o.table_id" />
+										</t>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<table>
+							<tr t-foreach="o.lines" t-as="l">
+								<t t-if="l.modifier != True">
+									<td>
+										<table>
+											<tr>
+												<td width="180">
+													<span t-field="l.product_id" />
+												</td>
+											</tr>
+											<tr>
+												<t t-if="l.line_note">
+													<td>
+														(
+														<span t-esc="l.line_note" />
+														)
+													</td>
+												</t>
+											</tr>
+										</table>
+										<table>
+											<tr t-foreach="l.mod_lines" t-as="m">
+												<td>
+													<tr>
+														-
+														<span t-esc="m.name"></span>
+														<br />
+													</tr>
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td>
+										<span style="margin-left:5px" t-esc="int(l.qty)" />
+									</td>
+								</t>
+							</tr>
+						</table>
+						<br />
+					</div>
+				</t>
+			</t>
+		</template>
+
+	</data>
+</openerp>

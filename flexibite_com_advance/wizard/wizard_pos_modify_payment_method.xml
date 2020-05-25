@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_pos_modify_payment_form_view" model="ir.ui.view">
+            <field name="name">wizard.pos.payment.form.view</field>
+            <field name="model">wizard.pos.payment</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="journal_id" domain="[('journal_user', '=', 'True'),('jr_use_for', '=', None)]" required="1"/>
+                    </group>
+                    <footer>
+                        <button type="object" name="modify_payment" string="Confirm" style="height:100%;"/>
+                        <button string="Close" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+		<record id="action_wizard_pos_modify_payment_method" model="ir.actions.act_window">
+            <field name="name">Modify Payment</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.pos.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+ 
+    </data>
+</odoo>

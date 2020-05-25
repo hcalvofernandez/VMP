@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="eor_res_partner_view_form" model="ir.ui.view">
+        <field name="name">eor.res.partner.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">17</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="client_pin" password="True"/>
+                <field name="numero_tarjeta"/>
+            </xpath>
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <page name="esquema_subsidios" string="Esquema de subsidio" invisible="1">
+                    <field name="esquema_subsidio_ids">
+                        <tree>
+                            <field name="name" />
+                            <field name="qty" />
+                            <field name="type_sub" />
+                            <field name="product_id" />
+                        </tree>
+                    </field>
+                </page>
+                <page name="product_scheme" string="Productos">
+                    <field name="product_ids" context="{'search_product': True, 'partner_id': id}">
+                        <tree>
+                            <field name="name" />
+                            <field name="lst_price" />
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

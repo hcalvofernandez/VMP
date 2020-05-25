@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- contract.contract Form Inherit-->
+    <record model="ir.ui.view" id="contract_contract_form_view_inherit">
+      <field name="name">contract.contract.form.view.inherit</field>
+      <field name="model">contract.contract</field>
+      <field name="inherit_id" ref="contract.contract_contract_customer_form_view"/>
+      <field name="arch" type="xml">
+        <xpath expr="//page[@name='recurring_invoice_line']" position="after">
+           <page name="schemes_credit_page" string="Esquemas de Crédito" attrs="{'invisible': [('type_contract', '!=', 'credito')]}">
+                  <field name="credit_schemes_line_ids"/>
+           </page>
+       </xpath>
+      </field>
+    </record>
+
+    <!-- res.partner Form Inherit-->
+    <record model="ir.ui.view" id="res_partner_form_view_inherit_credit">
+        <field name="name">res.partner.form.view.inherit.credit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='vat']" position="after">
+            <field name="type_contract_hide"/>
+            
+            <field name="ids_schemes_contracts" invisible="1"/>
+            <field name="credit_s_id" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
+
+            <field name="ids_schemes_sub" invisible="1" />
+            <field name="schemes_sub_id" attrs="{'invisible':[('type_contract_hide','not in', ['subsidio'])]}" domain="[('id','in',ids_schemes_sub)]"/>
+
+          </xpath>
+        </field>
+    </record>
+        
+  </data>
+</odoo>

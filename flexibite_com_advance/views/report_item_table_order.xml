@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_item_table_order">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <div class="row" style="border-bottom: 1px solid #ccc;">
+                            <div>
+                                <span class="col-xs-6 text-left strong" t-field="o.order_id"
+                                      style="font-size: 20px; font-weight: bold;"/>
+                                <t t-if="o.table_id">
+                                    <span class="col-xs-6 text-right strong" t-field="o.table_id"
+                                          style="font-size: 20px; font-weight: bold;"/>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="col-xs-12" style="padding-right:0px;">
+                            <span class="col-xs-8 text-left " style="font-size: 18px;" t-field="o.product_id.name" />
+                            <span class="col-xs-4 text-right" style="font-size: 18px;" t-esc="int(o.qty)"/>
+                            <h4 t-if="o.line_note" class="col-xs-8 text-left " style="font-size: 16px;">
+                                (<t t-esc="o.line_note"/>)
+                            </h4>
+                            <div t-foreach="o.mod_lines" t-as="m" class="col-xs-12 " style="font-size: 16px;">
+                                - <t t-esc="m.name" />:
+                                  <t t-esc="m.qty" />
+                            </div>
+                        </div>
+                        <br/>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</openerp>

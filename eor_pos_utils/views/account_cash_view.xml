@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="account_view_cashbox" model="ir.ui.view">
+        <field name="name">account.view.cashbox.inherit</field>
+        <field name="model">account.bank.statement.cashbox</field>
+        <field name="inherit_id" ref="account.view_account_bnk_stmt_cashbox"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='cashbox_lines_ids']/tree/field[@name='subtotal']" position="after">
+                <field name="is_coin" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
