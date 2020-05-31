@@ -30,7 +30,7 @@ class ResPartner(models.Model):
     ids_schemes_contracts = fields.Many2many(
         'credit.credit_schemes',
         compute='_compute_schemes_credit',
-        store=False,
+        store=True,
         string='Esquemas de Crédito',
     )
 

@@ -1,0 +1,10 @@
+<odoo>
+    <report
+        id="action_report_credit_summary"
+        model="pos.order"
+        report_type="qweb-pdf"
+        string="Reporte de Crédito"
+        name="credit.report_credit_summary"
+        file="credit.report_credit_summary"
+    />
+</odoo>

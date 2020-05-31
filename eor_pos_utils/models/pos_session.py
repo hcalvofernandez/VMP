@@ -45,13 +45,6 @@ class PosSession(models.Model):
                 }
                 session.cash_control_widget = json.dumps(vals)
 
-    cash_register_tip = fields.Monetary(
-        compute='_compute_cash_balance',
-        string="- Propinas pagadas",
-        help="Total de propinas pagadas",
-        readonly=True
-    )
-
     def _compute_payments(self):
         list_payment = []
         for session in self:
@@ -87,6 +80,12 @@ class PosSession(models.Model):
             _logger.info(values)
             session.payment_debit_widget = json.dumps(values)
 
+    cash_register_tip = fields.Monetary(
+        compute='_compute_cash_balance',
+        string="- Propinas pagadas",
+        help="Total de propinas pagadas",
+        readonly=True
+    )
     payment_debit_widget = fields.Text(string="Abonos a débito", compute="_compute_debit_widget")
     payment_lines = fields.One2many('account.payment', 'pos_session_id', string='Pagos', compute='_compute_payments')
     abono_total_debito = fields.Text(string="Abono", compute='_compute_payments')
