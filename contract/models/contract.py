@@ -101,6 +101,48 @@ class ContractContract(models.Model):
         ('subsidio', 'Subsidio'),
     ], default="credito", string="Tipo de contrato")
 
+    @api.model
+    def create(self, vals):
+        contract = super(ContractContract, self).create(vals)
+        partner = self.env['res.partner'].browse(self.partner_id.id)
+        partner.sudo().update({'type_contract':self.type_contract})
+        partner_childs = self.env['res.partner'].search([('parent_id','=',partner.id)])
+        for partner_child in partner_childs:
+            _partner_child = self.env['res.partner'].browse(partner_child.id)
+            _partner_child.sudo().update({'type_contract':self.type_contract})
+            _partner_child.sudo().write({'type_contract':self.type_contract})
+
+            _partner_child.sudo().update({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
+            _partner_child.sudo().write({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
+
+            _partner_child.sudo().update({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+            _partner_child.sudo().write({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+
+            _partner_child.type_contract = self.type_contract
+        
+        return contract
+    
+    @api.model
+    def write(self, vals):
+        contract = super(ContractContract, self).write(vals)
+        partner = self.env['res.partner'].browse(self.partner_id.id)
+        partner.sudo().update({'type_contract':self.type_contract})
+        partner_childs = self.env['res.partner'].search([('parent_id','=',partner.id)])
+        for partner_child in partner_childs:
+            _partner_child = self.env['res.partner'].browse(partner_child.id)
+
+
+            _partner_child.sudo().update({'type_contract':self.type_contract})
+            _partner_child.sudo().write({'type_contract':self.type_contract})
+            
+            
+
+            _partner_child.type_contract = self.type_contract
+            #raise Warning(_partner_child.read())
+        
+        return contract
+    
+
     @api.multi
     def _inverse_partner_id(self):
         for rec in self:

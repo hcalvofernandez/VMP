@@ -18,6 +18,7 @@
         'security/ir.model.access.csv',
         'views/res_partner_view.xml',
         'views/account_cash_view.xml',
+        'views/account_journal_view.xml',
         'views/eor_pos_templates.xml',
         'views/pos_session_view.xml',
         'views/contract_view.xml',

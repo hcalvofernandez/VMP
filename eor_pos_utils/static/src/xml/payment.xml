@@ -34,7 +34,7 @@
         <t t-jquery=".control-button.js_tip" t-operation="after">
             <t t-foreach="widget.pos.cashregisters" t-as="cashregister">
                 <t t-if="!cashregister.journal.jr_use_for">
-	                <div t-attf-class="control-button paymentmethod-right #{(cashregister.journal_id[0] == 29 or cashregister.journal_id[0] == 31 or cashregister.journal_id[0] == 22 or cashregister.journal_id[0] == 27) ? '': ''}" t-att-data-id="cashregister.journal_id[0]">
+	                <div t-attf-class="control-button paymentmethod-right #{(cashregister.journal.hide_journal == true) ? 'hidden': ''}" t-att-data-id="cashregister.journal_id[0]">
                         <!--#{cashregister.journal_id[0] != 22 ? 'hidden': ''}-->
 	                    <t t-esc="cashregister.journal_id[1]" />
 	                    <t t-if="cashregister.journal.type == 'cash'">

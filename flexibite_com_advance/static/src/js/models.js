@@ -30,7 +30,7 @@ odoo.define('flexibite_com_advance.models', function (require) {
     models.load_fields("product.category", ['complete_name']);
     models.load_fields('pos.session',['is_lock_screen','current_cashier_id','locked','locked_by_user_id','opening_balance','increment_number','shop_id']);
     models.load_fields("account.journal", ['shortcut_key','jr_use_for','apply_charges','fees_amount','fees_type','optional','pos_journal_id',
-                                           'is_online_journal']);
+                                           'is_online_journal', 'hide_journal']);
     models.load_fields("res.company", ['payment_total','pos_price', 'pos_quantity', 'pos_discount', 'pos_search', 'pos_next']);
     models.load_fields("pos.category", ['loyalty_point','return_valid_days']);
     models.load_fields("pos.order", ['is_delivery'], ['picking_id']);

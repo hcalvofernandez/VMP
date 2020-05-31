@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="account_journal_pos_inherit" model="ir.ui.view">
+        <field name="name">account.journal.pos.inherit</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='outbound_payment_method_ids']" position="after">
+                <field name="hide_journal" string="Ocultar método de pago en el POS"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -291,14 +291,9 @@ class pos_order(models.Model):
 
     
     def make_payment_postpago(self):
-        active_ids = self.env.context.get('active_ids', [])
-        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)
         
-        if(postpaid_journal):
-            pass
-        else:
-            raise Warning("Debe existir un diario con codigo corto POSCR para la compañia "+str(self.env.user.company_id.name))
-
+        active_ids = self.env.context.get('active_ids', [])
+        postpaid_journal = self.env['account.journal'].search(['|', ('code','=','PPPG'), ('code', '=', 'POSCR')],limit=1)
         partner_id = False
         has_more_partners = False
 
@@ -313,7 +308,7 @@ class pos_order(models.Model):
                 partner_id = order.partner_id.id
                 
                 if(order.state == "draft"):
-                    try:    
+                    try:                        
                         values = self.env['pos.make.payment'].with_context({'active_id': order.id, 'default_journal_id': postpaid_journal.id,'default_amount': order.amount_total}).default_get(['journal_id', 'amount'])
                         self.env['pos.make.payment'].with_context({'active_id': order.id,'ctx_is_postpaid': True}).sudo().create(values).check()
                         if order.amount_total > 0:
@@ -371,8 +366,6 @@ class pos_order(models.Model):
             return {'name': _('Pedidos a Cŕedito'), 'view_type': 'form', 'view_mode': 'tree', 'view_id': self.env.ref('point_of_sale.view_pos_order_tree').id, 'res_model': 'pos.order', 'type': 'ir.actions.act_window', 'target': 'current','domain':[('is_postpaid','=',True)]}
         else:
             return {'name': _('Pedidos a Cŕedito'), 'view_type': 'form', 'view_mode': 'tree', 'view_id': self.env.ref('point_of_sale.view_pos_order_tree').id, 'res_model': 'pos.order', 'type': 'ir.actions.act_window', 'target': 'current','domain':[('is_postpaid','=',True),('partner_id','=',partner_id)]}
-
-    
 
     @api.model
     def load_order_details(self, order_id):
@@ -476,7 +469,7 @@ class pos_order(models.Model):
                                 ('date_order', '>=', fields.Date.today().strftime('%m/%d/%Y') + " 00:00:00"),
                                 ('date_order', '<=', fields.Date.today().strftime('%m/%d/%Y') + " 23:59:59"), ])
         if pos_ids:
-            total_sales = 0
+            total_sales = 0;
             existing_partner_sale = 0
             new_partner_sale = 0
             without_partner_sale = 0
@@ -2249,13 +2242,12 @@ class res_partner(models.Model):
 
     @api.multi
     def _compute_remain_credit_limit(self):
-        
         for partner in self:
             total_credited = 0
             orders = self.env['pos.order'].search([('partner_id', '=', partner.id),
-                                                   ('state', '=', 'paid'),('is_postpaid','=',True)])
+                                                   ('state', '=', 'draft')])
             for order in orders:
-                total_credited += order.amount_total
+                total_credited += order.amount_due
             partner.remaining_credit_limit = partner.credit_limit - total_credited
 
     remaining_credit_limit = fields.Float("Remaining Credit Limit", compute="_compute_remain_credit_limit")
@@ -2293,18 +2285,6 @@ class pos_session(models.Model):
     opening_balance = fields.Boolean(string="Opening Balance")
     increment_number = fields.Integer(string="Increment Number", default=0, size=3, help="This is a field is used for show increment number on kitchen screen when create pos order from point of sale.")
     shop_id = fields.Many2one('pos.shop',string='Shop' ,related='config_id.multi_shop_id')
-
-    def action_pos_session_closing_control(self):
-        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)        
-        if(postpaid_journal):
-            account_bank_statements_lines = self.env['account.bank.statement.line'].sudo().search([('journal_id', '=', postpaid_journal.id)]) 
-            for account_bank_statements_line in account_bank_statements_lines:
-                account_bank_statements_line.sudo().update({'account_id':postpaid_journal.default_credit_account_id.id})
-            pass
-        else:
-            raise Warning("Debe existir un diario con codigo corto POSCR para la compañia "+str(self.env.user.company_id.name))
-
-        super(pos_session, self).action_pos_session_closing_control()
 
     @api.multi
     def get_payments_by_service_type(self):

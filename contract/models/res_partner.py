@@ -21,6 +21,14 @@ class ResPartner(models.Model):
         string="Contracts",
     )
 
+    type_contract = fields.Selection([
+        ('credito', 'Crédito'),
+        ('prepago', 'Prepago'),
+        ('mealplan', 'Meal plan'),
+        ('subsidio', 'Subsidio'),
+    ], default="credito", string="Tipo de contrato")
+
+    
     def _compute_contract_count(self):
         contract_model = self.env['contract.contract']
         fetch_data = contract_model.read_group([

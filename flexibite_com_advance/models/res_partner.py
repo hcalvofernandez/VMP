@@ -175,9 +175,9 @@ class ResPartner(models.Model):
         self.remaining_wallet_amount = total
 
     @api.multi
-    def _calc_credit_remaining(self):
+    def _calc_credit_remaining_(self):
         for partner in self:
-            orders = self.env['pos.order'].search([('state','=','draft'),('is_postpaid','=',True),('partner_id','=',partner.id)])
+            orders = self.env['pos.order'].search([('state','=','paid'),('is_postpaid','=',True),('partner_id','=',partner.id)])
             total = 0.0
             for order in orders:
                 total = total + float(order.amount_total)
@@ -202,8 +202,7 @@ class ResPartner(models.Model):
             amount = sum([order.amount_total for order in pos_orders]) or 0.00
             partner.remaining_debit_amount = partner.debit_limit - amount
 
-    remaining_credit_amount = fields.Float(compute="_calc_credit_remaining", string="Remaining Credit Amount",
-                                           store=True, readonly=True)
+    remaining_credit_amount = fields.Float(compute="_calc_credit_remaining_", string="Remaining Credit Amount",store=True, readonly=True)
     debit_limit = fields.Float("Limite de Credito")
     credit_limit = fields.Float("Crédito límite")
     remaining_debit_amount = fields.Float(compute="_calc_debit_remaining", string="Credito Disponible",

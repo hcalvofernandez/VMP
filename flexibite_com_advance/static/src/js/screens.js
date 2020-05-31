@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 
+ *   All rights reserved.
+ */
 odoo.define('flexibite_com_advance.screens', function (require) {
     "use strict";
 
@@ -4687,7 +4691,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var params = {
                     model: 'account.journal',
                     method: "get_journal_by_code",
-                    args: ['PPPG'],
+                    args: ['POSCR'],
                 }
                 rpc.query(params, {async: false}).then(function(journal)
                 {
@@ -4742,15 +4746,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 
             }
 
-            console.log("Adding meal plan transaction")
             if(order.get_is_meal_plan())
             {
                 var journal = false;
                 var params = {
-                    model: 'account.journal',
-                    method: "get_journal_by_code",
-                    args: ['MEALP'],
-                }
+                                model: 'account.journal',
+                                method: "get_journal_by_code",
+                                args: ['MEALP'],
+                            }
                 rpc.query(params, {async: false}).then(function(journal)
                 {
                     var get_journal_id = false;                

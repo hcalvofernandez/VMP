@@ -13,6 +13,9 @@ from odoo import models, api, fields, _
 from datetime import datetime
 from odoo.tools import float_is_zero
 import sys
+import logging
+
+_logger = logging.getLogger('____________________________' + __name__)
 
 class account_journal(models.Model):
     _inherit="account.journal"
@@ -367,14 +370,14 @@ class account_payment(models.Model):
         customer = self.env['res.partner'].browse(partner_id)
         
         res = self.env['pos.order'].search([('partner_id', '=', partner_id), ('state', '=', 'draft')])
-        pos_session = self.env['pos.session']
 
         total_amt_due = 0
         
         for each in res:
             total_amt_due += each.amount_due
 
-        #return {'amount_due':total_amt_due,'customer':customer.id,'credit_bal':customer.remaining_credit_amount,'credit_limit':customer.credit_limit,'affected_order':order_update.read()}
+        response =  {'amount_due':total_amt_due,'customer':customer.id,'credit_bal':customer.remaining_credit_amount,'credit_limit':customer.credit_limit,'affected_order':order_update.read()}
+        
         try:
             account_payment_obj = self.env['account.payment']
             pos_order_obj = self.env['pos.order']
@@ -400,13 +403,10 @@ class account_payment(models.Model):
                             affected_order.append(each.read())
                     else:
                         break
-            pos_session_id = pos_session.sudo().search([('name', '=', pos_session_id)])
-
             if amount > 0:
                 vals = {
                             'es_abono': False,
-                            'name': pos_session_id.name,
-                            'pos_session_id': pos_session_id.id,
+                            'name': pos_session_id,
                             'payment_type': "inbound",
                             'amount': amount,
                             'payment_date': datetime.now().date(),
@@ -428,7 +428,8 @@ class account_payment(models.Model):
             for each in res:
                 total_amt_due += each.amount_due
             customer = self.env['res.partner'].browse(partner_id)
-            return {'amount_due':total_amt_due,'customer':customer.id,'credit_bal':customer.remaining_credit_amount,'credit_limit':customer.credit_limit,'affected_order':affected_order}
+
+            return response
 
         except Exception as e:
             exc_traceback = sys.exc_info()
