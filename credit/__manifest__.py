@@ -18,9 +18,14 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'wizard/report_pos_wizard_views.xml',
         'views/credit_schemes_views.xml',
         'views/contract_contract_views.xml',
-        'views/contract_scheme_contract_views.xml'
+        'views/contract_scheme_contract_views.xml',
+        'views/res_company_views.xml',
+        'report/credit_summary_report.xml',
+        'report/credit_summary_template.xml',
+
         ],
     'installable': True,
     'application': True,
