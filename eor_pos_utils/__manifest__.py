@@ -12,6 +12,8 @@
     'depends': [
         'base',
         'point_of_sale',
+        #'credit',
+        #'contract',
         'flexibite_com_advance',
     ],
     'data': [

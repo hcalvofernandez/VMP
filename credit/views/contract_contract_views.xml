@@ -26,9 +26,12 @@
 
             <field name="ids_schemes_contracts" invisible="1"/>
             <field name="credit_s_id" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
+<<<<<<< HEAD
 
             <field name="credit_limit_computed" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
 
+=======
+>>>>>>> 548bc37809d8fac7057611afed56fbca037fd881
             <field name="ids_schemes_sub" invisible="1" />
             <field name="schemes_sub_id" attrs="{'invisible':[('type_contract_hide','not in', ['subsidio'])]}" domain="[('id','in',ids_schemes_sub)]"/>
             
