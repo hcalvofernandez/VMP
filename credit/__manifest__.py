@@ -14,6 +14,7 @@
     'depends': [
         'base',
         'contract',
+        'point_of_sale'
     ],
     'data': [
         'security/ir.model.access.csv',

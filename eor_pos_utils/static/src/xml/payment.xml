@@ -31,7 +31,7 @@
             <attribute name="class">control-button js_tip disabled</attribute>
         </t>
 
-        <t t-jquery=".control-button.js_tip" t-operation="after">
+        <t t-jquery=".payment-buttons" t-operation="append">
             <t t-foreach="widget.pos.cashregisters" t-as="cashregister">
                 <t t-if="!cashregister.journal.jr_use_for">
 	                <div t-attf-class="control-button paymentmethod-right #{(cashregister.journal.hide_journal == true) ? 'hidden': ''}" t-att-data-id="cashregister.journal_id[0]">
