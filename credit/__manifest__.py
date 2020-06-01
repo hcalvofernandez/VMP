@@ -14,7 +14,7 @@
     'depends': [
         'base',
         'contract',
-        'point_of_sale'
+        'eor_pos_utils',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -23,6 +23,7 @@
         'views/contract_contract_views.xml',
         'views/contract_scheme_contract_views.xml',
         'views/res_company_views.xml',
+        'views/detail_credit_partner_views.xml',
         'report/credit_summary_report.xml',
         'report/credit_summary_template.xml',
 

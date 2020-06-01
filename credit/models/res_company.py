@@ -16,7 +16,7 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
 
-    state_order_fac = fields.Selection([
+    state_order_fact = fields.Selection([
         ('n', 'Nuevo'),
         ('p', 'Proceso'),
         ('f', 'Facturado')],

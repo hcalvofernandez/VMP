@@ -8,10 +8,10 @@
                         <table style="width:100%" class="text-uppercase text-center">
                           <tr>
                             <th style="width:40%">
-                              <img t-if="res_company.logo"  t-att-src="'data:image/png;base64,%s' %res_company.logo"/>
+                                <img style="width: 200px !important; height: auto !important;" t-if="logo" t-att-src="'data:image/jpg;base64,%s' %logo"/>
                             </th>
                             <th style="border-bottom: 3px solid #343a40; width:60%">
-                              <h4>CAFETERÍA</h4>
+                              <h3>CAFETERÍA</h3>
                             </th>
                           </tr>
                         </table>
@@ -24,8 +24,8 @@
                                     <table style="width:100%; margin-top: 20px;">
                                       <thead>
                                         <th class="text-center">
-                                          <h5>Resumen de Crédito</h5>
-                                          <p>del 16-11-2019 al 01-12-2019</p>
+                                          <h3>Resumen de Crédito</h3>
+                                          <p>del <span t-esc="start_date"/> al <span t-esc="end_date"/></p>
                                         </th>
                                       </thead>
                                     </table>
@@ -43,18 +43,18 @@
                             </tr>
                           </thead>
                           <tbody class="text-center">
-                            <t t-set = "sum_total" t-value = "0" /> 
-                            <t t-foreach="docs" t-as="o">
-                                 <t t-set = "sum_total" t-value = "sum_total + o.amount_total" /> 
+                            <t t-set = "sub_total" t-value = "0" /> 
+                            <t t-foreach="orders" t-as="o">
+                                 <t t-set = "sub_total" t-value = "sub_total + o['importe']" /> 
                                 <tr >
-                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;"><span t-esc="o.partner_id.client_number"/></td>
-                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;"><span t-esc="o.partner_id.name"/></td>
-                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;" class="font-weight-bold">$ <span t-esc="o.amount_total"/></td>
+                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;"><span t-esc="o['client_number']"/></td>
+                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;"><span t-esc="o['cliente']"/></td>
+                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;" class="font-weight-bold">$ <span t-esc="o['importe']"/></td>
                                   </tr>
                             </t>
                             <tr class="font-weight-bold text-uppercase">
                               <td colspan="2" style="text-align: right !important;" >subtotales:</td>
-                              <td style="text-align: center !important;" >$ <span t-esc="sum_total"/></td>
+                              <td style="text-align: center !important;" >$ <span t-esc="sub_total"/></td>
                             </tr>
                             <tr class="font-weight-bold text-uppercase">
                               <td colspan="2" style="text-align: right !important;">iva:</td>
@@ -62,7 +62,7 @@
                             </tr>
                             <tr class="font-weight-bold text-uppercase">
                               <td colspan="2" style="text-align: right !important;">totales:</td>
-                              <td style="text-align: center !important;" >$ <span t-esc="sum_total"/></td>
+                              <td style="text-align: center !important;" >$ <span t-esc="sub_total"/></td>
                             </tr>
                           </tbody>
                         </table>

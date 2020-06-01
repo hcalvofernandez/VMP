@@ -53,6 +53,21 @@ class ResPartner(models.Model):
         help=' tipos de  contrato - , credito, prepago, mealplan, subsidio', 
     )
 
+    credit_limit_computed = fields.Float(
+        compute='_credit_limit_computed',
+        string='Límite de Crédito',
+        help=' campo para mostrar el limite de credito ', 
+    )
+    client_number = fields.Char(
+        string='Número de Cliente',
+    )
+
+    @api.multi
+    @api.depends('credit_limit')
+    def _credit_limit_computed(self):
+        self.credit_limit_computed = self.credit_limit
+
+
     @api.multi
     @api.depends('contract_ids')
     def _compute_schemes_credit(self):
@@ -70,9 +85,9 @@ class ResPartner(models.Model):
             self.ids_schemes_contracts = [(6, 0, acumulador)]
 
             if(len(acumulador)==0):
-                if(self.parent_id):      
+                if(self.parent_id):
                     parent_partner = self.env['res.partner'].browse(self.parent_id.id)
-                    if  parent_partner.type_contract == "credito":
+                    if  parent_partner.type_contract_hide == "credito":
                         acumulador = []
                         for sch in parent_partner.ids_schemes_contracts:
                             acumulador.append(sch.id)
@@ -99,9 +114,9 @@ class ResPartner(models.Model):
             self.ids_schemes_sub = [(6, 0, acumulador)]
 
             if(len(acumulador)==0):
-                if(self.parent_id):      
+                if(self.parent_id):
                     parent_partner = self.env['res.partner'].browse(self.parent_id.id)
-                    if  parent_partner.type_contract == "subsidio":
+                    if  parent_partner.type_contract_hide == "subsidio":
                         for sch in parent_partner.ids_schemes_sub:
                             acumulador.append(sch.id)
                         self.ids_schemes_sub = [(6, 0, acumulador)]
@@ -130,7 +145,6 @@ class ResPartner(models.Model):
             elif con.type_contract == "subsidio":
                 tipo = "subsidio"
         self.type_contract_hide = tipo
-        self.type_contract = tipo
 
 
     @api.multi
@@ -153,7 +167,7 @@ class ResPartner(models.Model):
             if(_partner_child.credit_s_id):
                 pass
             else:
-                _partner_child.sudo().update({"credit_limit":0})           
+                _partner_child.sudo().update({"credit_limit":0})
     
     @api.onchange('schemes_sub_id')
     def onchange_schemes_sub_id(self):

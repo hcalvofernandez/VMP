@@ -17,7 +17,30 @@ class ReportPosWizard(models.TransientModel):
 
     start_date = fields.Datetime(string='Fecha y Hora inicial')
     end_date  = fields.Datetime(string='Fecha y Hora Final', default=lambda self: fields.datetime.now())
-    #company_id = field_name_id = fields.Many2one('res.company',string='Compañia')
+    company_id = fields.Many2one('res.company',string='Compañia', default = lambda self: self.env.user.company_id.id,)
+
+
+    @api.multi
+    def consult_credit_details(self):
+        orders = self.env['pos.order'].search([('company_id','=',self.company_id.id)])
+        res= []
+        for o in orders:
+            res.append({
+                'client_number':o.partner_id.client_number,
+                'cliente': o.partner_id.name,
+                'importe': o.amount_total,
+                })
+        return res
+
+    @api.multi
+    def get_report_credit_details(self):
+        data = {
+            'orders': self.consult_credit_details(),
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+            'logo': self.company_id.logo,
+            }
+        return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data,config=False)
 
 
     @api.multi

@@ -26,12 +26,9 @@
 
             <field name="ids_schemes_contracts" invisible="1"/>
             <field name="credit_s_id" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
-<<<<<<< HEAD
 
             <field name="credit_limit_computed" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
 
-=======
->>>>>>> 548bc37809d8fac7057611afed56fbca037fd881
             <field name="ids_schemes_sub" invisible="1" />
             <field name="schemes_sub_id" attrs="{'invisible':[('type_contract_hide','not in', ['subsidio'])]}" domain="[('id','in',ids_schemes_sub)]"/>
             
@@ -41,5 +38,42 @@
           </xpath>
         </field>
     </record>
+
+        <!-- res.partner Form Inherit-->
+    <record model="ir.ui.view" id="res_partner_tree_view_inherit_credit">
+        <field name="name">res.partner.tree.view.inherit.credit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='phone']" position="before">
+            <field name="active"/>
+            <field name="commercial_partner_id"/>
+            <field name="credit_limit"/>
+          </xpath>
+        </field>
+    </record>
+
+
+
+    <!--Action-->
+    <record id="detail_credit_partner_action_tree" model="ir.actions.act_window">
+      <field name="name">Detalles de Crédito</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree</field>
+      <field name="domain">[('active', '=', True),('commercial_partner_id','=',43)]</field> 
+      <field name="context">{'create': False}</field>
+    </record>
+
+
+    <menuitem
+            id="detail_credit_partner_menu"
+            name="Detalles de Crédito"
+            parent="sale.menu_sale_config"
+            action="detail_credit_partner_action_tree"
+            sequence="12"
+        />
+
   </data>
 </odoo>
