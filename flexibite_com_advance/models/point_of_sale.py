@@ -2249,11 +2249,11 @@ class res_partner(models.Model):
 
     @api.multi
     def _compute_remain_credit_limit(self):
-        
+
         for partner in self:
             total_credited = 0
             orders = self.env['pos.order'].search([('partner_id', '=', partner.id),
-                                                   ('state', '=', 'paid'),('is_postpaid','=',True)])
+                                                   ('state_order_fact', '=', 'n'),('is_postpaid','=',True)])
             for order in orders:
                 total_credited += order.amount_total
             partner.remaining_credit_limit = partner.credit_limit - total_credited
@@ -2295,7 +2295,9 @@ class pos_session(models.Model):
     shop_id = fields.Many2one('pos.shop',string='Shop' ,related='config_id.multi_shop_id')
 
     def action_pos_session_closing_control(self):
-        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)        
+        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)
+        _logger.info(postpaid_journal)
+
         if(postpaid_journal):
             account_bank_statements_lines = self.env['account.bank.statement.line'].sudo().search([('journal_id', '=', postpaid_journal.id)]) 
             for account_bank_statements_line in account_bank_statements_lines:
