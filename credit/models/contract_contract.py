@@ -61,6 +61,11 @@ class ResPartner(models.Model):
     client_number = fields.Char(
         string='Número de Cliente',
     )
+    saldo_credit = fields.Float(
+        compute='_get_sales_saldo_partner',
+        string='Saldo',
+    )
+
 
     @api.multi
     @api.depends('credit_limit')
@@ -189,7 +194,7 @@ class ResPartner(models.Model):
             else:
                 _partner_child.sudo().update({"credit_limit":0})
 
-    def write(self, vals):        
+    def write(self, vals):
         partner = super(ResPartner, self).write(vals)
         for partner in self:
             if(partner.child_ids):
@@ -200,3 +205,15 @@ class ResPartner(models.Model):
                     else:
                         _partner_child.sudo().update({"credit_limit":0})
         return partner
+
+
+    @api.multi
+    def _get_sales_saldo_partner(self):
+        for rec in self:
+            suma = 0
+            orders = self.env['pos.order'].search([('partner_id','=',rec.id),('state_order_fac','=','n'),('order_type','=','Cŕedito'),('is_postpaid','=',True)])
+            for o in orders:
+                suma += o.amount_total
+            saldo = rec.credit_limit - suma
+            rec.saldo_credit = saldo
+

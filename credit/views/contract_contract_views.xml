@@ -39,16 +39,26 @@
         </field>
     </record>
 
-        <!-- res.partner Form Inherit-->
+        <!-- res.partner tree Inherit-->
     <record model="ir.ui.view" id="res_partner_tree_view_inherit_credit">
         <field name="name">res.partner.tree.view.inherit.credit</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
+          <xpath expr="//tree" position="attributes">
+              <attribute name="editable">bottom</attribute>
+          </xpath>
+          <xpath expr="//field[@name='phone']" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='email']" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </xpath>
           <xpath expr="//field[@name='phone']" position="before">
-            <field name="active"/>
             <field name="commercial_partner_id"/>
             <field name="credit_limit"/>
+            <field name="saldo_credit"/>
+            <button name="report_sales_individual" string="Reporte Individual" class="oe_highlight"/>
           </xpath>
         </field>
     </record>
@@ -62,18 +72,24 @@
       <field name="res_model">res.partner</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree</field>
-      <field name="domain">[('active', '=', True),('commercial_partner_id','=',43)]</field> 
-      <field name="context">{'create': False}</field>
+      <field name="domain">[('active', '=', True)]</field>
+      <field name="context">{'search_default_type_person':1, 'create': False}</field>
     </record>
 
+    <menuitem
+        id="detail_credit_partner_menu"
+        name="Detalles de Crédito"
+        parent="sale.sale_menu_root"
+        sequence="12"
+    />
 
     <menuitem
-            id="detail_credit_partner_menu"
-            name="Detalles de Crédito"
-            parent="sale.menu_sale_config"
-            action="detail_credit_partner_action_tree"
-            sequence="12"
-        />
+        id="detail_credit_partner_sub_menu"
+        name="Detalles de Crédito"
+        parent="sale.menu_sale_config"
+        action="detail_credit_partner_action_tree"
+        sequence="12"
+    />
 
   </data>
 </odoo>

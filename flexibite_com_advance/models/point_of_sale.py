@@ -2252,8 +2252,8 @@ class res_partner(models.Model):
         
         for partner in self:
             total_credited = 0
-            orders = self.env['pos.order'].search([('partner_id', '=', partner.id),
-                                                   ('state', '=', 'paid'),('is_postpaid','=',True)])
+            orders = self.env['pos.order'].search([('partner_id', '=', partner.id),('state_order_fac', '=', 'n'),
+                                                   ('order_type', '=', 'Cŕedito'),('is_postpaid','=',True)])
             for order in orders:
                 total_credited += order.amount_total
             partner.remaining_credit_limit = partner.credit_limit - total_credited
