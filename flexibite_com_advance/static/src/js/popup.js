@@ -2895,9 +2895,12 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                 var cash_journal_id = $('.journal_id');
 
                 if (cash_value > 0){
-                    if (cash_journal_id.attr('id') == 7){
-                        var tr = $(cash_journal_id[0].parentElement.parentElement);
-                        tr.find('.balance_end_real').val(parseFloat(cash_value));
+                    for (var i=0; i < cash_journal_id.length; i++) {
+                        var journal_ef = cash_journal_id[i];
+                        if (journal_ef.innerHTML === 'Efectivo (MXN)') {
+                            var tr = $(journal_ef.parentElement.parentElement);
+                            tr.find('.balance_end_real').val(parseFloat(cash_value));
+                        }
                     }
                 }
 
