@@ -23,7 +23,7 @@ odoo.define('flexibite_com_advance.models', function (require) {
                                      'allow_switch_store','sales_persons','rfid_no']);
     models.load_fields("res.partner", ['client_pin','prefer_ereceipt','remaining_loyalty_points','remaining_credit_amount','property_account_receivable_id','parent_id',
                                        'remaining_loyalty_amount', 'loyalty_points_earned',
-                                       'total_remaining_points','remaining_wallet_amount','remaining_debit_amount','debit_limit','meal_plan_limit','remaining_meal_plan_limit']);
+                                       'total_remaining_points','remaining_wallet_amount','remaining_debit_amount','debit_limit','meal_plan_limit','remaining_meal_plan_limit', 'remaining_credit_limit']);
     models.load_fields("product.product", ['qty_available','type','is_packaging','loyalty_point',
                                            'is_dummy_product','modifier_line','is_combo','product_combo_ids','return_valid_days','non_refundable','send_to_kitchen',
                                            'priority','attribute_value_ids', 'lst_price','write_date']);

@@ -997,7 +997,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 });
                             }
                         }
-                        ajax_partner_load();
+                        //ajax_partner_load();
                     }
                 } else {
                     console.log("\n Partner Not Found.");
@@ -1074,8 +1074,52 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     var valid_meal_plan = options.valid_meal_plan;
                     var client = order.get_client();
                     var payment = options.payment;
-                    console.log(payment);
-                    var amount = order.get_total_with_tax() - order.get_total_paid();
+
+                    if (client){
+                        var credit_amount = client.remaining_credit_limit;
+                        var amount = order.getNetTotalTaxIncluded();
+                        if (amount > credit_amount){
+                            var cashregister = false;
+                            for(var i in self.pos.cashregisters){
+                                var reg = self.pos.cashregisters[i];
+                                if(reg.journal_id[1] === "POS-Crédito (MXN)"){
+                                    cashregister = reg;
+                                }
+                            }
+                            if (cashregister){
+                                //var order = self.pos.get_order();
+                                order.add_paymentline(cashregister);
+                                order.selected_paymentline.set_amount(credit_amount,0 );
+                                payment.reset_input();
+                                payment.render_paymentlines();
+                                payment.order_changes();
+
+                                /*
+                                var journal_id = cashregister.journal_id[0];
+                                var pos_session_id = cashregister.pos_session_id[0];
+
+                                var cashier_id = self.pos.get_cashier().id;
+
+                                var params = {
+                                    model: 'account.payment',
+                                    method: "payment_credit",
+                                    args: [journal_id, credit_amount, pos_session_id, client.id, cashier_id, true,order.name],
+                                }
+                                return rpc.query(params).then(function(res){
+
+                                });
+                                 */
+                                //payment.do_order(order, 'credit');
+                            }
+                        }else{
+                            if (valid_credit){
+                                self.gui.show_popup('show_pop_pin', {cashier: client, payment: payment, type: 'credit'});
+                                return
+                            }
+                        }
+                    }
+
+                    /*
                     if (valid_debit){
                         if (client && amount && amount > client.remaining_debit_amount){
                             self.gui.show_popup('max_limit',{
@@ -1115,6 +1159,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             return;
                         }
                     }
+                     */
                     var skip_payd = options.skip_pay_debit;
 
                     if (skip_payd){
@@ -1620,9 +1665,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         do_order: function(order, type){
             var order = order || this.pos.get_order();
-            var tdebit = true ? type == 'debit' : false;
-            var tcredit = true ? type == 'credit' : false;
-            var tmealplan = true ? type == 'mealplan' : false;
+            var tdebit = type === 'debit';
+            var tcredit = type === 'credit';
+            var tmealplan = type === 'mealplan';
             if (tdebit){
                 order.set_order_on_debit(tdebit);
                 order.set_is_debit(tdebit);
@@ -1716,8 +1761,29 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             
             if (client){
                 if (client.client_pin){
-                     self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'credit'});
-                    return
+                    var credit_amount = client.remaining_credit_limit;
+                    var amount = order.getNetTotalTaxIncluded();
+                    if (amount > credit_amount){
+                        if (order.get_paymentlines()){
+                            var total_amount = 0
+                            _.map(order.get_paymentlines(), function(plines){
+                                var pamount = plines.get_amount();
+                                total_amount += pamount;
+                            });
+                            if (total_amount > 0){
+                                if (total_amount === amount){
+                                    self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'credit'});
+                                    return
+                                }else{
+                                    return self.pos.db.notification('danger', _t('Es necesario agregar otro método de pago para saldar la venta.'))
+                                }
+                            }
+                        }
+                    }else{
+                        self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'credit'});
+                        return
+                    }
+
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
@@ -2428,9 +2494,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
 
                 if (total > client.remaining_credit_limit){
-                    this.$el.find("#remaining_credit_amount").addClass('invalid');
-                    this.$el.find('#pos-credit').addClass('disabled');
-                    this.$el.find('#pos-credit').text('Crédito (Sin saldo suficiente)');
+                    //this.$el.find("#remaining_credit_amount").addClass('invalid');
+                    //this.$el.find('#pos-credit').addClass('disabled');
+                    this.$el.find('#pos-credit').text('Crédito salda con: ' + self.format_currency(client.remaining_credit_limit));
                 }else{
                     this.$el.find("#remaining_credit_amount").removeClass('invalid');
                     this.$el.find('#pos-credit').removeClass('disabled');
@@ -2939,7 +3005,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 if (!order.get_client()){
                     return self.gui.show_screen('receipt');
                 }
+                /*
+                var cashregister = false;
+                for(var i in self.pos.cashregisters){
+                    var reg = self.pos.cashregisters[i];
+                    if(reg.journal_id[1] === "POS-Crédito (MXN)"){
+                        cashregister = reg;
+                    }
+                }
+
+                if (cashregister){
+                    //var order = self.pos.get_order();
+                    order.add_paymentline(cashregister);
+                    order.selected_paymentline.set_amount(credit_amount,0 );
+                    payment.reset_input();
+                    payment.render_paymentlines();
+                    payment.order_changes();
+                }
+
+                 */
             });
+
             this.$el.find('.paymentmethod-right').click(function(){
                 self.click_paymentmethods($(this).data('id'));
             });
@@ -4720,6 +4806,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         var client = self.pos.get_order().get_client()
                         partner_id = partner_id ? partner_id : client.id;
                         var cashier_id = self.pos.get_cashier().id;
+                        var payment_lines = order.get_paymentlines();
+                        _.map(payment_lines, function(line){
+                            if (line.name === "POS-Crédito (MXN)"){
+                                amount = line.amount;
+                            }
+                        });
+
                         var params = {
                             model: 'account.payment',
                             method: "payment_credit",
@@ -4731,6 +4824,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                                                     rpc.query(params, {async: false}).then(function(vals){
                                                                         if(vals)
                                                                         {
+                                                                            console.log(vals.affected_order);
                                                                             if(vals.affected_order.length>0)
                                                                             {
                                                                                 clearInterval(interval);

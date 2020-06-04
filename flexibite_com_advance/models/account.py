@@ -365,6 +365,8 @@ class account_payment(models.Model):
     @api.model
     def payment_credit(self, get_journal_id, amount, pos_session_id, partner_id, cashier_id, pay_due,order_ref):
         order = self.env['pos.order'].search([('partner_id', '=', partner_id), ('state', '=', 'draft'),('pos_reference', '=', order_ref)],order='date_order')
+
+        _logger.info("%s" % order)
         order_update = self.env['pos.order'].browse(order.id)
         order_update.sudo().update({'is_postpaid':True,'order_type':'Cŕedito'})
         customer = self.env['res.partner'].browse(partner_id)
@@ -376,8 +378,10 @@ class account_payment(models.Model):
         for each in res:
             total_amt_due += each.amount_due
 
+        _logger.info("Customer %s" % customer)
+
         response =  {'amount_due':total_amt_due,'customer':customer.id,'credit_bal':customer.remaining_credit_amount,'credit_limit':customer.credit_limit,'affected_order':order_update.read()}
-        
+        _logger.info(response['affected_order'])
         try:
             account_payment_obj = self.env['account.payment']
             pos_order_obj = self.env['pos.order']
@@ -385,14 +389,15 @@ class account_payment(models.Model):
             if pay_due:
                 #, ('pos_reference', '=', order_ref)
                 res = pos_order_obj.search([('partner_id', '=', partner_id), ('state', '=', 'draft'),('pos_reference', '=', order_ref)],order='date_order')
-                
+
+                _logger.info("Order ref: %s " % (res))
                 for each in res:
                     if amount > 0:
                         if each.amount_due < amount:
                             amount -= each.amount_due
                             values = self.env['pos.make.payment'].with_context(
                                 {'active_id': each.id, 'default_journal_id': get_journal_id, 'default_amount':each.amount_due}).default_get(['journal_id', 'amount'])
-                            self.env['pos.make.payment'].with_context({'active_id': each.id,'ctx_is_postpaid': True}).sudo.create(values).check()
+                            self.env['pos.make.payment'].with_context({'active_id': each.id,'ctx_is_postpaid': True}).sudo().create(values).check()
 
                         elif each.amount_due >= amount:
                             values = self.env['pos.make.payment'].with_context(
