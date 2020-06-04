@@ -2506,6 +2506,14 @@ class pos_session(models.Model):
 
     @api.multi
     def custom_close_pos_session(self):
+        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)        
+        if(postpaid_journal):
+            account_bank_statements_lines = self.env['account.bank.statement.line'].sudo().search([('journal_id', '=', postpaid_journal.id)]) 
+            for account_bank_statements_line in account_bank_statements_lines:
+                account_bank_statements_line.sudo().update({'account_id':postpaid_journal.default_credit_account_id.id})
+            pass
+        else:
+            raise Warning("Debe existir un diario con codigo corto POSCR para la compañia "+str(self.env.user.company_id.name))
         self._check_pos_session_balance()
         for session in self:
             session.write({'state': 'closing_control', 'stop_at': fields.Datetime.now()})

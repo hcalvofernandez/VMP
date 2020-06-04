@@ -11,7 +11,7 @@
                                 <img style="width: 200px !important; height: auto !important;" t-if="logo" t-att-src="'data:image/jpg;base64,%s' %logo"/>
                             </th>
                             <th style="border-bottom: 3px solid #343a40; width:60%">
-                              <h3>CAFETERÍA</h3>
+                              <h3><span t-esc="orders[0]['cliente_principal']"/></h3>
                             </th>
                           </tr>
                         </table>
@@ -43,13 +43,13 @@
                             </tr>
                           </thead>
                           <tbody class="text-center">
-                            <t t-set = "sub_total" t-value = "0" /> 
+                            <t t-set = "sub_total" t-value = "0" />
                             <t t-foreach="orders" t-as="o">
                                  <t t-set = "sub_total" t-value = "sub_total + o['importe']" /> 
                                 <tr >
-                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;"><span t-esc="o['client_number']"/></td>
-                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;"><span t-esc="o['cliente']"/></td>
-                                  <td style="text-align: center !important; border-bottom: 1px solid #343a40 !important;" class="font-weight-bold">$ <span t-esc="o['importe']"/></td>
+                                  <td style="text-align: center !important;"><span t-esc="o['client_number']"/></td>
+                                  <td style="text-align: center !important;"><span t-esc="o['cliente']"/></td>
+                                  <td style="text-align: center !important;" class="font-weight-bold">$ <span t-esc="o['importe']"/></td>
                                   </tr>
                             </t>
                             <tr class="font-weight-bold text-uppercase">
@@ -58,11 +58,13 @@
                             </tr>
                             <tr class="font-weight-bold text-uppercase">
                               <td colspan="2" style="text-align: right !important;">iva:</td>
-                              <td style="text-align: center !important;" >$ 0.00</td>
+                              <t t-set = "iva" t-value = "sub_total * .16" />
+                              <td style="text-align: center !important;" >$ <span t-esc="'%.2f'% iva"/></td>
                             </tr>
                             <tr class="font-weight-bold text-uppercase">
                               <td colspan="2" style="text-align: right !important;">totales:</td>
-                              <td style="text-align: center !important;" >$ <span t-esc="sub_total"/></td>
+                              <t t-set = "total" t-value = "sub_total + iva" />
+                              <td style="text-align: center !important;" >$ <span t-esc="'%.2f'% total"/></td>
                             </tr>
                           </tbody>
                         </table>

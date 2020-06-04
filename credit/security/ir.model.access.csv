@@ -1,5 +1,6 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_credit_credit_schemes,credit.credit_schemes,model_credit_credit_schemes,base.group_user,1,1,1,1
 access_credit_report_pos_wizard,credit.report_pos_wizard,model_credit_report_pos_wizard,base.group_user,1,1,1,1
+access_credit_report_pos_individual_wizard,credit.report_pos_individual_wizard,model_credit_report_pos_individual_wizard,base.group_user,1,1,1,1
 access_credit_detail_credit_partner,credit.detail_credit_partner,model_credit_detail_credit_partner,base.group_user,1,1,1,1
 

@@ -19,6 +19,7 @@
     'data': [
         'security/ir.model.access.csv',
         'wizard/report_pos_wizard_views.xml',
+        'wizard/report_pos_wizard_individual_views.xml',
         'views/credit_schemes_views.xml',
         'views/contract_contract_views.xml',
         'views/contract_scheme_contract_views.xml',
@@ -26,6 +27,8 @@
         'views/detail_credit_partner_views.xml',
         'report/credit_summary_report.xml',
         'report/credit_summary_template.xml',
+        'report/credit_summary_invididual_report.xml',
+        'report/credit_summary_invididual_template.xml',
 
         ],
     'installable': True,

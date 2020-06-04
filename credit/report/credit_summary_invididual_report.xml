@@ -1,0 +1,10 @@
+<odoo>
+    <report
+        id="action_report_credit_summary_individual"
+        model="pos.order"
+        report_type="qweb-pdf"
+        string="Reporte de Ventas Individual"
+        name="credit.report_credit_summary_individual"
+        file="credit.report_credit_summary_individual"
+    />
+</odoo>

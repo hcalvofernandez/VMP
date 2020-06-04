@@ -127,18 +127,24 @@ class ContractContract(models.Model):
         contract = super(ContractContract, self).write(vals)
         partner = self.env['res.partner'].browse(self.partner_id.id)
         partner.sudo().update({'type_contract':self.type_contract})
+        partner.sudo().update({'type_contract_hide':self.type_contract})
+        partner.sudo().update({'ids_schemes_contracts':self.credit_schemes_line_ids})
+        partner.sudo().update({'ids_schemes_sub':self.esquema_subsidio_ids})
+       
         partner_childs = self.env['res.partner'].search([('parent_id','=',partner.id)])
+
         for partner_child in partner_childs:
-            _partner_child = self.env['res.partner'].browse(partner_child.id)
+                _partner_child = self.env['res.partner'].browse(partner_child.id)
+                _partner_child.sudo().update({'type_contract':self.type_contract})
+                _partner_child.sudo().write({'type_contract_hide':self.type_contract})
+                
+                _partner_child.sudo().update({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
+                _partner_child.sudo().write({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
 
-
-            _partner_child.sudo().update({'type_contract':self.type_contract})
-            _partner_child.sudo().write({'type_contract':self.type_contract})
-            
-            
-
-            _partner_child.type_contract = self.type_contract
-            #raise Warning(_partner_child.read())
+                _partner_child.sudo().update({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+                _partner_child.sudo().write({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+                _partner_child.type_contract = self.partner_id.type_contract
+                _partner_child.type_contract_hide = self.partner_id.type_contract
         
         return contract
     

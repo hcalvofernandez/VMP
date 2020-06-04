@@ -22,13 +22,24 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def consult_credit_details(self):
-        orders = self.env['pos.order'].search([('company_id','=',self.company_id.id)])
-        res= []
+        one = self.start_date
+        two = self.end_date
+        start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
+        end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
+        orders = self.env['pos.order'].search([('company_id','=',self.company_id.id),('state_order_fac','=','n'),('order_type','=','Cŕedito'),('is_postpaid','=',True),('date_order','>=',start),('date_order','<=',end)])
+        importes_por_persona = dict()
+        res = []
         for o in orders:
+            if o.partner_id in importes_por_persona:
+                importes_por_persona[o.partner_id] += o.amount_total
+            else:
+                importes_por_persona[o.partner_id] = o.amount_total
+        for key, value in importes_por_persona.items():
             res.append({
-                'client_number':o.partner_id.client_number,
-                'cliente': o.partner_id.name,
-                'importe': o.amount_total,
+                'client_number': key.client_number,
+                'cliente_principal': key.parent_id.name,
+                'cliente': key.name,
+                'importe': value,
                 })
         return res
 
