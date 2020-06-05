@@ -997,7 +997,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 });
                             }
                         }
-                        //ajax_partner_load();
+                        ajax_partner_load();
                     }
                 } else {
                     console.log("\n Partner Not Found.");
@@ -1772,11 +1772,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             });
                             if (total_amount > 0){
                                 if (total_amount === amount){
-                                    self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'credit'});
+                                    self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'credit', is_low_credit: true});
                                     return
                                 }else{
                                     return self.pos.db.notification('danger', _t('Es necesario agregar otro método de pago para saldar la venta.'))
                                 }
+                            }
+                        }else{
+                            var cashregister = false;
+                            for(var i in self.pos.cashregisters){
+                                var reg = self.pos.cashregisters[i];
+                                if(reg.journal_id[1] === "POS-Crédito (MXN)"){
+                                    cashregister = reg;
+                                }
+                            }
+                            if (cashregister){
+                                //var order = self.pos.get_order();
+                                order.add_paymentline(cashregister);
+                                order.selected_paymentline.set_amount(credit_amount,0 );
+                                payment.reset_input();
+                                payment.render_paymentlines();
+                                payment.order_changes();
                             }
                         }
                     }else{
@@ -4807,12 +4823,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         partner_id = partner_id ? partner_id : client.id;
                         var cashier_id = self.pos.get_cashier().id;
                         var payment_lines = order.get_paymentlines();
-                        _.map(payment_lines, function(line){
+                        /*_.map(payment_lines, function(line){
                             if (line.name === "POS-Crédito (MXN)"){
                                 amount = line.amount;
+
                             }
                         });
-
+                        debugger;*/
                         var params = {
                             model: 'account.payment',
                             method: "payment_credit",
