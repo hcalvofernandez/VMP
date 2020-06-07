@@ -71,7 +71,7 @@ class ResPartner(models.Model):
     @api.depends('credit_limit')
     def _credit_limit_computed(self):
         for rec in self:
-            self.credit_limit_computed = self.credit_limit
+            rec.credit_limit_computed = rec.credit_limit
 
 
     @api.multi
