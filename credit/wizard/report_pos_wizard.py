@@ -15,9 +15,22 @@ class ReportPosWizard(models.TransientModel):
     _description = 'Wizard para el reporte de las ventas en POS '
 
 
-    start_date = fields.Datetime(string='Fecha y Hora inicial')
-    end_date  = fields.Datetime(string='Fecha y Hora Final', default=lambda self: fields.datetime.now())
-    company_id = fields.Many2one('res.company',string='Compañia', default = lambda self: self.env.user.company_id.id,)
+    start_date = fields.Datetime(computed='_default_date_report', string='Fecha y Hora inicial')
+    end_date  = fields.Datetime(computed='_default_date_report', string='Fecha y Hora Final', default=lambda self: fields.datetime.now())
+    company_id = fields.Many2one('res.company',string='Compañia',)
+    partner_id = fields.Many2one('res.partner',string='Cliente',)
+
+    @api.multi
+    @api.onchange('partner_id')
+    def _default_date_report(self):
+        h_min = datetime.max.time()
+        h_max = datetime.max.time()
+        contracts = self.env['contract.contract'].search([('partner_id','=',self.partner_id.id),('active','=',True)])
+        for c in contracts:
+            for lc in c.contract_line_ids:
+                self.start_date = datetime.combine(lc.next_period_date_start, h_min)
+                self.end_date = datetime.combine(lc.next_period_date_end, h_max)
+
 
 
     @api.multi
@@ -29,19 +42,22 @@ class ReportPosWizard(models.TransientModel):
         orders = self.env['pos.order'].search([('company_id','=',self.company_id.id),('state_order_fac','=','n'),('order_type','=','Cŕedito'),('is_postpaid','=',True),('date_order','>=',start),('date_order','<=',end)])
         importes_por_persona = dict()
         res = []
-        for o in orders:
-            if o.partner_id in importes_por_persona:
-                importes_por_persona[o.partner_id] += o.amount_total
-            else:
-                importes_por_persona[o.partner_id] = o.amount_total
-        for key, value in importes_por_persona.items():
-            res.append({
-                'client_number': key.client_number,
-                'cliente_principal': key.parent_id.name,
-                'cliente': key.name,
-                'importe': value,
-                })
-        return res
+        if orders:
+            for o in orders:
+                if o.partner_id in importes_por_persona:
+                    importes_por_persona[o.partner_id] += o.amount_total
+                else:
+                    importes_por_persona[o.partner_id] = o.amount_total
+            for key, value in importes_por_persona.items():
+                res.append({
+                    'client_number': key.client_number,
+                    'cliente_principal': key.parent_id.name,
+                    'cliente': key.name,
+                    'importe': value,
+                    })
+            return res
+        else:
+            raise ValidationError("No Tiene Información para Mostrar ")
 
     @api.multi
     def get_report_credit_details(self):

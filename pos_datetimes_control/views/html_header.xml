@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+        <template id="assets_backend" name="pos assets" inherit_id="point_of_sale.assets">
+             <xpath expr="." position="inside">   
+                <script type="text/javascript" src="/pos_datetimes_control/static/src/jquery.js"></script>
+                <script type="text/javascript" src="/pos_datetimes_control/static/src/point_of_sale.js"></script>                
+            </xpath>
+        </template>
+        <template id="assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/pos_datetimes_control/static/src/pos.css" type="text/css"/>    
+            </xpath>
+         </template>
+    </data>
+</odoo>

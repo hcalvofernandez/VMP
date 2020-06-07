@@ -8,7 +8,8 @@
                 <group>
                     <field col="4" name="start_date" autocomplete="off"/> 
                     <field col="4" name="end_date" autocomplete="off"/> 
-                    <!--<field col="4" name="company_id"/>-->
+                    <field col="4" name="company_id" invisible="1"/>
+                    <field col="4" name="partner_id" invisible="1"/>
                 </group>
                 <footer>
                     <button name="sale_report_pos" type="object" string="Ver Ventas" class="btn btn-success"/>
@@ -27,6 +28,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="report_pos_wizard_form"/>
+        <field name="context">{'default_company_id': context.get('company_id', False),'default_partner_id': context.get('partner_id', False)}</field>
         <field name="target">new</field>
     </record>
 

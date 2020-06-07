@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- res company Form Inherit -->
+        <record model="ir.ui.view" id="pos_config_form_view_inherit">
+          <field name="name">pos.config.form.view.inherit</field>
+          <field name="model">pos.config</field>
+          <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+          <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+              <div name="div_logo">
+                <field name="imagen" widget="image" class="oe_avatar"/>
+              </div>
+           </xpath>
+          </field>
+        </record>
+    </data>
+</odoo>

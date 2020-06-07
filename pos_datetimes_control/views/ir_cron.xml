@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>	
+        <record id="PCDT_pos_dt_next" forcecreate='True' model="ir.cron">
+            <field name="name">POS NEXT - Horarios de atencion permitidos</field>
+            <field name="active" eval="True" />
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="model_id" ref="base.model_res_company"/>
+            <field name="state">code</field>
+            <field name="code">env['res.company'].cron_set_next_day_datetimes()</field>
+        </record>
+    </data>
+</odoo>

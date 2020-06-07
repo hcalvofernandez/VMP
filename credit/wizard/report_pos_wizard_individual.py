@@ -15,9 +15,22 @@ class ReportPosIndividualWizard(models.TransientModel):
     _description = 'Wizard para el reporte de las ventas en POS Individual '
 
 
-    start_date = fields.Datetime(string='Fecha y Hora inicial')
-    end_date  = fields.Datetime(string='Fecha y Hora Final', default=lambda self: fields.datetime.now())
-    partner_id = fields.Many2one('res.partner',string='Cliente')
+    start_date = fields.Datetime(computed='_default_date_report', string='Fecha y Hora inicial',)
+    end_date  = fields.Datetime(computed='_default_date_report', string='Fecha y Hora Final',)
+    partner_id = fields.Many2one('res.partner',string='Cliente',)
+
+
+
+    @api.multi
+    @api.onchange('partner_id')
+    def _default_date_report(self):
+        h_min = datetime.max.time()
+        h_max = datetime.max.time()
+        contracts = self.env['contract.contract'].search([('partner_id','=',self.partner_id.parent_id.id),('active','=',True)])
+        for c in contracts:
+            for lc in c.contract_line_ids:
+                self.start_date = datetime.combine(lc.next_period_date_start, h_min)
+                self.end_date = datetime.combine(lc.next_period_date_end, h_max)
 
 
     @api.multi
