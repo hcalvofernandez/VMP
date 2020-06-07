@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="PCDT_pos_session_inherit">
+            <field name="name">pos.session.form.view.inherit</field>
+            <field name="model">pos.session</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='resume_journal']" position="after">
+                    <div name="resume_daily_dt">
+                        <div class="o_horizontal_separator">Control de Horarios</div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td><label for="is_autocomputed"/></td>                            
+                                    <td><field name="is_autocomputed" id="is_autocomputed" readonly="1"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td><label for="start_day_datetime"/></td>                            
+                                    <td><field name="start_day_datetime" id="start_day_datetime" readonly="1" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td><label for="ends_day_datetime"/></td>                            
+                                    <td><field name="ends_day_datetime" id="ends_day_datetime" readonly="1"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

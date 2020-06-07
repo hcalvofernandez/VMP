@@ -12,6 +12,8 @@
 from odoo import fields, models, api, _
 
 
+
+
 class wizard_pos_x_report(models.TransientModel):
     _name = 'wizard.pos.x.report'
     _description = 'wizard pos x report'
@@ -25,5 +27,5 @@ class wizard_pos_x_report(models.TransientModel):
     session_ids = fields.Many2many('pos.session', 'pos_session_wizard_rel', 'x_wizard_id','pos_session_id', string="Session(s)")
     report_type = fields.Selection([('pdf', 'PDF')], default='pdf', string="Report Type")
     proxy_ip = fields.Char(string="Proxy IP", default=get_ip)
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+

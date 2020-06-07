@@ -2518,7 +2518,21 @@ class pos_session(models.Model):
             pass
         else:
             raise Warning("Debe existir un diario con codigo corto POSCR para la compañia "+str(self.env.user.company_id.name))
+
+        efecty_journal = self.env['account.journal'].sudo().search([('code', '=', 'CSH1'),('company_id', '=', self.env.user.company_id.id)],limit=1)        
+        if(efecty_journal):
+            account_bank_statements_lines = self.env['account.bank.statement.line'].sudo().search([('journal_id', '=', efecty_journal.id)]) 
+            #for account_bank_statements_line in account_bank_statements_lines:
+            #    account_bank_statements_line.sudo().update({'amount':float(float(account_bank_statements_line.amount)/float(2))})
+
+            pass
+        else:
+            raise Warning("Debe existir un diario con codigo corto CSH1 para la compañia "+str(self.env.user.company_id.name))
+        
+
+        self.set_end_balance_real_declared()
         self._check_pos_session_balance()
+
         for session in self:
             session.write({'state': 'closing_control', 'stop_at': fields.Datetime.now()})
             if not session.config_id.cash_control:
@@ -2527,6 +2541,13 @@ class pos_session(models.Model):
             if session.config_id.cash_control:
                 self._check_pos_session_balance()
                 return self.action_pos_session_close()
+
+    def set_end_balance_real_declared(self):
+        for statement in self.statement_ids:
+            statement.write({
+                                'balance_end_real_declared': float(statement.balance_end_real)
+                            })
+
     @api.multi
     def cash_statement_ids(self, vals):
         for statement in self.statement_ids:

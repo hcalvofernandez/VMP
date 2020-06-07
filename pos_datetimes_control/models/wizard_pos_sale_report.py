@@ -61,3 +61,18 @@ class wizard_pos_sale_report(models.TransientModel):
                 count = count + 1
         if(count==0):
             self.Z_report_set_sessions()
+
+class wizard_pos_x_report(models.TransientModel):
+    _name = 'wizard.pos.x.report'
+    _description = 'wizard pos x report'
+
+    @api.model
+    def get_ip(self):
+        proxy_ip = self.env['res.users'].browse([self._uid]).company_id.report_ip_address or''
+        return proxy_ip
+
+
+    session_ids = fields.Many2many('pos.session', 'pos_session_wizard_rel', 'x_wizard_id','pos_session_id', string="Session(s)")
+    report_type = fields.Selection([('pdf', 'PDF')], default='pdf', string="Report Type")
+    proxy_ip = fields.Char(string="Proxy IP", default=get_ip)
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
