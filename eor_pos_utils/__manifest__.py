@@ -12,7 +12,7 @@
     'depends': [
         'base',
         'point_of_sale',
-        #'credit',
+        'credit',
         #'contract',
         'flexibite_com_advance',
     ],
