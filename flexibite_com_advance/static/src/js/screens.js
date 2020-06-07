@@ -997,7 +997,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 });
                             }
                         }
-                        //ajax_partner_load();
+                        ajax_partner_load();
                     }
                 } else {
                     console.log("\n Partner Not Found.");
