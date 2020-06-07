@@ -9,6 +9,15 @@
             </xpath>
             <xpath expr="//div[@name='resume_real']" position="replace">
             </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" name="open_report_x" type="object" icon="fa-print">
+                    <span class="o_stat_text">Reporte X</span>
+                </button>
+
+                <button class="oe_stat_button" name="open_report_z" icon="fa-print" type="object">
+                    <span class="o_stat_text">Reporte Z</span>
+                </button>
+            </xpath>
             <field name="statement_ids" position="after">
                 <div name="resume_journal" attrs="{'invisible' : [('cash_control', '=', False)]}">
                     <separator string="Resumen Diarios Efectivo"/>

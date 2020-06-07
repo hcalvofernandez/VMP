@@ -2987,6 +2987,12 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                             $('.button.close_session').show();
                             //$("#open_bal").text(self.format_currency(value.cash_register_balance_start));
                         });
+                        var pos_session_id = [self.pos.pos_session.id];
+                        self.pos.chrome.do_action('flexibite_com_advance.pos_x_report',{additional_context:{
+                            active_ids:pos_session_id,
+                        }}).fail(function(){
+                            self.pos.db.notification('danger',"Connection lost");
+                        });
                     }
                 });
             });

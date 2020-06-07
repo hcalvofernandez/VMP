@@ -34,4 +34,5 @@ class ResPartner(models.Model):
     numero_tarjeta = fields.Char(string="Número de tarjeta")
     esquema_subsidio_ids = fields.Many2many('contract.scheme.contract', string='Esquemas de subsidio')
     product_ids = fields.Many2many('product.product', string="Productos")
+    credit_blocked = fields.Boolean(string="Bloquear Saldo", default=False)
     # TODO: Esquema por producto

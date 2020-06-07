@@ -1514,7 +1514,7 @@
                     <div class="button cancel">
                         Cancel
                     </div>
-                    <div class="button print_report_x" style="width: 130px;">
+                    <div class="button print_report_x" style="width: 130px;" t-if="report">
                         Reporte X
                     </div>
                 </div>

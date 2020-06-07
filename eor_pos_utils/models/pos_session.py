@@ -23,17 +23,18 @@ class PosSession(models.Model):
     @api.depends('cash_register_total_entry_encoding')
     def _compute_cash_control(self):
         for session in self:
-            statement_ids = session.statement_ids.filtered(lambda st: st.journal_id.id==7)
+            statement_ids = session.sudo().statement_ids.filtered(lambda st: st.journal_id.sudo().name == 'Efectivo')
+            vals = {}
             for cash in statement_ids:
                 negative_amount = cash.mapped('line_ids').filtered(lambda l: l.amount < 0)
                 positive_amount = cash.mapped('line_ids').filtered(lambda l: l.amount > 0)
                 currency_id = cash.company_id.currency_id
                 dif_ncash = currency_id.round(sum(negative_amount.mapped('amount')))
                 dif_pcash = currency_id.round(sum(positive_amount.mapped('amount')))
-                ventas_efectivo = session.cash_register_balance_end
+                ventas_efectivo = currency_id.round(session.cash_register_balance_end)
                 ingresos_efectivo = dif_pcash
                 retiros_efectivo = dif_ncash
-                balance_start = session.cash_register_balance_start
+                balance_start = currency_id.round(session.cash_register_balance_start)
                 vals = {
                     'balance_start': balance_start,
                     'currency': currency_id.symbol,
@@ -43,7 +44,7 @@ class PosSession(models.Model):
                     'retiros':  retiros_efectivo,
                     'transacciones': balance_start + ventas_efectivo + ingresos_efectivo + retiros_efectivo
                 }
-                session.cash_control_widget = json.dumps(vals)
+            session.cash_control_widget = json.dumps(vals)
 
     def _compute_payments(self):
         list_payment = []
@@ -90,3 +91,38 @@ class PosSession(models.Model):
     payment_lines = fields.One2many('account.payment', 'pos_session_id', string='Pagos', compute='_compute_payments')
     abono_total_debito = fields.Text(string="Abono", compute='_compute_payments')
     cash_control_widget = fields.Text(string="Resumen Diario de Efectivo", compute="_compute_cash_control")
+
+    @api.multi
+    def open_report_x(self):
+        context = dict(
+            default_session_ids=self.ids
+        )
+        return {
+            'name': _('Report X'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.pos.x.report',
+            #'views': [(self.env.ref('flexibite_com_advance.action_wizard_pos_x_report').id, 'form')],
+            #'view_id': compose_form.id,
+            'target': 'new',
+            'context': context
+        }
+
+
+    @api.multi
+    def open_report_z(self):
+        context = dict(
+            default_session_ids=self.ids
+        )
+        return {
+            'name': _('Report Z'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.pos.sale.report',
+            # 'views': [(self.env.ref('flexibite_com_advance.action_wizard_pos_x_report').id, 'form')],
+            # 'view_id': compose_form.id,
+            'target': 'new',
+            'context': context,
+        }

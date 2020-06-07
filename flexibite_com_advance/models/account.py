@@ -363,10 +363,10 @@ class account_payment(models.Model):
     
 
     @api.model
-    def payment_credit(self, get_journal_id, amount, pos_session_id, partner_id, cashier_id, pay_due,order_ref):
+    def payment_credit(self, get_journal_id, amount, pos_session_id, partner_id, cashier_id, pay_due,order_ref, amount_is_low):
         order = self.env['pos.order'].search([('partner_id', '=', partner_id), ('state', '=', 'draft'),('pos_reference', '=', order_ref)],order='date_order')
+        objorder = self.env['pos.order'].search([('partner_id', '=', partner_id), ('pos_reference', '=', order_ref)])
 
-        _logger.info("%s" % order)
         order_update = self.env['pos.order'].browse(order.id)
         order_update.sudo().update({'is_postpaid':True,'order_type':'Cŕedito'})
         customer = self.env['res.partner'].browse(partner_id)
@@ -378,10 +378,14 @@ class account_payment(models.Model):
         for each in res:
             total_amt_due += each.amount_due
 
-        _logger.info("Customer %s" % customer)
 
         response =  {'amount_due':total_amt_due,'customer':customer.id,'credit_bal':customer.remaining_credit_amount,'credit_limit':customer.credit_limit,'affected_order':order_update.read()}
-        _logger.info(response['affected_order'])
+        if amount_is_low:
+            for o in res:
+                o.sudo().write({'amount_total': 0})
+                _logger.info(amount)
+                _logger.info(o.amount_total)
+            response['affected_order'] = res.read()
         try:
             account_payment_obj = self.env['account.payment']
             pos_order_obj = self.env['pos.order']

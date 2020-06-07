@@ -2314,6 +2314,10 @@ class pos_session(models.Model):
             user = self.env['res.users'].search([["id","=",self._uid]],limit=1)            
             pos_orders_online = pos_order.search([('session_id', '=', self.id), ('state', 'in', ['paid', 'invoiced', 'done']), ('user_id', '=', self.user_id.id), ('company_id', '=', user.company_id.id), ('order_mode', '=', 'online_mode')])
 
+            currency_id = self.mapped('order_ids.lines.company_id.currency_id')
+            if len(currency_id) > 1:
+                currency_id = currency_id[0]
+
             total_online = 0.0
             for item in pos_orders_online:
                 total_online += float(item.amount_paid)
@@ -2328,7 +2332,7 @@ class pos_session(models.Model):
             for item in pos_orders_take_away:
                 total_take_away += float(item.amount_paid)
 
-            response = {'online':total_online,'dine_in':total_dine_in,'take_away':total_take_away}
+            response = {'online': currency_id.round(total_online),'dine_in': currency_id.round(total_dine_in),'take_away': currency_id.round(total_take_away)}
         return response
 
     @api.multi
@@ -2980,12 +2984,83 @@ class pos_session(models.Model):
     @api.multi
     def get_product_cate_total_x(self):
         balance_end_real = 0.0
+        discount = 0.0
+        vals = {}
         if self and self.order_ids:
+            currency_id = self.mapped('order_ids.lines.company_id.currency_id')
+            tax_id = [t.name for t in self.mapped('order_ids.lines.tax_ids_after_fiscal_position')]
+            amount_tax_line = 0.0
+            if len(currency_id) > 1:
+                currency_id = currency_id[0]
+            for o in self.mapped('order_ids.lines'):
+                amount_tax_line += (o.price_subtotal_incl - o.price_subtotal)
             for order in self.order_ids:
                 if order.state != "draft":
                     for line in order.lines:
                         balance_end_real += (line.qty * line.price_unit)
-        return "%.2f" % balance_end_real
+                        discount += line.discount
+                        vals['balance_end_real'] = balance_end_real
+                        vals['balance_discount'] = discount
+                        vals['venta_neta'] = balance_end_real - discount
+                        #tax_id.append([t.display_name for t in line.mapped('tax_ids_after_fiscal_position')])
+            if len(currency_id) > 1:
+                currency_id = currency_id[0]
+            vals['amount_tax'] = currency_id[0].round(sum(self.mapped('order_ids.amount_tax')))
+            vals['taxes'] = tax_id
+            vals['amount_tax_line'] = currency_id[0].round(amount_tax_line)
+            vals['amount_total'] = currency_id[0].round(sum(self.mapped('order_ids.amount_total')))
+
+        currency_id = self.mapped('statement_ids.company_id.currency_id')[0]
+        pos_session = self.env['pos.session'].sudo().search([])
+        efectivo = currency_id.round(
+            sum(pos_session.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'Efectivo').mapped('balance_end'))
+        )
+        tarjeta = currency_id.round(
+            sum(pos_session.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'Tarjeta Bancaria').mapped('balance_end'))
+        )
+        credito = currency_id.round(
+            sum(pos_session.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'POS-Crédito').mapped('balance_end'))
+        )
+        sobrante = 0.0
+        faltante = 0.0
+        total = efectivo + tarjeta + credito
+        if total < vals['amount_total']:
+            faltante = currency_id.round(total - vals['amount_total'])
+        else:
+            sobrante = currency_id.round(total - vals['amount_total'])
+
+        vals.update({
+            'efectivo': efectivo,
+            'tarjeta': tarjeta,
+            'credito': credito,
+            'total': total,
+            'sobrante': sobrante,
+            'faltante': faltante,
+        })
+
+        for session in self:
+            statement_ids = session.statement_ids # .filtered(lambda st: st.journal_id.name == 'POS - Debito (MXN)')
+            for cash in statement_ids:
+                negative_amount = cash.mapped('line_ids').filtered(lambda l: l.amount < 0)
+                positive_amount = cash.mapped('line_ids').filtered(lambda l: l.amount > 0)
+                currency_id = cash.company_id.currency_id
+                dif_ncash = currency_id.round(sum(negative_amount.mapped('amount')))
+                dif_pcash = currency_id.round(sum(positive_amount.mapped('amount')))
+                ventas_efectivo = session.cash_register_balance_end
+
+                ingresos_efectivo = dif_pcash
+                retiros_efectivo = dif_ncash
+                balance_start = session.cash_register_balance_start
+                vals.update({
+                    'balance_start': balance_start,
+                    'currency': currency_id.symbol,
+                    'digits': [69, currency_id.decimal_places],
+                    'ventas':   ventas_efectivo,
+                    'ingresos': ingresos_efectivo,
+                    'retiros':  retiros_efectivo,
+                    'transacciones': balance_start + ventas_efectivo + ingresos_efectivo + retiros_efectivo
+                })
+        return vals
 
     @api.multi
     def get_product_name_x(self, category_id):

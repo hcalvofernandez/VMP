@@ -997,7 +997,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 });
                             }
                         }
-                        ajax_partner_load();
+                        //ajax_partner_load();
                     }
                 } else {
                     console.log("\n Partner Not Found.");
@@ -2513,6 +2513,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     //this.$el.find("#remaining_credit_amount").addClass('invalid');
                     //this.$el.find('#pos-credit').addClass('disabled');
                     this.$el.find('#pos-credit').text('Crédito salda con: ' + self.format_currency(client.remaining_credit_limit));
+                    this.is_low_credit = true;
                 }else{
                     this.$el.find("#remaining_credit_amount").removeClass('invalid');
                     this.$el.find('#pos-credit').removeClass('disabled');
@@ -3021,6 +3022,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 if (!order.get_client()){
                     return self.gui.show_screen('receipt');
                 }
+
                 /*
                 var cashregister = false;
                 for(var i in self.pos.cashregisters){
@@ -4823,17 +4825,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         partner_id = partner_id ? partner_id : client.id;
                         var cashier_id = self.pos.get_cashier().id;
                         var payment_lines = order.get_paymentlines();
-                        /*_.map(payment_lines, function(line){
+                        var amount_is_low = false;
+                        _.map(payment_lines, function(line){
                             if (line.name === "POS-Crédito (MXN)"){
                                 amount = line.amount;
-
+                                amount_is_low = true;
                             }
                         });
-                        debugger;*/
                         var params = {
                             model: 'account.payment',
                             method: "payment_credit",
-                            args: [get_journal_id, amount, pos_session_id, partner_id, cashier_id, true,order.name],
+                            args: [get_journal_id, amount, pos_session_id, partner_id, cashier_id, true,order.name, amount_is_low],
                         }
                         
                         var interval = setInterval(function() 
@@ -4841,7 +4843,6 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                                                     rpc.query(params, {async: false}).then(function(vals){
                                                                         if(vals)
                                                                         {
-                                                                            console.log(vals.affected_order);
                                                                             if(vals.affected_order.length>0)
                                                                             {
                                                                                 clearInterval(interval);
