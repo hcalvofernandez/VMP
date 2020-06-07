@@ -70,7 +70,8 @@ class ResPartner(models.Model):
     @api.multi
     @api.depends('credit_limit')
     def _credit_limit_computed(self):
-        self.credit_limit_computed = self.credit_limit
+        for rec in self:
+            self.credit_limit_computed = self.credit_limit
 
 
     @api.multi
@@ -137,19 +138,34 @@ class ResPartner(models.Model):
     @api.multi
     @api.depends('contract_ids')
     def _compute_type_credit(self):
-        tipo = ""
-        partner_id = self.id
-        contracts = self.env['contract.contract'].search([('partner_id','=',partner_id),('active','=',True)])
-        for con in contracts:
-            if con.type_contract == "credito":
-                tipo = "credito"
-            elif con.type_contract == "prepago":
-                tipo = "prepago"
-            elif con.type_contract == "mealplan":
-                tipo = "mealplan"
-            elif con.type_contract == "subsidio":
-                tipo = "subsidio"
-        self.type_contract_hide = tipo
+        for rec in self:
+            tipo = ""
+            if rec.parent_id:
+                partner_id = rec.parent_id.id
+                contracts = self.env['contract.contract'].search([('partner_id','=',partner_id),('active','=',True)])
+                for con in contracts:
+                    if con.type_contract == "credito":
+                        tipo = "credito"
+                    elif con.type_contract == "prepago":
+                        tipo = "prepago"
+                    elif con.type_contract == "mealplan":
+                        tipo = "mealplan"
+                    elif con.type_contract == "subsidio":
+                        tipo = "subsidio"
+                rec.type_contract_hide = tipo
+            else:
+                partner_id = rec.id
+                contracts = self.env['contract.contract'].search([('partner_id','=',partner_id),('active','=',True)])
+                for con in contracts:
+                    if con.type_contract == "credito":
+                        tipo = "credito"
+                    elif con.type_contract == "prepago":
+                        tipo = "prepago"
+                    elif con.type_contract == "mealplan":
+                        tipo = "mealplan"
+                    elif con.type_contract == "subsidio":
+                        tipo = "subsidio"
+                rec.type_contract_hide = tipo
 
 
     @api.multi

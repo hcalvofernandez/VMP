@@ -38,9 +38,9 @@
             <field name="id" invisible="1"/>
           </xpath>
 
-          <xpath expr="//button[@name='get_transaction']" position="after">
+          <!--<xpath expr="//button[@name='get_transaction']" position="after">
             <button name="%(action_view_report_pos_wizard)d" type="action" string="Reporte POS" class="oe_highlight" context="{'company_id': company_id,'partner_id': id}"/>
-          </xpath>
+          </xpath>-->
 
         </field>
     </record>
