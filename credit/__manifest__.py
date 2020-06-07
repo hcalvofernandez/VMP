@@ -14,6 +14,7 @@
     'depends': [
         'base',
         'contract',
+        'eor_pos_utils',
     ],
     'data': [
         'security/ir.model.access.csv',

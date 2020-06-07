@@ -16,7 +16,7 @@
     'description': "Odoo POS Restaurant",
     'category': 'Point Of Sale',
     'website': 'http://www.acespritech.com',
-    'depends': ['base', 'bus', 'pos_restaurant', 'mrp', 'sale_management', 'barcodes','purchase','hr_attendance', 'account', 'credit'],
+    'depends': ['base', 'bus', 'pos_restaurant', 'mrp', 'sale_management', 'barcodes','purchase','hr_attendance', 'account'],
     'price': 350.00, 
     'currency': 'EUR',
     'images': [
