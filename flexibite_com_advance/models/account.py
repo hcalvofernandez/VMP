@@ -61,9 +61,32 @@ class account_journal(models.Model):
     show_in_pos = fields.Boolean('Show in POS select', default=False)
 
 
+class CashBoxIn(models.TransientModel):
+    _inherit = 'cash.box.in'
+
+    @api.multi
+    def _calculate_values_for_statement_line(self, record):
+        res = super(CashBoxIn, self)._calculate_values_for_statement_line(record)
+        if res:
+            res.update({'cash_in': True})
+        return res
+
+
+class CashBoxOut(models.TransientModel):
+    _inherit = 'cash.box.out'
+
+    @api.multi
+    def _calculate_values_for_statement_line(self, record):
+        res = super(CashBoxOut, self)._calculate_values_for_statement_line(record)
+        if res:
+            res.update({'cash_out': True})
+        return res
+
 class AccountBankStatementLine(models.Model):
     _inherit = "account.bank.statement.line"
 
+    cash_in = fields.Boolean(string="Ingresar dinero")
+    cash_out = fields.Boolean(string="Sacar dinero")
     is_postpaid = fields.Boolean(string="Is Postpaid")
     is_prepaid = fields.Boolean(string="Is Prepaid")
     order_state = fields.Selection([('draft', 'New'), ('cancel', 'Cancelled'), ('paid', 'Paid'), ('done', 'Posted'), ('done', 'Debited'), ('invoiced', 'Invoiced')],'Status',related="pos_statement_id.state")

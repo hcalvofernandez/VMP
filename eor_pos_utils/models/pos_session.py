@@ -26,23 +26,30 @@ class PosSession(models.Model):
             statement_ids = session.sudo().statement_ids.filtered(lambda st: st.journal_id.sudo().name == 'Efectivo')
             vals = {}
             for cash in statement_ids:
+                currency_id = cash.company_id.currency_id
+                cashi_id = cash.mapped('line_ids').filtered(lambda line: line.cash_in == True)
+                in_money = currency_id.round(sum(cashi_id.mapped('amount')))
+                casho_id = cash.mapped('line_ids').filtered(lambda line: line.cash_out == True)
+                out_money = currency_id.round(sum(casho_id.mapped('amount')))
                 negative_amount = cash.mapped('line_ids').filtered(lambda l: l.amount < 0)
                 positive_amount = cash.mapped('line_ids').filtered(lambda l: l.amount > 0)
-                currency_id = cash.company_id.currency_id
                 dif_ncash = currency_id.round(sum(negative_amount.mapped('amount')))
                 dif_pcash = currency_id.round(sum(positive_amount.mapped('amount')))
-                ventas_efectivo = currency_id.round(session.cash_register_balance_end)
+                #ventas_efectivo = currency_id.round(sum(cash.mapped('line_ids').filtered(lambda line: line.cash_in != True or line.cash_out != True).mapped('amount')))
+
                 ingresos_efectivo = dif_pcash
                 retiros_efectivo = dif_ncash
                 balance_start = currency_id.round(session.cash_register_balance_start)
+                ventas = sum(session.mapped('order_ids').filtered(lambda o: o.mapped('statement_ids.journal_id.name')[0] == 'Efectivo').mapped('amount_total'))
+                _logger.info(ventas)
                 vals = {
                     'balance_start': balance_start,
                     'currency': currency_id.symbol,
                     'digits': [69, currency_id.decimal_places],
-                    'ventas':   ventas_efectivo,
-                    'ingresos': ingresos_efectivo,
-                    'retiros':  retiros_efectivo,
-                    'transacciones': balance_start + ventas_efectivo + ingresos_efectivo + retiros_efectivo
+                    'ventas':  ventas,
+                    'ingresos': in_money,
+                    'retiros':  out_money,
+                    'transacciones': balance_start + ventas + in_money + out_money
                 }
             session.cash_control_widget = json.dumps(vals)
 
