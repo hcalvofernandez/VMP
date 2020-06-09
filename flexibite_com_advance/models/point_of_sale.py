@@ -3026,6 +3026,7 @@ class pos_session(models.Model):
                         #tax_id.append([t.display_name for t in line.mapped('tax_ids_after_fiscal_position')])
             if len(currency_id) > 1:
                 currency_id = currency_id[0]
+
             vals['amount_tax'] = currency_id[0].round(sum(self.mapped('order_ids.amount_tax')))
             vals['taxes'] = tax_id
             vals['amount_tax_line'] = currency_id[0].round(amount_tax_line)
@@ -3034,13 +3035,13 @@ class pos_session(models.Model):
         currency_id = self.mapped('statement_ids.company_id.currency_id')[0]
         pos_session = self.env['pos.session'].sudo().search([])
         efectivo = currency_id.round(
-            sum(pos_session.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'Efectivo').mapped('balance_end'))
+            sum(self.mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'Efectivo').mapped('balance_end_real_declared'))
         )
         tarjeta = currency_id.round(
-            sum(pos_session.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'Tarjeta Bancaria').mapped('balance_end'))
+            sum(self.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'Tarjeta Bancaria').mapped('balance_end_real_declared'))
         )
         credito = currency_id.round(
-            sum(pos_session.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'POS-Crédito').mapped('balance_end'))
+            sum(self.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'POS-Crédito').mapped('balance_end_real_declared'))
         )
         sobrante = 0.0
         faltante = 0.0

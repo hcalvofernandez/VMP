@@ -41,7 +41,6 @@ class PosSession(models.Model):
                 retiros_efectivo = dif_ncash
                 balance_start = currency_id.round(session.cash_register_balance_start)
                 ventas = sum(session.mapped('order_ids').filtered(lambda o: o.mapped('statement_ids.journal_id.name')[0] == 'Efectivo').mapped('amount_total'))
-                _logger.info(ventas)
                 vals = {
                     'balance_start': balance_start,
                     'currency': currency_id.symbol,
@@ -85,7 +84,6 @@ class PosSession(models.Model):
                 'currency': currency_id.symbol,
                 'digits': [69, currency_id.decimal_places],
             })
-            _logger.info(values)
             session.payment_debit_widget = json.dumps(values)
 
     cash_register_tip = fields.Monetary(

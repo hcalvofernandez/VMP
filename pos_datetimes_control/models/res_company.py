@@ -3,6 +3,10 @@
 from odoo import models, fields, api
 from datetime import datetime,timedelta
 from odoo.exceptions import Warning
+import logging
+
+_logger = logging.getLogger('___________________________________' + __name__)
+
 
 class res_company(models.Model):
     _inherit = 'res.company'
@@ -80,14 +84,16 @@ class res_company(models.Model):
 class AccountBankStatementLine(models.Model):
     _inherit = "account.bank.statement"
 
-    difference_custom = fields.Monetary(compute='_display_custom_balance', store=True, help="Difference between the computed ending balance and the specified ending balance.")
+    difference_custom = fields.Monetary(compute='_display_custom_balance', store=False, help="Difference between the computed ending balance and the specified ending balance.")
     balance_end_real_declared = fields.Monetary('Declarado')
-    
+
     def _display_custom_balance(self):
         new_difference_custom = float(0)
         for record in self:
             statement = self.env['account.bank.statement'].browse(record.id)
-            new_difference_custom = record.balance_start - record.balance_end_real_declared
+            orders = record.pos_session_id.mapped('order_ids')
+            for order in orders.filtered(lambda o: o.mapped('statement_ids.journal_id.id')[0] == record.journal_id.id):
+                new_difference_custom = order.amount_total - record.balance_end_real_declared
             statement.update({'difference_custom':new_difference_custom})
 
         #raise Warning (str(self.balance_start) + str(" - ") + str(self.balance_end_real_declared) + str("=") + str(self.difference_custom))
