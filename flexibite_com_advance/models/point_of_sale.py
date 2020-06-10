@@ -3008,7 +3008,7 @@ class pos_session(models.Model):
     def get_product_cate_total_x(self):
         balance_end_real = 0.0
         discount = 0.0
-        vals = {'amount_total': 0.0}
+        vals = {}
         if self and self.order_ids:
             currency_id = self.mapped('order_ids.lines.company_id.currency_id')
             tax_id = [t.name for t in self.mapped('order_ids.lines.tax_ids_after_fiscal_position')]
@@ -3047,11 +3047,12 @@ class pos_session(models.Model):
         )
         sobrante = 0.0
         faltante = 0.0
-        total = efectivo + tarjeta + credito
-        if total < vals['amount_total']:
-            faltante = currency_id.round(total - vals['amount_total'])
-        else:
-            sobrante = currency_id.round(total - vals['amount_total'])
+        if 'amount_total' in vals:
+            total = efectivo + tarjeta + credito
+            if total < vals['amount_total']:
+                faltante = currency_id.round(total - vals['amount_total'])
+            else:
+                sobrante = currency_id.round(total - vals['amount_total'])
 
         vals.update({
             'efectivo': efectivo,
