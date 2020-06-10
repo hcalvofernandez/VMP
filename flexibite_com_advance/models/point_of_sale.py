@@ -2572,6 +2572,8 @@ class pos_session(models.Model):
             total_amount += cash_line.subtotal
         for statement in self.statement_ids:
             statement.write({'balance_end_real': total_amount})
+
+        self.set_end_balance_real_declared()
         return True
 
     @api.multi
@@ -3082,6 +3084,7 @@ class pos_session(models.Model):
                     'retiros':  retiros_efectivo,
                     'transacciones': balance_start + ventas_efectivo + ingresos_efectivo + retiros_efectivo
                 })
+        _logger.info("VALUES: %s" % vals)
         return vals
 
     @api.multi

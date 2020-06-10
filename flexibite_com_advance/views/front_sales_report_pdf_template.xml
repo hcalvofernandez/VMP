@@ -6,7 +6,7 @@
                 <div class="page">
                     <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>   
                     <div class="company-details">
-                        <div class="row-xreport">
+                        <div class="row-xreport" t-if="name">
                             MENDOCINOS (09)
                         </div>
                         <div class="row-xreport companyx-name">
