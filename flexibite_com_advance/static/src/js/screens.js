@@ -1062,6 +1062,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.gui.show_popup('map_popup',{'partner':self.selected_partner})
                 }
             });
+            this.$('.searchbox > input').focus();
             this.$('.default').click(function(){
                 self.default_customer();
                 self.gui.back();

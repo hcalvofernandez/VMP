@@ -3106,6 +3106,11 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     }
                 });
                 $('.subtotal_end').text(self.format_currency(subtotal));
+                /*var method = $('.balance_end_real').data('method');
+
+                if(method === 'Efectivo (MXN)'){
+                    $('.balance_end_real').addClass('disabled');
+                }*/
             }
         }
     });

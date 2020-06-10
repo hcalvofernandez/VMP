@@ -1524,10 +1524,11 @@
 
     <t t-name="PaymentMethodsCash" class="payment-method-cash">
         <tr class="balances-cash">
+
            <td><span t-att-id="result.journal_id[0]" t-esc="result.journal_id[1]" class="journal_id"/></td>
            <td t-if="initial"><span t-esc="widget.format_currency(result.balance_start)" class="balance_start"/></td>
            <td t-if="subtotal"><span t-esc="widget.format_currency(result.total_entry_encoding)" class="total_entry_encoding"/></td>
-           <td><input t-att-value="widget.format_currency(result.balance_end_real)" class="balance_end_real"/></td>
+           <td><input t-att-value="widget.format_currency(result.balance_end_real)" t-att-data-method="result.journal_id[1]" class="balance_end_real"/></td>
            <td><span t-esc="result.difference" class="difference" t-if="difference"/></td>
        </tr>
     </t>
