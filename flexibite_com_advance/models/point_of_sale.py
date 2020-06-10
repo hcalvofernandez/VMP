@@ -3008,7 +3008,7 @@ class pos_session(models.Model):
     def get_product_cate_total_x(self):
         balance_end_real = 0.0
         discount = 0.0
-        vals = {}
+        vals = {'amount_total': 0.0}
         if self and self.order_ids:
             currency_id = self.mapped('order_ids.lines.company_id.currency_id')
             tax_id = [t.name for t in self.mapped('order_ids.lines.tax_ids_after_fiscal_position')]
