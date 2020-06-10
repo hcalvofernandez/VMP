@@ -970,32 +970,32 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         var last_ids = partner_ids;
                         var count_loaded_products = 0;
                         function ajax_partner_load(){
-                            if(count_loop > 0){
-                                $.ajax({
-                                    type: "POST",
-                                    url: '/web/dataset/load_customers',
-                                    data: {
-                                            model: 'res.partner',
-                                            fields: JSON.stringify(self.pos.partner_fields),
-                                            partner_limit:partner_limit,
-                                            partner_ids:JSON.stringify(last_ids.splice(0, partner_limit) || []),
-                                    },
-                                    success: function(res) {
-                                        var all_partners = JSON.parse(res);
-                                        count_loop -= all_partners.length;
-                                        self.pos.partners = JSON.parse(res);
-                                        self.pos.partners_load = true;
-                                        self.pos.db.add_partners(JSON.parse(res));
-                                        self.render_list(self.pos.db.get_partners_sorted(1000));
-                                        ajax_partner_load();
-                                    },
-                                     error: function(e) {
-                                        console.log("e >>>>>>>> ",e);
-                                        self.pos.db.notification('danger',_t('Partner Loading Failed !'));
-                                        console.log('Partner Qa-run failed.');
-                                     },
-                                });
-                            }
+                            //if(count_loop > 0){
+                            $.ajax({
+                                type: "POST",
+                                url: '/web/dataset/load_customers',
+                                data: {
+                                        model: 'res.partner',
+                                        fields: JSON.stringify(self.pos.partner_fields),
+                                        partner_limit:partner_limit,
+                                        partner_ids:JSON.stringify(last_ids.splice(0, partner_limit) || []),
+                                },
+                                success: function(res) {
+                                    var all_partners = JSON.parse(res);
+                                    count_loop -= all_partners.length;
+                                    self.pos.partners = JSON.parse(res);
+                                    self.pos.partners_load = true;
+                                    self.pos.db.add_partners(JSON.parse(res));
+                                    self.render_list(self.pos.db.get_partners_sorted(1000));
+                                    //ajax_partner_load();
+                                },
+                                 error: function(e) {
+                                    console.log("e >>>>>>>> ",e);
+                                    self.pos.db.notification('danger',_t('Partner Loading Failed !'));
+                                    console.log('Partner Qa-run failed.');
+                                 },
+                            });
+                            //}
                         }
                         ajax_partner_load();
                     }
