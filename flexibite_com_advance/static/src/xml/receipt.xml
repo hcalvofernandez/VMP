@@ -8,7 +8,7 @@
 				<h1>Total: <span class='total-value'>0.00</span> &amp;nbsp; Change:
                     <span class='change-value'>0.00</span></h1>
                 <span class='button next'>
-        	        Next Order
+        	        Siguiente
             	    <i class='fa fa-angle-double-right'></i>
             	</span>
            	</div>
@@ -18,7 +18,7 @@
     <t t-name="XmlMoneyInOutTicket">
         <receipt align='center' width='40' value-thousands-separator=''>
             <line>
-                <left>Company Name</left>
+                <left>Nombre de la Compañia</left>
                 <right><t t-esc='pos.company.name' /></right>
             </line>
             <line>
@@ -26,11 +26,11 @@
                 <right><t t-esc='pos.pos_session.name' /></right>
             </line>
             <line>
-                <left>Date Time</left>
+                <left>Hora y Fecha</left>
                 <right><t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/></right>
             </line>
             <line>
-                <left>Phone</left>
+                <left>Telefono</left>
                 <right><t t-esc="pos.company.phone"/></right>
             </line>
             <line>
@@ -38,15 +38,15 @@
                 <right><t t-esc="pos.cashier ? pos.cashier.name : pos.user.name"/></right>
             </line>
             <line>
-                <left>Operation</left>
+                <left>Operacion</left>
                 <right><t t-esc="order.get_money_inout_details().operation"/></right>
             </line>
             <line>
-                <left>Reason</left>
+                <left>Motivo</left>
                 <right><t t-esc="order.get_money_inout_details().reason"/></right>
             </line>
             <line>
-                <left>Amount</left>
+                <left>Monto</left>
                 <right><t t-esc="order.get_money_inout_details().amount"/></right>
             </line>
             <br/>
@@ -155,19 +155,19 @@
             Numero de Sesion:
             <t t-esc="widget.pos.pos_session.name || ''"/>
             <br/>
-            Phone:
+            Telefono:
             <t t-esc="widget.pos.company.phone || ''"/>
             <br/>
             Cajero:
             <t t-esc="widget.pos.cashier ? widget.pos.cashier.name : widget.pos.user.name"/>
             <br/>
-            Operation:
+            Operacion:
             <t t-esc="money_data.operation"/>
             <br/>
-            Reason:
+            Motivo:
             <t t-esc="money_data.reason"/>
             <br/>
-            Amount:
+            Monto:
             <t t-esc="widget.format_currency(money_data.amount)"/>
             <br/>
             <br/>
@@ -338,18 +338,18 @@
                                 <t t-set="store_detail"
                                    t-value="widget.pos.store_by_id[widget.pos.pos_session.shop_id[0]]"/>
                                 <t t-if="store_detail and store_detail.phone">
-                                    Phone: <t t-esc="store_detail.phone || ''"/>
+                                    Telefono: <t t-esc="store_detail.phone || ''"/>
                                     <br/>
                                 </t>
                             </t>
                         </t>
                         <t t-if="widget.pos.config.header_info == 'company' and widget.pos.company.phone">
-                            Phone: <t t-esc="widget.pos.company.phone || ''"/>
+                            Telefono: <t t-esc="widget.pos.company.phone || ''"/>
                             <br/>
                         </t>
                     </t>
                     <t t-if="!widget.pos.config.multi_shop_id and widget.pos.company.phone">
-                        Phone: <t t-esc="widget.pos.company.phone || ''"/>
+                        Telefono: <t t-esc="widget.pos.company.phone || ''"/>
                         <br/>
                     </t>
                 </div>
@@ -365,12 +365,12 @@
             <t t-if="widget.pos.get_client() and widget.pos.get_client().name">
                 <br/>
                 <div>
-                    Customer: <t t-esc="widget.pos.get_client().name"/>
+                    Cliente: <t t-esc="widget.pos.get_client().name"/>
                 </div>
              </t>
             <t t-if="widget.pos.get_client() and widget.pos.get_client().address">
                  <div>
-                     Address: <t t-esc="widget.pos.get_client().address"/>
+                     Direccion: <t t-esc="widget.pos.get_client().address"/>
                  </div>
              </t>
         </t>
@@ -382,7 +382,7 @@
                         <t t-if="widget.pos.pos_session.shop_id and widget.pos.store_by_id[widget.pos.pos_session.shop_id[0]]">
                             <t t-set="store_detail"
                                t-value="widget.pos.store_by_id[widget.pos.pos_session.shop_id[0]]"/>
-                            Store:
+                            Tienda:
                             <t t-esc="store_detail.display_name || ''"/>
                             <br/>
                         </t>
@@ -418,7 +418,7 @@
                </t>
            </t>
             <t t-if="widget.pos.get_order().merge_table_str">
-               Table: <t t-esc="widget.pos.get_order().merge_table_str"/>
+               Mesa: <t t-esc="widget.pos.get_order().merge_table_str"/>
            </t>
        </t>
         <t t-jquery="[t-esc='order.name']" t-operation="replace">
@@ -442,7 +442,7 @@
                                             &#8594; <t t-esc="prod_info.product.display_name"/>
                                             <t t-esc="prod_info.qty"/>
                                             <t t-if="widget.pos.config.hide_uom">
-                                                <span>Quantity</span>
+                                                <span>Cantidad</span>
                                             </t>
                                             <t t-if="!widget.pos.config.hide_uom">
                                                 <t t-if="prod_info.product and prod_info.product.uom_id and prod_info.product.uom_id[0]">
@@ -1085,18 +1085,18 @@
             <t t-if="widget.pos.config.enable_credit and widget.pos.config.receipt_balance 
             and widget.pos.get_client() and widget.pos.get_order().get_credit_detail() and widget.pos.get_order().get_credit_detail()[0]">
                 ------------------------------------------
-               <div class="pos-center-align"> Credit Details </div>
+               <div class="pos-center-align"> Detalles de Credito</div>
                 ------------------------------------------
                 <table>
                     <tr>
-                        <td>Customer Name:</td>
+                        <td>Nombre del Cliente:</td>
                         <td class="pos-right-align">
                             <t t-esc="widget.pos.get_client().name"/>
                         </td>
                     </tr>
                     <br/>
                     <tr>
-                        <td>Available Credit:</td>
+                        <td>Credito Disponible:</td>
                         <td class="pos-right-align">
                             <!-- <t t-if="widget.pos.get_client() and widget.pos.get_client().remaining_credit_amount"> -->
                             <t t-esc="widget.format_currency(widget.pos.get_client().remaining_credit_amount)"/>
