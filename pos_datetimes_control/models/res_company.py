@@ -87,6 +87,7 @@ class AccountBankStatementLine(models.Model):
     difference_custom = fields.Monetary(compute='_display_custom_balance', store=False, help="Difference between the computed ending balance and the specified ending balance.")
     balance_end_real_declared = fields.Monetary('Declarado')
 
+    @api.depends('balance_end_real')
     def _display_custom_balance(self):
         new_difference_custom = float(0)
         for record in self:
@@ -94,6 +95,6 @@ class AccountBankStatementLine(models.Model):
             orders = record.pos_session_id.mapped('order_ids')
             for order in orders.filtered(lambda o: o.mapped('statement_ids.journal_id.id')[0] == record.journal_id.id):
                 new_difference_custom = order.amount_total - record.balance_end_real_declared
-            statement.update({'difference_custom':new_difference_custom})
+                statement.update({'difference_custom':new_difference_custom})
 
         #raise Warning (str(self.balance_start) + str(" - ") + str(self.balance_end_real_declared) + str("=") + str(self.difference_custom))

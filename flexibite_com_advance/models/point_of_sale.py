@@ -2562,7 +2562,7 @@ class pos_session(models.Model):
         return True
 
     @api.multi
-    def cash_control_line(self,vals):
+    def cash_control_line(self,vals, statement_ids):
         total_amount = 0.00
         if vals:
             self.cashcontrol_ids.unlink()
@@ -2571,7 +2571,9 @@ class pos_session(models.Model):
         for cash_line in self.cashcontrol_ids:
             total_amount += cash_line.subtotal
         for statement in self.statement_ids:
-            statement.write({'balance_end_real': total_amount})
+            for st in statement_ids:
+                if statement.journal_id.id == int(st['journal_id']):
+                    statement.write({'balance_end_real': st['balance_end_real']})
 
         self.set_end_balance_real_declared()
         return True
@@ -3085,7 +3087,6 @@ class pos_session(models.Model):
                     'retiros':  retiros_efectivo,
                     'transacciones': balance_start + ventas_efectivo + ingresos_efectivo + retiros_efectivo
                 })
-        _logger.info("VALUES: %s" % vals)
         return vals
 
     @api.multi
