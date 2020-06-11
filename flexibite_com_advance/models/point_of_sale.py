@@ -3049,12 +3049,11 @@ class pos_session(models.Model):
         )
         sobrante = 0.0
         faltante = 0.0
-        if 'amount_total' in vals:
-            total = efectivo + tarjeta + credito
-            if total < vals['amount_total']:
-                faltante = currency_id.round(total - vals['amount_total'])
-            else:
-                sobrante = currency_id.round(total - vals['amount_total'])
+        total = efectivo + tarjeta + credito
+        if total < vals['amount_total']:
+            faltante = currency_id.round(total - vals['amount_total'])
+        else:
+            sobrante = currency_id.round(total - vals['amount_total'])
 
         vals.update({
             'efectivo': efectivo,
