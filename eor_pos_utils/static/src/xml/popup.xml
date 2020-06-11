@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ChangePinPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup">
+                <p class="title">Cambiar PIN</p>
+                <div t-if="widget.pos.get_order().get_client()" class="client-name">
+                    CLIENTE: <t t-esc="widget.pos.get_order().get_client().name"/>
+                </div>
+                <div class="pin-container">
+                    <p>
+                        NUEVO PIN
+                    </p>
+                    <input type="password" placeholder="PIN" class="pin-value" />
+                </div>
+                <div class="footer">
+                    <div class="button confirm change">
+                        Cambiar
+                    </div>
+                    <div class="button cancel">
+                        Cancelar
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
