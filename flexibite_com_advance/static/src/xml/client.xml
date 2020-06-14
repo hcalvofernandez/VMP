@@ -238,7 +238,7 @@
             <div class='window'>
                 <div class='left-content pc50 touch-scrollable scrollable-y' style="top: 0px !important;">
                     <div class='subwindow-container-fix client-details-contents' style="height:auto !important;"></div>
-                    <div class="map-top-header">
+                    <div class="map-top-header" t-if="google_maps">
                         <div style="margin-top: 8px;margin-left: 16px;float:left;">
                             <i id="globe_cust" class="fa fa-globe" style="font-size: 35px;cursor: pointer;"/>
                             <span style="display:none" id="map_error_msg">Map Could not load</span>
@@ -251,7 +251,7 @@
                         </div>
                     </div>
                     
-                    <div id="map_view_edit_details"/>
+                    <div id="map_view_edit_details" t-if="google_maps"/>
                 </div>
                 <div class='right-content pc50 touch-scrollable scrollable-y' style="top: 0px !important;">
                     <div class='subwindow-container'>

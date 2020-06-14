@@ -210,7 +210,9 @@ header.rightpane-header .listview{
 .pos .button.js_set_customer{
     height: 60px !important;
     line-height: 60px !important;
-    top: -13px;
+    top: 0;
+    width: auto;
+    padding: 0 15px !important;
 }
 
 .pos .quickpay .control-button{

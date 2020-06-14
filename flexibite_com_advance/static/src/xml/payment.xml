@@ -201,8 +201,9 @@
                                     </t>
                                 </span>
                             </div> -->
-                            <t t-if="widget.pos.config.enable_credit and widget.pos.get_order()">
-				                <div style="padding: 0;line-height: 36px;" t-attf-class='button js_use_credit #{ widget.pos.get_order().get_use_credit() ? "highlight" : ""}'>
+                            <!-- t-if="widget.pos.config.enable_credit and widget.pos.get_order()"-->
+                            <t>
+				                <div style="padding: 0;line-height: 36px;" t-attf-class='button js_use_credit #{ widget.pos.get_order().get_use_credit() ? "highlight" : "hidden"}'>
 				                </div>
 				            </t>
                             <t	t-if='widget.pos.config.enable_journal_id and widget.pos.config.enable_gift_card'>
@@ -257,7 +258,7 @@
                             </details>
                         </div>
                     </t>
-                    <div id="delivery_details" class="delivery_details_cal">
+                    <div t-if="delivery-details" id="delivery_details" class="delivery_details_cal">
                         <details class="payment_details_css1">
                             <summary class="delivery-details">Delivery Details:</summary>
                             <table class="delivery_table">

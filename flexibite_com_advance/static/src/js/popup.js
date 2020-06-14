@@ -2995,6 +2995,11 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                         });
                     }
                 });
+                $(this).addClass('hidden');
+                $('.coins').addClass('disabled');
+                $('.cash').addClass('disabled');
+                $('.cash_paymentmethods').addClass('disabled');
+                //self.$('.button.close_session').trigger('click');
             });
             this.$('.print_report_x').click(function(e){
                 var pos_session_id = [self.pos.pos_session.id];
@@ -3106,11 +3111,12 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     }
                 });
                 $('.subtotal_end').text(self.format_currency(subtotal));
-                /*var method = $('.balance_end_real').data('method');
-
-                if(method === 'Efectivo (MXN)'){
-                    $('.balance_end_real').addClass('disabled');
-                }*/
+                var balance = self.$('.balance_end_real');
+                for (var i=0; i < balance.length; i++){
+                    if ($(balance[i]).data('method') === 'Efectivo (MXN)'){
+                        $(balance[i]).val(subtotal);
+                    }
+                }
             }
         }
     });

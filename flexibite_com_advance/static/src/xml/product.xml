@@ -353,6 +353,10 @@
                             <span class="btn_span_set"> Abonar a Meal Plan</span>
                         </div>
                     </t>
+                    <div id="change_pin" title="Cambiar PIN" class="btn_icon_set">
+                        <img src="/flexibite_com_advance/static/src/img/icons/security.png"/>
+                        <span class="btn_span_set"> Cambiar PIN</span>
+                    </div>
                 </div>
             </div>
         </t>

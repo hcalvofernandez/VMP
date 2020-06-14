@@ -4,6 +4,7 @@ odoo.define('eor_pos_utils.screens', function (require) {
 var core = require('web.core');
 var PopupWidget = require('point_of_sale.popups');
 var gui = require('point_of_sale.gui');
+var rpc = require('web.rpc');
 
 var ChashierPinPopupWidget = PopupWidget.extend({
         template: 'CashierPipPopupWidget',
@@ -39,5 +40,32 @@ var ChashierPinPopupWidget = PopupWidget.extend({
 
 gui.define_popup({name: 'show_pop_pin', widget: ChashierPinPopupWidget});
 
+var ChangePinPopupWidget = PopupWidget.extend({
+    template: 'ChangePinPopupWidget',
+    show: function(options){
+        this._super(options);
+        this.input = $('.pin-value');
+        this.input.focus();
+    },
+    click_confirm: function(){
+        var self = this;
+        if (this.input.val() === ''){
+            self.pos.db.notification('danger', _t('Es necesario ingresar un PIN'));
+            return;
+        }
+        var partner = self.pos.get_order().get_client();
+        if (partner){
+            return rpc.query({
+                model: 'res.partner',
+                method: 'update_pin',
+                args: [partner.id]
+            }).then(function(res){
+                console.log(res);
+            });
+        }
+    }
+});
+
+gui.define_popup({name: 'update_pip_popup', widget: ChangePinPopupWidget});
 
 });

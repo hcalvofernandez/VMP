@@ -18,3 +18,55 @@
     text-align: left;
     padding-left: 10px;
 }
+
+.pos .client-name{
+    padding: 30px 5px;
+}
+
+.pos .pin-container{
+    padding: 10px 30px;
+}
+
+.pos .pin-container > input{
+    padding: 20px;
+    font-size: 30px !important;
+    text-align: center;
+}
+
+.pos td.error{
+    box-shadow: 0px 0px 0px 3px #ED9398 !important;
+    border-color: #ED9398 !important;
+}
+
+.pos .payment-container{
+    display: inline-grid;
+}
+
+.pos .payment-button{
+    width: 330px !important;
+    height: 90px !important;
+    line-height: 90px !important;
+    font-size: 20px !important;
+    text-transform: uppercase !important;
+    font-weight: 900 !important;
+    color: #85898a !important;
+    border-radius: 1px;
+    border: 2px solid;
+}
+
+.pos .paymentlines-container .message{
+    font-size: 16px;
+}
+
+.pos .payment-screen .button,
+.pos .screen .top-content .button{
+    width: auto;
+    height: 60px !important;
+    line-height: 60px !important;
+    margin: 0 !important;
+    border-radius: 5px !important;
+}
+
+.pos .c-name{
+    font-size: 16px !important;
+}

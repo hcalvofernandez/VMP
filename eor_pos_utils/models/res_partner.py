@@ -36,3 +36,8 @@ class ResPartner(models.Model):
     product_ids = fields.Many2many('product.product', string="Productos")
     credit_blocked = fields.Boolean(string="Bloquear Saldo", default=False)
     # TODO: Esquema por producto
+
+    @api.multi
+    def update_pin(self, vals):
+        _logger.info(vals)
+        return {}

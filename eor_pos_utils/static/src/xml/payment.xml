@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-extend="PaymentScreenWidget">
-        <t t-jquery=".right-content" t-operation="append">
-            <div style="padding-left: 40px;padding-top:10px;">
+        <t t-jquery=".control-button.js_tip" t-operation="attributes">
+            <attribute name="class">control-button js_tip disabled</attribute>
+        </t>
+
+        <t t-jquery=".payment-numpad" t-operation="append">
+            <div class="payment-container">
+                <t t-foreach="widget.pos.cashregisters" t-as="cashregister">
+                    <t t-if="!cashregister.journal.jr_use_for">
+                            <div t-attf-class="control-button payment-button paymentmethod-right #{(cashregister.journal.hide_journal == true) ? 'hidden': ''}" t-att-data-id="cashregister.journal_id[0]">
+                            <!--#{cashregister.journal_id[0] != 22 ? 'hidden': ''}-->
+	                            <t t-esc="cashregister.journal_id[1]" />
+	                            <t t-if="cashregister.journal.type == 'cash'">
+	                                <i class="fa fa-money" aria-hidden="true"></i>
+	                            </t>
+	                            <t t-if="cashregister.journal.type == 'bank'">
+	                                <i class="fa fa-university" aria-hidden="true"></i>
+	                            </t>
+	                        </div>
+	                </t>
+                </t>
+            </div>
+        </t>
+
+        <t t-jquery=".payment-container" t-operation="append">
+            <div style="padding-top:30px;">
                 <t t-if="widget.pos.config.enable_debit">
-                    <span id="pos-debit" class='control-button rounding_btn' style="margin-top: 30px;">
+                    <span id="pos-debit" class='control-button rounding_btn payment-button' style="margin-top: 30px;">
                         Prepago - Débito
                     </span>
                 </t>
                 <t t-if="widget.pos.config.enable_credit">
-                    <span id="pos-credit" class='control-button rounding_btn'>
+                    <span id="pos-credit" class='control-button rounding_btn payment-button'>
                         Crédito
                     </span>
                 </t>
                 <t t-if="widget.pos.config.enable_meal_plan">
-                    <span id="pos-meal-plan" class='control-button rounding_btn'>
+                    <span id="pos-meal-plan" class='control-button rounding_btn payment-button'>
                         Meal Plan
                     </span>
                 </t>
@@ -25,27 +48,6 @@
                     </div>
                 </t>
             </div>
-        </t>
-
-        <t t-jquery=".control-button.js_tip" t-operation="attributes">
-            <attribute name="class">control-button js_tip disabled</attribute>
-        </t>
-
-        <t t-jquery=".payment-buttons" t-operation="append">
-            <t t-foreach="widget.pos.cashregisters" t-as="cashregister">
-                <t t-if="!cashregister.journal.jr_use_for">
-	                <div t-attf-class="control-button paymentmethod-right #{(cashregister.journal.hide_journal == true) ? 'hidden': ''}" t-att-data-id="cashregister.journal_id[0]">
-                        <!--#{cashregister.journal_id[0] != 22 ? 'hidden': ''}-->
-	                    <t t-esc="cashregister.journal_id[1]" />
-	                    <t t-if="cashregister.journal.type == 'cash'">
-	                        <i class="fa fa-money" aria-hidden="true"></i>
-	                    </t>
-	                    <t t-if="cashregister.journal.type == 'bank'">
-	                        <i class="fa fa-university" aria-hidden="true"></i>
-	                    </t>
-	                </div>
-	            </t>
-            </t>
         </t>
     </t>
 

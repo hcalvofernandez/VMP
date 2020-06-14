@@ -965,7 +965,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     var total_partners = partner_ids.length;
                     var remaining_time;
                     if(total_partners){
-                        var partner_limit = 1000;
+                        var partner_limit = 5000;
                         var count_loop = partner_ids.length;
                         var last_ids = partner_ids;
                         var count_loaded_products = 0;
@@ -986,7 +986,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                     self.pos.partners = JSON.parse(res);
                                     self.pos.partners_load = true;
                                     self.pos.db.add_partners(JSON.parse(res));
-                                    self.render_list(self.pos.db.get_partners_sorted(1000));
+                                    self.render_list(self.pos.db.get_partners_sorted(5000));
                                     //ajax_partner_load();
                                 },
                                  error: function(e) {
@@ -1012,6 +1012,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.selected_partner = false;
             var partner = self.pos.partners;
             var order = self.pos.get_order();
+            var options = order.get_screen_data('params');
+            this.change_pin = false;
+            if (options && options.change_pin){
+                this.change_pin = true;
+                this.$('.next').html('Cambiar PIN');
+                //this.$('.next').after($('button.do_change_pin.button.highlight'));
+            }else{
+                this.change_pin = false;
+            }
             //order.set_screen_data('params', {});
             if(order.get_client()){
                 self.display_client_details('show',order.get_client(),0);
@@ -1075,6 +1084,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     var valid_meal_plan = options.valid_meal_plan;
                     var client = order.get_client();
                     var payment = options.payment;
+                    if (self.change_pin){
+                        self.pos.gui.show_popup('update_pip_popup');
+                        return;
+                    }
 
                     if (client){
                         var credit_amount = client.remaining_credit_limit;
@@ -1765,7 +1778,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     var credit_amount = client.remaining_credit_limit;
                     var amount = order.getNetTotalTaxIncluded();
                     if (amount > credit_amount){
-                        if (order.get_paymentlines()){
+                        if (order.get_paymentlines().length > 0){
                             var total_amount = 0
                             _.map(order.get_paymentlines(), function(plines){
                                 var pamount = plines.get_amount();
@@ -3021,6 +3034,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 }
                 if (!order.get_client()){
+                    var payment_amount = 0;
+                    if (order.get_paymentlines().length === 0){
+                        return self.pos.db.notification('danger', 'Agregue un Método de Pago!.');
+                    }
+                    _.map(order.get_paymentlines(), function(lines){
+                        payment_amount += lines.amount;
+                    });
+                    var total = order.getNetTotalTaxIncluded();
+                    if (payment_amount < total){
+                        self.$('.edit').addClass('error');
+                        return self.pos.db.notification('danger', 'La cantidad "Entregado" no es correcta!');
+                    }else{
+                        self.$('.edit').removeClass('error');
+                    }
                     return self.gui.show_screen('receipt');
                 }
 
@@ -4111,6 +4138,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.gui.show_popup('pay_meal_plan_popup');
                 }else{
                     self.gui.show_screen('clientlist');
+                }
+            });
+            $('#change_pin').click(function(){
+                var customer = self.pos.get_order().get_client();
+                if (customer){
+                    self.gui.show_popup('update_pip_popup');
+                }else{
+                    self.gui.show_screen('clientlist', {change_pin: true});
                 }
             });
         },
