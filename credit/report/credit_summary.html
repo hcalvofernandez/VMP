@@ -1,89 +1,210 @@
+<!DOCTYPE html>
 <html>
+<head>
+  <title></title>
+</head>
 <style type="text/css" media="screen">
-  /* no es necesario */
-html {
-  margin: 3em;
+  .table-center{
+  margin: 0 auto;
 }
-/* no es necesario */
+.table-highlight{
+  background-color: #e43e3f !important;
+  color: white;
+  font-weight: bold;
+}
+.table-borders{
+  width: 95%;
+  margin: 0 auto;
+}
+.table-borders .table-highlight td:first-child{
+  border-bottom-left-radius: 10px;
+  border-top: 1px solid transparent;
+}
+.table-borders .table-highlight td:last-child{
+  border-bottom-right-radius: 10px;
+  border-top: 1px solid transparent;
+}
+.table-borders th:first-child{
+  border-top-left-radius: 10px;
+  border-top: 1px solid transparent;
+}
+.table-borders th:last-child{
+  border-top-right-radius: 10px;
+  border-top: 1px solid transparent;
+}
+.link a{
+  color: #e43e3f;;
+}
+img{
+  width: 200px;
+  height: auto;
+  margin: 0 auto;
+}
 </style>
-  <div class="container-fluid">
-    <table style="width:100%" class="text-uppercase text-center">
-      <tr>
-        <th style="width:40%">
-          <img src="https://scontent.fmid1-1.fna.fbcdn.net/v/t31.0-8/22712262_1659965590689145_933205488153366449_o.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_eui2=AeHrcVENLlbC_MwKQBaqA882ufiVK9p2cR25-JUr2nZxHdKVmt6EhekcwAEaza-LOC4xaMUEUNY4aGBLKaIbwwuG&_nc_oc=AQmuWBHl8BEVdSsBnfIvEgE-t1QS4oWpQ-aNGM-qelpZI0oo9iyjbuK87s0_5NKUFLY&_nc_ht=scontent.fmid1-1.fna&oh=77b133ec72c91b4780c77dea3e209f00&oe=5EF5515E" 
-               class="img-fluid" style="width: 200px;height: auto;">
-        </th>
-        <th style="border-bottom: 3px solid #343a40; width:60%">
-          <h5>CAFETERÍA</h5>
-        </th>
-      </tr>
-    </table>
-    <table style="width:100%; font-size: 14px;" class="text-uppercase">
-        <tr>
-          <th scope="col" style="width: 40%"></th>
-          <th scope="col" style="width: 60%">
-            <table style="width:100%">
-              <th>
-                <table style="width:100%; margin-top: 20px;">
-                  <thead>
-                    <th class="text-center">
-                      <h6>Resumen de Crédito</h6>
-                      <p>del 16-11-2019 al 01-12-2019</p>
-                    </th>
-                  </thead>
-                </table>
-              </th>
-            </table>
-          </th>
-        </tr>
-    </table>
-    <table class="table table-striped" style="margin-top: 50px;">
-      <thead class="thead-dark text-uppercase text-center">
-        <tr>
-          <th scope="col">no. cliente</th>
-          <th scope="col">nombre</th>
-          <th scope="col">Importe</th>
-        </tr>
-      </thead>
-      <tbody class="text-center">
-        <tr>
-          <td>000340</td>
-          <td>ORALIA AGUSTIN CRUZ</td>
-          <td class="font-weight-bold">$ 0.00</td>
-        </tr>
-        <tr>
-          <td>000340</td>
-          <td>ORALIA AGUSTIN CRUZ</td>
-          <td class="font-weight-bold">$ 0.00</td>
-        </tr>
-        <tr>
-          <td>000340</td>
-          <td>ORALIA AGUSTIN CRUZ</td>
-          <td class="font-weight-bold">$ 0.00</td>
-        </tr>
-        <tr>
-          <td>000340</td>
-          <td>ORALIA AGUSTIN CRUZ</td>
-          <td class="font-weight-bold">$ 0.00</td>
-        </tr>
-        <tr>
-          <td>000340</td>
-          <td>ORALIA AGUSTIN CRUZ</td>
-          <td class="font-weight-bold">$ 0.00</td>
-        </tr>
-        <tr class="font-weight-bold text-uppercase">
-          <td colspan="3" class="text-right">subtotales:</td>
-          <td>$ 0.00</td>
-        </tr>
-        <tr class="font-weight-bold text-uppercase">
-          <td colspan="3" class="text-right">iva:</td>
-          <td>$ 0.00</td>
-        </tr>
-        <tr class="font-weight-bold text-uppercase">
-          <td colspan="3" class="text-right">totales:</td>
-          <td>$ 0.00</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+<body>
+  <table style="width:100%">
+    <div class="text-center"><img src="http://www.vmp.com.mx/Images/web-vmp.png" class="img-fluid"></div>
+    <tr class="text-uppercase text-center">
+      <th>
+        <p>john doe</p>
+        <p>ms10102212</p>
+        <p>calle 51 x 31 y 33, merida, yucatan</p>
+      </th>
+      <th class="text-center">
+        <h4>Estado de cuenta</h4>
+        <p>jaropamex</p>
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <table class="text-uppercase table-sm table-striped table-center table-attenuate">
+          <tr>
+            <td>fecha límite de pago</td>
+            <td>28-feb-2020</td>
+          </tr>
+          <tr>
+            <td>fecha de corte</td>
+            <td>28-ene-2020</td>
+          </tr>
+          <tr>
+            <td>no. de cuenta</td>
+            <td>1876564657</td>
+          </tr>
+          <tr>
+            <td>clabe spei</td>
+            <td>28558855747722885</td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <table class="text-uppercase table-sm table-striped table-center table-attenuate">
+          <tr>
+            <td>saldo anterior</td>
+            <td>$0.00</td>
+          </tr>
+          <tr>
+            <td>pagos y abonos</td>
+            <td>$0.00</td>
+          </tr>
+          <tr>
+            <td>compras y cargos</td>
+            <td>$0.00</td>
+          </tr>
+          <tr class="table-highlight">
+            <td>saldo actual al corte</td>
+            <td>$0.00</td>
+          </tr>
+          <tr>
+            <td>saldo vencido</td>
+            <td>$0.00</td>
+          </tr>
+          <tr class="table-highlight">
+            <td>limite de crédito</td>
+            <td>$0.00</td>
+          </tr>
+          <tr>
+            <td>crédito disponible</td>
+            <td>$0.00</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="text-center">Días del periodo: <strong><span>31</span></strong></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  <table style="width:100%;" class="text-center mt-4">
+    <th>
+      Cuenta con 90 días naturales a partir de su fecha de corte para cualquier             aclaración contenida en el presente Estado de Cuenta
+    </th>
+  </table>
+  <h4 class="text-center text-uppercase pt-4 pb-4">Detalle de movimientos</h4>
+  <table class="table table-striped text-uppercase table-borders">
+    <tr class="thead-dark">
+      <th>Fecha</th>
+      <th>Concepto</th>
+      <th>Cargos</th>
+      <th>Abonos</th>
+    </tr>
+    <tr>
+      <td>25-jun-2020 </td>
+      <td>Gracias por su pago </td>
+      <td>$0.00</td>
+      <td>$7,000.00</td>
+    </tr>
+    <tr>
+      <td>26-jun-2020</td>
+      <td>Interés Financiero</td>
+      <td>$600.21</td>
+      <td>$0.00</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>i.v.a. sobre intereses financieros</td>
+      <td>$85.00</td>
+      <td>$0.00</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Comisión por no pago</td>
+      <td>$600.21</td>
+      <td>$0.00</td>
+    </tr>
+    <tr class="table-highlight font-weight-bold">
+      <td></td>
+      <td class="text-left">total</td>
+      <td>$781.25</td>
+      <td>$7,000.00</td>
+    </tr>
+  </table>
+  <h4 class="text-center text-uppercase pt-4 pb-4">Detalle de movimientos</h4>
+  <table class="table table-striped text-uppercase table-borders">
+    <tr class="thead-dark">
+      <th>orden</th>
+      <th>fecha y hora</th>
+      <th>producto</th>
+      <th>importe</th>
+    </tr>
+    <tr>
+      <td>001</td>
+      <td>2020-06-01 12:00:00</td>
+      <td>producto</td>
+      <td>$0.00</td>
+    </tr>
+    <tr>
+      <td>002</td>
+      <td>2020-06-01 12:00:00</td>
+      <td>producto</td>
+      <td>$0.00</td>
+    </tr>
+    <tr>
+      <td>003</td>
+      <td>2020-06-01 12:00:00</td>
+      <td>producto</td>
+      <td>$0.00</td>
+    </tr>
+    <tr class="table-highlight font-weight-bold">
+      <td></td>
+      <td></td>
+      <td class="text-left">total</td>
+      <td>$0.00</td>
+    </tr>
+  </table>
+  <table class="table-borders mt-4">
+    <tr>
+      <th>
+        <p>VMP Alimentos, S. de R.L. de C.V.</p>
+        <p>Régimen Fiscal de Ley de Personas Morales</p>
+        <p>Calle 2 # 208, Jardín 20 de Noviembre C.P. 89440, Cd. Madero, Tamaulipas</p>
+      </th>
+      <th>
+        <p>Centro de Atención</p>
+        <p>Línea Sin Costo: (833) 454-2900</p>
+        <p>Correo: aclaraciones@vmp.com.mx</p>
+        <p class="link"><a href="www.vmp.com.mx">www.vmp.com.mx</a></p>
+      </th>
+    </tr>
+  </table>
+
+</body>
 </html>

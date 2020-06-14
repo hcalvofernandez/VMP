@@ -1,76 +1,218 @@
 <odoo>
     <template id="report_credit_summary">
         <t t-call="web.html_container">
-            <div class="header"></div>
-                <t t-call="web.internal_layout">
-                    <div class="page">
-                      <div class="container-fluid">
-                        <table style="width:100%" class="text-uppercase text-center">
+          <div class="header"></div>
+          <t t-call="web.internal_layout">
+              <div class="page">
+                <style type="text/css">
+                    .table-center{
+                      margin: 0 auto;
+                    }
+                    .table-highlight{
+                      background-color: #e43e3f !important;
+                      color: white;
+                      font-weight: bold;
+                    }
+                    .table-borders{
+                      width: 95%;
+                      margin: 0 auto;
+                    }
+                    .table-borders .table-highlight td:first-child{
+                      border-bottom-left-radius: 10px;
+                      border-top: 1px solid transparent;
+                    }
+                    .table-borders .table-highlight td:last-child{
+                      border-bottom-right-radius: 10px;
+                      border-top: 1px solid transparent;
+                    }
+                    .table-borders th:first-child{
+                      border-top-left-radius: 10px;
+                      border-top: 1px solid transparent;
+                    }
+                    .table-borders th:last-child{
+                      border-top-right-radius: 10px;
+                      border-top: 1px solid transparent;
+                    }
+                    .link a{
+                      color: #e43e3f;;
+                    }
+                    img{
+                      width: 100px;
+                      height: auto;
+                      margin: 0 auto;
+                    }
+                </style>
+                  <table style="width:100%">
+                    <div class="text-center"><img src="http://www.vmp.com.mx/Images/web-vmp.png" class="img-fluid"/></div>
+                    <tr class="text-uppercase text-center">
+                      <th>
+                        <p>john doe</p>
+                        <p>ms10102212</p>
+                        <p>calle 51 x 31 y 33, merida, yucatan</p>
+                      </th>
+                      <th class="text-center">
+                        <h4>Estado de cuenta</h4>
+                        <p><span t-esc="orders[0]['cliente_principal']"/></p>
+                      </th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <table class="text-uppercase table-sm table-striped table-center table-attenuate">
                           <tr>
-                            <th style="width:40%">
-                                <img style="width: 200px !important; height: auto !important;" t-if="logo" t-att-src="'data:image/jpg;base64,%s' %logo"/>
-                            </th>
-                            <th style="border-bottom: 3px solid #343a40; width:60%">
-                              <h3><span t-esc="orders[0]['cliente_principal']"/></h3>
-                            </th>
+                            <td>fecha límite de pago</td>
+                            <td>28-feb-2020</td>
+                          </tr>
+                          <tr>
+                            <td>fecha de corte</td>
+                            <td>28-ene-2020</td>
+                          </tr>
+                          <tr>
+                            <td>no. de cuenta</td>
+                            <td>1876564657</td>
+                          </tr>
+                          <tr>
+                            <td>clabe spei</td>
+                            <td>28558855747722885</td>
                           </tr>
                         </table>
-                        <table style="width:100%; font-size: 14px;" class="text-uppercase">
-                            <tr>
-                              <th scope="col" style="width: 40%"></th>
-                              <th scope="col" style="width: 60%">
-                                <table style="width:100%">
-                                  <th>
-                                    <table style="width:100%; margin-top: 20px;">
-                                      <thead>
-                                        <th class="text-center">
-                                          <h3>Resumen de Crédito</h3>
-                                          <p>del <span t-esc="start_date"/> al <span t-esc="end_date"/></p>
-                                        </th>
-                                      </thead>
-                                    </table>
-                                  </th>
-                                </table>
-                              </th>
-                            </tr>
+                      </td>
+                      <td>
+                        <table class="text-uppercase table-sm table-striped table-center table-attenuate">
+                          <tr>
+                            <td>saldo anterior</td>
+                            <td>$0.00</td>
+                          </tr>
+                          <tr>
+                            <td>pagos y abonos</td>
+                            <td>$0.00</td>
+                          </tr>
+                          <tr>
+                            <td>compras y cargos</td>
+                            <td>$0.00</td>
+                          </tr>
+                          <tr class="table-highlight">
+                            <td>saldo actual al corte</td>
+                            <td>$0.00</td>
+                          </tr>
+                          <tr>
+                            <td>saldo vencido</td>
+                            <td>$0.00</td>
+                          </tr>
+                          <tr class="table-highlight">
+                            <td>limite de crédito</td>
+                            <td>$0.00</td>
+                          </tr>
+                          <tr>
+                            <td>crédito disponible</td>
+                            <td>$0.00</td>
+                          </tr>
+                          <tr>
+                            <td colspan="2" class="text-center">Días del periodo: <strong><span>31</span></strong></td>
+                          </tr>
                         </table>
-                        <table class="table table-striped" style="width:100%; margin-top: 50px;">
-                          <thead style=" background-color:#4c4c4c; color:white;" class="thead-dark text-uppercase text-center">
-                            <tr>
-                              <th scope="col">no. cliente</th>
-                              <th scope="col">nombre</th>
-                              <th scope="col">Importe</th>
-                            </tr>
-                          </thead>
-                          <tbody class="text-center">
-                            <t t-set = "sub_total" t-value = "0" />
-                            <t t-foreach="orders" t-as="o">
-                                 <t t-set = "sub_total" t-value = "sub_total + o['importe']" /> 
-                                <tr >
-                                  <td style="text-align: center !important;"><span t-esc="o['client_number']"/></td>
-                                  <td style="text-align: center !important;"><span t-esc="o['cliente']"/></td>
-                                  <td style="text-align: center !important;" class="font-weight-bold">$ <span t-esc="o['importe']"/></td>
-                                  </tr>
-                            </t>
-                            <tr class="font-weight-bold text-uppercase">
-                              <td colspan="2" style="text-align: right !important;" >subtotales:</td>
-                              <td style="text-align: center !important;" >$ <span t-esc="sub_total"/></td>
-                            </tr>
-                            <tr class="font-weight-bold text-uppercase">
-                              <td colspan="2" style="text-align: right !important;">iva:</td>
-                              <t t-set = "iva" t-value = "sub_total * .16" />
-                              <td style="text-align: center !important;" >$ <span t-esc="'%.2f'% iva"/></td>
-                            </tr>
-                            <tr class="font-weight-bold text-uppercase">
-                              <td colspan="2" style="text-align: right !important;">totales:</td>
-                              <t t-set = "total" t-value = "sub_total + iva" />
-                              <td style="text-align: center !important;" >$ <span t-esc="'%.2f'% total"/></td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                </t>
+                      </td>
+                    </tr>
+                  </table>
+                  <table style="width:100%;" class="text-center mt-4">
+                    <th>
+                      Cuenta con 90 días naturales a partir de su fecha de corte para cualquier             aclaración contenida en el presente Estado de Cuenta
+                    </th>
+                  </table>
+                  <h4 class="text-center text-uppercase pt-4 pb-4">Detalle de movimientos</h4>
+                  <table class="table table-striped text-uppercase table-borders">
+                    <tr style=" background-color:#e43e3f; color:white;" class="thead-dark">
+                      <th>Fecha</th>
+                      <th>Concepto</th>
+                      <th>Cargos</th>
+                      <th>Abonos</th>
+                    </tr>
+                    <tr>
+                      <td><span t-esc="start_date"/></td>
+                      <td>Gracias por su pago </td>
+                      <td>$0.00</td>
+                      <td>$7,000.00</td>
+                    </tr>
+                    <tr>
+                      <td><span t-esc="end_date"/></td>
+                      <td>Interés Financiero</td>
+                      <td>$600.21</td>
+                      <td>$0.00</td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td>i.v.a. sobre intereses financieros</td>
+                      <td>$85.00</td>
+                      <td>$0.00</td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td>Comisión por no pago</td>
+                      <td>$600.21</td>
+                      <td>$0.00</td>
+                    </tr>
+                    <tr class="table-highlight font-weight-bold">
+                      <td></td>
+                      <td class="text-left">Total</td>
+                      <td>$781.25</td>
+                      <td>$7,000.00</td>
+                    </tr>
+                  </table>
+                  <h4 class="text-center text-uppercase pt-4 pb-4">Resumen General de Empleados</h4>
+                  
+                  <table class="table table-striped text-uppercase table-borders" style="width:100%; margin-top: 50px;">
+                      <thead style=" background-color:#e43e3f; color:white;" class="thead-dark text-uppercase text-center">
+                      <tr>
+                        <th scope="col">no. cliente</th>
+                        <th scope="col">nombre</th>
+                        <th scope="col">Importe</th>
+                      </tr>
+                      </thead>
+                      <tbody class="text-center">
+                        <t t-set = "sub_total" t-value = "0" />
+                        <t t-foreach="orders" t-as="o">
+                             <t t-set = "sub_total" t-value = "sub_total + o['importe']" /> 
+                            <tr >
+                              <td style="text-align: center !important;"><span t-esc="o['client_number']"/></td>
+                              <td style="text-align: center !important;"><span t-esc="o['cliente']"/></td>
+                              <td style="text-align: center !important;" class="font-weight-bold">$ <span t-esc="o['importe']"/></td>
+                              </tr>
+                        </t>
+                        <tr class="font-weight-bold text-uppercase">
+                          <td colspan="2" style="text-align: right !important;" >subtotales:</td>
+                          <td style="text-align: center !important;" >$ <span t-esc="sub_total"/></td>
+                        </tr>
+                        <tr class="font-weight-bold text-uppercase">
+                          <td colspan="2" style="text-align: right !important;">iva:</td>
+                          <t t-set = "iva" t-value = "sub_total * .16" />
+                          <td style="text-align: center !important;" >$ <span t-esc="'%.2f'% iva"/></td>
+                        </tr>
+                        <tr class="table-highlight font-weight-bold">
+                          <td></td>
+                          <td style="text-align: left !important;">Total:</td>
+                          <t t-set = "total" t-value = "sub_total + iva" />
+                          <td style="text-align: center !important;" >$ <span t-esc="'%.2f'% total"/></td>
+                        </tr>
+                      </tbody>
+                  </table>
+
+
+                  <table class="table-borders mt-4">
+                    <tr>
+                      <th>
+                        <p>VMP Alimentos, S. de R.L. de C.V.</p>
+                        <p>Régimen Fiscal de Ley de Personas Morales</p>
+                        <p>Calle 2 # 208, Jardín 20 de Noviembre C.P. 89440, Cd. Madero, Tamaulipas</p>
+                      </th>
+                      <th>
+                        <p>Centro de Atención</p>
+                        <p>Línea Sin Costo: (833) 454-2900</p>
+                        <p>Correo: aclaraciones@vmp.com.mx</p>
+                        <p class="link"><a href="www.vmp.com.mx">www.vmp.com.mx</a></p>
+                      </th>
+                    </tr>
+                  </table>
+              </div>
+          </t>
         </t>
     </template>
 </odoo>

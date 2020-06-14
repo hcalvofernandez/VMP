@@ -10,11 +10,12 @@
                     <field col="4" name="end_date" autocomplete="off"/> 
                     <field col="4" name="company_id" invisible="1"/>
                     <field col="4" name="partner_id" invisible="1"/>
+                    <field col="4" name="check_mail" type="checkbox"/> 
                 </group>
                 <footer>
                     <button name="sale_report_pos" type="object" string="Ver Ventas" class="btn btn-success"/>
                     <button name="get_report_credit_details" string="Reporte de Ventas" type="object" class="btn btn-success"/>
-                    <!--<button name="restart_credits" string="REINICIAR NUMEROS" type="object" class="btn btn-success"/>-->
+                    <!--<button name="send_mail_report" type="object" string="Enviar Correo" class="btn btn-success"/>-->
                     <button string="Cancel" special="cancel" class="btn btn-danger"/>
                 </footer>
             </form>

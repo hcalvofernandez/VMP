@@ -18,6 +18,7 @@ class ReportPosIndividualWizard(models.TransientModel):
     start_date = fields.Datetime(computed='_default_date_report', string='Fecha y Hora inicial',)
     end_date  = fields.Datetime(computed='_default_date_report', string='Fecha y Hora Final',)
     partner_id = fields.Many2one('res.partner',string='Cliente',)
+    check_mail = fields.Boolean(string='Enviar por Correo',)
 
 
 
@@ -35,6 +36,8 @@ class ReportPosIndividualWizard(models.TransientModel):
 
     @api.multi
     def consult_report_individual_details(self):
+        if self.check_mail:
+            self.send_mail_report()
         one = self.start_date
         two = self.end_date
         start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
@@ -48,7 +51,6 @@ class ReportPosIndividualWizard(models.TransientModel):
                 'producto': o.product_id.name,
                 'importe': o.price_subtotal_incl,
                 })
-        _logger.error('🍖🍖🍖'+str(res)+'🍖🍖🍖')
         return res
 
     @api.multi
@@ -59,7 +61,27 @@ class ReportPosIndividualWizard(models.TransientModel):
             'end_date': self.end_date,
             'client': self.partner_id.name,
             'client_number':self.partner_id.client_number,
-            'logo': self.partner_id.company_id.logo,
             }
         return self.env.ref('credit.action_report_credit_summary_individual').report_action(self, data=data,config=False)
 
+
+    @api.multi
+    def send_mail_report(self):
+        template = self.env['mail.template'].search([('name','=','Reporte de Crédito')])
+        template = template.generate_email(self.id)
+        self.send(template) # enviar
+
+
+    def send(self, template):
+        # objeto odoo de correo
+        mail = self.env['mail.mail']
+        mail_data={
+            'subject':'Reporte De Crédito Individual',
+            'body_html': template['body_html'],
+            'email_to': 'francisco-castillo-moo@hotmail.com',
+            'email_from': template['email_from'],
+        }
+        mail_out=mail.create(mail_data)
+        if mail_out:
+            mail.send(mail_out)
+            _logger.info("Reporte de Pos Enviado📬")

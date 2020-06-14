@@ -14,13 +14,16 @@
     'depends': [
         'base',
         'contract',
-        'point_of_sale'
-        #'eor_pos_utils',
+        'point_of_sale',
+        'eor_pos_utils',
+        'mail',
+        'contacts',
     ],
     'data': [
         'security/ir.model.access.csv',
         'wizard/report_pos_wizard_views.xml',
         'wizard/report_pos_wizard_individual_views.xml',
+        'data/mail_template_report.xml',
         'views/credit_schemes_views.xml',
         'views/contract_contract_views.xml',
         'views/contract_scheme_contract_views.xml',

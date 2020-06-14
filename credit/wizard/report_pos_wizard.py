@@ -3,6 +3,7 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 from dateutil import relativedelta
 from datetime import datetime
+from odoo.http import request
 
 import logging
 
@@ -19,6 +20,7 @@ class ReportPosWizard(models.TransientModel):
     end_date  = fields.Datetime(computed='_default_date_report', string='Fecha y Hora Final', default=lambda self: fields.datetime.now())
     company_id = fields.Many2one('res.company',string='Compañia',)
     partner_id = fields.Many2one('res.partner',string='Cliente',)
+    check_mail = fields.Boolean(string='Enviar por Correo',)
 
     @api.multi
     @api.onchange('partner_id')
@@ -61,11 +63,12 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def get_report_credit_details(self):
+        if self.check_mail:
+            self.send_mail_report()
         data = {
             'orders': self.consult_credit_details(),
             'start_date': self.start_date,
             'end_date': self.end_date,
-            'logo': self.company_id.logo,
             }
         return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data,config=False)
 
@@ -89,11 +92,22 @@ class ReportPosWizard(models.TransientModel):
         }
 
     @api.multi
-    def sale_report_pdf(self):
-        raise ValidationError("VENTAS REPORT")
-
-    @api.multi
-    def restart_credits(self):
-        raise ValidationError("REINCIAR CREDITOS")
+    def send_mail_report(self):
+        template = self.env['mail.template'].search([('name','=','Reporte de Crédito')])
+        template = template.generate_email(self.id)
+        self.send(template) # enviar
 
 
+    def send(self, template):
+        # objeto odoo de correo
+        mail = self.env['mail.mail']
+        mail_data={
+            'subject': 'Reporte de Crédito General',
+            'body_html': template['body_html'],
+            'email_to': 'francisco-castillo-moo@hotmail.com',
+            'email_from': template['email_from'],
+        }
+        mail_out=mail.create(mail_data)
+        if mail_out:
+            mail.send(mail_out)
+            _logger.info("Reporte de Pos Enviado📬")
