@@ -391,7 +391,7 @@ class account_payment(models.Model):
         objorder = self.env['pos.order'].search([('partner_id', '=', partner_id), ('pos_reference', '=', order_ref)])
 
         order_update = self.env['pos.order'].browse(order.id)
-        order_update.sudo().update({'is_postpaid':True,'order_type':'Cŕedito'})
+        order_update.sudo().update({'is_postpaid':True,'order_type':'Cŕedito', 'state_order_fac': 'n'})
         customer = self.env['res.partner'].browse(partner_id)
         
         res = self.env['pos.order'].search([('partner_id', '=', partner_id), ('state', '=', 'draft')])
@@ -403,12 +403,7 @@ class account_payment(models.Model):
 
 
         response =  {'amount_due':total_amt_due,'customer':customer.id,'credit_bal':customer.remaining_credit_amount,'credit_limit':customer.credit_limit,'affected_order':order_update.read()}
-        if amount_is_low:
-            for o in res:
-                o.sudo().write({'amount_total': 0})
-                _logger.info(amount)
-                _logger.info(o.amount_total)
-            response['affected_order'] = res.read()
+
         try:
             account_payment_obj = self.env['account.payment']
             pos_order_obj = self.env['pos.order']

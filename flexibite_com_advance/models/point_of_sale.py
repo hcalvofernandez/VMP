@@ -3053,10 +3053,6 @@ class pos_session(models.Model):
         faltante = 0.0
 
         total = efectivo + tarjeta + credito + retiro + ingreso
-        if total < vals['amount_total']:
-            faltante = currency_id.round(total - vals['amount_total'])
-        else:
-            sobrante = currency_id.round(total - vals['amount_total'])
 
         journal_ids = self.mapped('statement_ids.journal_id.name')
         amounts = self.mapped('statement_ids.balance_end')
@@ -3071,7 +3067,14 @@ class pos_session(models.Model):
                 'amount': amount,
             })
             values.append(dict_cash_values)
-        _logger.info(values)
+
+        total_cash = sum(val['amount'] for val in values) + retiro + ingreso
+        total_declaracion = efectivo + tarjeta + credito
+        if total_declaracion < total_cash:
+            faltante = currency_id.round(total_declaracion - total_cash)
+        else:
+            sobrante = currency_id.round(total_declaracion - total_cash)
+
         vals.update({
             'cash_control': values,
             'retiro': retiro,
@@ -3080,8 +3083,8 @@ class pos_session(models.Model):
             'tarjeta': tarjeta,
             'credito': credito,
             'final_cash': sum(val['amount'] for val in values),
-            'total_cash': sum(val['amount'] for val in values) + retiro + ingreso,
-            'total': total,
+            'total_cash': total_cash,
+            'total': efectivo + tarjeta + credito,
             'sobrante': sobrante,
             'faltante': faltante,
         })

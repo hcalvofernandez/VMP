@@ -1805,9 +1805,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 //var order = self.pos.get_order();
                                 order.add_paymentline(cashregister);
                                 order.selected_paymentline.set_amount(credit_amount,0 );
-                                payment.reset_input();
-                                payment.render_paymentlines();
-                                payment.order_changes();
+                                self.reset_input();
+                                self.render_paymentlines();
+                                self.order_changes();
                             }
                         }
                     }else{
