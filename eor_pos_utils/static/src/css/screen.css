@@ -39,7 +39,8 @@
 }
 
 .pos .payment-container{
-    display: inline-grid;
+    /*display: inline-grid;*/
+    padding: 10px;
 }
 
 .pos .payment-button{
@@ -69,4 +70,8 @@
 
 .pos .c-name{
     font-size: 16px !important;
+}
+
+.pos .payment-numpad{
+    display: inline-flex;
 }

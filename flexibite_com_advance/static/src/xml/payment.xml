@@ -9,7 +9,7 @@
 	                <t t-raw="widget.div_btns" />
 	            </div>
 	            <t t-if="widget.pos.get_client()" >
-                    <div class="quickpay_credit">
+                    <div class="quickpay_credit" t-if="active_credit">
 	                    <t t-set="total_credit" t-value="0"/>
 	                    <table class="quickpay_credit_paymenttable">
 	                        <t t-if="widget.pos.get_client().deposite_info">

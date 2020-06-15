@@ -74,7 +74,7 @@
                         <div style="border-top:2px dashed #111; padding-top:20px; padding-bottom:35px;">
                             <div align="center" style="padding-bottom:25px;">CAJA</div>
                             <table  style="width:100%;">
-                                <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(True)"/>
+                                <!--<t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(True)"/>
                                 <t t-set="total_sum" t-value="0.0"/>
                                 <t t-foreach="payment_summary_without_prices" t-as="payment_element">
                                     <tr>
@@ -90,6 +90,48 @@
                                  <tr>
                                 <td  style="width:50%;padding-left:15px;">= SALDO FINAL: </td>
                                 <td  style="width:50%"><t t-esc="total_sum" /></td>
+                                </tr>
+                                -->
+                                <t t-set="values" t-value="o.get_product_cate_total_x()"/>
+                                <tr t-foreach="values['cash_control']" t-as="cash">
+                                    <td style="width: 50%">
+                                        (+) <t t-esc="cash['name']" />
+                                    </td>
+                                    <td style="width: 50%">
+                                        <t t-esc="cash['amount']" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50%">
+                                        SALDO FINAL
+                                    </td>
+                                    <td style="width: 50%">
+                                        <t t-esc="values['final_cash']" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50%">
+                                        (-) Retiros
+                                    </td>
+                                    <td style="width: 50%">
+                                        <t t-esc="values['retiro']" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50%">
+                                        (+) Ingresos
+                                    </td>
+                                    <td style="width: 50%">
+                                        <t t-esc="values['ingreso']" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="50%">
+                                        TOTAL
+                                    </td>
+                                    <td style="50%">
+                                        <t t-esc="values['total_cash']" />
+                                    </td>
                                 </tr>
                             </table>
                         </div> 
@@ -147,7 +189,7 @@
                                 </tr>
                             </table>
                         </div>
-                         <div style="padding-top:0px; padding-bottom:35px;">
+                         <div style="padding-top:0px; padding-bottom:35px;" t-if="service_type">
                             <div align="center" style="padding-bottom:10px;">VENTAS POR TIPO DE SERVICIO</div>
                             <table style="width:100%;">
                                 <t t-set="services" t-value="o.get_payments_by_service_type()"/>

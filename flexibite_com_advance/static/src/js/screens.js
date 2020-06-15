@@ -805,6 +805,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         get_company_image_url: function(){
             var company_id = this.pos.company.id;
+
             if(company_id){
                 return window.location.origin + '/web/binary/company_logo?&company=' + company_id;
             }

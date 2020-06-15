@@ -3047,18 +3047,40 @@ class pos_session(models.Model):
         credito = currency_id.round(
             sum(self.sudo().mapped('statement_ids').filtered(lambda c: c.journal_id.name == 'POS-Crédito').mapped('balance_end_real_declared'))
         )
+        retiro = currency_id.round(sum(self.mapped('statement_ids.line_ids').filtered(lambda line: line.cash_out == True).mapped('amount')))
+        ingreso = currency_id.round(sum(self.mapped('statement_ids.line_ids').filtered(lambda line: line.cash_in == True).mapped('amount')))
         sobrante = 0.0
         faltante = 0.0
-        total = efectivo + tarjeta + credito
+
+        total = efectivo + tarjeta + credito + retiro + ingreso
         if total < vals['amount_total']:
             faltante = currency_id.round(total - vals['amount_total'])
         else:
             sobrante = currency_id.round(total - vals['amount_total'])
 
+        journal_ids = self.mapped('statement_ids.journal_id.name')
+        amounts = self.mapped('statement_ids.balance_end')
+        values = []
+
+        for statement in self.statement_ids:
+            dict_cash_values = {}
+            journal = statement.journal_id
+            amount = sum(statement.pos_session_id.mapped('order_ids').filtered(lambda o: o.mapped('statement_ids.journal_id.id')[0] == journal.id).mapped('amount_total'))
+            dict_cash_values.update({
+                'name': journal.name,
+                'amount': amount,
+            })
+            values.append(dict_cash_values)
+        _logger.info(values)
         vals.update({
+            'cash_control': values,
+            'retiro': retiro,
+            'ingreso': ingreso,
             'efectivo': efectivo,
             'tarjeta': tarjeta,
             'credito': credito,
+            'final_cash': sum(val['amount'] for val in values),
+            'total_cash': sum(val['amount'] for val in values) + retiro + ingreso,
             'total': total,
             'sobrante': sobrante,
             'faltante': faltante,

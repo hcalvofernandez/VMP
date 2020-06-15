@@ -93,8 +93,12 @@ class AccountBankStatementLine(models.Model):
         for record in self:
             statement = self.env['account.bank.statement'].browse(record.id)
             orders = record.pos_session_id.mapped('order_ids')
+            retiro = record.company_id.currency_id.round(sum(
+                self.mapped('line_ids').filtered(lambda line: line.cash_out == True).mapped('amount')))
+            ingreso = record.company_id.currency_id.round(
+                sum(self.mapped('line_ids').filtered(lambda line: line.cash_in == True).mapped('amount')))
             for order in orders.filtered(lambda o: o.mapped('statement_ids.journal_id.id')[0] == record.journal_id.id):
-                new_difference_custom = order.amount_total - record.balance_end_real_declared
+                new_difference_custom = order.amount_total + retiro + ingreso - record.balance_end_real_declared
                 statement.update({'difference_custom':new_difference_custom})
 
         #raise Warning (str(self.balance_start) + str(" - ") + str(self.balance_end_real_declared) + str("=") + str(self.difference_custom))
