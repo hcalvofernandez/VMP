@@ -2610,6 +2610,7 @@ class pos_session(models.Model):
 
     @api.multi
     def get_product_cate_total(self):
+        #self.get_totals_by_pos_configs()
         balance_end_real = 0.0
         if self and self.order_ids:
             for order in self.order_ids:
@@ -2617,6 +2618,49 @@ class pos_session(models.Model):
                     for line in order.lines:
                         balance_end_real += (line.qty * line.price_unit)
         return balance_end_real
+    
+    @api.multi
+    def get_totals_by_pos_configs(self,pos_configs):
+        if self:
+            #raise Warning(self)
+            for pos_session in self:
+                pos_orders = self.env['pos.order'].search([('session_id','=',pos_session.id)])
+                pos_config = pos_session.config_id
+                pos_configs = self.update_pos_config_totals(pos_configs, pos_config, pos_orders)                          
+        #raise Warning(pos_configs)          
+        return pos_configs
+    
+    def update_pos_config_totals(self,pos_configs, pos_config, pos_orders):
+        if(len(pos_configs)>0):
+            i = 0  
+            found = False       
+            for _pos_config in pos_configs:
+                
+                if(str(_pos_config['name']) == str(pos_config.name)):
+                    amounts_totals = 0.0  
+                    for pos_order in pos_orders:
+                        amounts_totals += pos_order.amount_total
+                    pos_config_updated = {'name':_pos_config['name'],'amount_total':float(amounts_totals) + float(pos_configs[i]['amount_total'])}
+                    pos_configs[i] = pos_config_updated
+                    found = True
+                    _logger.warning(pos_configs[i])
+                i+=1
+
+            if(not found):
+                amounts_totals = 0.0  
+                for pos_order in pos_orders:
+                    amounts_totals += pos_order.amount_total
+                pos_config_new = {'name':pos_config.name,'amount_total':float(amounts_totals)}
+                pos_configs.append(pos_config_new)
+                
+        
+        else:
+            amounts_totals = 0.0
+            for pos_order in pos_orders:
+                amounts_totals += pos_order.amount_total
+            pos_configs.append({'name':pos_config.name,'amount_total':float(amounts_totals)})
+       
+        return pos_configs
 
     @api.multi
     def get_net_gross_total(self):
@@ -2712,6 +2756,8 @@ class pos_session(models.Model):
                 if order.state != "draft":
                     total_price += sum([(line.qty * line.price_unit) for line in order.lines])
         return total_price
+    
+                
 
     @api.multi
     def get_total_tax(self):
@@ -3005,6 +3051,8 @@ class pos_session(models.Model):
                     total_cost += line.qty * line.product_id.standard_price
             net_gross_profit = self.get_total_sales() - self.get_total_tax() - total_cost
         return "%.2f" % net_gross_profit
+
+    
 
     @api.multi
     def get_product_cate_total_x(self):

@@ -9,6 +9,7 @@
                             <strong>Z Report</strong>
                         </div>
                         <t t-foreach="docs" t-as="o">
+                        
                             <!-- <table style="width:100%;margin-top:15px;">
                                 <tr>
                                     <td class="text-left">

@@ -8,7 +8,11 @@
                     <div align="center" style="border:1px solid black;margin:0 auto;padding:0 auto;font-size:25px">
                         <strong>Z Report</strong>
                     </div>
+                    <t t-set="pos_config_totals" t-value="[]"/>
+                    <t t-set="currency_symbol" t-value=""/>
+                    
                     <t t-foreach="docs" t-as="o">
+                        <t t-set="currency_symbol" t-value="o.currency_id.symbol"/>
                         <table style="width:100%;margin-top:15px;">
                             <tr>
                                 <td class="text-left">
@@ -252,8 +256,47 @@
                                     </td>
                                 </tr>
                             </table>
-                        </t>
+                            <t t-set="pos_config_totals" t-value="o.get_totals_by_pos_configs(pos_config_totals)"/>                            
+                        </t> 
                     </t>
+                    <div class="text-left" style="margin-top:10px !important;">
+                        Cashboxes:
+                    </div>
+                    <t t-set="pos_config_amounts_totals" t-value="0.0"/>
+                    <table style="width:100%">
+                    
+                        <tr t-foreach="pos_config_totals" t-as="pos_config">
+                            <td style="width:50%;">
+                            <t t-esc="pos_config['name']"/>
+                            </td>
+                            <td style="width:50%; !important" class="text-right">
+                                <span t-esc="currency_symbol"/>
+                                <t t-esc="pos_config['amount_total']"/>
+                                <t t-set="pos_config_amounts_totals" t-value="float(pos_config_amounts_totals) + float(pos_config['amount_total'])"/>
+                            </td>
+                        </tr>
+                        
+                    </table>
+                    <table style="width:100%;">
+                                <tr>
+                                    <td style="width:50%;">
+                                    </td>
+                                    <td style="width:50%; !important" class="text-right">
+                                        ===========
+                                    </td>
+                                </tr>
+                            </table>
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:50%;">
+                            </td>
+                            <td style="width:50%; !important" class="text-right">
+                                <span t-esc="currency_symbol"/>
+                                <t t-esc="pos_config_amounts_totals"/>
+                            </td>
+                        </tr>
+                        
+                    </table>
                 </div>
             </t>
 
