@@ -3000,6 +3000,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                 $('.cash').addClass('disabled');
                 $('.cash_paymentmethods').addClass('disabled');
                 //self.$('.button.close_session').trigger('click');
+                self.$('.button.cancel').hide();
             });
             this.$('.print_report_x').click(function(e){
                 var pos_session_id = [self.pos.pos_session.id];

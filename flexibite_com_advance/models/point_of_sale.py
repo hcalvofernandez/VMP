@@ -3010,6 +3010,7 @@ class pos_session(models.Model):
     def get_product_cate_total_x(self):
         balance_end_real = 0.0
         discount = 0.0
+        saldo_inicial = 0.0
         vals = {}
         if self and self.order_ids:
             currency_id = self.mapped('order_ids.lines.company_id.currency_id')
@@ -3058,35 +3059,93 @@ class pos_session(models.Model):
         amounts = self.mapped('statement_ids.balance_end')
         values = []
 
+        dict_cash_values = {
+            'name': '',
+            'amount': 0
+        }
+        credit_values = {
+            'name': '',
+            'amount': 0,
+        }
+        tar_values = {
+            'name': '',
+            'amount': 0
+        }
         for statement in self.statement_ids:
-            dict_cash_values = {}
-            journal = statement.journal_id
-            amount = sum(statement.pos_session_id.mapped('order_ids').filtered(lambda o: o.mapped('statement_ids.journal_id.id')[0] == journal.id).mapped('amount_total'))
-            dict_cash_values.update({
-                'name': journal.name,
-                'amount': amount,
-            })
+            for order in statement.pos_session_id.mapped('order_ids'):
+                for st in order.statement_ids:
+                    if st.journal_id.name == 'Efectivo':
+                        amount = sum(order.mapped('amount_total'))
+
+                        dict_cash_values.update({
+                            'name': st.journal_id.name,
+                            'amount': amount,
+                        })
+                    elif st.journal_id.name == 'POS-Crédito':
+                        amount = sum(order.mapped('amount_total'))
+                        credit_values.update({
+                            'name': st.journal_id.name,
+                            'amount': amount,
+                        })
+                    elif st.journal_id.name == 'Tarjeta Bancaria':
+                        amount = sum(order.mapped('amount_total'))
+                        tar_values.update({
+                            'name': st.journal_id.name,
+                            'amount': amount,
+                        })
             values.append(dict_cash_values)
 
-        total_cash = sum(val['amount'] for val in values) + retiro + ingreso
+        _logger.info(dict_cash_values)
+
+        for session in self:
+            saldo_inicial = session.cash_register_balance_start
+        total_cash = saldo_inicial + dict_cash_values['amount'] + retiro + ingreso
         total_declaracion = efectivo + tarjeta + credito
-        if total_declaracion < total_cash:
+        declaracion_efectivo = efectivo - total_cash
+        declaracion_tarjeta = tarjeta - tar_values['amount']
+        declaracion_credito = credito - credit_values['amount']
+
+        total_sobrante = []
+        total_faltante = []
+        if efectivo < total_cash:
+            faltante = efectivo - total_cash
+            total_faltante.append(faltante)
+        else:
+            sobrante = efectivo - total_cash
+            total_sobrante.append(sobrante)
+
+        if tarjeta < tar_values['amount']:
+            faltante = tarjeta - tar_values['amount']
+            total_faltante.append(faltante)
+        else:
+            sobrante = tarjeta - tar_values['amount']
+            total_sobrante.append(sobrante)
+        if credito < credit_values['amount']:
+            faltante = credito - credit_values['amount']
+            total_faltante.append(faltante)
+        else:
+            sobrante = credito - credit_values['amount']
+            total_sobrante.append(sobrante)
+        _logger.info(total_sobrante)
+        _logger.info(total_faltante)
+
+        '''if total_declaracion < total_cash:
             faltante = currency_id.round(total_declaracion - total_cash)
         else:
             sobrante = currency_id.round(total_declaracion - total_cash)
-
+        '''
         vals.update({
-            'cash_control': values,
+            'cash_control': dict_cash_values,
             'retiro': retiro,
             'ingreso': ingreso,
             'efectivo': efectivo,
             'tarjeta': tarjeta,
             'credito': credito,
-            'final_cash': sum(val['amount'] for val in values),
+            #'final_cash': dict_cash_values['amount'],
             'total_cash': total_cash,
             'total': efectivo + tarjeta + credito,
-            'sobrante': sobrante,
-            'faltante': faltante,
+            'sobrante': sum(total_sobrante),
+            'faltante': sum(total_faltante),
         })
 
         for session in self:

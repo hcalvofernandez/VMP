@@ -72,7 +72,7 @@
                         </div>
                         <br />
                         <div style="border-top:2px dashed #111; padding-top:20px; padding-bottom:35px;">
-                            <div align="center" style="padding-bottom:25px;">CAJA</div>
+                            <div align="center" style="padding-bottom:25px;">FLUJO DE EFECTIVO</div>
                             <table  style="width:100%;">
                                 <!--<t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(True)"/>
                                 <t t-set="total_sum" t-value="0.0"/>
@@ -93,20 +93,20 @@
                                 </tr>
                                 -->
                                 <t t-set="values" t-value="o.get_product_cate_total_x()"/>
-                                <tr t-foreach="values['cash_control']" t-as="cash">
+                                <tr>
                                     <td style="width: 50%">
-                                        (+) <t t-esc="cash['name']" />
+                                        Efectivo inicial
                                     </td>
-                                    <td style="width: 50%">
-                                        <t t-esc="cash['amount']" />
+                                    <td>
+                                        <t t-esc="values['balance_start']" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="width: 50%">
-                                        SALDO FINAL
+                                        (+) <t t-esc="values['cash_control']['name']" />
                                     </td>
                                     <td style="width: 50%">
-                                        <t t-esc="values['final_cash']" />
+                                        <t t-esc="values['cash_control']['amount']" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -127,7 +127,7 @@
                                 </tr>
                                 <tr>
                                     <td style="50%">
-                                        TOTAL
+                                        EFECTIVO TOTAL
                                     </td>
                                     <td style="50%">
                                         <t t-esc="values['total_cash']" />

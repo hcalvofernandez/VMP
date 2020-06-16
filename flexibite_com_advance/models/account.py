@@ -386,7 +386,7 @@ class account_payment(models.Model):
     
 
     @api.model
-    def payment_credit(self, get_journal_id, amount, pos_session_id, partner_id, cashier_id, pay_due,order_ref, amount_is_low):
+    def payment_credit(self, get_journal_id, amount, pos_session_id, partner_id, cashier_id, pay_due,order_ref):
         order = self.env['pos.order'].search([('partner_id', '=', partner_id), ('state', '=', 'draft'),('pos_reference', '=', order_ref)],order='date_order')
         objorder = self.env['pos.order'].search([('partner_id', '=', partner_id), ('pos_reference', '=', order_ref)])
 
@@ -412,16 +412,17 @@ class account_payment(models.Model):
                 #, ('pos_reference', '=', order_ref)
                 res = pos_order_obj.search([('partner_id', '=', partner_id), ('state', '=', 'draft'),('pos_reference', '=', order_ref)],order='date_order')
 
-                _logger.info("Order ref: %s " % (res))
                 for each in res:
                     if amount > 0:
                         if each.amount_due < amount:
+                            _logger.info("AMOUNT DUE < AMOUNT %s" % (res))
                             amount -= each.amount_due
                             values = self.env['pos.make.payment'].with_context(
                                 {'active_id': each.id, 'default_journal_id': get_journal_id, 'default_amount':each.amount_due}).default_get(['journal_id', 'amount'])
                             self.env['pos.make.payment'].with_context({'active_id': each.id,'ctx_is_postpaid': True}).sudo().create(values).check()
 
                         elif each.amount_due >= amount:
+                            _logger.info("AMOUNT DUE >= AMOUNT %s" % (response))
                             values = self.env['pos.make.payment'].with_context(
                                 {'active_id': each.id, 'default_journal_id': get_journal_id,
                                 'default_amount': amount}).default_get(['journal_id', 'amount'])
@@ -429,6 +430,7 @@ class account_payment(models.Model):
                             amount = 0
                             affected_order.append(each.read())
                     else:
+                        _logger.info("ELSE ")
                         break
             if amount > 0:
                 vals = {

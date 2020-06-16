@@ -4861,18 +4861,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         var client = self.pos.get_order().get_client()
                         partner_id = partner_id ? partner_id : client.id;
                         var cashier_id = self.pos.get_cashier().id;
-                        var payment_lines = order.get_paymentlines();
-                        var amount_is_low = false;
-                        _.map(payment_lines, function(line){
+                        //var payment_lines = order.get_paymentlines();
+                        //var amount_is_low = false;
+                        /*_.map(payment_lines, function(line){
                             if (line.name === "POS-Crédito (MXN)"){
                                 amount = line.amount;
                                 amount_is_low = true;
                             }
-                        });
+                        });*/
                         var params = {
                             model: 'account.payment',
                             method: "payment_credit",
-                            args: [get_journal_id, amount, pos_session_id, partner_id, cashier_id, true,order.name, amount_is_low],
+                            args: [get_journal_id, amount, pos_session_id, partner_id, cashier_id, true,order.name],
                         }
                         
                         var interval = setInterval(function() 

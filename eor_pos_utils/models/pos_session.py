@@ -40,7 +40,13 @@ class PosSession(models.Model):
                 ingresos_efectivo = dif_pcash
                 retiros_efectivo = dif_ncash
                 balance_start = currency_id.round(session.cash_register_balance_start)
-                ventas = sum(session.mapped('order_ids').filtered(lambda o: o.mapped('statement_ids.journal_id.name')[0] == 'Efectivo').mapped('amount_total'))
+                ventas = 0
+                _logger.info(session.mapped('order_ids.statement_ids.journal_id.name'))
+                for order in session.mapped('order_ids'):
+                    for st in order.statement_ids:
+                        if st.journal_id.name == 'Efectivo':
+                            ventas = sum(order.mapped('amount_total'))
+                #ventas = sum(session.mapped('order_ids').filtered(lambda o: o.mapped('statement_ids.journal_id.name')[0] == 'Efectivo').mapped('amount_total'))
                 vals = {
                     'balance_start': balance_start,
                     'currency': currency_id.symbol,

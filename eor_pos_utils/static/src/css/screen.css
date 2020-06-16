@@ -39,7 +39,7 @@
 }
 
 .pos .payment-container{
-    /*display: inline-grid;*/
+    display: inline-grid;
     padding: 10px;
 }
 
@@ -74,4 +74,12 @@
 
 .pos .payment-numpad{
     display: inline-flex;
+}
+
+.pos .right-content{
+    left: 0 !important;
+}
+
+.pos .left-content{
+    right: 0 !important;
 }
