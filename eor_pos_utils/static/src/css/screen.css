@@ -82,4 +82,5 @@
 
 .pos .left-content{
     right: 0 !important;
+    z-index: 11111 !important;
 }
