@@ -178,7 +178,7 @@
                     </span>
                     </div>
                 </div>
-                <div class='left-content pc40 touch-scrollable scrollable-y' style="right: 30%;">
+                <div class='left-content pc40 touch-scrollable scrollable-y' style="right: 0%;">
                 	<div>
                         <div class='paymentmethods-container' />
                         <t t-call="FromCredit"/>
@@ -187,7 +187,7 @@
                     </div>
                     <section class='payment-numpad'></section>
 	            </div>
-                <div class='right-content pc60 touch-scrollable scrollable-y' style="left: 70%;">
+                <div class='right-content pc60 touch-scrollable scrollable-y' style="left: 100%;">
                     <selection class="payment-other-buttons">
                         <div class="payment-buttons payment_center_right" style="float: left;padding:10px;">
                             <!-- <div class="control-button js_set_customer">

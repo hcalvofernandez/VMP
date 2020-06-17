@@ -3034,6 +3034,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         self.pos.get_order().mirror_image_data(true);
                     }
                 }
+                if (order.get_orderlines().length === 0){
+                    return self.pos.db.notification('danger', 'Agregue una línea de Venta!.');
+                }
+
                 if (!order.get_client()){
                     var payment_amount = 0;
                     if (order.get_paymentlines().length === 0){
@@ -3043,6 +3047,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         payment_amount += lines.amount;
                     });
                     var total = order.getNetTotalTaxIncluded();
+
                     if (payment_amount < total){
                         self.$('.edit').addClass('error');
                         return self.pos.db.notification('danger', 'La cantidad "Entregado" no es correcta!');
