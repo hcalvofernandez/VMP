@@ -168,7 +168,7 @@
                             </table>
                         </div>
 
-                       <div style="padding-top:20px; padding-bottom:10px;">
+                       <div style="padding-top:20px; padding-bottom:10px;" t-if="product_type">
                             <div align="center" style="padding-bottom:10px;">VENTA (NO INCLUYE IMPUESTOS)</div>
                             <div align="center" style="padding-bottom:25px;">VENTAS POR TIPO PRODUCTO</div>
                             <table style="width:100%;">
@@ -274,34 +274,76 @@
                             <div align="center" style="padding-bottom:10px;">DECLARACION DE CAJERO</div>
                             <table style="width:100%;">
                                 <tr>
-                                    <td>EFECTIVO</td>
-                                    <td>
+                                    <td style="width:25%">EFECTIVO</td>
+                                    <td style="width:25%">
+                                        <t t-esc="vals.get('total_cash')" />
+                                    </td>
+                                    <td style="width:25%">
                                         <t t-esc="vals.get('efectivo')" />
                                     </td>
+                                    <td style="width:25%">
+                                        <t t-esc="vals.get('total_cash') - vals.get('efectivo')" />
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>TARJETA</td>
-                                    <td>
+                                    <td style="25%">TARJETA</td>
+                                    <td style="25%">
+                                        <t t-esc="vals.get('tarjeta_vals')['amount']"/>
+                                    </td>
+                                    <td style="25%">
                                         <t t-esc="vals.get('tarjeta')" />
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td>CREDITO</td>
-                                    <td>
-                                        <t t-esc="vals.get('credito')" />
+                                    <td style="25%">
+                                        <t t-esc="vals.get('tarjeta_vals')['amount'] - vals.get('tarjeta')" />
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td style="width:25%">CREDITO</td>
+                                    <td style="width:25%">
+                                        <t t-esc="vals.get('credit_vals')['amount']" />
+                                    </td>
+                                    <td style="width:25%">
+                                        <t t-esc="vals.get('credito')" />
+                                    </td>
+                                    <td style="width:25%">
+                                        <t t-esc="vals.get('credit_vals')['amount'] - vals.get('credito')" />
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 2px dashed #AAA; padding-bottom: 10px;">
                                     <td>TOTAL</td>
+                                    <td>
+                                        <t t-esc="vals.get('total_cash') + vals.get('tarjeta_vals')['amount'] + vals.get('credit_vals')['amount']" />
+                                    </td>
                                     <td>
                                         <t t-esc="vals.get('total')" />
                                     </td>
-                                </tr>
-                                <tr style="border-top: 1px solid #AAA;text-align: left;">
-                                    <td style="padding-top: 15px;">SOBRANTE(+) <t t-esc="vals.get('sobrante')" /></td>
                                     <td>
-                                        FALTANTE(-) <t t-esc="vals.get('faltante')" />
+                                        <t t-set="cash" t-value="vals.get('total_cash') - vals.get('efectivo')"/>
+                                        <t t-set="tar" t-value="vals.get('tarjeta_vals')['amount'] - vals.get('tarjeta')" />
+                                        <t t-set="cred" t-value="vals.get('credit_vals')['amount'] - vals.get('credito')" />
+                                        <t t-esc="cash + tar + cred" />
                                     </td>
+                                </tr>
+                            </table>
+                            <table style="width: 100%">
+                                <tr>
+                                    <t t-set="total_amount" t-value="cash + tar + cred"/>
+                                    <t t-if="total_amount &lt; 0">
+                                        <td style="padding-top: 15px;width: 50%">
+                                            FALTANTE(-) <t t-esc="total_amount" />
+                                        </td>
+                                        <td style="width: 50%">
+                                            SOBRANTE(+) 0.0
+                                        </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td style="padding-top: 15px; width: 50%">
+                                            SOBRANTE(+) <t t-esc="total_amount" />
+                                        </td>
+                                        <td style="width: 50%">
+                                            FALTANTE(-) 0.0
+                                        </td>
+                                    </t>
                                 </tr>
                                 <tr>
                                     <td style="padding-top: 15px;">GERENTE</td>

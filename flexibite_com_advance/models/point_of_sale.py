@@ -3120,7 +3120,7 @@ class pos_session(models.Model):
             'amount': 0
         }
         for statement in self.statement_ids:
-            for order in statement.pos_session_id.mapped('order_ids'):
+            for order in statement.sudo().pos_session_id.mapped('order_ids'):
                 for st in order.statement_ids:
                     if st.journal_id.name == 'Efectivo':
                         amount = sum(order.mapped('amount_total'))
@@ -3191,6 +3191,8 @@ class pos_session(models.Model):
             'credito': credito,
             #'final_cash': dict_cash_values['amount'],
             'total_cash': total_cash,
+            'credit_vals': credit_values,
+            'tarjeta_vals': tar_values,
             'total': efectivo + tarjeta + credito,
             'sobrante': sum(total_sobrante),
             'faltante': sum(total_faltante),
