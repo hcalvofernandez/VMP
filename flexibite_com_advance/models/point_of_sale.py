@@ -2559,6 +2559,7 @@ class pos_session(models.Model):
                     statement.write({
                         'balance_end_real': float(balance_end_real)
                     })
+        self.set_end_balance_real_declared()
         return True
 
     @api.multi
@@ -2571,10 +2572,7 @@ class pos_session(models.Model):
         for cash_line in self.cashcontrol_ids:
             total_amount += cash_line.subtotal
         for statement in self.statement_ids:
-            for st in statement_ids:
-                if statement.journal_id.id == int(st['journal_id']):
-                    statement.write({'balance_end_real': st['balance_end_real']})
-
+            statement.write({'balance_end_real': total_amount})
         self.set_end_balance_real_declared()
         return True
 

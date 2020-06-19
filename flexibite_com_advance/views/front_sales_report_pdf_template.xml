@@ -313,14 +313,14 @@
                                         </td>
                                         <td style="width: 25%;">
                                             <t t-if="payment_element['name'] == 'Efectivo'">
-                                                <t t-esc="vals.get('efectivo') - efectivo_total" />
+                                                <t t-esc="(vals.get('efectivo') - efectivo_total) * -1" />
                                             </t>
                                             <t t-elif="payment_element['name'] == 'POS-Crédito'">
-                                                <t t-set="credito_total" t-value="vals.get('credito') - payment_element['sum']" />
+                                                <t t-set="credito_total" t-value="(vals.get('credito') - payment_element['sum'])" />
                                                 <t t-esc="credito_total" />
                                             </t>
                                             <t t-elif="payment_element['name'] == 'Tarjeta Bancaria'">
-                                                <t t-set="tarjeta_total" t-value="vals.get('tarjeta') - payment_element['sum']" />
+                                                <t t-set="tarjeta_total" t-value="(vals.get('tarjeta') - payment_element['sum'])" />
                                                 <t t-esc="tarjeta_total" />
                                             </t>
                                         </td>
@@ -370,7 +370,7 @@
                                     <td>
                                     </td>
                                     <td>
-                                        <t t-set="cash" t-value="vals.get('efectivo') - efectivo_total"/>
+                                        <t t-set="cash" t-value="(vals.get('efectivo') - efectivo_total) * -1"/>
                                         <t t-set="tar" t-value="tarjeta_total" />
                                         <t t-set="cred" t-value="credito_total" />
                                         <t t-esc="cash + tar + cred" />
