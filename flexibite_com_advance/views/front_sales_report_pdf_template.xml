@@ -3,8 +3,9 @@
     <data>
         <template id="front_sales_report_pdf_document">
             <t t-call="web.basic_layout">
-                <div class="page">
-                    <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>   
+                <div class="page" style="font-size:12px !important;">
+                    <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>
+                    <link href="/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>
                     <div class="company-details">
                         <div class="row-xreport" t-if="name">
                             MENDOCINOS (09)
@@ -12,10 +13,10 @@
                         <div class="row-xreport companyx-name">
                             <t t-esc="str(o.get_company_data_x().name).upper()" />
                         </div>
-                        <div class="row-xreport">
+                        <div class="row-xreport" t-if="o.get_company_data_x().vat">
                             : <t t-esc="o.get_company_data_x().vat" />
                         </div>                        
-                        <div class="row-xreport">
+                        <div class="row-xreport companyx-info">
                              <t t-esc="str(str(o.get_company_data_x().street).lower()).capitalize()" /> - <t t-esc="str(str(o.get_company_data_x().street2).lower()).capitalize()" /> 
                             - <t t-esc="str(str(o.get_company_data_x().city).lower()).capitalize()" /> 
                             - <t t-esc="str(str(o.get_company_data_x().state_id.name).lower()).capitalize()" /> 
@@ -282,14 +283,23 @@
 
                         <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">
                             <t t-set="vals" t-value="o.get_product_cate_total_x()" />
-                            <div align="center" style="padding-bottom:10px;">DECLARACION DE CAJERO</div>
-                            <table style="width:100%;">
+                            <div align="center" style="padding-bottom:10px; font-weight: 900;"><strong>VALIDACIÓN</strong></div>
+                            <table style="width:100%;" class="table_validate">
                                 <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(False)"/>
                                 <t t-set="total_sum" t-value="0.0"/>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>VENTA</th>
+                                        <th>DECLARACIÓN</th>
+                                        <th style="text-align: right;">DIFERENCIA</th>
+                                    </tr>
+                                </thead>
                                 <!--<t t-set="payment_summary_with_prices" t-value="o.get_payments_by_method(False)"/>-->
-                                <t t-set="credito_total" t-value="0.0" />
-                                <t t-set="tarjeta_total" t-value="0.0" />
-                                <t t-foreach="payment_summary_without_prices" t-as="payment_element">
+                                <tbody>
+                                    <t t-set="tarjeta_total" t-value="0.0" />
+                                    <t t-set="credito_total" t-value="0.0" />
+                                    <t t-foreach="payment_summary_without_prices" t-as="payment_element">
                                     <tr>
                                         <td style="width:25%"><t t-esc="payment_element['name']"/></td>
                                         <td  style="width:25%">
@@ -300,7 +310,7 @@
                                                 <t t-esc="payment_element['sum']" widget="monetary"/>
                                             </t>
                                         </td>
-                                        <td style="width: 25%;">
+                                        <td style="width: 25%; text-align: center;">
                                             <t t-if="payment_element['name'] == 'Efectivo'">
                                                 <t t-esc="vals.get('efectivo')" />
                                             </t>
@@ -311,9 +321,9 @@
                                                 <t t-esc="vals.get('tarjeta')" />
                                             </t>
                                         </td>
-                                        <td style="width: 25%;">
+                                        <td style="width: 25%; text-align: right;">
                                             <t t-if="payment_element['name'] == 'Efectivo'">
-                                                <t t-esc="(vals.get('efectivo') - efectivo_total) * -1" />
+                                                <t t-esc="(vals.get('efectivo') - efectivo_total)" />
                                             </t>
                                             <t t-elif="payment_element['name'] == 'POS-Crédito'">
                                                 <t t-set="credito_total" t-value="(vals.get('credito') - payment_element['sum'])" />
@@ -327,6 +337,19 @@
                                     </tr>
                                     <t t-set="total_sum" t-value="float(total_sum) + float(payment_element['sum'])"/>
                                 </t>
+                                    <tr style="border-bottom: 2px dashed #AAA; padding-bottom: 10px;">
+                                        <td>TOTAL</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td style="text-align: right;">
+                                            <t t-set="cash" t-value="(vals.get('efectivo') - efectivo_total)"/>
+                                            <t t-set="tar" t-value="(tarjeta_total)" />
+                                            <t t-set="cred" t-value="(credito_total)" />
+                                            <t t-esc="cash + tar + cred" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+
                                 <tr t-if="one">
                                     <td style="width:25%">EFECTIVO</td>
                                     <td style="width:25%">
@@ -363,19 +386,7 @@
                                         <t t-esc="vals.get('credit_vals')['amount'] - vals.get('credito')" />
                                     </td>
                                 </tr>
-                                <tr style="border-bottom: 2px dashed #AAA; padding-bottom: 10px;">
-                                    <td>TOTAL</td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                        <t t-set="cash" t-value="(vals.get('efectivo') - efectivo_total) * -1"/>
-                                        <t t-set="tar" t-value="tarjeta_total" />
-                                        <t t-set="cred" t-value="credito_total" />
-                                        <t t-esc="cash + tar + cred" />
-                                    </td>
-                                </tr>
+
                             </table>
                             <table style="width: 100%">
                                 <tr>

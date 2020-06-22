@@ -1,0 +1,19 @@
+body{
+    background: white;
+}
+
+.table_validate thead > tr{
+    background: #eaeaea;
+}
+
+.companyx-name{
+    text-align: center;
+    padding-top: 30px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+.companyx-info,
+ .row-xreport{
+    text-align: center;
+    font-weight: 700;
+}

@@ -58,9 +58,16 @@ var ChangePinPopupWidget = PopupWidget.extend({
             return rpc.query({
                 model: 'res.partner',
                 method: 'update_pin',
-                args: [partner.id]
+                args: [partner.id, self.input.val()]
             }).then(function(res){
                 console.log(res);
+                if (res.error){
+                    self.pos.db.notification('danger', res.msg);
+                }else{
+                    self.pos.db.notification('success', res.msg);
+                    self.gui.close_popup();
+                    self.pos.get_order().set_client(null);
+                }
             });
         }
     }

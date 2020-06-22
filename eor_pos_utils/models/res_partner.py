@@ -37,7 +37,14 @@ class ResPartner(models.Model):
     credit_blocked = fields.Boolean(string="Bloquear Saldo", default=False)
     # TODO: Esquema por producto
 
-    @api.multi
-    def update_pin(self, vals):
-        _logger.info(vals)
-        return {}
+    @api.model
+    def update_pin(self, partner_id, new_pin):
+        partner = self.browse(partner_id)
+        res = {'msg': 'Pin actualizado correctamente!', 'error': False}
+        if partner:
+            if new_pin == partner.client_pin:
+                res['msg'] = 'El nuevo PIN debe ser diferente al anterior'
+                res['error'] = True
+            else:
+                partner.sudo().write({'client_pin': new_pin})
+        return res

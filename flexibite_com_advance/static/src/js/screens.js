@@ -1183,6 +1183,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 }
             });
+            this.$('.client-line').click(function(e){
+                console.log(e);
+            }) //.attr('-id')
         },
         default_customer: function(){
             var order = this.pos.get_order();
@@ -4866,14 +4869,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         var client = self.pos.get_order().get_client()
                         partner_id = partner_id ? partner_id : client.id;
                         var cashier_id = self.pos.get_cashier().id;
-                        //var payment_lines = order.get_paymentlines();
-                        //var amount_is_low = false;
-                        /*_.map(payment_lines, function(line){
+                        var payment_lines = order.get_paymentlines();
+                        var amount_is_low = false;
+                        var amount_credit = 0.0;
+                        _.map(payment_lines, function(line){
                             if (line.name === "POS-Crédito (MXN)"){
-                                amount = line.amount;
+                                amount_credit += line.amount;
                                 amount_is_low = true;
                             }
-                        });*/
+                        });
+                        if (amount_is_low){
+
+                        }
+
                         var params = {
                             model: 'account.payment',
                             method: "payment_credit",

@@ -3141,8 +3141,6 @@ class pos_session(models.Model):
                         })
             values.append(dict_cash_values)
 
-        _logger.info(dict_cash_values)
-
         for session in self:
             saldo_inicial = session.cash_register_balance_start
         total_cash = saldo_inicial + dict_cash_values['amount'] + retiro + ingreso

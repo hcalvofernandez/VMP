@@ -420,9 +420,9 @@ class account_payment(models.Model):
                             values = self.env['pos.make.payment'].with_context(
                                 {'active_id': each.id, 'default_journal_id': get_journal_id, 'default_amount':each.amount_due}).default_get(['journal_id', 'amount'])
                             self.env['pos.make.payment'].with_context({'active_id': each.id,'ctx_is_postpaid': True}).sudo().create(values).check()
-
+                            affected_order.append(each.read())
                         elif each.amount_due >= amount:
-                            _logger.info("AMOUNT DUE >= AMOUNT %s" % (response))
+                            _logger.info("AMOUNTaffected_order DUE >= AMOUNT %s" % (response))
                             values = self.env['pos.make.payment'].with_context(
                                 {'active_id': each.id, 'default_journal_id': get_journal_id,
                                 'default_amount': amount}).default_get(['journal_id', 'amount'])
