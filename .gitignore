@@ -1,4 +1,6 @@
 *.pyc
+*.pyd
+*.pyo
 *.vscode/
 *.idea/
 __pycache__/
@@ -8,4 +10,7 @@ __pycache__/
 */__pycache__/
 **/__pycache__
 *__pycache__*
-
+*.dat
+*.swp
+#merge file
+merge.sh
