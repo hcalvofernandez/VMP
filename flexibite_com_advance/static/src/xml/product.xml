@@ -463,7 +463,7 @@
 	                <span style="text-decoration: line-through;color: red;"><t t-esc="widget.format_currency(line.get_original_price())" /></span>
 	            </t>
                 <t t-esc="widget.format_currency(line.get_display_price())"/>
-                <i class="oe_link_icon fa fa-trash oe_icon remove_line"/>
+                <i class="oe_link_icon fa fa-trash oe_icon remove_line icon_del_size"/>
             </span>
             <ul class="info-list">
                 <t t-if="line.get_quantity_str() !== '1' || line.selected ">

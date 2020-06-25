@@ -3544,6 +3544,10 @@ ul.sidebar-nav li.sidebar-brand .user_name {
 	font-size: 20px;
 }
 
+.icon_del_size{
+    font-size: 2em !important;
+}
+
 .pos .order .orderline .product-name {
 	width: 77%;
 	font-size: 16px;
