@@ -747,6 +747,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         login_user: function(username, password){
             var self = this;
             var user = _.find(self.pos.users, function(obj) { return obj.login == username && obj.pos_security_pin == password });
+            var view_initial = 'products';
             if(user){
                 $('.pos-topheader').show();
                 self.pos.set_cashier(user);
@@ -760,11 +761,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     if (self.pos.config.iface_floorplan) {
                         self.gui.set_startup_screen('floors');
                         self.gui.show_screen("floors");
+                        view_initial = 'floors';
                     } else {
                         self.gui.show_screen("products");
+                        view_initial = 'products';
                     }
                 }else{
                     self.gui.show_screen("products");
+                    view_initial = 'products';
                 }
                 self.pos.chrome.slider_widget.renderElement();
                 self.pos.set_login_from('login');
@@ -799,6 +803,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 if(self.pos.config.enable_automatic_lock && self.pos.get_cashier().access_pos_lock){
                     start_lock_timer(self.pos.config.time_interval, self);
                 }
+                //   print initial amount ticket
+                self.gui.show_screen('initialBalanceTicket');
+                self.gui.show_screen(view_initial);
+
             }else{
                 self.pos.db.notification('danger',_t('Invalid Username or Pin!!!'));
             }
@@ -3175,6 +3183,47 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
     gui.define_screen({name:'orderdetail', widget: OrderDetailScreenWidget});
+
+    var InitialBalanceTicket = screens.ReceiptScreenWidget.extend({
+        template: 'InitialBalanceReceiptScreenWidget',
+        show: function(){
+            this._super();
+            var self = this;
+            this.render_receipt();
+            this.handle_auto_print();
+            console.log('vamos bien!!');
+        },
+        render_receipt: function() {
+            var self = this;
+            //   print initial amount ticket
+            var params = {
+                model: 'pos.session',
+                method: 'search_read',
+                fields: ['id', 'user_id', 'cash_register_balance_start'],
+                domain: [['id','=', self.pos.config.current_session_id[0]]],
+            };
+            rpc.query(params, {async: false}).then(function(pos_session){
+                    var receipt = QWeb.render('InitialBalanceTicket', {
+                        receipt: {
+                            balance_start: pos_session[0]['cash_register_balance_start'],
+                            user_name: pos_session[0]['user_id'][1],
+                            start_text: _t('Saldo inicial'),
+                        },
+                        pos: self.pos,
+                        widget: self,
+                    });
+                    self.$('.pos-receipt-container').html(receipt);
+            });
+        },
+        handle_auto_print: function() {
+            if (this.should_auto_print()) {
+                this.print();
+            } else {
+                this.lock_screen(false);
+            }
+        },
+    });
+    gui.define_screen({name:'initialBalanceTicket', widget: InitialBalanceTicket});
 
     screens.OrderWidget.include({
         init: function(parent, options) {

@@ -68,38 +68,38 @@
                     <col width='70%'/>
                     <col width='30%'/>
                 </colgroup>
-<!--
-                <tr t-foreach="orderlines" t-as="orderline">
-                    <t t-if="!orderline.get_product().is_dummy_product">
-	                    <td>
-	                        <t t-esc="orderline.get_product().display_name"/>
-	                    </td>
-                        <t t-if="orderline.get_take_away()">
-                            <div class="pos-disc-font">
-                                Take Away...
-                            </div>
-                        </t>
-                        <t t-if="orderline.get_drive_through_mode()">
-                            <div class="pos-disc-font">
-                                Drive Through
-                            </div>
-                        </t>
-                        <t t-if="orderline.get_dine_in_mode()">
-                            <div class="pos-disc-font">
-                                Dine In
-                            </div>
-                        </t>
-                        <t t-if="orderline.get_online_mode()">
-                            <div class="pos-disc-font">
-                                Online
-                            </div>
-                        </t>
-                        <td class="pos-right-align">
-	                        <t t-esc="orderline.get_quantity_str_with_unit()"/>
-	                    </td>
-                    </t>
-                </tr>
-                -->
+                <!--
+                                <tr t-foreach="orderlines" t-as="orderline">
+                                    <t t-if="!orderline.get_product().is_dummy_product">
+                                        <td>
+                                            <t t-esc="orderline.get_product().display_name"/>
+                                        </td>
+                                        <t t-if="orderline.get_take_away()">
+                                            <div class="pos-disc-font">
+                                                Take Away...
+                                            </div>
+                                        </t>
+                                        <t t-if="orderline.get_drive_through_mode()">
+                                            <div class="pos-disc-font">
+                                                Drive Through
+                                            </div>
+                                        </t>
+                                        <t t-if="orderline.get_dine_in_mode()">
+                                            <div class="pos-disc-font">
+                                                Dine In
+                                            </div>
+                                        </t>
+                                        <t t-if="orderline.get_online_mode()">
+                                            <div class="pos-disc-font">
+                                                Online
+                                            </div>
+                                        </t>
+                                        <td class="pos-right-align">
+                                            <t t-esc="orderline.get_quantity_str_with_unit()"/>
+                                        </td>
+                                    </t>
+                                </tr>
+                                -->
             </table>
             <br/>
             <div class="pos-center-align" style="font-size: 12px;">
@@ -475,13 +475,13 @@
                                    Drive Through
                                </div>
                            </t>
-                           <!--
-                            <t t-if="orderline.get_dine_in_mode()">
-                               <div class="pos-disc-font">
-                                   Dine In
-                               </div>
-                           </t>
-                           -->
+                            <!--
+                             <t t-if="orderline.get_dine_in_mode()">
+                                <div class="pos-disc-font">
+                                    Dine In
+                                </div>
+                            </t>
+                            -->
                             <t t-if="orderline.get_online_mode()">
                                <div class="pos-disc-font">
                                    Online
@@ -791,7 +791,7 @@
         <t t-jquery="table.receipt-change" t-operation="append">
           <tr t-if="order.order_on_debit">
                     <td>Débito Disponible:</td>
-                    <td class="pos-right-align">
+              <td class="pos-right-align">
                         <t t-esc="widget.format_currency(widget.pos.get_client().remaining_debit_amount - order.get_total_with_tax())"/>
                     </td>
                 </tr>
@@ -799,9 +799,10 @@
         <t t-jquery="table.receipt-change" t-operation="append">
           <tr t-if="order.order_on_credit">
                     <td>Crédito Disponible:</td>
-                    <td class="pos-right-align">
-                        <t t-if="'remaining_credit_amount' in client_data" t-esc="widget.format_currency(widget.pos.get_client().remaining_credit_limit  - order.get_total_with_tax())"/>
-                        <!--client_data['remaining_credit_limit']-->
+              <td class="pos-right-align">
+                        <t t-if="'remaining_credit_amount' in client_data"
+                           t-esc="widget.format_currency(widget.pos.get_client().remaining_credit_limit  - order.get_total_with_tax())"/>
+                  <!--client_data['remaining_credit_limit']-->
                     </td>
                 </tr>
         </t>
@@ -809,11 +810,12 @@
             <tr t-if="order.order_on_meal_plan">
                 <td>Meal Plan Crédito Disponible:</td>
                 <td class="pos-right-align">
-                    <t t-if="'remaining_meal_plan_limit' in client_data" t-esc="widget.format_currency(client_data['remaining_meal_plan_limit']  - order.get_total_with_tax() )"/>
+                    <t t-if="'remaining_meal_plan_limit' in client_data"
+                       t-esc="widget.format_currency(client_data['remaining_meal_plan_limit']  - order.get_total_with_tax() )"/>
                 </td>
             </tr>
         </t>
-        
+
         <t t-jquery="table.receipt-change" t-operation="after">
             <br/>
             <table style="margin-left: 54px;"><tbody><tr id="barcode1"></tr></tbody></table>
@@ -2792,4 +2794,40 @@
         </t>
     </t>
 
+    <t t-name="InitialBalanceTicket">
+        <div class="pos-sale-ticket" style="border:0px solid;">
+            <div class="pos-center-align">
+                <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>
+            </div>
+            <div class="pos-center-align">
+                <img width="210" t-attf-src="data:image/png;base64,#{pos.config.imagen}"/>
+            </div>
+            <div class="pos-center-align">
+                <table class="receipt-orderlines">
+                    <colgroup>
+                        <col width="55%"/>
+                        <col width="45%"/>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: left">
+                                Cajero:
+                            </td>
+                            <td class="pos-right-align">
+                                 <t t-esc='receipt.user_name'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">
+                                <t t-esc='receipt.start_text' />
+                            </td>
+                            <td class="pos-right-align">
+                                <t t-esc="widget.format_currency((receipt.balance_start).toFixed(2))"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
 </templates>
