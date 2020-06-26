@@ -15,7 +15,7 @@
         'base',
         'contract',
         'point_of_sale',
-        'flexibite_com_advance',
+        #'flexibite_com_advance',
         #'eor_pos_utils',
         'mail',
         'contacts',
