@@ -2800,7 +2800,9 @@
                 <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>
             </div>
             <div class="pos-center-align">
-                <img width="210" t-attf-src="data:image/png;base64,#{pos.config.imagen}"/>
+                <t t-if="pos">
+                    <img width="210" t-attf-src="data:image/png;base64,#{pos.config.imagen}"/>
+                </t>
             </div>
             <div class="pos-center-align">
                 <table class="receipt-orderlines">
