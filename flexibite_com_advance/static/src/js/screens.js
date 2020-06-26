@@ -2993,6 +2993,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         if(self.pos.config.validate_on_click){
                             self.pre_validate_order();
                         }
+                        if (self.order_is_valid()){
+                            if (self.pos.config.iface_print_auto){
+                                if (!self._locked) {
+                                    order.finalize();
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -3065,7 +3072,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }else{
                         self.$('.edit').removeClass('error');
                     }
-                    return self.gui.show_screen('receipt');
+                    if (self.pos.config.iface_print_auto){
+                        if (!self._locked) {
+                            return self.pos.get_order().finalize();
+                        }
+                    } else {
+                        return self.gui.show_screen('receipt');
+                    }
                 }
 
                 /*
@@ -3191,7 +3204,6 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var self = this;
             this.render_receipt();
             this.handle_auto_print();
-            console.log('vamos bien!!');
         },
         render_receipt: function() {
             var self = this;
@@ -3223,6 +3235,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
     });
+
     gui.define_screen({name:'initialBalanceTicket', widget: InitialBalanceTicket});
 
     screens.OrderWidget.include({

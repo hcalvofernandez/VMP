@@ -6,7 +6,7 @@
                 <div class="page" style="font-size:12px !important;">
                     <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>
                     <link href="/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>
-                    <div class="company-details">
+                    <div class="company-details fa-1x">
                         <div class="row-xreport" t-if="name">
                             MENDOCINOS (09)
                         </div>
@@ -290,9 +290,9 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>VENTA</th>
-                                        <th>DECLARACIÓN</th>
-                                        <th style="text-align: right;">DIFERENCIA</th>
+                                        <th class="fa-0x">VENTA</th>
+                                        <th class="fa-0x">DECLARACIÓN</th>
+                                        <th class="fa-0x" style="text-align: right;">DIFERENCIA</th>
                                     </tr>
                                 </thead>
                                 <!--<t t-set="payment_summary_with_prices" t-value="o.get_payments_by_method(False)"/>-->
