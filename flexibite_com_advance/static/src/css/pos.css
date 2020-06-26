@@ -2261,7 +2261,7 @@ button.fc-today-button.fc-button.fc-state-default.fc-corner-left.fc-corner-right
 
 .pos .control-button {
 	line-height: 34px;
-	font-size: 16px;
+	font-size: 20px;
 	margin-left: 0;
 	margin-bottom: 0;
 }
@@ -5318,6 +5318,7 @@ li div.divider span {
 {
 	border: 0px!important;
 	background: white;
+	font-size: 2em;
 }
 
 .pos .sale-note-order-list {
