@@ -3198,7 +3198,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     gui.define_screen({name:'orderdetail', widget: OrderDetailScreenWidget});
 
     var InitialBalanceTicket = screens.ReceiptScreenWidget.extend({
-        template: 'InitialBalanceReceiptScreenWidget',
+        template: 'InitialBalanceTicket',
         show: function(){
             this._super();
             var self = this;
