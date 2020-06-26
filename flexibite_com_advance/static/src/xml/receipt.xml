@@ -2811,7 +2811,7 @@
                         <col width="45%"/>
                     </colgroup>
                     <tbody>
-                        <tr>
+                        <tr t-if="receipt">
                             <td style="text-align: left">
                                 Cajero:
                             </td>
@@ -2819,7 +2819,7 @@
                                  <t t-esc='receipt.user_name'/>
                             </td>
                         </tr>
-                        <tr>
+                        <tr t-if="receipt">
                             <td style="text-align: left">
                                 <t t-esc='receipt.start_text' />
                             </td>
