@@ -2800,8 +2800,8 @@
                 <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>
             </div>
             <div class="pos-center-align">
-                <t t-if="pos">
-                    <img width="210" t-attf-src="data:image/png;base64,#{pos.config.imagen}"/>
+                <t t-if="widget.pos">
+                    <img width="210" t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}"/>
                 </t>
             </div>
             <div class="pos-center-align">
@@ -2811,20 +2811,20 @@
                         <col width="45%"/>
                     </colgroup>
                     <tbody>
-                        <tr t-if="receipt">
+                        <tr t-if="widget.init_receipt_data">
                             <td style="text-align: left">
                                 Cajero:
                             </td>
                             <td class="pos-right-align">
-                                 <t t-esc='receipt.user_name'/>
+                                 <t t-esc='widget.init_receipt_data.user_name'/>
                             </td>
                         </tr>
-                        <tr t-if="receipt">
+                        <tr t-if="widget.init_receipt_data">
                             <td style="text-align: left">
-                                <t t-esc='receipt.start_text' />
+                                <t t-esc="widget.init_receipt_data.start_text"/>
                             </td>
                             <td class="pos-right-align">
-                                <t t-esc="widget.format_currency((receipt.balance_start).toFixed(2))"/>
+                                <t t-esc="widget.format_currency((widget.init_receipt_data.balance_start).toFixed(2))"/>
                             </td>
                         </tr>
                     </tbody>

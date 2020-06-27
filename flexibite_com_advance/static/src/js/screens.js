@@ -804,7 +804,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     start_lock_timer(self.pos.config.time_interval, self);
                 }
                 //   print initial amount ticket
-                self.gui.show_screen('initialBalanceTicket');
+                if (self.pos.config.iface_print_auto) {
+                    self.gui.show_screen('initialBalanceTicket');
+                }
                 self.gui.show_screen(view_initial);
 
             }else{
@@ -3199,33 +3201,25 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     var InitialBalanceTicket = screens.ReceiptScreenWidget.extend({
         template: 'InitialBalanceTicket',
-        show: function(){
-            this._super();
+        willStart: function() {
             var self = this;
-            this.render_receipt();
-            this.handle_auto_print();
-        },
-        render_receipt: function() {
-            var self = this;
-            //   print initial amount ticket
             var params = {
                 model: 'pos.session',
                 method: 'search_read',
                 fields: ['id', 'user_id', 'cash_register_balance_start'],
-                domain: [['id','=', self.pos.config.current_session_id[0]]],
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
             };
-            rpc.query(params, {async: false}).then(function(pos_session){
-                    var receipt = QWeb.render('InitialBalanceTicket', {
-                        receipt: {
-                            balance_start: pos_session[0]['cash_register_balance_start'],
-                            user_name: pos_session[0]['user_id'][1],
-                            start_text: _t('Saldo inicial'),
-                        },
-                        pos: self.pos,
-                        widget: self,
-                    });
-                    self.$('.pos-receipt-container').html(receipt);
+            return rpc.query(params, {async: false}).then(function(pos_session){
+                self.init_receipt_data = {
+                        balance_start: pos_session[0]['cash_register_balance_start'],
+                        user_name: pos_session[0]['user_id'][1],
+                        start_text: _t('Saldo inicial'),
+                };
             });
+        },
+        show: function(){
+            this._super();
+            this.handle_auto_print();
         },
         handle_auto_print: function() {
             if (this.should_auto_print()) {
