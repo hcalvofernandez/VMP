@@ -956,6 +956,9 @@ odoo.define('flexibite_com_advance.popup', function (require) {
             });
             $('.close-pos-session').click(function(){
                 if(self.pos.config.cash_control){
+                    if (self.pos.config.iface_cashdrawer) {
+                        self.pos.proxy.open_cashbox();
+                    }
                     self.gui.show_popup('cash_control',{
                         title:'Declaración de Efectivo',
                         statement_id:self.statement_id,
