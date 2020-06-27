@@ -806,8 +806,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 //   print initial amount ticket
                 if (self.pos.config.iface_print_auto) {
                     self.gui.show_screen('initialBalanceTicket');
+                    setTimeout(function () {
+                        self.gui.show_screen(view_initial);
+                    }, 1000)
                 }
-                self.gui.show_screen(view_initial);
+                else {
+                    self.gui.show_screen(view_initial);
+                }
 
             }else{
                 self.pos.db.notification('danger',_t('Invalid Username or Pin!!!'));
@@ -3222,10 +3227,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.handle_auto_print();
         },
         handle_auto_print: function() {
-            if (this.should_auto_print()) {
-                this.print();
+            var self = this;
+            if (self.should_auto_print()) {
+                self.print();
             } else {
-                this.lock_screen(false);
+                self.lock_screen(false);
             }
         },
     });

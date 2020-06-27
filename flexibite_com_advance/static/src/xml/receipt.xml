@@ -2807,8 +2807,8 @@
             <div class="pos-center-align">
                 <table class="receipt-orderlines">
                     <colgroup>
-                        <col width="55%"/>
-                        <col width="45%"/>
+                        <col width="50%"/>
+                        <col width="50%"/>
                     </colgroup>
                     <tbody>
                         <tr t-if="widget.init_receipt_data">
