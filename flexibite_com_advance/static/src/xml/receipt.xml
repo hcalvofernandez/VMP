@@ -197,7 +197,7 @@
             <br/>
             <t t-if="widget.pos.company_logo_base64">
                 <div style="text-align:center;">
-                    <img t-att-src="widget.pos.company_logo_base64" style="max-height: 70px;width:auto;height:auto;"/>
+                    <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" style="max-height: 70px;width:auto;height:auto;"/>
                     <br/>
                 </div>
             </t>
@@ -257,7 +257,7 @@
     <t t-name="XmlDeliveryPaymentTicket">
         <receipt align='center' width='40' value-thousands-separator=''>
             <t t-if='widget.pos.company.logo'>
-                <img t-att-src='widget.pos.company.logo' alt="Logo"/>
+                <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" alt="Logo"/>
                 <br/>
             </t>
             <t t-if='!widget.pos.company.logo'>
@@ -401,7 +401,7 @@
         <t t-jquery="[t-esc='order.name']" t-operation="after">
            <t t-if="widget.pos.company_logo_base64">
                <div style="text-align:center;">
-                   <img t-att-src="widget.pos.company_logo_base64" style="max-height: 70px;width:auto;height:auto;"/>
+                   <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" style="max-height: 70px;width:auto;height:auto;"/>
                    <br/>
                </div>
            </t>
@@ -1619,7 +1619,7 @@
     <t t-name="XmlFreeTicket">
         <receipt align='center' width='40' value-thousands-separator=''>
             <t t-if='receipt.company.logo'>
-                <img t-att-src='receipt.company.logo'/>
+                <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}"/>
                 <br/>
             </t>
             <t t-if='!receipt.company.logo'>
