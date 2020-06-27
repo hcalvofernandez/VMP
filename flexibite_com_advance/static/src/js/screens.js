@@ -6736,6 +6736,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
 
     screens.NumpadWidget.include({
+        template: 'NumpadWidget01_9',
         start: function() {
             var self = this;
             this._super();
