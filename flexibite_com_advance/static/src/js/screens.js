@@ -1755,6 +1755,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             self.pos.push_order(order);
             self.gui.show_screen('receipt');
+            if (self.pos.config.iface_print_auto){
+                if (!self._locked) {
+                    setTimeout(function(){
+                        order.finalize();
+                    }, 500);
+                }
+            }
 
             /*
             if (client && debit && debit > client.remaining_debit_amount){
@@ -3089,6 +3096,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }
                     } else {
                         return self.gui.show_screen('receipt');
+                    }
+                }
+                else {
+                    if (self.pos.config.iface_print_auto){
+                        if (!self._locked) {
+                            return self.pos.get_order().finalize();
+                        }
                     }
                 }
 
