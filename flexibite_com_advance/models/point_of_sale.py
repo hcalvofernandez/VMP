@@ -2242,25 +2242,6 @@ class pos_order_line(models.Model):
     online_mode = fields.Boolean('Rápido')
 
 
-class res_partner(models.Model):
-    _inherit = 'res.partner'
-
-    prefer_ereceipt = fields.Boolean('Prefer E-Receipt')
-
-    @api.multi
-    def _compute_remain_credit_limit(self):
-        
-        for partner in self:
-            total_credited = 0
-            orders = self.env['pos.order'].search([('partner_id', '=', partner.id),('state_order_fac', '=', 'n'),
-                                                   ('order_type', '=', 'Cŕedito'),('is_postpaid','=',True)])
-            for order in orders:
-                total_credited += order.amount_total
-            partner.remaining_credit_limit = partner.credit_limit - total_credited
-
-    remaining_credit_limit = fields.Float("Remaining Credit Limit", compute="_compute_remain_credit_limit")
-
-
 class quick_cash_payment(models.Model):
     _name = "quick.cash.payment"
     _description = 'quick cash payment'

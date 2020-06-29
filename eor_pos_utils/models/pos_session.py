@@ -11,7 +11,7 @@ _logger = logging.getLogger("_______________________________________" + __name__
 class PosSession(models.Model):
     _inherit = 'pos.session'
 
-    @api.depends('order_ids', 'cash_register_balance_start', 'cash_register_id', 'cash_register_tip')
+    @api.depends('order_ids', 'cash_register_balance_start', 'cash_register_id')
     def _compute_cash_balance(self):
         #res = super(PosSession, self)._compute_cash_balance()
         for session in self:

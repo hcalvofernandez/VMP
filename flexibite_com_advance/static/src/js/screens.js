@@ -976,55 +976,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         init: function(parent, options){
             var self = this;
             this._super(parent, options);
-            var records = rpc.query({
-                model: 'res.partner',
-                method: 'calculate_partner',
-            }, {async: false}).then(function (result) {
-                if(result && result[0]){
-                    var partner_ids = result;
-                    var total_partners = partner_ids.length;
-                    var remaining_time;
-                    if(total_partners){
-                        var partner_limit = 5000;
-                        var count_loop = partner_ids.length;
-                        var last_ids = partner_ids;
-                        var count_loaded_products = 0;
-                        function ajax_partner_load(){
-                            //if(count_loop > 0){
-                            $.ajax({
-                                type: "POST",
-                                url: '/web/dataset/load_customers',
-                                data: {
-                                        model: 'res.partner',
-                                        fields: JSON.stringify(self.pos.partner_fields),
-                                        partner_limit:partner_limit,
-                                        partner_ids:JSON.stringify(last_ids.splice(0, partner_limit) || []),
-                                },
-                                success: function(res) {
-                                    var all_partners = JSON.parse(res);
-                                    count_loop -= all_partners.length;
-                                    self.pos.partners = JSON.parse(res);
-                                    self.pos.partners_load = true;
-                                    self.pos.db.add_partners(JSON.parse(res));
-                                    self.render_list(self.pos.db.get_partners_sorted(5000));
-                                    //ajax_partner_load();
-                                },
-                                 error: function(e) {
-                                    console.log("e >>>>>>>> ",e);
-                                    self.pos.db.notification('danger',_t('Partner Loading Failed !'));
-                                    console.log('Partner Qa-run failed.');
-                                 },
-                            });
-                            //}
+        },
+        willStart: function() {
+            var self = this;
+            var def1 = this._super.apply(this, arguments);
+
+            var def2 =  rpc.query({
+                    model: 'res.partner',
+                    method: 'calculate_partner',
+                    args: [JSON.stringify(self.pos.partner_fields)],
+                }).then(function(result){
+                    if(result && result[0]) {
+                        var partner_ids = result;
+                        var total_partners = partner_ids.length;
+                        if(total_partners) {
+                            self.pos.partners = result;
+                            self.pos.partners_load = true;
+                            self.pos.db.add_partners(result);
                         }
-                        ajax_partner_load();
                     }
-                } else {
-                    console.log("\n Partner Not Found.");
-                }
-            }).fail(function(){
-                self.pos.db.notification('danger',"Connection lost");
-            });
+                }).fail(function(){
+                    self.pos.db.notification('danger', _t("Connection lost"));
+                });
+
+            return $.when(def1, def2);
         },
         show: function(){
             var self = this;
@@ -1033,6 +1008,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var partner = self.pos.partners;
             var order = self.pos.get_order();
             var options = order.get_screen_data('params');
+            self.render_list(self.pos.db.get_partners_sorted(5000));
             this.change_pin = false;
             if (options && options.change_pin){
                 this.change_pin = true;

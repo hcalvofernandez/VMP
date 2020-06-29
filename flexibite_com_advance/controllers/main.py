@@ -151,26 +151,26 @@ class DataSet(http.Controller):
         return json.dumps([])
 
     # Load Customers
-    @http.route('/web/dataset/load_customers', type='http', auth="user", methods=['POST'], csrf=False)
-    def load_customers(self, **kw):
-        cr, uid, context = request.cr, request.uid, request.context
-        partner_ids = eval(kw.get('partner_ids'))
-        records = []
-        fields = []
-        if eval(kw.get('fields')):
-            fields = eval(kw.get('fields'))
-        domain = [('id', 'in', partner_ids), ('customer', '=', True)]
-        try:
-            records = request.env['res.partner'].search_read(domain, fields)
-            if records:
-                for each_rec in records:
-                    if each_rec['write_date']:
-                        client_write_date = each_rec['write_date']
-                        each_rec['write_date'] = client_write_date.strftime('%Y-%m-%d %H:%M:%S')
-                return json.dumps(records)
-        except Exception as e:
-            print ("\n Error......", e)
-        return json.dumps([])
+    # @http.route('/web/dataset/load_customers', type='http', auth="user", methods=['POST'], csrf=False)
+    # def load_customers(self, **kw):
+    #     cr, uid, context = request.cr, request.uid, request.context
+    #     partner_ids = eval(kw.get('partner_ids'))
+    #     records = []
+    #     fields = []
+    #     if eval(kw.get('fields')):
+    #         fields = eval(kw.get('fields'))
+    #     domain = [('id', 'in', partner_ids), ('customer', '=', True)]
+    #     try:
+    #         records = request.env['res.partner'].search_read(domain, fields)
+    #         if records:
+    #             for each_rec in records:
+    #                 if each_rec['write_date']:
+    #                     client_write_date = each_rec['write_date']
+    #                     each_rec['write_date'] = client_write_date.strftime('%Y-%m-%d %H:%M:%S')
+    #             return json.dumps(records)
+    #     except Exception as e:
+    #         print ("\n Error......", e)
+    #     return json.dumps([])
 
 class TerminalLockController(BusController):
 
