@@ -2566,7 +2566,6 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var order = this.pos.get_order();
             var self = this;
             var client = order.get_client();
-            
 
             if((this.pos.get_order().get_total_with_tax() < 0) && this.pos.get_order().get_paymentlines().length == 0){
                 return alert(_t('Please select a journal.'));
@@ -3050,10 +3049,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     return self.pos.db.notification('danger', 'Agregue una línea de Venta!.');
                 }
 
-                if (!order.get_client()){
-                    var payment_amount = 0;
-                    if (order.get_paymentlines().length === 0){
-                        return self.pos.db.notification('danger', 'Agregue un Método de Pago!.');
+                var payment_amount = 0;
+                if (order.get_paymentlines().length === 0){
+                    return self.pos.db.notification('danger', 'Agregue un Método de Pago!.');
                     }
                     _.map(order.get_paymentlines(), function(lines){
                         payment_amount += lines.amount;
@@ -3066,6 +3064,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }else{
                         self.$('.edit').removeClass('error');
                     }
+                if (!order.get_client()){
                     if (self.pos.config.iface_print_auto){
                         if (!self._locked) {
                             return self.pos.get_order().finalize();
