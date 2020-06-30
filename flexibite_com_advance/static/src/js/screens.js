@@ -1261,6 +1261,37 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             $add_money_button.toggleClass('oe_hidden',!this.has_client_changed());
         },
+        line_select: function(event,$line,id){
+            var self = this;
+            var params = {
+                model: 'res.partner',
+                method: 'search_read',
+                domain: [['id', '=', id]],
+                fields:['remaining_credit_limit']
+            };
+            rpc.query(params).then(function(result){
+                var partner = self.pos.db.get_partner_by_id(id);
+                if (partner.remaining_credit_limit != result[0].remaining_credit_limit)
+                {
+                    partner.remaining_credit_limit = result[0].remaining_credit_limit;
+                }
+                self.$('.client-list .lowlight').removeClass('lowlight');
+                    if ( $line.hasClass('highlight') ){
+                        $line.removeClass('highlight');
+                        $line.addClass('lowlight');
+                        self.display_client_details('hide',partner);
+                        self.new_client = null;
+                        self.toggle_save_button();
+                    }else{
+                        self.$('.client-list .highlight').removeClass('highlight');
+                        $line.addClass('highlight');
+                        var y = event.pageY - $line.parent().offset().top;
+                        self.display_client_details('show',partner,y);
+                        self.new_client = partner;
+                        self.toggle_save_button();
+                    }
+                });
+        },
         _get_customer_history: function(partner){
             var params = {
                 model: 'pos.order',
