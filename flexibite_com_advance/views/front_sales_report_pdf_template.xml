@@ -273,39 +273,39 @@
                                 </tr>
                             </table>
                         </div>
-                        <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">
-                            <t t-set="vals" t-value="o.get_product_cate_total_x()" />
-                            <table style="width:100%;">
-                                <!--<t t-set="item_categories" t-value="o.get_product_category_x()"/>
-                                <t t-foreach="item_categories" t-as="item_category">
-                                    <tr>
-                                        <td style="width:50%"><t t-esc="o.get_product_name_x(item_category.get('pos_categ_id'))"/>:</td>
-                                        <td  style="width:50%"><t t-esc="item_category['price']" widget="monetary"/></td>
-                                    </tr>
-                                </t>
-                                -->
-                                <tr>
-                                    <td  style="width:50%;padding-left:15px;">VENTA 16%</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('balance_end_real')"
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                <tr t-foreach="vals.get('taxes')" t-as="tax">
-                                    <td style="width:70%">IMPUESTO <t t-esc="tax" />:</td>
-                                    <td style="width:30%" class="text-right"><t t-esc="vals.get('amount_tax_line')"
-                                                             t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                <tr style="border-top: 1px solid #AAA;">
-                                    <td  style="width:50%;">IMPUESTOS TOTAL</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_tax')"
-                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                <tr style="border-top: 1px solid #AAA;">
-                                    <td  style="width:50%;">VENTAS CON IMP.</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_total')"
-                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                            </table>
-                        </div>
+<!--                        <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">-->
+<!--                            <t t-set="vals" t-value="o.get_product_cate_total_x()" />-->
+<!--                            <table style="width:100%;">-->
+<!--                                &lt;!&ndash;<t t-set="item_categories" t-value="o.get_product_category_x()"/>-->
+<!--                                <t t-foreach="item_categories" t-as="item_category">-->
+<!--                                    <tr>-->
+<!--                                        <td style="width:50%"><t t-esc="o.get_product_name_x(item_category.get('pos_categ_id'))"/>:</td>-->
+<!--                                        <td  style="width:50%"><t t-esc="item_category['price']" widget="monetary"/></td>-->
+<!--                                    </tr>-->
+<!--                                </t>-->
+<!--                                &ndash;&gt;-->
+<!--                                <tr>-->
+<!--                                    <td  style="width:50%;padding-left:15px;">VENTA 16%</td>-->
+<!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('balance_end_real')"-->
+<!--                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+<!--                                </tr>-->
+<!--                                <tr t-foreach="vals.get('taxes')" t-as="tax">-->
+<!--                                    <td style="width:70%">IMPUESTO <t t-esc="tax" />:</td>-->
+<!--                                    <td style="width:30%" class="text-right"><t t-esc="vals.get('amount_tax_line')"-->
+<!--                                                             t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+<!--                                </tr>-->
+<!--                                <tr style="border-top: 1px solid #AAA;">-->
+<!--                                    <td  style="width:50%;">IMPUESTOS TOTAL</td>-->
+<!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_tax')"-->
+<!--                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+<!--                                </tr>-->
+<!--                                <tr style="border-top: 1px solid #AAA;">-->
+<!--                                    <td  style="width:50%;">VENTAS CON IMP.</td>-->
+<!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_total')"-->
+<!--                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+<!--                                </tr>-->
+<!--                            </table>-->
+<!--                        </div>-->
 
                         <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">
                             <t t-set="vals" t-value="o.get_product_cate_total_x()" />

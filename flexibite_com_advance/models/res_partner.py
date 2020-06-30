@@ -270,7 +270,7 @@ class ResPartner(models.Model):
     remaining_loyalty_amount = fields.Float("Points to Amount", readonly=1, compute='_calculate_remaining_loyalty', store=True)
 
     loyalty_points_earned = fields.Float(compute='_calculate_earned_loyalty_points', store=True)
-    remaining_credit_limit = fields.Float("Remaining Credit Limit", compute="_compute_remain_credit_limit", store=True)
+    remaining_credit_limit = fields.Float(string="Crédito Disponible", compute="_compute_remain_credit_limit", store=True)
 
 
 class partner_payment_transaction(models.TransientModel):
