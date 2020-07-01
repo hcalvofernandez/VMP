@@ -247,9 +247,6 @@ class ResPartner(models.Model):
     exchange_history_ids = fields.One2many('aspl.gift.card.exchange.history', 'customer_id')
     send_loyalty_mail = fields.Boolean("Send Loyalty Mail", default=True)
     total_remaining_points = fields.Float("Total Loyalty Points", readonly=1)
-
-    pos_order_ids = fields.One2many(comodel_name="pos.order", inverse_name="partner_id", string="Pos Orders",
-                                    required=False)
     loyalty_ids = fields.One2many(comodel_name="loyalty.point", inverse_name="partner_id", string="Loyalty", required=False, )
     loyalty_point_redeem_ids = fields.One2many(comodel_name="loyalty.point.redeem", inverse_name="partner_id", string="Loyalty Points", required=False, )
     prefer_ereceipt = fields.Boolean('Prefer E-Receipt')

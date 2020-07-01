@@ -31,6 +31,26 @@
                     </field>
                 </page>
             </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="ids_schemes_sub" invisible="1" />
+                <field name="schemes_sub_id" attrs="{'invisible':[('type_contract_hide','not in', ['subsidio'])]}" domain="[('id','in',ids_schemes_sub)]"/>
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="type_contract_hide"/>
+
+                <field name="ids_schemes_contracts" invisible="1"/>
+                <field name="credit_s_id" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
+
+                <field name="credit_limit_computed" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
+            </xpath>
+            <xpath expr="//field[@name='function']" position="before">
+                <field name="client_number"/>
+                <field name="id" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//button[last()]" position="after">
+                <button name="%(credit.action_view_report_pos_wizard)d" type="action" string="Reporte POS" class="oe_highlight" context="{'company_id': company_id,'partner_id': id}"/>
+            </xpath>
         </field>
     </record>
 
@@ -41,6 +61,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='active']" position="after">
                 <field name="credit_blocked" widget="checkbox"/>
+                <field name="saldo_credit"/>
             </xpath>
         </field>
     </record>

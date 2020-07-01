@@ -15,6 +15,10 @@ class Contract(models.Model):
     "contract_contract_scheme_rel", "contract_id", "scheme_id", "Esquema de subsidio")
     # TODO: Esquema de producto
     product_ids = fields.Many2many("product.product", string="Productos", domain="[('available_in_pos', '=', True)]")
+    credit_schemes_line_ids = fields.Many2many(
+        'credit.credit_schemes',
+        string='Esquemas de Crédito',
+    )
 
     @api.multi
     def write(self, vals):
@@ -27,18 +31,3 @@ class Contract(models.Model):
         if 'meal_plan_credit' in vals:
             partner.sudo().write({'meal_plan_limit': vals['meal_plan_credit']})
         return super(Contract, self).write(vals)
-
-
-
-class ContractSchemeContract(models.Model):
-    _name = 'contract.scheme.contract'
-    _description = 'Modelo Esquema de Subsidio'
-    _rec_name = 'name'
-
-    name = fields.Char(string='Nombre')
-    qty = fields.Float(string='Cantidad')
-    type_sub = fields.Selection([
-        ('ajuste', 'Ajuste'),
-        ('porcentaje', 'Porcentaje')
-    ], string='Tipo subsidio', default="ajuste")
-    product_id = fields.Many2one('product.product', string="Producto", domain="[('available_in_pos', '=', True)]")
