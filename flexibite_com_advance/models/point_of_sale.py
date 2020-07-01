@@ -2275,6 +2275,14 @@ class pos_session(models.Model):
     increment_number = fields.Integer(string="Increment Number", default=0, size=3, help="This is a field is used for show increment number on kitchen screen when create pos order from point of sale.")
     shop_id = fields.Many2one('pos.shop',string='Shop' ,related='config_id.multi_shop_id')
 
+    @api.model
+    def get_datetime_now(self):
+        tz = self._context.get('tz')
+        tz = pytz.timezone(tz)
+        date_utc = fields.Datetime.now().astimezone(tz)
+        date = date_utc.strftime('%Y-%m-%d %H:%M:%S')
+        return {'date_now': date}
+
     def action_pos_session_closing_control(self):
         postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)        
         if(postpaid_journal):

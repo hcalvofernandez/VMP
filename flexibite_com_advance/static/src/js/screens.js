@@ -16,6 +16,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     var splitbill = require('pos_restaurant.splitbill').SplitbillButton;
     var QWeb = core.qweb;
     var _t = core._t;
+    var session = require('web.session');
 
     function start_lock_timer(time_interval,self){
         var $area = $(document),
@@ -3247,8 +3248,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         show: function(){
-            this._super();
-            this.handle_auto_print();
+            self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'get_datetime_now',
+                context: session.user_context,
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
+            };
+            rpc.query(params, {async: false}).then(function(pos_session){
+                $('#date_now').html(pos_session['date_now']);
+                self._super();
+            });
         },
         handle_auto_print: function() {
             var self = this;
@@ -3261,6 +3271,50 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
 
     gui.define_screen({name:'initialBalanceTicket', widget: InitialBalanceTicket});
+
+    var EndBalanceTicket = screens.ReceiptScreenWidget.extend({
+        template: 'EndBalanceTicket',
+        willStart: function() {
+            var self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'search_read',
+                fields: ['id', 'user_id'],
+                domain: [['id','=', self.pos.config.current_session_id[0]]],
+            };
+            return rpc.query(params, {async: false}).then(function(pos_session){
+                self.end_receipt_data = {
+                    user_name: pos_session[0]['user_id'][1],
+                };
+            });
+        },
+        show: function(){
+            self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'get_datetime_now',
+                context: session.user_context,
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
+            };
+            rpc.query(params, {async: false}).then(function(pos_session){
+                $('#end_date_now').html(pos_session['date_now']);
+                self._super();
+            });
+        },
+        should_auto_print: function() {
+            return this.pos.config.iface_print_auto;
+        },
+        handle_auto_print: function() {
+            var self = this;
+            if (self.should_auto_print()) {
+                self.print();
+            } else {
+                self.lock_screen(false);
+            }
+        },
+    });
+
+    gui.define_screen({name:'endBalanceTicket', widget: EndBalanceTicket});
 
     screens.OrderWidget.include({
         init: function(parent, options) {

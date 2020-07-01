@@ -935,46 +935,6 @@ odoo.define('flexibite_com_advance.popup', function (require) {
     });
     gui.define_popup({name:'pos_return_order', widget: PosReturnOrder});
 
-    var EndBalanceTicket = screens.ReceiptScreenWidget.extend({
-        template: 'EndBalanceTicket',
-        willStart: function() {
-            var self = this;
-            var params = {
-                model: 'pos.session',
-                method: 'search_read',
-                fields: ['id', 'user_id'],
-                domain: [['id','=', self.pos.config.current_session_id[0]]],
-            };
-            return rpc.query(params, {async: false}).then(function(pos_session){
-                self.end_receipt_data = {
-                    user_name: pos_session[0]['user_id'][1],
-                };
-            });
-        },
-        show: function(){
-            this._super();
-            this.handle_auto_print();
-        },
-        should_auto_print: function() {
-            return this.pos.config.iface_print_auto && !this._printed;
-        },
-        get_date_now: function(){
-            return moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-        },
-        handle_auto_print: function() {
-            var self = this;
-            if (self.should_auto_print()) {
-                self.print();
-                this._printed = true;
-            } else {
-                self.lock_screen(false);
-                this._printed = false;
-            }
-        },
-    });
-
-    gui.define_screen({name:'endBalanceTicket', widget: EndBalanceTicket});
-
     var POSSessionConfig = PopupWidget.extend({
         template: 'POSSessionConfig',
         show: function(options){

@@ -2891,8 +2891,8 @@
                     display: none !important;
                 }
             </style>
-            <div class="pos-center-align">
-                <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>
+            <div id="date_now" class="pos-center-align">
+<!--                <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>-->
             </div>
             <div class="pos-center-align">
                 <t t-if="widget.pos">
@@ -2935,8 +2935,7 @@
                     display: none !important;
                 }
             </style>
-            <div class="pos-center-align">
-                <t t-esc="widget.get_date_now()"/>
+            <div id='end_date_now' class="pos-center-align">
             </div>
             <div class="pos-center-align">
                 Solicitud de Retiro
