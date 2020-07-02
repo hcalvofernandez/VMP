@@ -2261,7 +2261,7 @@ button.fc-today-button.fc-button.fc-state-default.fc-corner-left.fc-corner-right
 
 .pos .control-button {
 	line-height: 34px;
-	font-size: 16px;
+	font-size: 20px;
 	margin-left: 0;
 	margin-bottom: 0;
 }
@@ -3542,6 +3542,10 @@ ul.sidebar-nav li.sidebar-brand .user_name {
 .pos .order .orderline .remove_line {
 	padding-left: 10px;
 	font-size: 20px;
+}
+
+.icon_del_size{
+    font-size: 2em !important;
 }
 
 .pos .order .orderline .product-name {
@@ -5314,6 +5318,7 @@ li div.divider span {
 {
 	border: 0px!important;
 	background: white;
+	font-size: 21px;
 }
 
 .pos .sale-note-order-list {

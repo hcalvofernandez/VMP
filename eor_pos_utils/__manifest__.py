@@ -14,7 +14,7 @@
         'point_of_sale',
         'credit',
         #'contract',
-        'flexibite_com_advance',
+        # 'flexibite_com_advance',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -23,6 +23,7 @@
         'views/account_journal_view.xml',
         'views/eor_pos_templates.xml',
         'views/pos_session_view.xml',
+        'views/contract_scheme_contract_views.xml',
         'views/contract_view.xml',
     ],
     'qweb': ['static/src/xml/*.xml'],

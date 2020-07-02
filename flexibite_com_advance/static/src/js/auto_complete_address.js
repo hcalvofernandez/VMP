@@ -90,43 +90,46 @@ function geocodePosition(pos) {
 }
 
 function codeAddress(address) {
-	if(navigator.onLine){
-		var infowindow = new google.maps.InfoWindow({
-			size: new google.maps.Size(150, 50)
-		});
-		if(address){
-			if(geocoder){
-				geocoder.geocode( {'address': address}, function(results, status) {
-					if (status == 'OK') {
-					$('#map_error_msg').hide();
-		            map.setCenter(results[0].geometry.location);
-		            if (marker) {
-		                marker.setMap(null);
-		                if (infowindow){
-		                	infowindow.close();
-		                }
-		            }
-		            marker = new google.maps.Marker({
-		                map: map,
-		                position: results[0].geometry.location,
-		                draggable:true,
-		            });
-		            google.maps.event.addListener(marker, 'dragend', function() {
-		                geocodePosition(marker.getPosition());
-		              });
-		            google.maps.event.addListener(marker, 'click', function() {
-		                if (marker.formatted_address) {
-		                	infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
-		                } else {
-		                	infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
-		                }
-		                infowindow.open(map, marker);
-		            });
-		              google.maps.event.trigger(marker, 'click');
-		          } else if(status != 'REQUEST_DENIED'){
-		        	  $('#map_error_msg').show();
-		          }
-		        });
+	if(navigator.onLine) {
+		if (typeof google !== "undefined")
+		{
+			var infowindow = new google.maps.InfoWindow({
+				size: new google.maps.Size(150, 50)
+			});
+			if(address){
+				if(geocoder){
+					geocoder.geocode( {'address': address}, function(results, status) {
+						if (status == 'OK') {
+						$('#map_error_msg').hide();
+						map.setCenter(results[0].geometry.location);
+						if (marker) {
+							marker.setMap(null);
+							if (infowindow){
+								infowindow.close();
+							}
+						}
+						marker = new google.maps.Marker({
+							map: map,
+							position: results[0].geometry.location,
+							draggable:true,
+						});
+						google.maps.event.addListener(marker, 'dragend', function() {
+							geocodePosition(marker.getPosition());
+						  });
+						google.maps.event.addListener(marker, 'click', function() {
+							if (marker.formatted_address) {
+								infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+							} else {
+								infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+							}
+							infowindow.open(map, marker);
+						});
+						  google.maps.event.trigger(marker, 'click');
+					  } else if(status != 'REQUEST_DENIED'){
+						  $('#map_error_msg').show();
+					  }
+					});
+				}
 			}
 		}
 	}

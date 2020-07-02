@@ -2242,25 +2242,6 @@ class pos_order_line(models.Model):
     online_mode = fields.Boolean('Rápido')
 
 
-class res_partner(models.Model):
-    _inherit = 'res.partner'
-
-    prefer_ereceipt = fields.Boolean('Prefer E-Receipt')
-
-    @api.multi
-    def _compute_remain_credit_limit(self):
-        
-        for partner in self:
-            total_credited = 0
-            orders = self.env['pos.order'].search([('partner_id', '=', partner.id),('state_order_fac', '=', 'n'),
-                                                   ('order_type', '=', 'Cŕedito'),('is_postpaid','=',True)])
-            for order in orders:
-                total_credited += order.amount_total
-            partner.remaining_credit_limit = partner.credit_limit - total_credited
-
-    remaining_credit_limit = fields.Float("Remaining Credit Limit", compute="_compute_remain_credit_limit")
-
-
 class quick_cash_payment(models.Model):
     _name = "quick.cash.payment"
     _description = 'quick cash payment'
@@ -2293,6 +2274,14 @@ class pos_session(models.Model):
     opening_balance = fields.Boolean(string="Opening Balance")
     increment_number = fields.Integer(string="Increment Number", default=0, size=3, help="This is a field is used for show increment number on kitchen screen when create pos order from point of sale.")
     shop_id = fields.Many2one('pos.shop',string='Shop' ,related='config_id.multi_shop_id')
+
+    @api.model
+    def get_datetime_now(self):
+        tz = self._context.get('tz')
+        tz = pytz.timezone(tz)
+        date_utc = fields.Datetime.now().astimezone(tz)
+        date = date_utc.strftime('%Y-%m-%d %H:%M:%S')
+        return {'date_now': date}
 
     def action_pos_session_closing_control(self):
         postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)        

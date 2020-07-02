@@ -6,7 +6,7 @@
 		    <div class="page-container page_containerset">
 		        <div class="panel-container page_containerset1">
 		            <div class="logo-container">
-						<img class="pos-logo-company" t-att-src="widget.get_company_image_url()" style="height: 100px;max-width: 100%;"/>
+						<img class="pos-logo-company" t-att-src="widget.get_pos_config_image_str()" style="height: 100px;max-width: 100%;"/>
 		            </div>
 		            <div class="login-fields">
 		                <form action="main-page.html">

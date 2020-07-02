@@ -1812,7 +1812,9 @@ odoo.define('flexibite_com_advance.models', function (require) {
             }
             if($('div#online_mode').hasClass('selected-menu')) {
                 if(!product.is_dummy_product){
-                    selected_line.set_online_mode(true);
+                    if (selected_line !== undefined) {
+                        selected_line.set_online_mode(true);
+                    }
                 }
             }
             if(selected_line && this.pricelist != this.pos.default_pricelist && this.pos.config.use_pricelist){
@@ -1848,7 +1850,9 @@ odoo.define('flexibite_com_advance.models', function (require) {
                     return_valid_days = 0;
                 }
             }
-            selected_line.set_return_valid_days(return_valid_days);
+            if (selected_line !== undefined) {
+                selected_line.set_return_valid_days(return_valid_days);
+            }
             if(product.is_combo && product.product_combo_ids.length > 0 && self.pos.config.enable_combo && self.pos.user.access_combo){
                 self.pos.gui.show_popup('combo_product_popup',{
                     'product':product

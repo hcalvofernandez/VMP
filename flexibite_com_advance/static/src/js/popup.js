@@ -2,6 +2,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
     "use strict";
 
     var gui = require('point_of_sale.gui');
+    var screens = require('point_of_sale.screens');
     var rpc = require('web.rpc');
     var PosBaseWidget = require('point_of_sale.BaseWidget');
     var PopupWidget = require('point_of_sale.popups');
@@ -955,11 +956,17 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                 self.gui.close_popup();
             });
             $('.close-pos-session').click(function(){
-                if(self.pos.config.cash_control){
-                    self.gui.show_popup('cash_control',{
-                        title:'Declaración de Efectivo',
-                        statement_id:self.statement_id,
-                    });
+                if(self.pos.config.cash_control) {
+                    if (self.pos.config.iface_cashdrawer) {
+                        self.pos.proxy.open_cashbox();
+                    }
+                    self.gui.show_screen('endBalanceTicket');
+                    setTimeout(function () {
+                        self.gui.show_popup('cash_control',{
+                            title:'Declaración de Efectivo',
+                            statement_id:self.statement_id,
+                        });
+                    }, 1000);
                 }else{
                     var cashier = self.pos.get_cashier() || false;
                     if(!cashier){
@@ -971,8 +978,8 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                             method: 'custom_close_pos_session',
                             args:[self.pos.pos_session.id]
                         }
-                        rpc.query(params, {async: false}).then(function(res){
-                            if(res){
+                        rpc.query(params, {async: false}).then(function(res) {
+                            if(res) {
                                 if(cashier.login_with_pos_screen){
                                     framework.redirect('/web/session/logout');
                                 }
@@ -3046,6 +3053,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
             });
             this.$('.button.cancel').click(function() {
                 self.gui.close_popup();
+                self.gui.back();
             });
         },
         renderElement: function() {

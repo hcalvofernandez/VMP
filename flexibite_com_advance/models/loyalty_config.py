@@ -78,7 +78,7 @@ class loyalty_point(models.Model):
     _rec_name = "pos_order_id"
     _description = 'loyalty point'
 
-    pos_order_id =  fields.Many2one("pos.order", string="Order", readonly=1)
+    pos_order_id = fields.Many2one("pos.order", string="Order", readonly=1)
     partner_id = fields.Many2one('res.partner', 'Member', readonly=1)
     amount_total = fields.Float('Total Amount', readonly=1)
     date = fields.Datetime('Date', readonly=1, default=datetime.now())

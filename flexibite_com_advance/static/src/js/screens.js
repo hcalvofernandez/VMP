@@ -16,6 +16,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     var splitbill = require('pos_restaurant.splitbill').SplitbillButton;
     var QWeb = core.qweb;
     var _t = core._t;
+    var session = require('web.session');
 
     function start_lock_timer(time_interval,self){
         var $area = $(document),
@@ -747,6 +748,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         login_user: function(username, password){
             var self = this;
             var user = _.find(self.pos.users, function(obj) { return obj.login == username && obj.pos_security_pin == password });
+            var view_initial = 'products';
             if(user){
                 $('.pos-topheader').show();
                 self.pos.set_cashier(user);
@@ -760,11 +762,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     if (self.pos.config.iface_floorplan) {
                         self.gui.set_startup_screen('floors');
                         self.gui.show_screen("floors");
+                        view_initial = 'floors';
                     } else {
                         self.gui.show_screen("products");
+                        view_initial = 'products';
                     }
                 }else{
                     self.gui.show_screen("products");
+                    view_initial = 'products';
                 }
                 self.pos.chrome.slider_widget.renderElement();
                 self.pos.set_login_from('login');
@@ -799,15 +804,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 if(self.pos.config.enable_automatic_lock && self.pos.get_cashier().access_pos_lock){
                     start_lock_timer(self.pos.config.time_interval, self);
                 }
+                //   print initial amount ticket
+                if (self.pos.config.iface_print_auto) {
+                    self.gui.show_screen('initialBalanceTicket');
+                    setTimeout(function () {
+                        self.gui.show_screen(view_initial);
+                    }, 1000)
+                }
+                else {
+                    self.gui.show_screen(view_initial);
+                }
+
             }else{
                 self.pos.db.notification('danger',_t('Invalid Username or Pin!!!'));
             }
         },
         get_company_image_url: function(){
             var company_id = this.pos.company.id;
-
             if(company_id){
                 return window.location.origin + '/web/binary/company_logo?&company=' + company_id;
+            }
+        },
+        get_pos_config_image_str: function() {
+            if (this.pos) {
+                return window.location.origin + "/web/image/pos.config/" + this.pos.config.id + "/imagen/"
             }
         },
         show: function(){
@@ -957,55 +977,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         init: function(parent, options){
             var self = this;
             this._super(parent, options);
-            var records = rpc.query({
-                model: 'res.partner',
-                method: 'calculate_partner',
-            }, {async: false}).then(function (result) {
-                if(result && result[0]){
-                    var partner_ids = result;
-                    var total_partners = partner_ids.length;
-                    var remaining_time;
-                    if(total_partners){
-                        var partner_limit = 5000;
-                        var count_loop = partner_ids.length;
-                        var last_ids = partner_ids;
-                        var count_loaded_products = 0;
-                        function ajax_partner_load(){
-                            //if(count_loop > 0){
-                            $.ajax({
-                                type: "POST",
-                                url: '/web/dataset/load_customers',
-                                data: {
-                                        model: 'res.partner',
-                                        fields: JSON.stringify(self.pos.partner_fields),
-                                        partner_limit:partner_limit,
-                                        partner_ids:JSON.stringify(last_ids.splice(0, partner_limit) || []),
-                                },
-                                success: function(res) {
-                                    var all_partners = JSON.parse(res);
-                                    count_loop -= all_partners.length;
-                                    self.pos.partners = JSON.parse(res);
-                                    self.pos.partners_load = true;
-                                    self.pos.db.add_partners(JSON.parse(res));
-                                    self.render_list(self.pos.db.get_partners_sorted(5000));
-                                    //ajax_partner_load();
-                                },
-                                 error: function(e) {
-                                    console.log("e >>>>>>>> ",e);
-                                    self.pos.db.notification('danger',_t('Partner Loading Failed !'));
-                                    console.log('Partner Qa-run failed.');
-                                 },
-                            });
-                            //}
+        },
+        willStart: function() {
+            var self = this;
+            var def1 = this._super.apply(this, arguments);
+
+            var def2 =  rpc.query({
+                    model: 'res.partner',
+                    method: 'calculate_partner',
+                    args: [JSON.stringify(self.pos.partner_fields)],
+                }).then(function(result){
+                    if(result && result[0]) {
+                        var partner_ids = result;
+                        var total_partners = partner_ids.length;
+                        if(total_partners) {
+                            self.pos.partners = result;
+                            self.pos.partners_load = true;
+                            self.pos.db.add_partners(result);
                         }
-                        ajax_partner_load();
                     }
-                } else {
-                    console.log("\n Partner Not Found.");
-                }
-            }).fail(function(){
-                self.pos.db.notification('danger',"Connection lost");
-            });
+                }).fail(function(){
+                    self.pos.db.notification('danger', _t("Connection lost"));
+                });
+
+            return $.when(def1, def2);
         },
         show: function(){
             var self = this;
@@ -1014,6 +1009,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var partner = self.pos.partners;
             var order = self.pos.get_order();
             var options = order.get_screen_data('params');
+            self.render_list(self.pos.db.get_partners_sorted(5000));
             this.change_pin = false;
             if (options && options.change_pin){
                 this.change_pin = true;
@@ -1265,6 +1261,37 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $add_money_button.text(_t('Add Credit'));
             }
             $add_money_button.toggleClass('oe_hidden',!this.has_client_changed());
+        },
+        line_select: function(event,$line,id){
+            var self = this;
+            var params = {
+                model: 'res.partner',
+                method: 'search_read',
+                domain: [['id', '=', id]],
+                fields:['remaining_credit_limit']
+            };
+            rpc.query(params).then(function(result){
+                var partner = self.pos.db.get_partner_by_id(id);
+                if (partner.remaining_credit_limit != result[0].remaining_credit_limit)
+                {
+                    partner.remaining_credit_limit = result[0].remaining_credit_limit;
+                }
+                self.$('.client-list .lowlight').removeClass('lowlight');
+                    if ( $line.hasClass('highlight') ){
+                        $line.removeClass('highlight');
+                        $line.addClass('lowlight');
+                        self.display_client_details('hide',partner);
+                        self.new_client = null;
+                        self.toggle_save_button();
+                    }else{
+                        self.$('.client-list .highlight').removeClass('highlight');
+                        $line.addClass('highlight');
+                        var y = event.pageY - $line.parent().offset().top;
+                        self.display_client_details('show',partner,y);
+                        self.new_client = partner;
+                        self.toggle_save_button();
+                    }
+                });
         },
         _get_customer_history: function(partner){
             var params = {
@@ -1736,6 +1763,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             self.pos.push_order(order);
             self.gui.show_screen('receipt');
+            if (self.pos.config.iface_print_auto){
+                if (!self._locked) {
+                    setTimeout(function(){
+                        order.finalize();
+                    }, 500);
+                }
+            }
 
             /*
             if (client && debit && debit > client.remaining_debit_amount){
@@ -2564,7 +2598,6 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var order = this.pos.get_order();
             var self = this;
             var client = order.get_client();
-            
 
             if((this.pos.get_order().get_total_with_tax() < 0) && this.pos.get_order().get_paymentlines().length == 0){
                 return alert(_t('Please select a journal.'));
@@ -2985,6 +3018,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         if(self.pos.config.validate_on_click){
                             self.pre_validate_order();
                         }
+                        if (self.order_is_valid()){
+                            if (self.pos.config.iface_print_auto){
+                                if (!self._locked) {
+                                    order.finalize();
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -3041,10 +3081,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     return self.pos.db.notification('danger', 'Agregue una línea de Venta!.');
                 }
 
-                if (!order.get_client()){
-                    var payment_amount = 0;
-                    if (order.get_paymentlines().length === 0){
-                        return self.pos.db.notification('danger', 'Agregue un Método de Pago!.');
+                var payment_amount = 0;
+                if (order.get_paymentlines().length === 0){
+                    return self.pos.db.notification('danger', 'Agregue un Método de Pago!.');
                     }
                     _.map(order.get_paymentlines(), function(lines){
                         payment_amount += lines.amount;
@@ -3057,7 +3096,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }else{
                         self.$('.edit').removeClass('error');
                     }
-                    return self.gui.show_screen('receipt');
+                if (!order.get_client()){
+                    if (self.pos.config.iface_print_auto){
+                        if (!self._locked) {
+                            return self.pos.get_order().finalize();
+                        }
+                    } else {
+                        return self.gui.show_screen('receipt');
+                    }
+                }
+                else {
+                    if (self.pos.config.iface_print_auto){
+                        if (!self._locked) {
+                            return self.pos.get_order().finalize();
+                        }
+                    }
                 }
 
                 /*
@@ -3175,6 +3228,93 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
     gui.define_screen({name:'orderdetail', widget: OrderDetailScreenWidget});
+
+    var InitialBalanceTicket = screens.ReceiptScreenWidget.extend({
+        template: 'InitialBalanceTicket',
+        willStart: function() {
+            var self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'search_read',
+                fields: ['id', 'user_id', 'cash_register_balance_start'],
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
+            };
+            return rpc.query(params, {async: false}).then(function(pos_session){
+                self.init_receipt_data = {
+                        balance_start: pos_session[0]['cash_register_balance_start'],
+                        user_name: pos_session[0]['user_id'][1],
+                        start_text: _t('Saldo inicial'),
+                };
+            });
+        },
+        show: function(){
+            self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'get_datetime_now',
+                context: session.user_context,
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
+            };
+            rpc.query(params, {async: false}).then(function(pos_session){
+                $('#date_now').html(pos_session['date_now']);
+                self._super();
+            });
+        },
+        handle_auto_print: function() {
+            var self = this;
+            if (self.should_auto_print()) {
+                self.print();
+            } else {
+                self.lock_screen(false);
+            }
+        },
+    });
+
+    gui.define_screen({name:'initialBalanceTicket', widget: InitialBalanceTicket});
+
+    var EndBalanceTicket = screens.ReceiptScreenWidget.extend({
+        template: 'EndBalanceTicket',
+        willStart: function() {
+            var self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'search_read',
+                fields: ['id', 'user_id'],
+                domain: [['id','=', self.pos.config.current_session_id[0]]],
+            };
+            return rpc.query(params, {async: false}).then(function(pos_session){
+                self.end_receipt_data = {
+                    user_name: pos_session[0]['user_id'][1],
+                };
+            });
+        },
+        show: function(){
+            self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'get_datetime_now',
+                context: session.user_context,
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
+            };
+            rpc.query(params, {async: false}).then(function(pos_session){
+                $('#end_date_now').html(pos_session['date_now']);
+                self._super();
+            });
+        },
+        should_auto_print: function() {
+            return this.pos.config.iface_print_auto;
+        },
+        handle_auto_print: function() {
+            var self = this;
+            if (self.should_auto_print()) {
+                self.print();
+            } else {
+                self.lock_screen(false);
+            }
+        },
+    });
+
+    gui.define_screen({name:'endBalanceTicket', widget: EndBalanceTicket});
 
     screens.OrderWidget.include({
         init: function(parent, options) {
@@ -6670,6 +6810,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
 
     screens.NumpadWidget.include({
+        template: 'NumpadWidget01_9',
         start: function() {
             var self = this;
             this._super();

@@ -5,6 +5,11 @@
     <t t-extend="ReceiptScreenWidget">
 		<t t-jquery="div.top-content" t-operation="replace">
 			<div class="top-content">
+                <style>
+                    .o_loading {
+                        display: none !important;
+                    }
+                </style>
 				<h1>Total: <span class='total-value'>0.00</span> &amp;nbsp; Change:
                     <span class='change-value'>0.00</span></h1>
                 <span class='button next'>
@@ -17,6 +22,11 @@
 
     <t t-name="XmlMoneyInOutTicket">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <line>
                 <left>Nombre de la Compañia</left>
                 <right><t t-esc='pos.company.name' /></right>
@@ -60,6 +70,11 @@
 
     <t t-name="TokenTicket">
         <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <div class="pos-center-align" style="font-size: 22px;font-weight: bold;">
                 Token No: <t t-esc="widget.pos.increment_number"/>
             </div>
@@ -68,38 +83,38 @@
                     <col width='70%'/>
                     <col width='30%'/>
                 </colgroup>
-<!--
-                <tr t-foreach="orderlines" t-as="orderline">
-                    <t t-if="!orderline.get_product().is_dummy_product">
-	                    <td>
-	                        <t t-esc="orderline.get_product().display_name"/>
-	                    </td>
-                        <t t-if="orderline.get_take_away()">
-                            <div class="pos-disc-font">
-                                Take Away...
-                            </div>
-                        </t>
-                        <t t-if="orderline.get_drive_through_mode()">
-                            <div class="pos-disc-font">
-                                Drive Through
-                            </div>
-                        </t>
-                        <t t-if="orderline.get_dine_in_mode()">
-                            <div class="pos-disc-font">
-                                Dine In
-                            </div>
-                        </t>
-                        <t t-if="orderline.get_online_mode()">
-                            <div class="pos-disc-font">
-                                Online
-                            </div>
-                        </t>
-                        <td class="pos-right-align">
-	                        <t t-esc="orderline.get_quantity_str_with_unit()"/>
-	                    </td>
-                    </t>
-                </tr>
-                -->
+                <!--
+                                <tr t-foreach="orderlines" t-as="orderline">
+                                    <t t-if="!orderline.get_product().is_dummy_product">
+                                        <td>
+                                            <t t-esc="orderline.get_product().display_name"/>
+                                        </td>
+                                        <t t-if="orderline.get_take_away()">
+                                            <div class="pos-disc-font">
+                                                Take Away...
+                                            </div>
+                                        </t>
+                                        <t t-if="orderline.get_drive_through_mode()">
+                                            <div class="pos-disc-font">
+                                                Drive Through
+                                            </div>
+                                        </t>
+                                        <t t-if="orderline.get_dine_in_mode()">
+                                            <div class="pos-disc-font">
+                                                Dine In
+                                            </div>
+                                        </t>
+                                        <t t-if="orderline.get_online_mode()">
+                                            <div class="pos-disc-font">
+                                                Online
+                                            </div>
+                                        </t>
+                                        <td class="pos-right-align">
+                                            <t t-esc="orderline.get_quantity_str_with_unit()"/>
+                                        </td>
+                                    </t>
+                                </tr>
+                                -->
             </table>
             <br/>
             <div class="pos-center-align" style="font-size: 12px;">
@@ -110,6 +125,11 @@
 
     <t t-name="XMLTokenTicket">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
 	        <t t-if="widget.pos.increment_number">
 	            <div bold='on'>
 	                Token No: <t t-esc="widget.pos.increment_number"/>
@@ -140,6 +160,11 @@
 
     <t t-name="MoneyInOutTicket">
         <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <div class="pos-center-align">
                 <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>
             </div>
@@ -192,12 +217,17 @@
 
     <t t-name="DeliveryPaymentTicket">
         <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <div class="pos-center-align"><t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>
                 <t t-esc="pos_order.pos_reference"/></div>
             <br/>
             <t t-if="widget.pos.company_logo_base64">
                 <div style="text-align:center;">
-                    <img t-att-src="widget.pos.company_logo_base64" style="max-height: 70px;width:auto;height:auto;"/>
+                    <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" style="max-height: 70px;width:auto;height:auto;"/>
                     <br/>
                 </div>
             </t>
@@ -256,8 +286,13 @@
 
     <t t-name="XmlDeliveryPaymentTicket">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <t t-if='widget.pos.company.logo'>
-                <img t-att-src='widget.pos.company.logo' alt="Logo"/>
+                <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" alt="Logo"/>
                 <br/>
             </t>
             <t t-if='!widget.pos.company.logo'>
@@ -401,7 +436,7 @@
         <t t-jquery="[t-esc='order.name']" t-operation="after">
            <t t-if="widget.pos.company_logo_base64">
                <div style="text-align:center;">
-                   <img t-att-src="widget.pos.company_logo_base64" style="max-height: 70px;width:auto;height:auto;"/>
+                   <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" style="max-height: 70px;width:auto;height:auto;"/>
                    <br/>
                </div>
            </t>
@@ -475,13 +510,13 @@
                                    Drive Through
                                </div>
                            </t>
-                           <!--
-                            <t t-if="orderline.get_dine_in_mode()">
-                               <div class="pos-disc-font">
-                                   Dine In
-                               </div>
-                           </t>
-                           -->
+                            <!--
+                             <t t-if="orderline.get_dine_in_mode()">
+                                <div class="pos-disc-font">
+                                    Dine In
+                                </div>
+                            </t>
+                            -->
                             <t t-if="orderline.get_online_mode()">
                                <div class="pos-disc-font">
                                    Online
@@ -791,7 +826,7 @@
         <t t-jquery="table.receipt-change" t-operation="append">
           <tr t-if="order.order_on_debit">
                     <td>Débito Disponible:</td>
-                    <td class="pos-right-align">
+              <td class="pos-right-align">
                         <t t-esc="widget.format_currency(widget.pos.get_client().remaining_debit_amount - order.get_total_with_tax())"/>
                     </td>
                 </tr>
@@ -799,9 +834,10 @@
         <t t-jquery="table.receipt-change" t-operation="append">
           <tr t-if="order.order_on_credit">
                     <td>Crédito Disponible:</td>
-                    <td class="pos-right-align">
-                        <t t-if="'remaining_credit_amount' in client_data" t-esc="widget.format_currency(widget.pos.get_client().remaining_credit_limit  - order.get_total_with_tax())"/>
-                        <!--client_data['remaining_credit_limit']-->
+              <td class="pos-right-align">
+                        <t t-if="'remaining_credit_amount' in client_data"
+                           t-esc="widget.format_currency(widget.pos.get_client().remaining_credit_limit  - order.get_total_with_tax())"/>
+                  <!--client_data['remaining_credit_limit']-->
                     </td>
                 </tr>
         </t>
@@ -809,11 +845,12 @@
             <tr t-if="order.order_on_meal_plan">
                 <td>Meal Plan Crédito Disponible:</td>
                 <td class="pos-right-align">
-                    <t t-if="'remaining_meal_plan_limit' in client_data" t-esc="widget.format_currency(client_data['remaining_meal_plan_limit']  - order.get_total_with_tax() )"/>
+                    <t t-if="'remaining_meal_plan_limit' in client_data"
+                       t-esc="widget.format_currency(client_data['remaining_meal_plan_limit']  - order.get_total_with_tax() )"/>
                 </td>
             </tr>
         </t>
-        
+
         <t t-jquery="table.receipt-change" t-operation="after">
             <br/>
             <table style="margin-left: 54px;"><tbody><tr id="barcode1"></tr></tbody></table>
@@ -1568,7 +1605,12 @@
 	</t>
 
     <t t-name="FreeTicket">
-        <div class="pos-sale-ticket" style="border:0px solid;"> 
+        <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <div class="pos_free_ticket">
               ------------------------------------------
               <div class="pos-center-align"> Card Details </div>
@@ -1616,8 +1658,13 @@
 
     <t t-name="XmlFreeTicket">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <t t-if='receipt.company.logo'>
-                <img t-att-src='receipt.company.logo'/>
+                <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}"/>
                 <br/>
             </t>
             <t t-if='!receipt.company.logo'>
@@ -1682,6 +1729,11 @@
 
     <t t-name="PaymentSummaryReport">
         <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <div class="pos-center-align"><t t-esc="moment().format('L LT')"/>
                 <br/>
                 <t t-esc="widget.pos.company.name"/>
@@ -1812,6 +1864,11 @@
     <!-- Payment Summary XML receipt -->
     <t t-name="PaymentSummaryReportXmlReceipt">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <h1><t t-esc='receipt.company.name' /></h1>
             <br/>
             <b>Start Date : </b>
@@ -1921,6 +1978,11 @@
     <!-- Product summary -->
 
     <t t-name="ProductSummaryReport">
+        <style>
+            .o_loading {
+                display: none !important;
+            }
+        </style>
         <div class="pos-sale-ticket" style="border:0px solid;">
             <div class="pos-center-align"><t t-esc="moment().format('L LT')"/>
                 <br/>
@@ -2074,6 +2136,11 @@
 
     <t t-name="ProductSummaryReportXmlReceipt">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <h1><t t-esc='receipt.company.name' /></h1>
             <br/>
             <b>Start Date : </b>
@@ -2189,6 +2256,11 @@
 
     <t t-name="CustomTicket">
         <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <div class="pos-center-align"><t t-esc="moment().format('L LT')" />
                 <t t-esc="widget.pos.company.name"/>
                 <br/>
@@ -2405,6 +2477,11 @@
 
     <t t-name="OrderXmlReceipt">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <h1><t t-esc='receipt.company.name' /></h1>
             <br/>
             <b>Start Date:</b>
@@ -2579,6 +2656,11 @@
 
     <t t-name="OutStockPosReport">
         <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <div class="pos-center-align"><t t-esc="moment().format('L LT')"/>
                 <br/>
                 <t t-esc="widget.pos.company.name"/>
@@ -2618,6 +2700,11 @@
 
     <t t-name="OutStockProductXmlReceipt">
         <receipt align='center' width='40' value-thousands-separator=''>
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <h1><t t-esc='receipt.company.name' /></h1>
             <br/>
 
@@ -2635,6 +2722,11 @@
 
     <t t-name="PayDebitReceipt">
         <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
             <t t-esc="widget.pos.company.name"/>
             <br/>
             <div class="receipt-phone">
@@ -2792,4 +2884,85 @@
         </t>
     </t>
 
+    <t t-name="InitialBalanceTicket">
+        <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
+            <div id="date_now" class="pos-center-align">
+<!--                <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>-->
+            </div>
+            <div class="pos-center-align">
+                <t t-if="widget.pos">
+                    <img width="210" t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}"/>
+                </t>
+            </div>
+            <div class="pos-center-align">
+                <table class="receipt-orderlines">
+                    <colgroup>
+                        <col width="50%"/>
+                        <col width="50%"/>
+                    </colgroup>
+                    <tbody>
+                        <tr t-if="widget.init_receipt_data">
+                            <td style="text-align: left">
+                                Cajero:
+                            </td>
+                            <td class="pos-right-align">
+                                 <t t-esc='widget.init_receipt_data.user_name'/>
+                            </td>
+                        </tr>
+                        <tr t-if="widget.init_receipt_data">
+                            <td style="text-align: left">
+                                <t t-esc="widget.init_receipt_data.start_text"/>
+                            </td>
+                            <td class="pos-right-align">
+                                <t t-esc="widget.format_currency((widget.init_receipt_data.balance_start).toFixed(2))"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="EndBalanceTicket">
+        <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
+            <div id='end_date_now' class="pos-center-align">
+            </div>
+            <div class="pos-center-align">
+                Solicitud de Retiro
+            </div>
+            <div class="pos-center-align">
+                <t t-if="widget.pos">
+                    <img width="210" t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}"/>
+                </t>
+            </div>
+            <div class="pos-center-align">
+                <table class="receipt-orderlines">
+                    <colgroup>
+                        <col width="50%"/>
+                        <col width="50%"/>
+                    </colgroup>
+                    <tbody>
+                        <tr t-if="widget.end_receipt_data">
+                            <td style="text-align: left">
+                                Cajero:
+                            </td>
+                            <td class="pos-right-align">
+                                 <t t-esc='widget.end_receipt_data.user_name'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
 </templates>
