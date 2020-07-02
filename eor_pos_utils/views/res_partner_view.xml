@@ -61,7 +61,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='active']" position="after">
                 <field name="credit_blocked" widget="checkbox"/>
-                <field name="saldo_credit"/>
+                <field name="remaining_credit_limit"/>
             </xpath>
         </field>
     </record>

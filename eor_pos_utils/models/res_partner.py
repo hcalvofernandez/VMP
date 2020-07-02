@@ -71,10 +71,8 @@ class ResPartner(models.Model):
     client_number = fields.Char(
         string='Número de Cliente',
     )
-    saldo_credit = fields.Float(
-        compute='_get_sales_saldo_partner',
-        string='Saldo',
-    )
+    remaining_credit_limit = fields.Float(string="Crédito Disponible", compute='_get_sales_saldo_partner',)
+
     pos_order_ids = fields.One2many(comodel_name="pos.order", inverse_name="partner_id", string="Pos Orders",
                                     required=False)
     # TODO: Esquema por producto
@@ -235,4 +233,4 @@ class ResPartner(models.Model):
             for o in pos_orders:
                 suma += o.amount_total
             saldo = partner.credit_limit - suma
-            partner.saldo_credit = saldo
+            partner.remaining_credit_limit = saldo
