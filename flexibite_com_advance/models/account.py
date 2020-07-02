@@ -215,6 +215,9 @@ class account_payment(models.Model):
         pos_order_obj = self.env['pos.order']
         pos_session = self.env['pos.session']
         affected_order = []
+
+        _logger.warning("PAYMENTEFEC")
+
         if pay_due:
             res = pos_order_obj.search([('partner_id', '=', partner_id), ('state', '=', 'draft')],order='date_order')
             _order = pos_order_obj.browse(res.id)
@@ -396,11 +399,21 @@ class account_payment(models.Model):
         
         res = self.env['pos.order'].search([('partner_id', '=', partner_id), ('state', '=', 'draft')])
 
-        total_amt_due = 0
-        
-        for each in res:
-            total_amt_due += each.amount_due
+        #total_amt_due = 0        
+        #for each in res:
+        #    total_amt_due += each.amount_due
+        #    _logger.warning("AMOUNT 1")
+        #    _logger.warning(total_amt_due)
 
+        total_amt_due = 0
+        account_journal = self.env['account.journal'].search([('code','=','POSCR')],limit=1)
+        for each in res:
+            for statment in each.statement_ids:
+                _logger.warning(str(account_journal.id) + str(" *-* ") + str(statment.journal_id.id))
+                if(int(account_journal.id) == int(statment.journal_id.id)):
+                    total_amt_due = float(total_amt_due) + float(statment.amount)
+                    _logger.warning("AMOUNT")
+                    _logger.warning(total_amt_due)
 
         response =  {'amount_due':total_amt_due,'customer':customer.id,'credit_bal':customer.remaining_credit_amount,'credit_limit':customer.credit_limit,'affected_order':order_update.read()}
 
@@ -417,14 +430,12 @@ class account_payment(models.Model):
                         if each.amount_due < amount:
                             _logger.info("AMOUNT DUE < AMOUNT %s" % (res))
                             amount -= each.amount_due
-                            values = self.env['pos.make.payment'].with_context(
-                                {'active_id': each.id, 'default_journal_id': get_journal_id, 'default_amount':each.amount_due}).default_get(['journal_id', 'amount'])
+                            values = self.env['pos.make.payment'].with_context({'active_id': each.id, 'default_journal_id': get_journal_id, 'default_amount':each.amount_due}).default_get(['journal_id', 'amount'])
                             self.env['pos.make.payment'].with_context({'active_id': each.id,'ctx_is_postpaid': True}).sudo().create(values).check()
                             affected_order.append(each.read())
                         elif each.amount_due >= amount:
                             _logger.info("AMOUNTaffected_order DUE >= AMOUNT %s" % (response))
-                            values = self.env['pos.make.payment'].with_context(
-                                {'active_id': each.id, 'default_journal_id': get_journal_id,
+                            values = self.env['pos.make.payment'].with_context({'active_id': each.id, 'default_journal_id': get_journal_id,
                                 'default_amount': amount}).default_get(['journal_id', 'amount'])
                             self.env['pos.make.payment'].with_context({'active_id': each.id,'ctx_is_postpaid': True}).sudo().create(values).check()
                             amount = 0
@@ -445,12 +456,11 @@ class account_payment(models.Model):
                             'partner_type': 'customer',
                             'partner_id': partner_id,
                         }
-                result = account_payment_obj.with_context({'default_from_pos':'credit'}).create(vals)
-                result.post()
-                #partner = self.env['res.partner'].browse(result.partner_id.id)
-                #new_credit_limit = float(result.partner_id.credit_limit) - float(result.amount)
-                #partner.update({'credit_limit':new_credit_limit})
 
+                result = account_payment_obj.with_context({'default_from_pos':'credit'}).create(vals)
+                _logger.warning(result)
+                result.post()
+                
             res = pos_order_obj.search([('partner_id', '=', partner_id), ('state', '=', 'draft')])
             total_amt_due = 0
             
@@ -464,6 +474,8 @@ class account_payment(models.Model):
             exc_traceback = sys.exc_info()
             raise Warning(getattr(e, 'message', repr(e))+" ON LINE "+format(sys.exc_info()[-1].tb_lineno))
     
+        
+
     @api.model
     def create(self, vals):
         recent_payment = super(account_payment, self).create(vals)

@@ -45,8 +45,7 @@ class ResPartner(models.Model):
     @api.model
     def get_partner_data(self, id_, amount):
         partner = self.sudo().browse(id_)
-        remaining_credit_amount = float(partner.credit_limit) - (
-                    float(self.get_remaining_credit_amount(partner)) + float(amount))
+        remaining_credit_amount = float(partner.credit_limit) - (float(self.get_remaining_credit_amount(partner)) + float(amount))
         return {'credit_limit'             : partner.credit_limit, 'remaining_credit_amount': remaining_credit_amount,
                 'remaining_meal_plan_limit': partner.remaining_meal_plan_limit
         }
@@ -55,8 +54,20 @@ class ResPartner(models.Model):
     def get_remaining_credit_amount(self, partner):
         orders = partner.pos_order_ids.filtered(lambda r: r.state == 'draft' and 'is_postpaid' is True)
         total = 0.0
+        account_journal = self.env['account.journal'].search([('code','=','POSCR')],limit=1)
         for order in orders:
-            total = total + float(order.amount_total)
+             for statment in order.statement_ids:
+                    _logger.warning(str(account_journal.id) + str(" *-* ") + str(statment.journal_id.id))
+                    if(int(account_journal.id) == int(statment.journal_id.id)):
+                        total = total + float(statment.amount)
+                        _logger.warning(total)
+        try:
+            partner.remaining_credit_amount = total
+            if(partner.remaining_credit_limit<0):
+                    partner.remaining_credit_limit = 0
+                #total = total + float(order.amount_total)
+        except:
+            pass
         return total
 
     def action_view_partner_invoices_postpago(self):
@@ -174,9 +185,19 @@ class ResPartner(models.Model):
         for partner in self:
             orders = partner.pos_order_ids
             total = 0.0
-            for order in orders:
-                total = total + float(order.amount_total)
+            account_journal = self.env['account.journal'].search([('code','=','POSCR')],limit=1)
+            for order in orders:     
+                _logger.warning("STATMENTSIDS")                           
+                for statment in order.statement_ids:
+                    _logger.warning(str(account_journal.id) + str(" *-* ") + str(statment.journal_id.id))
+                    if(int(account_journal.id) == int(statment.journal_id.id)):
+                        total = total + float(statment.amount)
+                        _logger.warning(total)
             partner.remaining_credit_amount = total
+            if(partner.remaining_credit_limit<0):
+                partner.remaining_credit_limit = 0
+        
+        _logger.warning(partner.remaining_credit_amount)
 
     @api.multi
     @api.depends('pos_order_ids.amount_total', 'debit_limit')
@@ -228,14 +249,24 @@ class ResPartner(models.Model):
 
 
     @api.multi
-    @api.depends('pos_order_ids.amount_total', 'credit_limit')
+    @api.depends('pos_order_ids', 'credit_limit')
     def _compute_remain_credit_limit(self):
         for partner in self:
             total_credited = 0
-            orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n' and r.order_type == 'Cŕedito' and r.is_postpaid is True)
+            orders = partner.pos_order_ids
+            account_journal = self.env['account.journal'].search([('code','=','POSCR')],limit=1)
             for order in orders:
-                total_credited += order.amount_total
+                for statment in order.statement_ids:
+                    if(int(account_journal.id) == int(statment.journal_id.id)):
+                        total_credited = total_credited + float(statment.amount)
+                        _logger.warning(str("CONPUTE11 : ") + str(order.id))
+                        _logger.warning(total_credited)
+            total_credited = total_credited
+            _logger.warning("CONPUTE")
+            _logger.warning(total_credited)
             partner.remaining_credit_limit = partner.credit_limit - total_credited
+            if(partner.remaining_credit_limit<0):
+                partner.remaining_credit_limit = 0
 
     meal_plan_limit = fields.Float(string='Meal Plan Limite')
     debit_limit = fields.Float("Limite de Credito")
