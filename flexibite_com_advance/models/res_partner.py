@@ -185,18 +185,15 @@ class ResPartner(models.Model):
         for partner in self:
             orders = partner.pos_order_ids
             total = 0.0
-            account_journal = self.env['account.journal'].search([('code','=','POSCR')],limit=1)
+            account_journal = self.env['account.journal'].search([('code', '=', 'POSCR')], limit=1)
             for order in orders:     
                 _logger.warning("STATMENTSIDS")                           
                 for statment in order.statement_ids:
                     _logger.warning(str(account_journal.id) + str(" *-* ") + str(statment.journal_id.id))
-                    if(int(account_journal.id) == int(statment.journal_id.id)):
+                    if int(account_journal.id) == int(statment.journal_id.id):
                         total = total + float(statment.amount)
                         _logger.warning(total)
             partner.remaining_credit_amount = total
-            if(partner.remaining_credit_limit<0):
-                partner.remaining_credit_limit = 0
-        
         _logger.warning(partner.remaining_credit_amount)
 
     @api.multi
@@ -267,7 +264,7 @@ class ResPartner(models.Model):
                                            store=True)
     remaining_credit_amount = fields.Float(compute="_calc_credit_remaining_", string="Remaining Credit Amount",
                                            store=True, readonly=True)
-    remaining_debit_amount = fields.Float(compute="_calc_debit_remaining", string="Credito Disponible", readonly=True,
+    remaining_debit_amount = fields.Float(compute="_calc_debit_remaining", string="Saldo Disponible", readonly=True,
                                           store=True)
     remaining_meal_plan_limit = fields.Float(compute="_calc_meal_plan_remaining", string="Credito Disponible",
                                              store=True, readonly=True)
