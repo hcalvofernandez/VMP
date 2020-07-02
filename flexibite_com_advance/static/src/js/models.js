@@ -2982,8 +2982,8 @@ odoo.define('flexibite_com_advance.models', function (require) {
         },
         add_paymentline_by_journal: function(cashregister) {
             this.assert_editable();
-            var newPaymentline = new models.Paymentline({}, {order: this, cashregister:cashregister, pos: this.pos})
-            var newPaymentline = new models.Paymentline({}, {order: this, cashregister:cashregister, pos: this.pos})
+            var newPaymentline = new models.Paymentline({}, {order: this, cashregister:cashregister, pos: this.pos});
+            var newPaymentline = new models.Paymentline({}, {order: this, cashregister:cashregister, pos: this.pos});
             if((this.pos.get_order().get_due() > 0) && (this.pos.get_order().get_client().remaining_credit_amount > this.pos.get_order().get_due())) {
                 newPaymentline.set_amount(Math.min(this.pos.get_order().get_due(),this.pos.get_order().get_client().remaining_credit_amount));
             }else if((this.pos.get_order().get_due() > 0) && (this.pos.get_order().get_client().remaining_credit_amount < this.pos.get_order().get_due())) {
