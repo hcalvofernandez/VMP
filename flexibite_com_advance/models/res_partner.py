@@ -243,28 +243,6 @@ class ResPartner(models.Model):
             partner.remaining_loyalty_points = points_earned - points_redeemed
             partner.remaining_loyalty_amount = amount_earned - amount_redeemed
 
-
-
-    @api.multi
-    @api.depends('pos_order_ids', 'credit_limit')
-    def _compute_remain_credit_limit(self):
-        for partner in self:
-            total_credited = 0
-            orders = partner.pos_order_ids
-            account_journal = self.env['account.journal'].search([('code','=','POSCR')],limit=1)
-            for order in orders:
-                for statment in order.statement_ids:
-                    if(int(account_journal.id) == int(statment.journal_id.id)):
-                        total_credited = total_credited + float(statment.amount)
-                        _logger.warning(str("CONPUTE11 : ") + str(order.id))
-                        _logger.warning(total_credited)
-            total_credited = total_credited
-            _logger.warning("CONPUTE")
-            _logger.warning(total_credited)
-            partner.remaining_credit_limit = partner.credit_limit - total_credited
-            if(partner.remaining_credit_limit<0):
-                partner.remaining_credit_limit = 0
-
     meal_plan_limit = fields.Float(string='Meal Plan Limite')
     debit_limit = fields.Float("Limite de Credito")
     credit_limit = fields.Float("Crédito límite")
@@ -295,8 +273,6 @@ class ResPartner(models.Model):
     remaining_loyalty_amount = fields.Float("Points to Amount", readonly=1, compute='_calculate_remaining_loyalty', store=True)
 
     loyalty_points_earned = fields.Float(compute='_calculate_earned_loyalty_points', store=True)
-    remaining_credit_limit = fields.Float(string="Crédito Disponible", compute="_compute_remain_credit_limit", store=True)
-
 
 class partner_payment_transaction(models.TransientModel):
     _name = 'partner.payment.transaction'
