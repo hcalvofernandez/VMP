@@ -225,20 +225,14 @@ class ResPartner(models.Model):
         return partner
 
     @api.multi
-    @api.depends('pos_order_ids.statement_ids', 'credit_limit')
+    @api.depends('pos_order_ids.amount_total', 'credit_limit')
     def _get_sales_saldo_partner(self):
-        for partner in self:
+        for rec in self:
             suma = 0
-            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n')
-            # and r.is_postpaid is True
-            for o in pos_orders:
-                for statement in o.statement_ids:
-                    if statement.journal_id.code == "POSCR":
-                        print("<Statement - " + str(statement.id) + "> <Amount - " + str(
-                            statement.amount) + "> <Journal - " + str(statement.journal_id.code) + ">")
-                        suma += statement.amount
-            saldo = partner.credit_limit - suma
-            print(partner.credit_limit)
-            print(saldo)
-            partner.remaining_credit_amount = suma
-            partner.remaining_credit_limit = saldo
+            orders = self.env['pos.order'].search(
+                [('partner_id', '=', rec.id), ('state_order_fac', '=', 'n'), ('order_type', '=', 'Cŕedito'),
+                 ('is_postpaid', '=', True)])
+            for o in orders:
+                suma += o.amount_total
+            rec.remaining_credit_amount = suma
+            rec.remaining_credit_limit = rec.credit_limit - suma
