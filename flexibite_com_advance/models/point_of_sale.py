@@ -278,8 +278,8 @@ class pos_order(models.Model):
     
     
     order_type = fields.Char(
-    string="Tipo",
-    default='Normal'
+        string="Tipo",
+        default='Normal'
     )
 
     @api.model
