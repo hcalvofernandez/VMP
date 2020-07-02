@@ -27,9 +27,11 @@ var ChashierPinPopupWidget = PopupWidget.extend({
             if (client_pin && pin ===client_pin){
                 self.pos.db.notification('success',"PIN correcto!"); 
                 self.gui.close_popup();
-                console.log(this.options);
-                if (this.options.payment){
-                    this.options.payment.do_order(order, this.options.type);
+                if (this.options.payment)
+                {
+                    try
+                    {this.options.payment.do_order(order, this.options.type);}
+                    catch (error) {}
                 }
             }else{
                 self.pos.db.notification('danger',_t('Pin Incorrecto, Intente de nuevo!'));
