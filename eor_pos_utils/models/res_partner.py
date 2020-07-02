@@ -71,7 +71,9 @@ class ResPartner(models.Model):
     client_number = fields.Char(
         string='Número de Cliente',
     )
-    remaining_credit_limit = fields.Float(string="Crédito Disponible", compute='_get_sales_saldo_partner',)
+    remaining_credit_limit = fields.Float(string="Crédito Disponible", compute='_get_sales_saldo_partner')
+    remaining_credit_amount = fields.Float(string="Remaining Credit Amount", compute="_get_sales_saldo_partner",
+                                           store=True, readonly=True)
 
     pos_order_ids = fields.One2many(comodel_name="pos.order", inverse_name="partner_id", string="Pos Orders",
                                     required=False)
@@ -223,12 +225,20 @@ class ResPartner(models.Model):
         return partner
 
     @api.multi
-    @api.depends('pos_order_ids.amount_total', 'credit_limit')
+    @api.depends('pos_order_ids.statement_ids', 'credit_limit')
     def _get_sales_saldo_partner(self):
         for partner in self:
             suma = 0
-            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n' and r.order_type == 'Cŕedito' and r.is_postpaid is True)
+            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n')
+            # and r.is_postpaid is True
             for o in pos_orders:
-                suma += o.amount_total
+                for statement in o.statement_ids:
+                    if statement.journal_id.code == "POSCR":
+                        print("<Statement - " + str(statement.id) + "> <Amount - " + str(
+                            statement.amount) + "> <Journal - " + str(statement.journal_id.code) + ">")
+                        suma += statement.amount
             saldo = partner.credit_limit - suma
+            print(partner.credit_limit)
+            print(saldo)
+            partner.remaining_credit_amount = suma
             partner.remaining_credit_limit = saldo
