@@ -194,8 +194,8 @@ class ResPartner(models.Model):
     @api.onchange('credit_s_id')
     def onchange_credit_s_id(self):
         # raise Warning(self._origin.read())
-        current_credit_limit = self.credit_limit
-        new_credit_limit = float(0)
+        # current_credit_limit = self.credit_limit
+        # new_credit_limit = float(0)
 
         # if(float(current_credit_limit) > 0):
         #    new_credit_limit = float(current_credit_limit) + float(self.credit_s_id.quantity)
@@ -207,9 +207,7 @@ class ResPartner(models.Model):
 
         for partner_child in self.child_ids:
             _partner_child = self.env['res.partner'].browse(partner_child.id)
-            if (_partner_child.credit_s_id):
-                pass
-            else:
+            if not _partner_child.credit_s_id:
                 _partner_child.sudo().update({"credit_limit": 0})
 
     def write(self, vals):

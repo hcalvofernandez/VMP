@@ -264,7 +264,7 @@ class ResPartner(models.Model):
                                            store=True)
     remaining_credit_amount = fields.Float(compute="_calc_credit_remaining_", string="Remaining Credit Amount",
                                            store=True, readonly=True)
-    remaining_debit_amount = fields.Float(compute="_calc_debit_remaining", string="Credito Disponible", readonly=True,
+    remaining_debit_amount = fields.Float(compute="_calc_debit_remaining", string="Saldo Disponible", readonly=True,
                                           store=True)
     remaining_meal_plan_limit = fields.Float(compute="_calc_meal_plan_remaining", string="Credito Disponible",
                                              store=True, readonly=True)
