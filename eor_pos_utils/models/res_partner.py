@@ -243,12 +243,10 @@ class ResPartner(models.Model):
     def _get_sales_saldo_partner(self):
         for partner in self:
             suma = 0
-            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n')
+            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n' and r.credit_amount > 0)
             # and r.is_postpaid is True
             for o in pos_orders:
                 suma += o.credit_amount
             saldo = partner.credit_limit - suma
-            print(partner.credit_limit)
-            print(saldo)
             partner.remaining_credit_amount = suma
             partner.remaining_credit_limit = saldo
