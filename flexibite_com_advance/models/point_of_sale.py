@@ -1297,13 +1297,13 @@ class pos_order(models.Model):
                             'redeemed_point': order.get('loyalty_redeemed_point'),
                         }
                         self.env['loyalty.point.redeem'].create(redeemed_vals)
-            if order.get('customer_email') and res:
-                try:
-                    template_id = self.env['ir.model.data'].get_object_reference('flexibite_com_advance', 'email_template_pos_ereceipt')
-                    template_obj = self.env['mail.template'].browse(template_id[1])
-                    template_obj.send_mail(res.id,force_send=True, raise_exception=True)
-                except Exception as e:
-                    _logger.error('Unable to send email for order %s',e)
+            # if order.get('customer_email') and res:
+                # try:
+                    # template_id = self.env['ir.model.data'].get_object_reference('flexibite_com_advance', 'email_template_pos_ereceipt')
+                    # template_obj = self.env['mail.template'].browse(template_id[1])
+                    # template_obj.send_mail(res.id,force_send=True, raise_exception=True)
+                # except Exception as e:
+                #     _logger.error('Unable to send email for order %s',e)
             if res and order.get('increment_number') and res.session_id.config_id.generate_token:
                 res.session_id.update({'increment_number':order.get('increment_number')})
             if res.rest_table_reservation_id:
