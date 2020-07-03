@@ -4,82 +4,111 @@
         <template id="front_sales_report_pdf_document">
             <t t-call="web.basic_layout">
                 <div class="page" style="font-size:12px !important;">
-                    <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>
+                    <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css"
+                          rel="stylesheet"/>
                     <link href="/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>
                     <div class="company-details fa-1x">
                         <div class="row-xreport" t-if="name">
                             MENDOCINOS (09)
                         </div>
                         <div class="row-xreport companyx-name">
-                            <t t-esc="str(o.get_company_data_x().name).upper()" />
+                            <t t-esc="str(o.get_company_data_x().name).upper()"/>
                         </div>
                         <div class="row-xreport" t-if="o.get_company_data_x().vat">
-                            : <t t-esc="o.get_company_data_x().vat" />
-                        </div>                        
-                        <div class="row-xreport companyx-info">
-                             <t t-esc="str(str(o.get_company_data_x().street).lower()).capitalize()" /> - <t t-esc="str(str(o.get_company_data_x().street2).lower()).capitalize()" /> 
-                            - <t t-esc="str(str(o.get_company_data_x().city).lower()).capitalize()" /> 
-                            - <t t-esc="str(str(o.get_company_data_x().state_id.name).lower()).capitalize()" /> 
-                            C.P <t t-esc="o.get_company_data_x().zip" />                            
+                            :
+                            <t t-esc="o.get_company_data_x().vat"/>
                         </div>
-                        <br />
+                        <div class="row-xreport companyx-info">
+                            <t t-esc="str(str(o.get_company_data_x().street).lower()).capitalize()"/>
+                            -
+                            <t t-esc="str(str(o.get_company_data_x().street2).lower()).capitalize()"/>
+                            -
+                            <t t-esc="str(str(o.get_company_data_x().city).lower()).capitalize()"/>
+                            -
+                            <t t-esc="str(str(o.get_company_data_x().state_id.name).lower()).capitalize()"/>
+                            C.P
+                            <t t-esc="o.get_company_data_x().zip"/>
+                        </div>
+                        <br/>
                         <div class="row-xreport">
                             CORTE DE CAJA X
-                        </div> 
-                        <div class="row-xreport">
-                            DEL <span t-esc="o.get_session_date_x(o.start_at)"/> <span t-esc="o.get_session_time_x(o.start_at)"/>
                         </div>
                         <div class="row-xreport">
-                            AL <span t-esc="o.get_current_date_x()"/> <span t-esc="o.get_current_time_x()"/>
+                            DEL
+                            <span t-esc="o.get_session_date_x(o.start_at)"/>
+                            <span t-esc="o.get_session_time_x(o.start_at)"/>
                         </div>
-                        <br />
+                        <div class="row-xreport">
+                            AL
+                            <span t-esc="o.get_current_date_x()"/>
+                            <span t-esc="o.get_current_time_x()"/>
+                        </div>
+                        <br/>
 
-                         <div t-if="cash">
-                           
+                        <div t-if="cash">
+
                             <table style="width:100%;">
                                 <tr>
-                                    <td  style="width:50%">Monto Apertura:</td>
-                                    <td  style="width:50%"><t t-esc='o.cash_register_balance_start'/></td>
+                                    <td style="width:50%">Monto Apertura:</td>
+                                    <td style="width:50%">
+                                        <t t-esc='o.cash_register_balance_start'/>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td  style="width:50%">Ventas:</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc='o.get_total_sales_x()'
-                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                 <tr>
-                                    <td  style="width:50%">Devoluciones:</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc='o.get_total_returns_x()'
-                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                 <tr>
-                                    <td  style="width:50%">Impuestos:</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc='o.get_total_tax_x()'
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                 <tr>
-                                    <td  style="width:50%">Descuentos:</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc='o.get_total_discount_x()'
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
+                                    <td style="width:50%">Ventas:</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc='o.get_total_sales_x()'
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td  style="width:50%">Total Bruto:</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc='o.get_total_first_x()'
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
+                                    <td style="width:50%">Devoluciones:</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc='o.get_total_returns_x()'
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td  style="width:50%">Total Ganancia:</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc='o.get_gross_total_x()' t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
+                                    <td style="width:50%">Impuestos:</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc='o.get_total_tax_x()'
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
                                 </tr>
-                                 <tr>
-                                    <td  style="width:50%">Total Ganancia Neto:</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc='o.get_net_gross_total_x()' t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
+                                <tr>
+                                    <td style="width:50%">Descuentos:</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc='o.get_total_discount_x()'
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">Total Bruto:</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc='o.get_total_first_x()'
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">Total Ganancia:</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc='o.get_gross_total_x()'
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">Total Ganancia Neto:</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc='o.get_net_gross_total_x()'
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
                                 </tr>
                             </table>
                         </div>
-                        <br />
+                        <br/>
                         <div style="border-top:2px dashed #111; padding-top:20px; padding-bottom:35px;">
                             <div align="center" style="padding-bottom:25px;">FLUJO DE EFECTIVO</div>
-                            <table  style="width:100%;">
+                            <table style="width:100%;">
                                 <!--<t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(True)"/>
                                 <t t-set="total_sum" t-value="0.0"/>
                                 <t t-foreach="payment_summary_without_prices" t-as="payment_element">
@@ -109,20 +138,27 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(False)"/>
+                                    <t t-set="payment_summary_without_prices"
+                                       t-value="o.get_payments_by_method(False)"/>
                                     <t t-set="total_sum" t-value="0.0"/>
                                     <!--<t t-set="payment_summary_with_prices" t-value="o.get_payments_by_method(False)"/>-->
                                     <t t-foreach="payment_summary_without_prices" t-as="payment_element">
                                         <tr t-if="payment_element['name'] == 'Efectivo'">
-                                            <td style="width:50%"><t t-esc="payment_element['name']"/></td>
-                                            <td  style="width:50%" class="text-right"><t t-esc="payment_element['sum']"
-                                                                      t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                            <t t-set="total_sum" t-value="float(total_sum) + float(payment_element['sum'])"/>
+                                            <td style="width:50%">
+                                                <t t-esc="payment_element['name']"/>
+                                            </td>
+                                            <td style="width:50%" class="text-right">
+                                                <t t-esc="payment_element['sum']"
+                                                   t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                            </td>
+                                            <t t-set="total_sum"
+                                               t-value="float(total_sum) + float(payment_element['sum'])"/>
                                         </tr>
                                     </t>
                                     <td style="width: 50%" t-if="none" class="text-right">
-                                        (+) <t t-esc="values['cash_control']['name']"
-                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        (+)
+                                        <t t-esc="values['cash_control']['name']"
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
                                     </td>
                                     <td style="width: 50%" t-if="none" class="text-right">
                                         <t t-esc="values['cash_control']['amount']"
@@ -152,13 +188,14 @@
                                         EFECTIVO TOTAL
                                     </td>
                                     <td style="50%" class="text-right">
-                                        <t t-set="efectivo_total" t-value="values['balance_start'] + total_sum + values['retiro'] + values['ingreso']"/>
+                                        <t t-set="efectivo_total"
+                                           t-value="values['balance_start'] + total_sum + values['retiro'] + values['ingreso']"/>
                                         <t t-esc="efectivo_total"
                                            t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
                                     </td>
                                 </tr>
                             </table>
-                        </div> 
+                        </div>
 
                         <div style="border-bottom:2px dashed #111; padding-top:20px; padding-bottom:35px;">
                             <div align="center" style="padding-bottom:25px;">FORMA DE PAGO VENTAS</div>
@@ -168,16 +205,20 @@
                                 <!--<t t-set="payment_summary_with_prices" t-value="o.get_payments_by_method(False)"/>-->
                                 <t t-foreach="payment_summary_without_prices" t-as="payment_element">
                                     <tr>
-                                        <td style="width:50%"><t t-esc="payment_element['name']"/></td>
-                                        <td  style="width:50%" class="text-right"><t t-esc="payment_element['sum']"
-                                                                  t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                    </tr> 
-                                    <t t-set="total_sum" t-value="float(total_sum) + float(payment_element['sum'])"/>                                    
+                                        <td style="width:50%">
+                                            <t t-esc="payment_element['name']"/>
+                                        </td>
+                                        <td style="width:50%" class="text-right">
+                                            <t t-esc="payment_element['sum']"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <t t-set="total_sum" t-value="float(total_sum) + float(payment_element['sum'])"/>
                                 </t>
                             </table>
                         </div>
 
-                       <div style="border-bottom:2px dashed #111; padding-top:20px; padding-bottom:35px;" t-if="tips">
+                        <div style="border-bottom:2px dashed #111; padding-top:20px; padding-bottom:35px;" t-if="tips">
                             <div align="center" style="padding-bottom:25px;">FORMA DE PAGO PROPINA</div>
                             <table style="width:100%;">
                                 <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(False)"/>
@@ -185,68 +226,86 @@
                                 <!--<t t-set="payment_summary_with_prices" t-value="o.get_payments_by_method(False)"/>-->
                                 <t t-foreach="payment_summary_without_prices" t-as="payment_element">
                                     <tr>
-                                        <td style="width:50%"><t t-esc="payment_element['name']"/></td>
-                                        <td  style="width:50%" class="text-right"><t t-esc="payment_element['sum']"
-                                                                  t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
+                                        <td style="width:50%">
+                                            <t t-esc="payment_element['name']"/>
+                                        </td>
+                                        <td style="width:50%" class="text-right">
+                                            <t t-esc="payment_element['sum']"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </td>
                                     </tr>
                                     <t t-set="total_sum" t-value="float(total_sum) + float(payment_element['sum'])"/>
                                 </t>
                             </table>
                         </div>
 
-                       <div style="padding-top:20px; padding-bottom:10px;" t-if="product_type">
+                        <div style="padding-top:20px; padding-bottom:10px;" t-if="product_type">
                             <div align="center" style="padding-bottom:10px;">VENTA (NO INCLUYE IMPUESTOS)</div>
                             <div align="center" style="padding-bottom:25px;">VENTAS POR TIPO PRODUCTO</div>
                             <table style="width:100%;">
                                 <t t-set="item_categories" t-value="o.get_product_category_x()"/>
                                 <t t-foreach="item_categories" t-as="item_category">
                                     <tr>
-                                        <td style="width:50%"><t t-esc="o.get_product_name_x(item_category.get('pos_categ_id'))"/>:</td>
-                                        <td  style="width:50%" class="text-right"><t t-esc="item_category['price']"
-                                                                  t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
+                                        <td style="width:50%"><t
+                                                t-esc="o.get_product_name_x(item_category.get('pos_categ_id'))"/>:
+                                        </td>
+                                        <td style="width:50%" class="text-right">
+                                            <t t-esc="item_category['price']"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </td>
                                     </tr>
                                 </t>
                                 <tr>
-                                    <td  style="width:50%"></td>
-                                    <td  style="width:50%"><div style="border-top:1px solid #333; height:1px;width:100%;"></div></td>
+                                    <td style="width:50%"></td>
+                                    <td style="width:50%">
+                                        <div style="border-top:1px solid #333; height:1px;width:100%;"></div>
+                                    </td>
                                 </tr>
                                 <tr t-if="subtotal">
-                                    <td  style="width:50%;padding-left:15px;">SUBTOTAL</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc="o.get_product_cate_total_x()"
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
+                                    <td style="width:50%;padding-left:15px;">SUBTOTAL</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc="o.get_product_cate_total_x()"
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
                                 </tr>
                             </table>
                         </div>
-                         <div style="padding-top:0px; padding-bottom:35px;" t-if="service_type">
+                        <div style="padding-top:0px; padding-bottom:35px;" t-if="service_type">
                             <div align="center" style="padding-bottom:10px;">VENTAS POR TIPO DE SERVICIO</div>
                             <table style="width:100%;">
                                 <t t-set="services" t-value="o.get_payments_by_service_type()"/>
-                                 <t>
+                                <t>
                                     <tr>
                                         <td style="width:50%">Comedor:</td>
-                                        <td  style="width:50%" class="text-right"><t t-esc="services['dine_in']"
-                                                                  t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                    </tr>                                   
+                                        <td style="width:50%" class="text-right">
+                                            <t t-esc="services['dine_in']"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </td>
+                                    </tr>
                                 </t>
-                                <t >
+                                <t>
                                     <tr>
                                         <td style="width:50%">Rápido:</td>
-                                        <td  style="width:50%" class="text-right"><t t-esc="services['online']"
-                                                                  t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                    </tr>                                   
+                                        <td style="width:50%" class="text-right">
+                                            <t t-esc="services['online']"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </td>
+                                    </tr>
                                 </t>
-                                 <t>
+                                <t>
                                     <tr>
                                         <td style="width:50%">Comedor:</td>
-                                        <td  style="width:50%" class="text-right"><t t-esc="services['take_away']"
-                                                                  t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                    </tr>                                   
+                                        <td style="width:50%" class="text-right">
+                                            <t t-esc="services['take_away']"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </td>
+                                    </tr>
                                 </t>
-                               
+
                             </table>
                         </div>
                         <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">
-                            <t t-set="vals" t-value="o.get_product_cate_total_x()" />
+                            <t t-set="vals" t-value="o.get_product_cate_total_x()"/>
                             <table style="width:100%;">
                                 <!--<t t-set="item_categories" t-value="o.get_product_category_x()"/>
                                 <t t-foreach="item_categories" t-as="item_category">
@@ -257,197 +316,163 @@
                                 </t>
                                 -->
                                 <tr>
-                                    <td  style="width:50%;padding-left:15px;">SUBTOTAL</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('balance_end_real')"
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                <tr>
-                                    <td  style="width:50%">- DESCUENTOS</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('balance_discount')"
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                                <tr>
-                                    <td  style="width:50%">VENTA NETA</td>
-                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('venta_neta')"
-                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>
-                                </tr>
-                            </table>
-                        </div>
-<!--                        <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">-->
-<!--                            <t t-set="vals" t-value="o.get_product_cate_total_x()" />-->
-<!--                            <table style="width:100%;">-->
-<!--                                &lt;!&ndash;<t t-set="item_categories" t-value="o.get_product_category_x()"/>-->
-<!--                                <t t-foreach="item_categories" t-as="item_category">-->
-<!--                                    <tr>-->
-<!--                                        <td style="width:50%"><t t-esc="o.get_product_name_x(item_category.get('pos_categ_id'))"/>:</td>-->
-<!--                                        <td  style="width:50%"><t t-esc="item_category['price']" widget="monetary"/></td>-->
-<!--                                    </tr>-->
-<!--                                </t>-->
-<!--                                &ndash;&gt;-->
-<!--                                <tr>-->
-<!--                                    <td  style="width:50%;padding-left:15px;">VENTA 16%</td>-->
-<!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('balance_end_real')"-->
-<!--                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
-<!--                                </tr>-->
-<!--                                <tr t-foreach="vals.get('taxes')" t-as="tax">-->
-<!--                                    <td style="width:70%">IMPUESTO <t t-esc="tax" />:</td>-->
-<!--                                    <td style="width:30%" class="text-right"><t t-esc="vals.get('amount_tax_line')"-->
-<!--                                                             t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
-<!--                                </tr>-->
-<!--                                <tr style="border-top: 1px solid #AAA;">-->
-<!--                                    <td  style="width:50%;">IMPUESTOS TOTAL</td>-->
-<!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_tax')"-->
-<!--                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
-<!--                                </tr>-->
-<!--                                <tr style="border-top: 1px solid #AAA;">-->
-<!--                                    <td  style="width:50%;">VENTAS CON IMP.</td>-->
-<!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_total')"-->
-<!--                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
-<!--                                </tr>-->
-<!--                            </table>-->
-<!--                        </div>-->
-
-                        <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">
-                            <t t-set="vals" t-value="o.get_product_cate_total_x()" />
-                            <div align="center" style="padding-bottom:10px; font-weight: 900;"><strong>VALIDACIÓN</strong></div>
-                            <table style="width:100%;" class="table_validate">
-                                <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(False)"/>
-                                <t t-set="total_sum" t-value="0.0"/>
-                                <thead>
-                                    <tr class="fa-0x">
-                                        <th></th>
-                                        <th class="text-center">VENTA</th>
-                                        <th class=" text-right">DEC.</th>
-                                        <th style="text-align: right;">DIF.</th>
-                                    </tr>
-                                </thead>
-                                <!--<t t-set="payment_summary_with_prices" t-value="o.get_payments_by_method(False)"/>-->
-                                <tbody>
-                                    <t t-set="tarjeta_total" t-value="0.0" />
-                                    <t t-set="credito_total" t-value="0.0" />
-                                    <t t-foreach="payment_summary_without_prices" t-as="payment_element">
-                                    <tr>
-                                        <td style="width:25%"><t t-esc="payment_element['name']"/></td>
-                                        <td  style="width:25%" class="text-right">
-                                            <t t-if="payment_element['name'] == 'Efectivo'">
-                                                <t t-esc="efectivo_total" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                            <t t-else="">
-                                                <t t-esc="payment_element['sum']" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                        </td>
-                                        <td style="width: 25%;" class="text-right">
-                                            <t t-if="payment_element['name'] == 'Efectivo'">
-                                                <t t-esc="vals.get('efectivo')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                            <t t-elif="payment_element['name'] == 'POS-Crédito'">
-                                                <t t-esc="vals.get('credito')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                            <t t-elif="payment_element['name'] == 'Tarjeta Bancaria'">
-                                                <t t-esc="vals.get('tarjeta')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                        </td>
-                                        <td style="width: 25%;" class="text-right">
-                                            <t t-if="payment_element['name'] == 'Efectivo'">
-                                                <t t-esc="(vals.get('efectivo') - efectivo_total)" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                            <t t-elif="payment_element['name'] == 'POS-Crédito'">
-                                                <t t-set="credito_total" t-value="(vals.get('credito') - payment_element['sum'])" />
-                                                <t t-esc="credito_total" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                            <t t-elif="payment_element['name'] == 'Tarjeta Bancaria'">
-                                                <t t-set="tarjeta_total" t-value="(vals.get('tarjeta') - payment_element['sum'])" />
-                                                <t t-esc="tarjeta_total" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                            </t>
-                                        </td>
-                                    </tr>
-                                    <t t-set="total_sum" t-value="float(total_sum) + float(payment_element['sum'])"/>
-                                </t>
-                                    <tr style="border-bottom: 2px dashed #AAA; padding-bottom: 10px;">
-                                        <td>TOTAL</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td class="text-right">
-                                            <t t-set="cash" t-value="(vals.get('efectivo') - efectivo_total)"/>
-                                            <t t-set="tar" t-value="(tarjeta_total)" />
-                                            <t t-set="cred" t-value="(credito_total)" />
-                                            <t t-esc="cash + tar + cred" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                        </td>
-                                    </tr>
-                                </tbody>
-
-                                <tr t-if="one">
-                                    <td style="width:25%">EFECTIVO</td>
-                                    <td style="width:25%" class="text-right">
-                                        <t t-esc="vals.get('total_cash')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                    </td>
-                                    <td style="width:25%" class="text-right">
-                                        <t t-esc="vals.get('efectivo')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                    </td>
-                                    <td style="width:25%" class="text-right">
-                                        <t t-esc="vals.get('total_cash') - vals.get('efectivo')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                    </td>
-                                </tr>
-                                <tr t-if="two">
-                                    <td style="25%">TARJETA</td>
-                                    <td style="25%" class="text-right">
-                                        <t t-esc="vals.get('tarjeta_vals')['amount']" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                    </td>
-                                    <td style="25%">
-                                        <t t-esc="vals.get('tarjeta')" />
-                                    </td>
-                                    <td style="25%" class="text-right">
-                                        <t t-esc="vals.get('tarjeta_vals')['amount'] - vals.get('tarjeta')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                    </td>
-                                </tr>
-                                <tr t-if="three">
-                                    <td style="width:25%">CREDITO</td>
-                                    <td style="width:25%" class="text-right">
-                                        <t t-esc="vals.get('credit_vals')['amount']" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                    </td>
-                                    <td style="width:25%" class="text-right">
-                                        <t t-esc="vals.get('credito')" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                    </td>
-                                    <td style="width:25%" class="text-right">
-                                        <t t-esc="vals.get('credit_vals')['amount'] - vals.get('credito')"
+                                    <td style="width:50%;padding-left:15px;">SUBTOTAL</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc="vals.get('balance_end_real')"
                                            t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
                                     </td>
                                 </tr>
-
-                            </table>
-                            <table style="width: 100%">
                                 <tr>
-                                    <t t-set="total_amount" t-value="cash + tar + cred"/>
-                                    <t t-if="total_amount &lt; 0">
-                                        <td style="padding-top: 15px;width: 50%">
-                                            FALTANTE(-) <t t-esc="total_amount" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                        </td>
-                                        <td style="width: 50%">
-                                            SOBRANTE(+) 0.0
-                                        </td>
-                                    </t>
-                                    <t t-else="">
-                                        <td style="padding-top: 15px; width: 50%">
-                                            SOBRANTE(+) <t t-esc="total_amount" t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
-                                        </td>
-                                        <td style="width: 50%">
-                                            FALTANTE(-) 0.0
-                                        </td>
-                                    </t>
+                                    <td style="width:50%">- DESCUENTOS</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc="vals.get('balance_discount')"
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-top: 15px;">GERENTE<br/>
-                                        <t t-esc="o.config_id.authentication_user_ids[0].name"/>
-                                    </td>
-                                    <td>
-                                       CAJERO<br/>
-                                        <t t-esc="o.user_id.name"/><br/>
-                                        Caja: <t t-esc="o.config_id.name"/>
+                                    <td style="width:50%">VENTA NETA</td>
+                                    <td style="width:50%" class="text-right">
+                                        <t t-esc="vals.get('venta_neta')"
+                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                        <!--                        <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">-->
+                        <!--                            <t t-set="vals" t-value="o.get_product_cate_total_x()" />-->
+                        <!--                            <table style="width:100%;">-->
+                        <!--                                &lt;!&ndash;<t t-set="item_categories" t-value="o.get_product_category_x()"/>-->
+                        <!--                                <t t-foreach="item_categories" t-as="item_category">-->
+                        <!--                                    <tr>-->
+                        <!--                                        <td style="width:50%"><t t-esc="o.get_product_name_x(item_category.get('pos_categ_id'))"/>:</td>-->
+                        <!--                                        <td  style="width:50%"><t t-esc="item_category['price']" widget="monetary"/></td>-->
+                        <!--                                    </tr>-->
+                        <!--                                </t>-->
+                        <!--                                &ndash;&gt;-->
+                        <!--                                <tr>-->
+                        <!--                                    <td  style="width:50%;padding-left:15px;">VENTA 16%</td>-->
+                        <!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('balance_end_real')"-->
+                        <!--                                                              t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+                        <!--                                </tr>-->
+                        <!--                                <tr t-foreach="vals.get('taxes')" t-as="tax">-->
+                        <!--                                    <td style="width:70%">IMPUESTO <t t-esc="tax" />:</td>-->
+                        <!--                                    <td style="width:30%" class="text-right"><t t-esc="vals.get('amount_tax_line')"-->
+                        <!--                                                             t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+                        <!--                                </tr>-->
+                        <!--                                <tr style="border-top: 1px solid #AAA;">-->
+                        <!--                                    <td  style="width:50%;">IMPUESTOS TOTAL</td>-->
+                        <!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_tax')"-->
+                        <!--                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+                        <!--                                </tr>-->
+                        <!--                                <tr style="border-top: 1px solid #AAA;">-->
+                        <!--                                    <td  style="width:50%;">VENTAS CON IMP.</td>-->
+                        <!--                                    <td  style="width:50%" class="text-right"><t t-esc="vals.get('amount_total')"-->
+                        <!--                                                                                 t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/></td>-->
+                        <!--                                </tr>-->
+                        <!--                            </table>-->
+                        <!--                        </div>-->
 
+                        <div style="border-bottom:2px dashed #989898;padding-top: 20px;padding-bottom: 30px;">
+                            <t t-set="vals" t-value="o.get_product_cate_total_x()"/>
+                            <div align="center" style="padding-bottom:10px; font-weight: 900;">
+                                <strong>VALIDACIÓN</strong>
+                            </div>
+                            <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(False)"/>
+                            <t t-foreach="payment_summary_without_prices" t-as="payment_element">
+                                <table style="width:100%;" class="table_validate">
+                                    <!--                                <t t-set="total_sum" t-value="0.0"/>-->
+                                    <!--                                <thead>-->
+                                    <!--                                    <tr class="fa-0x">-->
+                                    <!--                                        <th></th>-->
+                                    <!--                                        <th class="text-center">VENTA</th>-->
+                                    <!--                                        <th class=" text-right">DEC.</th>-->
+                                    <!--                                        <th style="text-align: right;">DIF.</th>-->
+                                    <!--                                    </tr>-->
+                                    <!--                                </thead>-->
+                                    <!--<t t-set="payment_summary_with_prices" t-value="o.get_payments_by_method(False)"/>-->
+                                    <tbody>
+                                        <t t-set="tarjeta_total" t-value="0.0"/>
+                                        <t t-set="credito_total" t-value="0.0"/>
+                                        <tr>
+                                            <td style="width:25%">
+                                                <t t-esc="payment_element['name']"/>
+                                            </td>
+                                            <td style="width:25%" class="text-right">
+                                                <t t-if="payment_element['name'] == 'Efectivo'">
+                                                    <t t-esc="efectivo_total"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                                <t t-else="">
+                                                    <t t-esc="payment_element['sum']"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Declaración
+                                            </td>
+                                            <td style="width: 25%;" class="text-right">
+                                                <t t-if="payment_element['name'] == 'Efectivo'">
+                                                    <t t-esc="vals.get('efectivo')"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                                <t t-elif="payment_element['name'] == 'POS-Crédito'">
+                                                    <t t-esc="vals.get('credito')"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                                <t t-elif="payment_element['name'] == 'Tarjeta Bancaria'">
+                                                    <t t-esc="vals.get('tarjeta')"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Diferencia
+                                            </td>
+                                            <td style="width: 25%;" class="text-right">
+                                                <t t-if="payment_element['name'] == 'Efectivo'">
+                                                    <t t-esc="(vals.get('efectivo') - efectivo_total)"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                                <t t-elif="payment_element['name'] == 'POS-Crédito'">
+                                                    <t t-set="credito_total"
+                                                       t-value="(vals.get('credito') - payment_element['sum'])"/>
+                                                    <t t-esc="credito_total"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                                <t t-elif="payment_element['name'] == 'Tarjeta Bancaria'">
+                                                    <t t-set="tarjeta_total"
+                                                       t-value="(vals.get('tarjeta') - payment_element['sum'])"/>
+                                                    <t t-esc="tarjeta_total"
+                                                       t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="height: 10px;"/>
+                            </t>
+                            <table style="width:100%;" class="table_validate">
+                                <tbody>
+                                    <tr>
+                                        <td style="padding-top: 15px; width: 50%;">GERENTE
+                                            <br/>
+                                            <t t-esc="o.config_id.authentication_user_ids[0].name"/>
+                                        </td>
+                                        <td style="width: 50%;">
+                                            CAJERO
+                                            <br/>
+                                            <t t-esc="o.user_id.name"/>
+                                            <br/>
+                                            Caja:
+                                            <t t-esc="o.config_id.name"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </t>
@@ -456,7 +481,7 @@
         <template id="front_sales_report_pdf_template">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="flexibite_com_advance.front_sales_report_pdf_document" />
+                    <t t-call="flexibite_com_advance.front_sales_report_pdf_document"/>
                 </t>
             </t>
         </template>

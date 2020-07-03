@@ -46,9 +46,9 @@
                     <div class="text-center"><img src="http://www.vmp.com.mx/Images/web-vmp.png" class="img-fluid"/></div>
                     <tr class="text-uppercase text-center">
                       <th>
-                        <p>john doe</p>
+                        <p><t t-esc="partner_name"/></p>
                         <p>ms10102212</p>
-                        <p>calle 51 x 31 y 33, merida, yucatan</p>
+                        <p><t t-esc="partner_address"/></p>
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
@@ -68,11 +68,11 @@
                           </tr>
                           <tr>
                             <td>no. de cuenta</td>
-                            <td>1876564657</td>
+                            <td><t t-esc="partner_account"/></td>
                           </tr>
                           <tr>
-                            <td>clabe spei</td>
-                            <td>28558855747722885</td>
+                            <td>clave spei</td>
+                            <td><t t-esc="partner_spei"/></td>
                           </tr>
                         </table>
                       </td>
@@ -107,7 +107,7 @@
                             <td>$0.00</td>
                           </tr>
                           <tr>
-                            <td colspan="2" class="text-center">Días del periodo: <strong><span>31</span></strong></td>
+                            <td colspan="2" class="text-center">Días del periodo: <strong><span><t t-esc="days"/></span></strong></td>
                           </tr>
                         </table>
                       </td>
@@ -134,22 +134,28 @@
                     </tr>
                     <tr>
                       <td><span t-esc="end_date"/></td>
-                      <td>Interés Financiero</td>
-                      <td>$600.21</td>
+                      <td>Resumen de Consumos a la fecha de corte</td>
+                      <td><t t-esc="total * 1.16" t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                       <td>$0.00</td>
                     </tr>
+<!--                    <tr>-->
+<!--                      <td><span t-esc="end_date"/></td>-->
+<!--                      <td>Interés Financiero</td>-->
+<!--                      <td>$600.21</td>-->
+<!--                      <td>$0.00</td>-->
+<!--                    </tr>-->
                     <tr>
                       <td></td>
                       <td>i.v.a. sobre intereses financieros</td>
                       <td>$85.00</td>
                       <td>$0.00</td>
                     </tr>
-                    <tr>
-                      <td></td>
-                      <td>Comisión por no pago</td>
-                      <td>$600.21</td>
-                      <td>$0.00</td>
-                    </tr>
+<!--                    <tr>-->
+<!--                      <td></td>-->
+<!--                      <td>Comisión por no pago</td>-->
+<!--                      <td>$600.21</td>-->
+<!--                      <td>$0.00</td>-->
+<!--                    </tr>-->
                     <tr class="table-highlight font-weight-bold">
                       <td></td>
                       <td class="text-left">Total</td>
@@ -157,6 +163,7 @@
                       <td>$7,000.00</td>
                     </tr>
                   </table>
+                  <p style="page-break-before:always;"/>
                   <h4 class="text-center text-uppercase pt-4 pb-4">Resumen General de Empleados</h4>
                   
                   <table class="table table-striped text-uppercase table-borders" style="width:100%; margin-top: 50px;">
@@ -171,11 +178,11 @@
                         <t t-set = "sub_total" t-value = "0" />
                         <t t-foreach="orders" t-as="o">
                              <t t-set = "sub_total" t-value = "sub_total + o['importe']" /> 
-                            <tr >
+                            <tr>
                               <td style="text-align: center !important;"><span t-esc="o['client_number']"/></td>
                               <td style="text-align: center !important;"><span t-esc="o['cliente']"/></td>
                               <td style="text-align: center !important;" class="font-weight-bold">$ <span t-esc="o['importe']"/></td>
-                              </tr>
+                            </tr>
                         </t>
                         <tr class="font-weight-bold text-uppercase">
                           <td colspan="2" style="text-align: right !important;" >subtotales:</td>
@@ -193,7 +200,7 @@
                           <td style="text-align: center !important;" >$ <span t-esc="'%.2f'% total"/></td>
                         </tr>
                       </tbody>
-                  </table>
+                  </table><br/>
 
 
                   <table class="table-borders mt-4">
