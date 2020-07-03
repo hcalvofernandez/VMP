@@ -418,11 +418,11 @@
 
     <t t-name="CategoriesView">
         <t t-if="sub_categories">
-            <t t-if="parent_categ_id">
+<!--            <t t-if="parent_categ_id">-->
                 <span class='v-category parent_categ category-simple-button js-category-switch' t-att-data-category-id="parent_categ_id">
                    <i class="fa fa-arrow-left"></i> Back
                 </span>
-            </t>
+<!--            </t>-->
             <t t-foreach="sub_categories" t-as="categ">
 	            <t t-set="products" t-value="widget.pos.db.get_product_by_category(categ.id)"/>
                 <t t-if="products and products.length > 0">

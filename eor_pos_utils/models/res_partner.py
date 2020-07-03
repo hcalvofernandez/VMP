@@ -19,6 +19,20 @@ class ProductProduct(models.Model):
                 args += [('id', 'in', Contracts.mapped('product_ids').ids)]
         return super(ProductProduct, self).search(args, offset, limit, order, count)
 
+class PosOrder(models.Model):
+    _inherit = 'pos.order'
+
+    credit_amount = fields.Float(string="Importe Créditos", compute="_get_credit_amount", store=True)
+
+    @api.multi
+    @api.depends("statement_ids")
+    def _get_credit_amount(self):
+        for order in self:
+            sum = 0
+            for statement in order.statement_ids:
+                if statement.journal_id.code == "POSCR":
+                    sum += statement.amount
+            order.credit_amount = sum
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -71,7 +85,7 @@ class ResPartner(models.Model):
     client_number = fields.Char(
         string='Número de Cliente',
     )
-    remaining_credit_limit = fields.Float(string="Crédito Disponible", compute='_get_sales_saldo_partner')
+    remaining_credit_limit = fields.Float(string="Crédito Disponible", compute='_get_sales_saldo_partner', store=True)
     remaining_credit_amount = fields.Float(string="Remaining Credit Amount", compute="_get_sales_saldo_partner",
                                            store=True, readonly=True)
 
@@ -225,14 +239,14 @@ class ResPartner(models.Model):
         return partner
 
     @api.multi
-    @api.depends('pos_order_ids.amount_total', 'credit_limit')
+    @api.depends('pos_order_ids.credit_amount', 'credit_limit')
     def _get_sales_saldo_partner(self):
-        for rec in self:
+        for partner in self:
             suma = 0
-            orders = self.env['pos.order'].search(
-                [('partner_id', '=', rec.id), ('state_order_fac', '=', 'n'), ('order_type', '=', 'Cŕedito'),
-                 ('is_postpaid', '=', True)])
-            for o in orders:
-                suma += o.amount_total
-            rec.remaining_credit_amount = suma
-            rec.remaining_credit_limit = rec.credit_limit - suma
+            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n' and r.credit_amount > 0)
+            # and r.is_postpaid is True
+            for o in pos_orders:
+                suma += o.credit_amount
+            saldo = partner.credit_limit - suma
+            partner.remaining_credit_amount = suma
+            partner.remaining_credit_limit = saldo
