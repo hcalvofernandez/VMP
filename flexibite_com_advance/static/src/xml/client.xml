@@ -197,19 +197,19 @@
 			            </div>
 		            </t>
                    
-			        <t t-if="widget.pos.config and widget.pos.config.enable_credit">
-		                <div class='client-detail'>
-		                    <span class='label'>Credit</span>
-		                    <t t-if='partner.remaining_credit_amount'>
-		                        <span class='detail client-remaining_credit_amount'>
-		                            <t t-esc='widget.format_currency(partner.remaining_credit_amount)'/>
-		                        </span>
-		                    </t>
-		                    <t t-if='!partner.remaining_credit_amount'>
-		                        <span class='detail client-remaining_credit_amount empty'>N/A</span>
-		                    </t>
-		                </div>
-		            </t>
+<!--			        <t t-if="widget.pos.config and widget.pos.config.enable_credit">-->
+<!--		                <div class='client-detail'>-->
+<!--		                    <span class='label'>Credit</span>-->
+<!--		                    <t t-if='partner.remaining_credit_amount'>-->
+<!--		                        <span class='detail client-remaining_credit_amount'>-->
+<!--		                            <t t-esc='widget.format_currency(partner.remaining_credit_amount)'/>-->
+<!--		                        </span>-->
+<!--		                    </t>-->
+<!--		                    <t t-if='!partner.remaining_credit_amount'>-->
+<!--		                        <span class='detail client-remaining_credit_amount empty'>N/A</span>-->
+<!--		                    </t>-->
+<!--		                </div>-->
+<!--		            </t>-->
                 </div>
             </div>
         </t>
