@@ -39,11 +39,15 @@ class ReportPosWizard(models.TransientModel):
     def consult_credit_details(self):
         one = self.start_date
         two = self.end_date
-        start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
-        end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
-        orders = self.env['pos.order'].search([('company_id','=',self.company_id.id),('state_order_fac','=','n'),('order_type','=','Cŕedito'),('is_postpaid','=',True),('date_order','>=',start),('date_order','<=',end)])
+        # start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
+        # end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
+        # orders = self.env['pos.order'].search([('company_id','=',self.company_id.id),('state_order_fac','=','n'),('order_type','=','Cŕedito'),('is_postpaid','=',True),('date_order','>=',start),('date_order','<=',end)])
+        orders = self.env['pos.order'].search([('company_id', '=', self.company_id.id), ('state_order_fac', '=', 'n'),
+                                               ('order_type', '=', 'Cŕedito'), ('is_postpaid', '=', True),
+                                               ('date_order', '>=', one), ('date_order', '<=', two)])
         importes_por_persona = dict()
         res = []
+        sum = 0
         if orders:
             for o in orders:
                 if o.partner_id in importes_por_persona:
@@ -57,7 +61,8 @@ class ReportPosWizard(models.TransientModel):
                     'cliente': key.name,
                     'importe': value,
                     })
-            return res
+                sum += value
+            return res, sum
         else:
             raise ValidationError("No Tiene Información para Mostrar ")
 
@@ -65,22 +70,31 @@ class ReportPosWizard(models.TransientModel):
     def get_report_credit_details(self):
         if self.check_mail:
             self.send_mail_report()
+        partner_id = self._context.get('partner_id')
+        partner = self.env['res.partner'].browse(partner_id)
+        res, sum = self.consult_credit_details()
         data = {
-            'orders': self.consult_credit_details(),
+            'orders': res,
+            'total': sum,
             'start_date': self.start_date,
             'end_date': self.end_date,
-            }
-        return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data,config=False)
-
+            'days': (self.end_date - self.start_date).days,
+            'partner_name': partner.name,
+            'partner_address': partner.street,
+            'partner_account': partner.account_number,
+            'partner_spei': partner.spei_key,
+        }
+        return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data, config=False)
 
     @api.multi
     def sale_report_pos(self):
         one = self.start_date
         two = self.end_date
-        start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
-        end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
+        # start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
+        # end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
         view_id = self.env.ref('point_of_sale.view_pos_order_tree').id
-        domain = ['&',('date_order','>=',start),('date_order','<=',end)]
+        # domain = ['&',('date_order','>=',start),('date_order','<=',end)]
+        domain = [('date_order', '>=', one), ('date_order', '<=', two)]
         return {
             'type': 'ir.actions.act_window',
             'name': 'Ventas de los Clientes',
@@ -93,7 +107,7 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def send_mail_report(self):
-        template = self.env['mail.template'].search([('name','=','Reporte de Crédito')])
+        template = self.env['mail.template'].search([('name', '=', 'Reporte de Crédito')])
         template = template.generate_email(self.id)
         self.send(template) # enviar
 

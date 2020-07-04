@@ -12,6 +12,10 @@
 							string='Payment' class="oe_highlight" />
 					</header>
 				</xpath>
+				<field name="category_id" position="after">
+					<field name="account_number" attrs="{'invisible': [('parent_id', 'not in', [False])]}"/>
+					<field name="spei_key" attrs="{'invisible': [('parent_id', 'not in', [False])]}"/>
+				</field>
 				<notebook>
 					<page name="limit_and_credit" string="Límites y Créditos">
 						<group>
