@@ -23,6 +23,7 @@
         'static/description/main_screenshot.png',
     ],
     'data': [
+        'data/temporal_cron.xml',
         'security/secutiry.xml',
         'security/ir.model.access.csv',
         'data/data.xml',

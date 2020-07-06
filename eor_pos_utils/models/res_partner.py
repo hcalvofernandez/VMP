@@ -190,6 +190,13 @@ class ResPartner(models.Model):
                         tipo = "subsidio"
                 rec.type_contract_hide = tipo
 
+    def cron_recalcule_limit(self):
+        parents = self.env['res.partner'].search([('customer', '=', 1), ('parent_id', '=', False)])
+        for parent in parents:
+            print(parent)
+            vals = {'credit_limit': parent.credit_s_id.quantity}
+            parent.child_ids.write(vals)
+
     @api.multi
     @api.onchange('credit_s_id')
     def onchange_credit_s_id(self):

@@ -42,14 +42,13 @@ class ReportPosIndividualWizard(models.TransientModel):
         two = self.end_date
         # start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
         # end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
-        res= []
+        res = []
         sum = 0
         orders = self.env['pos.order.line'].search([('order_id.partner_id.id', '=', self.partner_id.id),
                                                     ('order_id.state_order_fac', '=', 'n'),
-                                                    ('order_id.order_type', '=', 'Crédito'),
-                                                    ('order_id.is_postpaid', '=', True),
                                                     ('order_id.date_order', '>=', one),
                                                     ('order_id.date_order', '<=', two)])
+        print(orders)
         for o in orders:
             res.append({
                 'orden':o.order_id.name,
