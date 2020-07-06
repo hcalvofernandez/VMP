@@ -36,7 +36,7 @@ class PosOrder(models.Model):
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    
+
     def _compute_order_count(self):
         pos_orderobj = self.env['pos.order']
         for partner in self:
@@ -44,53 +44,34 @@ class ResPartner(models.Model):
 
     
     client_pin = fields.Char(string="Pin de seguridad")
-    order_postpago_count = fields.Integer(string="Ordenes postpago", compute="_compute_order_count")
     numero_tarjeta = fields.Char(string="Número de tarjeta")
     esquema_subsidio_ids = fields.Many2many('contract.scheme.contract', string='Esquemas de subsidio')
     product_ids = fields.Many2many('product.product', string="Productos")
     credit_blocked = fields.Boolean(string="Bloquear Saldo", default=False)
-    schemes_sub_id = fields.Many2one(
-        'contract.scheme.contract',
-        string='Esquema de Subsidio',
-    )
-    ids_schemes_sub = fields.Many2many(
-        'contract.scheme.contract',
-        compute='_compute_schemes_subsidio',
-        store=False,
-        string='Esquemas de Subsidio',
-    )
-    credit_s_id = fields.Many2one(
-        'credit.credit_schemes',
-        string='Esquema de Crédito',
-    )
+    schemes_sub_id = fields.Many2one('contract.scheme.contract', string='Esquema de Subsidio')
+    client_number = fields.Char(string='Número de Cliente')
+    has_credit_contract = fields.Boolean(string="Tiene contrato de crédito", compute='_compute_type_credit')
 
-    ids_schemes_contracts = fields.Many2many(
-        'credit.credit_schemes',
-        compute='_compute_schemes_credit',
-        store=True,
-        string='Esquemas de Crédito',
-    )
+    pos_order_ids = fields.One2many(comodel_name="pos.order", inverse_name="partner_id", string="Pos Orders",
+                                    required=False)
 
-    type_contract_hide = fields.Char(
-        compute='_compute_type_credit',
-        string='Tipo de contrato',
-        help=' tipos de  contrato - , credito, prepago, mealplan, subsidio',
-    )
+    # Computed fields
+    order_postpago_count = fields.Integer(string="Ordenes postpago", compute="_compute_order_count", store=True)
+    ids_schemes_sub = fields.Many2many('contract.scheme.contract', compute='_compute_schemes_subsidio', store=True,
+                                       string='Esquemas de Subsidio')
+    credit_s_id = fields.Many2one('credit.credit_schemes', string='Esquema de Crédito')
+    ids_schemes_contracts = fields.Many2many('credit.credit_schemes', compute='_compute_schemes_credit', store=True,
+                                             string='Esquemas de Crédito')
 
-    credit_limit_computed = fields.Float(
-        compute='_credit_limit_computed',
-        string='Límite de Crédito',
-        help=' campo para mostrar el limite de credito ',
-    )
-    client_number = fields.Char(
-        string='Número de Cliente',
-    )
+    type_contract_hide = fields.Char(compute='_compute_type_credit', string='Tipo de contrato', store=True,
+                                     help=' tipos de  contrato - , credito, prepago, mealplan, subsidio')
+
+    credit_limit_computed = fields.Float(compute='_credit_limit_computed', string='Límite de Crédito',
+                                         help=' campo para mostrar el limite de credito ')
     remaining_credit_limit = fields.Float(string="Crédito Disponible", compute='_get_sales_saldo_partner', store=True)
     remaining_credit_amount = fields.Float(string="Remaining Credit Amount", compute="_get_sales_saldo_partner",
                                            store=True, readonly=True)
 
-    pos_order_ids = fields.One2many(comodel_name="pos.order", inverse_name="partner_id", string="Pos Orders",
-                                    required=False)
     # TODO: Esquema por producto
 
     @api.multi
@@ -141,7 +122,7 @@ class ResPartner(models.Model):
             rec.credit_limit_computed = rec.credit_limit
 
     @api.multi
-    @api.depends('contract_ids')
+    @api.depends('contract_ids', 'parent_id')
     def _compute_schemes_credit(self):
 
         try:
@@ -169,11 +150,12 @@ class ResPartner(models.Model):
                         #    acumulador.append(contract.id)
                         # self.contract_ids = [(6, 0, acumulador)]
         except Exception as e:
-            exc_traceback = sys.exc_info()
+            pass
+            # exc_traceback = sys.exc_info()
             # raise Warning(getattr(e, 'message', repr(e))+" ON LINE "+format(sys.exc_info()[-1].tb_lineno))
 
     @api.multi
-    @api.depends('contract_ids')
+    @api.depends('contract_ids', 'parent_id')
     def _compute_type_credit(self):
         for rec in self:
             tipo = ""
@@ -183,6 +165,7 @@ class ResPartner(models.Model):
                     [('partner_id', '=', partner_id), ('active', '=', True)])
                 for con in contracts:
                     if con.type_contract == "credito":
+                        rec.has_credit_contract = True
                         tipo = "credito"
                     elif con.type_contract == "prepago":
                         tipo = "prepago"
@@ -192,6 +175,7 @@ class ResPartner(models.Model):
                         tipo = "subsidio"
                 rec.type_contract_hide = tipo
             else:
+                rec.has_credit_contract = False
                 partner_id = rec.id
                 contracts = self.env['contract.contract'].search(
                     [('partner_id', '=', partner_id), ('active', '=', True)])
@@ -221,32 +205,34 @@ class ResPartner(models.Model):
         #
         self.update({"credit_limit": self.credit_s_id.quantity})
 
-        for partner_child in self.child_ids:
-            _partner_child = self.env['res.partner'].browse(partner_child.id)
-            if not _partner_child.credit_s_id:
-                _partner_child.sudo().update({"credit_limit": 0})
+        # for partner_child in self.child_ids:
+        #     _partner_child = self.env['res.partner'].browse(partner_child.id)
+        #     if not _partner_child.credit_s_id:
+        #         _partner_child.sudo().update({"credit_limit": 0})
 
     def write(self, vals):
         partner = super(ResPartner, self).write(vals)
-        for partner in self:
-            if (partner.child_ids):
-                for partner_child in partner.child_ids:
-                    _partner_child = self.env['res.partner'].browse(partner_child.id)
-                    if (_partner_child.schemes_sub_id):
-                        pass
-                    else:
-                        _partner_child.sudo().update({"credit_limit": 0})
+        # for partner in self:
+        #     if (partner.child_ids):
+        #         for partner_child in partner.child_ids:
+        #             _partner_child = self.env['res.partner'].browse(partner_child.id)
+        #             if (_partner_child.schemes_sub_id):
+        #                 pass
+        #             else:
+        #                 _partner_child.sudo().update({"credit_limit": 0})
         return partner
+    
 
     @api.multi
-    @api.depends('pos_order_ids.credit_amount', 'credit_limit')
+    @api.depends('pos_order_ids.credit_amount', 'pos_order_ids.state_order_fac', 'credit_limit')
     def _get_sales_saldo_partner(self):
         for partner in self:
-            suma = 0
-            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n' and r.credit_amount > 0)
-            # and r.is_postpaid is True
-            for o in pos_orders:
-                suma += o.credit_amount
-            saldo = partner.credit_limit - suma
-            partner.remaining_credit_amount = suma
-            partner.remaining_credit_limit = saldo
+            if partner.credit_limit > 0:
+                pos_orders = partner.pos_order_ids.filtered(lambda r: r.state_order_fac == 'n' and r.credit_amount > 0)
+                # and r.is_postpaid is True
+                suma = sum(o.credit_amount for o in pos_orders) or 0.0
+                saldo = partner.credit_limit - suma
+                print(partner.credit_limit)
+                print(saldo)
+                partner.remaining_credit_amount = suma
+                partner.remaining_credit_limit = saldo

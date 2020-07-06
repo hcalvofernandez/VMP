@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <record id="eor_res_partner_view_form" model="ir.ui.view">
         <field name="name">eor.res.partner.view.form</field>
         <field name="model">res.partner</field>
@@ -37,11 +36,14 @@
             </xpath>
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="type_contract_hide"/>
-
                 <field name="ids_schemes_contracts" invisible="1"/>
-                <field name="credit_s_id" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
-
-                <field name="credit_limit_computed" attrs="{'invisible':[('type_contract_hide','not in', ['credito'])]}" domain="[('id','in',ids_schemes_contracts)]"/>
+                <field name="has_credit_contract" invisible="1"/>
+                <field name="credit_s_id"
+                       attrs="{'invisible':[('type_contract_hide','not in', ['credito']), ('has_credit_contract','=', False)]}"
+                       domain="[('id','in',ids_schemes_contracts)]"/>
+                <field name="credit_limit_computed"
+                       attrs="{'invisible':[('type_contract_hide','not in', ['credito']),('has_credit_contract','=', False)]}"
+                       domain="[('id','in',ids_schemes_contracts)]"/>
             </xpath>
             <xpath expr="//field[@name='function']" position="before">
                 <field name="client_number"/>
