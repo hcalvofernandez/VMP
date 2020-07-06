@@ -34,7 +34,7 @@ class ResPartner(models.Model):
         return res
 
     @api.multi
-    @api.depends('pos_order_ids.amount_total', 'meal_plan_limit')
+    @api.depends('pos_order_ids.amount_total', 'pos_order_ids.state', 'meal_plan_limit')
     def _calc_meal_plan_remaining(self):
         for partner in self:
             if partner.meal_plan_limit > 0:
@@ -184,7 +184,7 @@ class ResPartner(models.Model):
             s.remaining_wallet_amount = total
 
     @api.multi
-    @api.depends('pos_order_ids.amount_total', 'debit_limit')
+    @api.depends('pos_order_ids.amount_total', 'debit_limit', 'pos_order_ids.state')
     def _calc_debit_remaining(self):
         for partner in self:
             if partner.debit_limit > 0:
