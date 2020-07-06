@@ -47,9 +47,9 @@
                     <div class="text-center"><img src="http://www.vmp.com.mx/Images/web-vmp.png" class="img-fluid"/></div>
                     <tr class="text-uppercase text-center">
                       <th>
-                        <p>john doe</p>
+                        <p><t t-esc="partner.name"/></p>
                         <p>ms10102212</p>
-                        <p>calle 51 x 31 y 33, merida, yucatan</p>
+                        <p><t t-esc="partner.street"/></p>
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
@@ -69,11 +69,11 @@
                           </tr>
                           <tr>
                             <td>no. de cuenta</td>
-                            <td>1876564657</td>
+                            <td><t t-esc="partner.account_number"/></td>
                           </tr>
                           <tr>
                             <td>clave spei</td>
-                            <td>28558855747722885</td>
+                            <td><t t-esc="partner.spei_key"/></td>
                           </tr>
                         </table>
                       </td>
@@ -108,7 +108,7 @@
                             <td>$0.00</td>
                           </tr>
                           <tr>
-                            <td colspan="2" class="text-center">Días del periodo: <strong><span>31</span></strong></td>
+                            <td colspan="2" class="text-center">Días del periodo: <strong><span><t t-esc="days"/></span></strong></td>
                           </tr>
                         </table>
                       </td>
@@ -140,6 +140,12 @@
                       <td>$0.00</td>
                     </tr>
                     <tr>
+                      <td><span t-esc="end_date"/></td>
+                      <td>Resumen de Consumos a la fecha de corte</td>
+                      <td><t t-esc="total * 1.16" t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
+                      <td>$0.00</td>
+                    </tr>
+                    <tr>
                       <td></td>
                       <td>i.v.a. sobre intereses financieros</td>
                       <td>$85.00</td>
@@ -158,6 +164,7 @@
                       <td>$7,000.00</td>
                     </tr>
                   </table>
+                  <p style="page-break-before:always;"/>
                   <h4 class="text-center text-uppercase pt-4 pb-4">Resumen Individual</h4>
 
 
@@ -202,7 +209,7 @@
                               </td>
                             </tr>
                           </tbody>
-                        </table>
+                        </table><br/>
 
 
                   <table class="table-borders mt-4">

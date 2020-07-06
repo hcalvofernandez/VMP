@@ -40,10 +40,16 @@ class ReportPosIndividualWizard(models.TransientModel):
             self.send_mail_report()
         one = self.start_date
         two = self.end_date
-        start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
-        end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
+        # start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
+        # end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
         res= []
-        orders = self.env['pos.order.line'].search([('order_id.partner_id.id','=',self.partner_id.id),('order_id.state_order_fac','=','n'),('order_id.order_type','=','Cŕedito'),('order_id.is_postpaid','=',True),('order_id.date_order','>=',start),('order_id.date_order','<=',end)])
+        sum = 0
+        orders = self.env['pos.order.line'].search([('order_id.partner_id.id', '=', self.partner_id.id),
+                                                    ('order_id.state_order_fac', '=', 'n'),
+                                                    ('order_id.order_type', '=', 'Crédito'),
+                                                    ('order_id.is_postpaid', '=', True),
+                                                    ('order_id.date_order', '>=', one),
+                                                    ('order_id.date_order', '<=', two)])
         for o in orders:
             res.append({
                 'orden':o.order_id.name,
@@ -51,16 +57,22 @@ class ReportPosIndividualWizard(models.TransientModel):
                 'producto': o.product_id.name,
                 'importe': o.price_subtotal_incl,
                 })
-        return res
+            sum += o.price_subtotal_incl
+        return res, sum
 
     @api.multi
     def get_report_individual_details(self):
+        days = (self.end_date-self.start_date).days
+        orders, total = self.consult_report_individual_details()
+        print(total)
         data = {
-            'orders': self.consult_report_individual_details(),
+            'orders': orders,
             'start_date': self.start_date,
             'end_date': self.end_date,
+            'total': total,
             'client': self.partner_id.name,
-            'client_number':self.partner_id.client_number,
+            'client_number': self.partner_id.client_number,
+            'days': days,
             }
         return self.env.ref('credit.action_report_credit_summary_individual').report_action(self, data=data,config=False)
 
