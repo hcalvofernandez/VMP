@@ -13,7 +13,8 @@
 					</header>
 				</xpath>
 				<xpath expr="//header/button[last()]" position="after">
-                	<button string="Recalcular Crédito" name="onchange_credit_s_id" type="object" groups="base.group_no_one"/>
+                	<button string="Recalcular Crédito" name="cron_recalcule_limit"
+							type="object" groups="base.group_no_one"/>
             	</xpath>
 
 				<field name="category_id" position="after">

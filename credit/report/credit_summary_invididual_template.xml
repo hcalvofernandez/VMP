@@ -53,7 +53,7 @@
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
-                        <p><span t-esc="client"/></p>
+                        <p><span t-esc="partner.name"/></p>
                       </th>
                     </tr>
                     <tr>
@@ -61,11 +61,11 @@
                         <table class="text-uppercase table-sm table-striped table-center table-attenuate">
                           <tr>
                             <td>fecha límite de pago</td>
-                            <td>28-feb-2020</td>
+                            <td></td>
                           </tr>
                           <tr>
                             <td>fecha de corte</td>
-                            <td>28-ene-2020</td>
+                            <td><t t-esc="cut_date"/></td>
                           </tr>
                           <tr>
                             <td>no. de cuenta</td>
@@ -81,31 +81,33 @@
                         <table class="text-uppercase table-sm table-striped table-center table-attenuate">
                           <tr>
                             <td>saldo anterior</td>
-                            <td>$0.00</td>
+                            <td class="text-right">$0.00</td>
                           </tr>
                           <tr>
                             <td>pagos y abonos</td>
-                            <td>$0.00</td>
+                            <td class="text-right">$0.00</td>
                           </tr>
                           <tr>
                             <td>compras y cargos</td>
-                            <td>$0.00</td>
+                            <td class="text-right">$0.00</td>
                           </tr>
                           <tr class="table-highlight">
                             <td>saldo actual al corte</td>
-                            <td>$0.00</td>
+                            <td class="text-right"><t t-esc="float(total)" t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>saldo vencido</td>
-                            <td>$0.00</td>
+                            <td class="text-right">$0.00</td>
                           </tr>
                           <tr class="table-highlight">
                             <td>limite de crédito</td>
-                            <td>$0.00</td>
+                            <td class="text-right"><t t-esc="partner.credit_limit"
+                                   t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>crédito disponible</td>
-                            <td>$0.00</td>
+                            <td class="text-right"><t t-esc="partner.remaining_credit_limit"
+                                   t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td colspan="2" class="text-center">Días del periodo: <strong><span><t t-esc="days"/></span></strong></td>
@@ -127,41 +129,41 @@
                       <th>Cargos</th>
                       <th>Abonos</th>
                     </tr>
-                    <tr>
-                      <td><span t-esc="start_date"/></td>
-                      <td>Gracias por su pago </td>
-                      <td>$0.00</td>
-                      <td>$7,000.00</td>
-                    </tr>
-                    <tr>
-                      <td><span t-esc="end_date"/></td>
-                      <td>Interés Financiero</td>
-                      <td>$600.21</td>
-                      <td>$0.00</td>
-                    </tr>
+<!--                    <tr>-->
+<!--                      <td><span t-esc="start_date"/></td>-->
+<!--                      <td>Gracias por su pago </td>-->
+<!--                      <td>$0.00</td>-->
+<!--                      <td>$7,000.00</td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td><span t-esc="end_date"/></td>-->
+<!--                      <td>Interés Financiero</td>-->
+<!--                      <td>$600.21</td>-->
+<!--                      <td>$0.00</td>-->
+<!--                    </tr>-->
                     <tr>
                       <td><span t-esc="end_date"/></td>
                       <td>Resumen de Consumos a la fecha de corte</td>
-                      <td><t t-esc="float(total)" t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
-                      <td>$0.00</td>
+                      <td class="text-right"><t t-esc="float(total)" t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
+                      <td class="text-right">$0.00</td>
                     </tr>
-                    <tr>
-                      <td></td>
-                      <td>i.v.a. sobre intereses financieros</td>
-                      <td>$85.00</td>
-                      <td>$0.00</td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>Comisión por no pago</td>
-                      <td>$600.21</td>
-                      <td>$0.00</td>
-                    </tr>
+<!--                    <tr>-->
+<!--                      <td></td>-->
+<!--                      <td>i.v.a. sobre intereses financieros</td>-->
+<!--                      <td>$85.00</td>-->
+<!--                      <td>$0.00</td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td></td>-->
+<!--                      <td>Comisión por no pago</td>-->
+<!--                      <td>$600.21</td>-->
+<!--                      <td>$0.00</td>-->
+<!--                    </tr>-->
                     <tr class="table-highlight font-weight-bold">
                       <td></td>
                       <td class="text-left">Total</td>
-                      <td>$781.25</td>
-                      <td>$7,000.00</td>
+                      <td class="text-right"><t t-esc="float(total)" t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
+                      <td class="text-right">$0.00</td>
                     </tr>
                   </table>
                   <p style="page-break-before:always;"/>
@@ -177,10 +179,9 @@
                             </tr>
                           </thead>
                           <tbody class="text-center">
-                            
                               <tr>
-                              <td><span t-esc="client_number"/></td>
-                              <td><span t-esc="client"/></td>
+                              <td><span t-esc="partner.client_number"/></td>
+                              <td><span t-esc="partner.name"/></td>
                               <td>
                                 <table style="width: 100% !important;" class="text-uppercase table-sm">
                                   <tr style=" background-color:#e43e3f; color:white;" class="thead-dark text-uppercase text-center">
@@ -196,14 +197,14 @@
                                       <td style="text-align: center !important;"><span t-esc="o['orden']"/></td>
                                       <td style="text-align: center !important;"><span t-esc="o['fecha']"/></td>
                                       <td style="text-align: left !important;"><span t-esc="o['producto']"/></td>
-                                      <td style="text-align: center !important;">$ <span t-esc="'%.2f'% o['importe']"/></td>
+                                      <td style="text-align: right !important;">$ <span t-esc="'%.2f'% o['importe']"/></td>
                                     </tr>
                                   </t>
                                   <tr class="table-highlight font-weight-bold">
                                     <td class="text-right"></td>
                                     <td style="text-align: center !important;"></td>
                                     <td style="text-align: left !important;">Totales:</td>
-                                    <td style="text-align: center !important;">$ <span t-esc="'%.2f'% total"/></td>
+                                    <td style="text-align: right !important;">$ <span t-esc="'%.2f'% total"/></td>
                                   </tr>
                                 </table>
                               </td>

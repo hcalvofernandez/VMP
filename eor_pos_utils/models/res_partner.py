@@ -124,41 +124,35 @@ class ResPartner(models.Model):
     @api.multi
     @api.depends('contract_ids', 'parent_id')
     def _compute_schemes_credit(self):
+        acumulador = []
+        partner_id = self.id
+        contracts = self.contract_ids
 
-        try:
+        for con in contracts:
+            if con.type_contract == "credito":
+                for sch in con.credit_schemes_line_ids:
+                    acumulador.append(sch.id)
+        self.ids_schemes_contracts = [(6, 0, acumulador)]
 
-            acumulador = []
-            partner_id = self.id
-            contracts = self.env['contract.contract'].search([('partner_id', '=', partner_id), ('active', '=', True)])
-
-            for con in contracts:
-                if con.type_contract == "credito":
-                    for sch in con.credit_schemes_line_ids:
+        if (len(acumulador) == 0):
+            if (self.parent_id):
+                parent_partner = self.env['res.partner'].browse(self.parent_id.id)
+                if parent_partner.type_contract_hide == "credito":
+                    acumulador = []
+                    for sch in parent_partner.ids_schemes_contracts:
                         acumulador.append(sch.id)
-            self.ids_schemes_contracts = [(6, 0, acumulador)]
-
-            if (len(acumulador) == 0):
-                if (self.parent_id):
-                    parent_partner = self.env['res.partner'].browse(self.parent_id.id)
-                    if parent_partner.type_contract_hide == "credito":
-                        acumulador = []
-                        for sch in parent_partner.ids_schemes_contracts:
-                            acumulador.append(sch.id)
-                        self.ids_schemes_contracts = [(6, 0, acumulador)]
-                        # acumulador = []
-                        # for contract in parent_partner.contract_ids:
-                        #    acumulador.append(contract.id)
-                        # self.contract_ids = [(6, 0, acumulador)]
-        except Exception as e:
-            pass
-            # exc_traceback = sys.exc_info()
-            # raise Warning(getattr(e, 'message', repr(e))+" ON LINE "+format(sys.exc_info()[-1].tb_lineno))
+                    self.ids_schemes_contracts = [(6, 0, acumulador)]
+                    # acumulador = []
+                    # for contract in parent_partner.contract_ids:
+                    #    acumulador.append(contract.id)
+                    # self.contract_ids = [(6, 0, acumulador)]
 
     @api.multi
-    @api.depends('contract_ids', 'parent_id')
+    @api.depends('contract_ids', 'parent_id', 'contract_ids.credit_schemes_line_ids')
     def _compute_type_credit(self):
         for rec in self:
             tipo = ""
+            rec.has_credit_contract = False
             if rec.parent_id:
                 partner_id = rec.parent_id.id
                 contracts = self.env['contract.contract'].search(
@@ -175,12 +169,12 @@ class ResPartner(models.Model):
                         tipo = "subsidio"
                 rec.type_contract_hide = tipo
             else:
-                rec.has_credit_contract = False
                 partner_id = rec.id
                 contracts = self.env['contract.contract'].search(
                     [('partner_id', '=', partner_id), ('active', '=', True)])
                 for con in contracts:
                     if con.type_contract == "credito":
+                        rec.has_credit_contract = True
                         tipo = "credito"
                     elif con.type_contract == "prepago":
                         tipo = "prepago"

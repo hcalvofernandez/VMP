@@ -6,11 +6,12 @@
         <field name="arch" type="xml">
             <form string='Reporte Ventas POS'>
                 <group>
-                    <field col="4" name="start_date" autocomplete="off"/> 
-                    <field col="4" name="end_date" autocomplete="off"/> 
+                    <field col="4" name="start_date" attrs="{'readonly': [('check_format_date','=',True)]}"/>
+                    <field col="4" name="end_date" attrs="{'readonly': [('check_format_date','=',True)]}"/>
                     <field col="4" name="company_id" invisible="1"/>
                     <field col="4" name="partner_id" invisible="1"/>
-                    <field col="4" name="check_mail" type="checkbox"/> 
+                    <field col="4" name="check_mail" type="checkbox"/>
+                    <field col="4" name="check_format_date"/>
                 </group>
                 <footer>
                     <button name="sale_report_pos" type="object" string="Ver Ventas" class="btn btn-success"/>

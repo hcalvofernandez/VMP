@@ -247,8 +247,6 @@ class ResPartner(models.Model):
     loyalty_ids = fields.One2many(comodel_name="loyalty.point", inverse_name="partner_id", string="Loyalty", required=False, )
     loyalty_point_redeem_ids = fields.One2many(comodel_name="loyalty.point.redeem", inverse_name="partner_id", string="Loyalty Points", required=False, )
     prefer_ereceipt = fields.Boolean('Prefer E-Receipt')
-    account_number = fields.Char(string="Número de Cuenta")
-    spei_key = fields.Char(string="Clave SPEI")
 
     account_number = fields.Char(string = "Número de Cuenta")
     spei_key = fields.Char(string = "Clave SPEI")
