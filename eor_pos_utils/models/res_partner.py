@@ -233,7 +233,5 @@ class ResPartner(models.Model):
                 # and r.is_postpaid is True
                 suma = sum(o.credit_amount for o in pos_orders) or 0.0
                 saldo = partner.credit_limit - suma
-                print(partner.credit_limit)
-                print(saldo)
                 partner.remaining_credit_amount = suma
                 partner.remaining_credit_limit = saldo
