@@ -48,12 +48,13 @@
                     <tr class="text-uppercase text-center">
                       <th>
                         <p><t t-esc="partner.name"/></p>
+                        <p>no. cliente: <t t-esc="partner.client_number"/></p>
                         <p>ms10102212</p>
-                        <p><t t-esc="partner.street"/></p>
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
-                        <p><span t-esc="partner.name"/></p>
+                        <p><span t-esc="partner.parent_id.name"/></p>
+<!--                        <p><t t-esc="partner.parent_id.street"/></p>-->
                       </th>
                     </tr>
                     <tr>
@@ -170,20 +171,20 @@
                   <h4 class="text-center text-uppercase pt-4 pb-4">Resumen Individual</h4>
 
 
-                  <table class="table table-striped text-uppercase table-borders" style="margin-top: 50px; width:100%; font-size: 14px;">
-                          <thead style=" background-color:#e43e3f; color:white;" class="thead-dark text-uppercase text-center">
-                            <tr>
-                              <th style="text-align: center !important;" scope="col">no. cliente</th>
-                              <th style="text-align: center !important;" scope="col">nombre</th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody class="text-center">
-                              <tr>
-                              <td><span t-esc="partner.client_number"/></td>
-                              <td><span t-esc="partner.name"/></td>
-                              <td>
-                                <table style="width: 100% !important;" class="text-uppercase table-sm">
+<!--                  <table class="table table-striped text-uppercase table-borders" style="margin-top: 50px; width:100%; font-size: 14px;">-->
+<!--                          <thead style=" background-color:#e43e3f; color:white;" class="thead-dark text-uppercase text-center">-->
+<!--                            <tr>-->
+<!--                              <th style="text-align: center !important;" scope="col">no. cliente</th>-->
+<!--                              <th style="text-align: center !important;" scope="col">nombre</th>-->
+<!--                              <th></th>-->
+<!--                            </tr>-->
+<!--                          </thead>-->
+<!--                          <tbody class="text-center">-->
+<!--                              <tr>-->
+<!--                              <td><span t-esc="partner.client_number"/></td>-->
+<!--                              <td><span t-esc="partner.name"/></td>-->
+<!--                              <td>-->
+                                <table class="table table-striped text-uppercase table-borders" style="margin-top: 50px; width:100%; font-size: 14px;">
                                   <tr style=" background-color:#e43e3f; color:white;" class="thead-dark text-uppercase text-center">
                                     <th style="text-align: center !important;">Orden</th>
                                     <th style="text-align: center !important;">Fecha y Hora</th>
@@ -206,11 +207,11 @@
                                     <td style="text-align: left !important;">Totales:</td>
                                     <td style="text-align: right !important;">$ <span t-esc="'%.2f'% total"/></td>
                                   </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table><br/>
+                                </table><br/>
+<!--                              </td>-->
+<!--                            </tr>-->
+<!--                          </tbody>-->
+<!--                        </table>-->
 
 
                   <table class="table-borders mt-4">

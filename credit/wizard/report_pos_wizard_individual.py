@@ -69,18 +69,30 @@ class ReportPosIndividualWizard(models.TransientModel):
         # end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
         res = []
         sum = 0
-        orders = self.env['pos.order.line'].search([('order_id.partner_id.id', '=', self.partner_id.id),
-                                                    ('order_id.state_order_fac', '=', 'n'),
-                                                    ('order_id.date_order', '>=', one),
-                                                    ('order_id.date_order', '<=', two)])
-        for o in orders:
-            res.append({
-                'orden':o.order_id.name,
-                'fecha': o.create_date,
-                'producto': o.product_id.name,
-                'importe': o.price_subtotal_incl,
-                })
-            sum += o.price_subtotal_incl
+        orders = self.env['pos.order'].search([('partner_id.id', '=', self.partner_id.id),
+                                                    ('state_order_fac', '=', 'n'),
+                                                    ('credit_amount', '>', 0),
+                                                    ('date_order', '>=', one),
+                                                    ('date_order', '<=', two)])
+
+        for order in orders:
+            credit_amount = order.credit_amount
+            res_credit = credit_amount
+            for line in order.lines:
+                line_amount = line.price_subtotal_incl
+                line_name = line.product_id.name
+                if res_credit >= line_amount:
+                    res_credit -= line_amount
+                else:
+                    line_amount = res_credit
+                    line_name += " (Complementario)"
+                res.append({
+                    'orden': line.order_id.name,
+                    'fecha': line.create_date,
+                    'producto': line_name,
+                    'importe': line_amount,
+                    })
+            sum += credit_amount
         return res, sum
 
     @api.multi

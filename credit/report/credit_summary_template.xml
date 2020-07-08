@@ -48,11 +48,10 @@
                       <th>
                         <p><t t-esc="partner.name"/></p>
                         <p>ms10102212</p>
-                        <p><t t-esc="partner.street"/></p>
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
-                        <p><span t-esc="partner.name"/></p>
+                        <p><t t-esc="partner.street"/></p>
                       </th>
                     </tr>
                     <tr>
