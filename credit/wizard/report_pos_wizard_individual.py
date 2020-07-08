@@ -21,7 +21,7 @@ class ReportPosIndividualWizard(models.TransientModel):
     end_date = fields.Datetime(string='Fecha y Hora Final', required=True, )
     partner_id = fields.Many2one('res.partner', string='Cliente',)
     check_mail = fields.Boolean(string='Enviar por Correo',)
-    check_format_date = fields.Boolean(string="Reporte Diario", default=True)
+    check_format_date = fields.Boolean(string="Reporte Diario", default=False)
 
     @api.onchange('partner_id')
     def _default_date_report(self):
@@ -33,18 +33,19 @@ class ReportPosIndividualWizard(models.TransientModel):
 
         for c in contracts:
             for lc in c.contract_line_ids:
-                start_date_utc = datetime(year=lc.next_period_date_start.year, month=lc.next_period_date_start.month,
-                                          day=lc.next_period_date_start.day, hour=0, minute=0, second=0)
-                end_date_utc = datetime(year=lc.next_period_date_end.year, month=lc.next_period_date_end.month,
-                                        day=lc.next_period_date_end.day,
-                                        hour=23, minute=59, second=59)
-                # Temporal, luego mejorar
-                tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
-                if str(tz) == 'Mexico/General':
-                    start_date_utc = start_date_utc + timedelta(hours=5)
-                    end_date_utc = end_date_utc + timedelta(hours=5)
-                self.start_date = start_date_utc
-                self.end_date = end_date_utc
+                if lc.next_period_date_start and lc.next_period_date_end:
+                    start_date_utc = datetime(year=lc.next_period_date_start.year, month=lc.next_period_date_start.month,
+                                              day=lc.next_period_date_start.day, hour=0, minute=0, second=0)
+                    end_date_utc = datetime(year=lc.next_period_date_end.year, month=lc.next_period_date_end.month,
+                                            day=lc.next_period_date_end.day,
+                                            hour=23, minute=59, second=59)
+                    # Temporal, luego mejorar
+                    tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
+                    if str(tz) == 'Mexico/General':
+                        start_date_utc = start_date_utc + timedelta(hours=5)
+                        end_date_utc = end_date_utc + timedelta(hours=5)
+                    self.start_date = start_date_utc
+                    self.end_date = end_date_utc
 
     @api.onchange('check_format_date')
     def _onchange_check(self):
