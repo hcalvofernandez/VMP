@@ -1089,7 +1089,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     if (client){
                         var credit_amount = client.remaining_credit_limit;
                         var amount = order.getNetTotalTaxIncluded();
-                        if (amount > credit_amount){
+                        if (amount > credit_amount && credit_amount > 0){
                             var cashregister = false;
                             for(var i in self.pos.cashregisters){
                                 var reg = self.pos.cashregisters[i];
@@ -1122,11 +1122,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                  */
                                 //payment.do_order(order, 'credit');
                             }
-                        }else{
+                        }else if(amount <= credit_amount){
                             if (valid_credit){
                                 self.gui.show_popup('show_pop_pin', {cashier: client, payment: payment, type: 'credit'});
-                                return
+                                return;
                             }
+                        }else{
+                            return self.pos.db.notification('danger', 'Crédito insuficiente');
                         }
                     }
 
@@ -2756,6 +2758,35 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
                 return false;
             }
+            var order = this.pos.get_order();
+            var client = order.get_client();
+            if (client){
+                var params = {
+                    model: 'res.partner',
+                    method: 'search_read',
+                    domain: [['id', '=', client.id]],
+                    fields:['remaining_credit_limit']
+                };
+                rpc.query(params,{async:false}).then(function(result){
+                    if (client.remaining_credit_limit != result[0].remaining_credit_limit){
+                        client.remaining_credit_limit = result[0].remaining_credit_limit;
+                    }
+                });
+                var credit_limit = client.remaining_credit_limit;
+                var credit_lines_amount = 0;
+                var order_lines = order.get_paymentlines();
+                _.map(order_lines, function(lines){
+                    if(lines.name == "POS-Crédito (MXN)"){
+                        credit_lines_amount += lines.amount;
+                    }
+                });
+                if (credit_limit < credit_lines_amount){
+                    self.pos.db.notification('danger', 'Crédito insuficiente para liquidar la orden');
+                    return false;
+                }
+
+            }
+
             return this._super(force_validation);
         },
         order_changes: function(){
@@ -3077,6 +3108,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         self.pos.get_order().mirror_image_data(true);
                     }
                 }
+                if(!self.order_is_valid()){
+                    return
+                }
                 if (order.get_orderlines().length === 0){
                     return self.pos.db.notification('danger', 'Agregue una línea de Venta!.');
                 }
@@ -3084,18 +3118,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var payment_amount = 0;
                 if (order.get_paymentlines().length === 0){
                     return self.pos.db.notification('danger', 'Agregue un Método de Pago!.');
-                    }
-                    _.map(order.get_paymentlines(), function(lines){
-                        payment_amount += lines.amount;
-                    });
-                    var total = order.getNetTotalTaxIncluded();
+                }
+                _.map(order.get_paymentlines(), function(lines){
+                    payment_amount += lines.amount;
+                });
+                var total = order.getNetTotalTaxIncluded();
 
-                    if (payment_amount < total){
-                        self.$('.edit').addClass('error');
-                        return self.pos.db.notification('danger', 'La cantidad "Entregado" no es correcta!');
-                    }else{
-                        self.$('.edit').removeClass('error');
-                    }
+                if (payment_amount < total){
+                    self.$('.edit').addClass('error');
+                    return self.pos.db.notification('danger', 'La cantidad "Entregado" no es correcta!');
+                }else{
+                    self.$('.edit').removeClass('error');
+                }
                 if (!order.get_client()){
                     if (self.pos.config.iface_print_auto){
                         if (!self._locked) {
