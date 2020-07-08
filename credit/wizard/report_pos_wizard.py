@@ -30,7 +30,7 @@ class ReportPosWizard(models.TransientModel):
         contracts = self.env['contract.contract'].search([('partner_id', '=', self.partner_id.id), ('active', '=', True)])
         if not contracts:
             contracts = self.env['contract.contract'].search(
-                [('partner_id', '=', self.parent_id.id), ('active', '=', True)])
+                [('partner_id', '=', self.partner_id.parent_id.id), ('active', '=', True)])
 
         for c in contracts:
             for lc in c.contract_line_ids:
