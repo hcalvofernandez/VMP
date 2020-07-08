@@ -4,8 +4,8 @@ import locale
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 from dateutil import relativedelta
-from datetime import datetime
-
+from datetime import datetime, timedelta
+import pytz
 import logging
 
 
@@ -17,29 +17,47 @@ class ReportPosIndividualWizard(models.TransientModel):
     _description = 'Wizard para el reporte de las ventas en POS Individual '
 
 
-    start_date = fields.Datetime(computed='_default_date_report', required=True, string='Fecha y Hora inicial',)
-    end_date  = fields.Datetime(computed='_default_date_report', required=True, string='Fecha y Hora Final',)
+    start_date = fields.Datetime(string='Fecha y Hora inicial', required=True,)
+    end_date = fields.Datetime(string='Fecha y Hora Final', required=True, )
     partner_id = fields.Many2one('res.partner', string='Cliente',)
     check_mail = fields.Boolean(string='Enviar por Correo',)
     check_format_date = fields.Boolean(string="Reporte Diario", default=True)
 
-    @api.multi
     @api.onchange('partner_id')
     def _default_date_report(self):
-        h_min = datetime.max.time()
-        h_max = datetime.max.time()
-        contracts = self.env['contract.contract'].search([('partner_id','=',self.partner_id.parent_id.id),('active','=',True)])
+        contracts = self.env['contract.contract'].search(
+            [('partner_id', '=', self.partner_id.id), ('active', '=', True)])
+        if not contracts:
+            contracts = self.env['contract.contract'].search(
+                [('partner_id', '=', self.parent_id.id), ('active', '=', True)])
+
         for c in contracts:
             for lc in c.contract_line_ids:
-                self.start_date = datetime.combine(lc.next_period_date_start, h_min)
-                self.end_date = datetime.combine(lc.next_period_date_end, h_max)
+                start_date_utc = datetime(year=lc.next_period_date_start.year, month=lc.next_period_date_start.month,
+                                          day=lc.next_period_date_start.day, hour=0, minute=0, second=0)
+                end_date_utc = datetime(year=lc.next_period_date_end.year, month=lc.next_period_date_end.month,
+                                        day=lc.next_period_date_end.day,
+                                        hour=23, minute=59, second=59)
+                # Temporal, luego mejorar
+                tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
+                if str(tz) == 'Mexico/General':
+                    start_date_utc = start_date_utc + timedelta(hours=5)
+                    end_date_utc = end_date_utc + timedelta(hours=5)
+                self.start_date = start_date_utc
+                self.end_date = end_date_utc
 
-    @api.multi
     @api.onchange('check_format_date')
-    def format_date(self):
+    def _onchange_check(self):
         if self.check_format_date:
-            self.start_date = datetime.strftime(self.start_date,'%Y-%m-%d')+'00:00:00.00000'
-            self.end_date = datetime.strftime(self.end_date,'%Y-%m-%d')+'23:59:59.99999'
+            self.start_date = datetime(year=self.start_date.year, month=self.start_date.month, day=self.start_date.day,
+                                       hour=0, minute=0, second=0)
+            self.end_date = datetime(year=self.start_date.year, month=self.start_date.month, day=self.start_date.day,
+                                     hour=23, minute=59, second=59)
+            # Temporal, luego mejorar
+            tz = pytz.timezone(self.env.user.tz) if self.env.user.tz else pytz.utc
+            if str(tz) == 'Mexico/General':
+                self.start_date = self.start_date + timedelta(hours=5)
+                self.end_date = self.end_date + timedelta(hours=5)
 
 
     @api.multi

@@ -8,6 +8,7 @@
                 <group>
                     <field col="4" name="start_date" attrs="{'readonly': [('check_format_date','=',True)]}"/>
                     <field col="4" name="end_date" attrs="{'readonly': [('check_format_date','=',True)]}"/>
+                    <field col="4" name="end_date_copy" invisible="1"/>
                     <field col="4" name="company_id" invisible="1"/>
                     <field col="4" name="partner_id" invisible="1"/>
                     <field col="4" name="check_mail" type="checkbox"/>
