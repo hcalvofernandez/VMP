@@ -1205,7 +1205,27 @@ class pos_order(models.Model):
                 pos_order.invoice_id.sudo().action_invoice_open()
                 pos_order.account_move = pos_order.invoice_id.move_id
         self.broadcast_order_data(True)
+        self.add_orders_to_period(order_ids)
         return order_ids
+
+    @api.model
+    def add_orders_to_period(self, orders_ids):
+        if orders_ids:
+            orders = self.env['pos.order'].search([('id', 'in', orders_ids)])
+            if orders:
+                for order in orders:
+                    ids_ = order.mapped('partner_id.contract_ids.id') or order.mapped('partner_id.parent_id.contract_ids.id')
+                    contract_line_ids = self.env['contract.line'].search([
+                        ('contract_id', 'in', ids_)
+                    ])
+                    invoice_period_log = self.env['credit.invoice_period_log'].search([
+                        ('contract_line_id', 'in', contract_line_ids.mapped("id"))],
+                    )
+                    current_period_log = invoice_period_log.filtered(
+                        lambda logs: logs.start_date == logs.contract_line_id.next_period_date_start and
+                                     logs.end_date == logs.contract_line_id.next_period_date_end
+                    )
+                    current_period_log.write({'order_ids': [(4, order.id)]})
 
     @api.model
     def _process_order(self,order):

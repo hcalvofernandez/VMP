@@ -3,4 +3,5 @@ access_credit_credit_schemes,credit.credit_schemes,model_credit_credit_schemes,b
 access_credit_report_pos_wizard,credit.report_pos_wizard,model_credit_report_pos_wizard,base.group_user,1,1,1,1
 access_credit_report_pos_individual_wizard,credit.report_pos_individual_wizard,model_credit_report_pos_individual_wizard,base.group_user,1,1,1,1
 access_credit_detail_credit_partner,credit.detail_credit_partner,model_credit_detail_credit_partner,base.group_user,1,1,1,1
+access_credit_invoice_period_log,credit.invoice_period_log,model_credit_invoice_period_log,base.group_user,1,1,1,1
 
