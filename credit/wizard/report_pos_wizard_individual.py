@@ -22,6 +22,7 @@ class ReportPosIndividualWizard(models.TransientModel):
     partner_id = fields.Many2one('res.partner', string='Cliente',)
     check_mail = fields.Boolean(string='Enviar por Correo',)
     check_format_date = fields.Boolean(string="Reporte Diario", default=False)
+    email_to = fields.Many2many('res.partner', string='Destinatarios')
 
     @api.onchange('partner_id')
     def _default_date_report(self):
@@ -132,10 +133,18 @@ class ReportPosIndividualWizard(models.TransientModel):
     def send(self, template):
         # objeto odoo de correo
         mail = self.env['mail.mail']
-        mail_data={
+        email_to = ""
+        if not self.email_to:
+            raise ValidationError("No se encontraron destinatarios de correo")
+        for partner in self.email_to:
+            email_to += partner.email
+            email_to += ','
+        email_to = email_to[:-1]
+        print(email_to)
+        mail_data = {
             'subject':'Reporte De Crédito Individual',
             'body_html': template['body_html'],
-            'email_to': self.partner_id.email,
+            'email_to': email_to,
             'email_from': template['email_from'],
         }
         mail_out=mail.create(mail_data)

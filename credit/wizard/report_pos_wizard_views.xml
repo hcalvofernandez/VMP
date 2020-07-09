@@ -12,6 +12,7 @@
                     <field col="4" name="company_id" invisible="1"/>
                     <field col="4" name="partner_id" invisible="1"/>
                     <field col="4" name="check_mail" type="checkbox"/>
+                    <field col="4" name="email_to" widget="many2many_tags" attrs="{'invisible':[('check_mail','=',False)]}"/>
                     <field col="4" name="check_format_date"/>
                 </group>
                 <footer>
