@@ -76,24 +76,33 @@ class ReportPosIndividualWizard(models.TransientModel):
                                                     ('date_order', '>=', one),
                                                     ('date_order', '<=', two)])
 
+        # for order in orders:
+        #     credit_amount = order.credit_amount
+        #     res_credit = credit_amount
+        #     for line in order.lines:
+        #         line_amount = line.price_subtotal_incl
+        #         line_name = line.product_id.name
+        #         if res_credit >= line_amount:
+        #             res_credit -= line_amount
+        #         else:
+        #             line_amount = res_credit
+        #             line_name += " (Complementario)"
+        #         res.append({
+        #             'orden': line.order_id.name,
+        #             'fecha': line.create_date,
+        #             'producto': line_name,
+        #             'importe': line_amount,
+        #             })
+        #     sum += credit_amount
+
         for order in orders:
-            credit_amount = order.credit_amount
-            res_credit = credit_amount
-            for line in order.lines:
-                line_amount = line.price_subtotal_incl
-                line_name = line.product_id.name
-                if res_credit >= line_amount:
-                    res_credit -= line_amount
-                else:
-                    line_amount = res_credit
-                    line_name += " (Complementario)"
-                res.append({
-                    'orden': line.order_id.name,
-                    'fecha': line.create_date,
-                    'producto': line_name,
-                    'importe': line_amount,
-                    })
-            sum += credit_amount
+            res.append({
+                'order': order.name,
+                'date': order.date_order,
+                'ticket': order.pos_reference,
+                'amount': order.credit_amount,
+            })
+            sum += order.credit_amount
         return res, sum
 
     @api.multi

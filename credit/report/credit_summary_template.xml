@@ -59,7 +59,7 @@
                         <table class="text-uppercase table-sm table-striped table-center table-attenuate">
                           <tr>
                             <td>fecha límite de pago</td>
-                            <td></td>
+                            <td><t t-esc="max_pay_date"/></td>
                           </tr>
                           <tr>
                             <td>fecha de corte</td>
