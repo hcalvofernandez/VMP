@@ -20,7 +20,8 @@
             <field name="commercial_partner_id"/>
             <field name="credit_limit"/>
             <field name="id" invisible="1"/>
-            <button name="%(action_view_report_pos_individual_wizard)d" type="action" string="Reporte Individual" class="oe_highlight" context="{'partner_id': id}"/>
+            <field name="company_id" invisible="True"/>
+            <button name="%(action_view_report_pos_individual_wizard)d" type="action" string="Reporte Individual" class="oe_highlight" context="{'company_id': company_id,'partner_id': id}"/>
           </xpath>
         </field>
     </record>

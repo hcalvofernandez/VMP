@@ -24,8 +24,7 @@ class ResPartner(models.Model):
 
     def _calc_limit(self):
         for partner in self:
-            contract_obj = self.env['contract.contract']
-            contract = contract_obj.search([('partner_id', '=', partner.id)])
+            contract = self.env['contract.contract'].search([('partner_id', '=', partner.id)])
             partner.credit_limit = contract.limit_credit
             partner.meal_plan_limit = contract.meal_plan_credit
 
@@ -35,18 +34,23 @@ class ResPartner(models.Model):
         return res
 
     @api.multi
-    @api.depends('pos_order_ids.amount_total', 'meal_plan_limit')
+    @api.depends('pos_order_ids.amount_total', 'pos_order_ids.state', 'meal_plan_limit')
     def _calc_meal_plan_remaining(self):
         for partner in self:
-            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state == 'paid' and 'is_meal_plan' is True)
-            amount = sum([order.amount_total for order in pos_orders]) or 0.00
-            partner.remaining_meal_plan_limit = partner.meal_plan_limit - amount
+            if partner.meal_plan_limit > 0:
+                pos_orders = self.env['pos.order'].search([('id', '=', partner.id),
+                                                           ('state', '=', 'paid'), ('is_meal_plan', 'is', True)])
+                amount = sum([order.amount_total for order in pos_orders]) or 0.00
+                partner.remaining_meal_plan_limit = partner.meal_plan_limit - amount
+            else:
+                partner.remaining_meal_plan_limit = 0
+
 
     @api.model
     def get_partner_data(self, id_, amount):
         partner = self.sudo().browse(id_)
-        remaining_credit_amount = float(partner.credit_limit) - (float(self.get_remaining_credit_amount(partner)) + float(amount))
-        return {'credit_limit'             : partner.credit_limit, 'remaining_credit_amount': remaining_credit_amount,
+        remaining_credit_amount = float(partner.credit_limit) - (float(partner.remaining_credit_amount) + float(amount))
+        return {'credit_limit': partner.credit_limit, 'remaining_credit_amount': remaining_credit_amount,
                 'remaining_meal_plan_limit': partner.remaining_meal_plan_limit
         }
 
@@ -54,7 +58,7 @@ class ResPartner(models.Model):
     def get_remaining_credit_amount(self, partner):
         orders = partner.pos_order_ids.filtered(lambda r: r.state == 'draft' and 'is_postpaid' is True)
         total = 0.0
-        account_journal = self.env['account.journal'].search([('code','=','POSCR')],limit=1)
+        account_journal = self.env['account.journal'].search([('code', '=', 'POSCR')], limit=1)
         for order in orders:
              for statment in order.statement_ids:
                     _logger.warning(str(account_journal.id) + str(" *-* ") + str(statment.journal_id.id))
@@ -176,21 +180,26 @@ class ResPartner(models.Model):
         for s in self:
             total = 0.00
             for line in s.wallet_lines:
-                total += line.credit - line.debit
+                total += (line.credit - line.debit)
             s.remaining_wallet_amount = total
 
     @api.multi
-    @api.depends('pos_order_ids.amount_total', 'debit_limit')
+    @api.depends('pos_order_ids.amount_total', 'debit_limit', 'pos_order_ids.state')
     def _calc_debit_remaining(self):
         for partner in self:
-            pos_orders = partner.pos_order_ids.filtered(lambda r: r.state == 'paid' and r.is_debit is True)
-            amount = sum([order.amount_total for order in pos_orders]) or 0.00
-            partner.remaining_debit_amount = partner.debit_limit - amount
+            if partner.debit_limit > 0:
+                pos_orders = self.env['pos.order'].search([('id', '=', partner.id),
+                                                           ('state', '=', 'paid'), ('is_debit', "is", True)])
+                amount = sum([order.amount_total for order in pos_orders]) or 0.00
+                partner.remaining_debit_amount = partner.debit_limit - amount
+            else:
+                partner.remaining_debit_amount = 0
 
     @api.model
     def loyalty_reminder(self):
-        partner_ids = self.search([('email', "!=", False), ('send_loyalty_mail', '=', True)])
-        for partner_id in partner_ids.filtered(lambda partner: partner.remaining_loyalty_points > 0):
+        partner_ids = self.search([('email', "!=", False), ('send_loyalty_mail', '=', True),
+                                   ('remaining_loyalty_points', '>', 0)])
+        for partner_id in partner_ids:
             try:
                 template_id = self.env['ir.model.data'].get_object_reference('flexibite_com_advance',
                                                                              'email_template_loyalty_reminder')
@@ -228,7 +237,6 @@ class ResPartner(models.Model):
 
     meal_plan_limit = fields.Float(string='Meal Plan Limite')
     debit_limit = fields.Float("Limite de Credito")
-    credit_limit = fields.Float("Crédito límite")
     card_ids = fields.One2many('aspl.gift.card', 'customer_id', string="List of card")
     used_ids = fields.One2many('aspl.gift.card.use', 'customer_id', string="List of used card")
     recharged_ids = fields.One2many('aspl.gift.card.recharge', 'customer_id', string="List of recharged card")
@@ -239,8 +247,9 @@ class ResPartner(models.Model):
     loyalty_ids = fields.One2many(comodel_name="loyalty.point", inverse_name="partner_id", string="Loyalty", required=False, )
     loyalty_point_redeem_ids = fields.One2many(comodel_name="loyalty.point.redeem", inverse_name="partner_id", string="Loyalty Points", required=False, )
     prefer_ereceipt = fields.Boolean('Prefer E-Receipt')
-    account_number = fields.Char(string="Número de Cuenta")
-    spei_key = fields.Char(string="Clave SPEI")
+
+    account_number = fields.Char(string = "Número de Cuenta")
+    spei_key = fields.Char(string = "Clave SPEI")
 
 
     # Campos calculados

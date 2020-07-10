@@ -12,6 +12,11 @@
 							string='Payment' class="oe_highlight" />
 					</header>
 				</xpath>
+				<xpath expr="//header/button[last()]" position="after">
+                	<button string="Recalcular Crédito" name="cron_recalcule_limit"
+							type="object" groups="base.group_no_one"/>
+            	</xpath>
+
 				<field name="category_id" position="after">
 					<field name="account_number" attrs="{'invisible': [('parent_id', 'not in', [False])]}"/>
 					<field name="spei_key" attrs="{'invisible': [('parent_id', 'not in', [False])]}"/>
