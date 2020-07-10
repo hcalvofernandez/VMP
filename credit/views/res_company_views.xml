@@ -53,6 +53,7 @@
 <!--                    <field name="end_date"/>-->
 <!--                    <field name="order_ids"/>-->
 <!--                    <field name="contract_line_id"/>-->
+<!--                    <field name="state"/>-->
 <!--                </tree>-->
 <!--            </field>-->
 <!--        </record>-->
