@@ -1211,7 +1211,7 @@ class pos_order(models.Model):
     @api.model
     def add_orders_to_period(self, orders_ids):
         if orders_ids:
-            orders = self.env['pos.order'].search([('id', 'in', orders_ids)])
+            orders = self.env['pos.order'].search([('id', 'in', orders_ids), ('partner_id', '!=', False)])
             if orders:
                 for order in orders:
                     ids_ = order.mapped('partner_id.contract_ids.id') or order.mapped('partner_id.parent_id.contract_ids.id')
