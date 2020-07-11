@@ -1124,6 +1124,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             }
                         }else if(amount <= credit_amount){
                             if (valid_credit){
+                                if(!self.order_is_valid()){
+                                    return
+                                }
                                 self.gui.show_popup('show_pop_pin', {cashier: client, payment: payment, type: 'credit'});
                                 return;
                             }
@@ -1184,6 +1187,51 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.$('.client-line').click(function(e){
                 console.log(e);
             }) //.attr('-id')
+        },
+        order_is_valid: function(force_validation) {
+            var self = this;
+
+            var order = this.pos.get_order();
+            var client = order.get_client();
+            if (client){
+                var params = {
+                    model: 'contract.contract',
+                    method: 'is_valid_order_date',
+                    args:[client.id]
+                }
+                var valid = false;
+                rpc.query(params,{async:false}).then(function(result){
+                    valid = result.result
+                });
+                if(!valid){
+                    self.pos.db.notification('danger', 'No tiene contrato vigente');
+                    return false;
+                }
+                var params = {
+                    model: 'res.partner',
+                    method: 'search_read',
+                    domain: [['id', '=', client.id]],
+                    fields:['remaining_credit_limit','contract_ids','parent_id']
+                };
+                rpc.query(params,{async:false}).then(function(result){
+                    if (client.remaining_credit_limit != result[0].remaining_credit_limit){
+                        client.remaining_credit_limit = result[0].remaining_credit_limit;
+                    }
+                });
+                var credit_limit = client.remaining_credit_limit;
+                var credit_lines_amount = 0;
+                var order_lines = order.get_paymentlines();
+                _.map(order_lines, function(lines){
+                    if(lines.name == "POS-Crédito (MXN)"){
+                        credit_lines_amount += lines.amount;
+                    }
+                });
+                if (credit_limit < credit_lines_amount){
+                    self.pos.db.notification('danger', 'Crédito insuficiente para liquidar la orden');
+                    return false;
+                }
+                return true;
+            }
         },
         default_customer: function(){
             var order = this.pos.get_order();
@@ -2074,9 +2122,32 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this._super(parent, options);
             this.div_btns = "";
             var payment_buttons = this.pos.config.payment_buttons;
-            for(var i in payment_buttons){
+            var payment_buttons_order = new Array(payment_buttons.length);
+            var index = 0;
+            for(var i in payment_buttons) {
                 var btn_info = this.pos.db.get_button_by_id(payment_buttons[i]);
-                this.div_btns += "<div id="+btn_info.id+" class='control-button 1quickpay' data="+btn_info.display_name+">"+self.format_currency(btn_info.display_name)+"</div>"
+                if (!payment_buttons_order[0]) {
+                    payment_buttons_order[index] = btn_info;
+                }
+                else {
+                    payment_buttons_order[index] = btn_info;
+                    for (var j = 0; j < index; j++) {
+                        try {
+                            if (parseFloat(payment_buttons_order[j].display_name) > parseFloat(payment_buttons_order[index].display_name)) {
+                                var aux = payment_buttons_order[j];
+                                payment_buttons_order[j] = payment_buttons_order[index];
+                                payment_buttons_order[index] = aux;
+                            }
+                        }
+                        catch (e) {
+                            alert("Error al ordenar");
+                        }
+                    }
+                }
+                index += 1;
+            }
+            for(var j = 0; j < index; j++) {
+                this.div_btns += "<div id=" + payment_buttons_order[j].id + " class='control-button 1quickpay' data=" + payment_buttons_order[j].display_name + ">" + self.format_currency(payment_buttons_order[j].display_name) + "</div>";
             }
             this.use_credit = function(event){
                 var order = self.pos.get_order();
@@ -2758,14 +2829,26 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
                 return false;
             }
-            var order = this.pos.get_order();
             var client = order.get_client();
             if (client){
+                var params = {
+                    model: 'contract.contract',
+                    method: 'is_valid_order_date',
+                    args:[client.id]
+                }
+                var valid = false;
+                rpc.query(params,{async:false}).then(function(result){
+                    valid = result.result
+                });
+                if(!valid){
+                    self.pos.db.notification('danger', 'No tiene contrato ha vigente');
+                    return false;
+                }
                 var params = {
                     model: 'res.partner',
                     method: 'search_read',
                     domain: [['id', '=', client.id]],
-                    fields:['remaining_credit_limit']
+                    fields:['remaining_credit_limit','contract_ids','parent_id']
                 };
                 rpc.query(params,{async:false}).then(function(result){
                     if (client.remaining_credit_limit != result[0].remaining_credit_limit){

@@ -14,9 +14,10 @@ class CreditInvoicePeriodLog(models.Model):
     end_date = fields.Date(string="Fecha Fin")
     order_ids = fields.One2many("pos.order", "period_log_id",string="Ordenes")
     contract_line_id = fields.Many2one("contract.line", string="Linea de Contrato")
+    state = fields.Selection([('new', 'Nuevo'), ('invoiced', 'Facturado')], string="Estado", default='new')
 
     @api.depends('start_date', 'end_date', 'contract_line_id.contract_id')
     def compute_name(self):
         for period in self:
             period.name = datetime.strftime(period.start_date, "%d-%m-%Y") + " a " +\
-                          datetime.strftime(period.end_date, "%d-%m-%Y")+ " " + self.contract_line_id.contract_id.name
+                          datetime.strftime(period.end_date, "%d-%m-%Y") + " " + self.contract_line_id.contract_id.name
