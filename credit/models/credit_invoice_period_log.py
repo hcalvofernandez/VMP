@@ -19,5 +19,9 @@ class CreditInvoicePeriodLog(models.Model):
     @api.depends('start_date', 'end_date', 'contract_line_id.contract_id')
     def compute_name(self):
         for period in self:
-            period.name = datetime.strftime(period.start_date, "%d-%m-%Y") + " a " +\
-                          datetime.strftime(period.end_date, "%d-%m-%Y") + " " + self.contract_line_id.contract_id.name
+            if period.start_date:
+                period.name = datetime.strftime(period.start_date, "%d-%m-%Y")
+            if period.end_date:
+                period.name += " a " + datetime.strftime(period.end_date, "%d-%m-%Y") + " "
+            if self.contract_line_id.contract_id.name:
+                period.name += self.contract_line_id.contract_id.name

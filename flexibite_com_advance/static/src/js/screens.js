@@ -2879,8 +2879,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var order = this.pos.get_order();
             var total = order ? order.get_total_with_tax() : 0;
             if(!order){
-                return
-            } else if(order.get_due() == total || order.get_due() == 0){
+                return;
+            }
+            else if(order.get_due() == total || order.get_due() == 0) {
                 self.$('#partial_pay').removeClass('highlight');
             } else {
                 self.$('#partial_pay').addClass('highlight');
