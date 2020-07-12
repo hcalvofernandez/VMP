@@ -124,28 +124,28 @@ class ResPartner(models.Model):
     @api.multi
     @api.depends('contract_ids', 'parent_id')
     def _compute_schemes_credit(self):
-        acumulador = []
-        partner_id = self.id
-        contracts = self.contract_ids
+        for partner in self:
+            acumulador = []
+            contracts = partner.contract_ids
 
-        for con in contracts:
-            if con.type_contract == "credito":
-                for sch in con.credit_schemes_line_ids:
-                    acumulador.append(sch.id)
-        self.ids_schemes_contracts = [(6, 0, acumulador)]
-
-        if (len(acumulador) == 0):
-            if (self.parent_id):
-                parent_partner = self.env['res.partner'].browse(self.parent_id.id)
-                if parent_partner.type_contract_hide == "credito":
-                    acumulador = []
-                    for sch in parent_partner.ids_schemes_contracts:
+            for con in contracts:
+                if con.type_contract == "credito":
+                    for sch in con.credit_schemes_line_ids:
                         acumulador.append(sch.id)
-                    self.ids_schemes_contracts = [(6, 0, acumulador)]
-                    # acumulador = []
-                    # for contract in parent_partner.contract_ids:
-                    #    acumulador.append(contract.id)
-                    # self.contract_ids = [(6, 0, acumulador)]
+            partner.ids_schemes_contracts = [(6, 0, acumulador)]
+
+            if (len(acumulador) == 0):
+                if (partner.parent_id):
+                    parent_partner = partner.env['res.partner'].browse(partner.parent_id.id)
+                    if parent_partner.type_contract_hide == "credito":
+                        acumulador = []
+                        for sch in parent_partner.ids_schemes_contracts:
+                            acumulador.append(sch.id)
+                        partner.ids_schemes_contracts = [(6, 0, acumulador)]
+                        # acumulador = []
+                        # for contract in parent_partner.contract_ids:
+                        #    acumulador.append(contract.id)
+                        # self.contract_ids = [(6, 0, acumulador)]
 
     @api.multi
     @api.depends('contract_ids', 'parent_id', 'contract_ids.credit_schemes_line_ids')
