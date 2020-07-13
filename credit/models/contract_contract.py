@@ -63,6 +63,7 @@ class ContractContract(models.Model):
                                     order.state_order_fac = 'p'
                                     invoice_line_values['quantity'] = 1
                                     invoice_line_values['price_unit'] = sum
+
                                 invoice_values['invoice_line_ids'].append(
                                     (0, 0, invoice_line_values)
                                 )
@@ -81,7 +82,7 @@ class ContractContract(models.Model):
 class CreditContractLine(models.Model):
     _inherit = "contract.line"
 
-    invoice_period_log_ids = fields.One2many('credit.invoice_period_log','contract_line_id', string="Ids Periodos")
+    invoice_period_log_ids = fields.One2many('credit.invoice_period_log', 'contract_line_id', string="Ids Periodos")
 
     @api.model
     def get_next_invoice_date(
