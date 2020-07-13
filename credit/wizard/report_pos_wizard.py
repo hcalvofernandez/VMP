@@ -63,9 +63,11 @@ class ReportPosWizard(models.TransientModel):
     def consult_credit_details(self):
         one = self.start_date
         two = self.end_date
-        # orders = self.env['pos.order'].search([('company_id','=',self.company_id.id),('state_order_fac','=','n'),('order_type','=','Cŕedito'),('is_postpaid','=',True),('date_order','>=',start),('date_order','<=',end)])
-        orders = self.env['pos.order'].search([('company_id', '=', self.company_id.id), ('state_order_fac', '=', 'n'),
-                                               ('order_type', '=', 'Cŕedito'), ('is_postpaid', '=', True),
+        partner_ids = self.partner_id.child_ids.mapped('id')
+        partner_ids.append(self.partner_id.id)
+        orders = self.env['pos.order'].search([('company_id', '=', self.company_id.id),
+                                               ('partner_id', 'in', partner_ids),
+                                               ('credit_amount', '>', 0),
                                                ('date_order', '>=', one), ('date_order', '<=', two)])
         importes_por_persona = dict()
         res = []
