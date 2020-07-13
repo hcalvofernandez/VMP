@@ -467,15 +467,22 @@ class ContractLine(models.Model):
             next_period_date_end = max_date_end
         return next_period_date_end
 
-    @api.depends('last_date_invoiced', 'date_start', 'date_end')
+    @api.depends('last_date_invoiced', 'date_start', 'date_end', 'recurring_next_date')
     def _compute_next_period_date_start(self):
         for rec in self:
-            if rec.last_date_invoiced:
+            if rec.recurring_next_date:
                 next_period_date_start = (
-                    rec.last_date_invoiced + relativedelta(days=1)
+                    rec.recurring_next_date - self.get_relative_delta(
+                       rec.recurring_rule_type, rec.recurring_interval
+                    )
                 )
             else:
-                next_period_date_start = rec.date_start
+                if rec.last_date_invoiced:
+                    next_period_date_start = (
+                            rec.last_date_invoiced + relativedelta(days=1)
+                    )
+                else:
+                    next_period_date_start = rec.date_start
             if rec.date_end and next_period_date_start > rec.date_end:
                 next_period_date_start = False
             rec.next_period_date_start = next_period_date_start
