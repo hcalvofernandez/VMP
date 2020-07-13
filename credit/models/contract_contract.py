@@ -6,6 +6,44 @@ from odoo import models, fields, api
 class ContractContract(models.Model):
     _inherit = "contract.contract"
 
+    count_orders = fields.Integer(string="Órdenes", compute="compute_orders_to_invoice")
+
+    @api.multi
+    def compute_orders_to_invoice(self):
+        for contract in self:
+            for line in contract.contract_line_ids:
+                partner = contract.partner_id
+                partner_ids = partner.mapped('child_ids.id')
+                partner_ids.append(partner.id)
+                orders = self.env['pos.order'].search_count([('partner_id', 'in', partner_ids),
+                                                       ('credit_amount', '>', 0),
+                                                       ('state_order_fac', '=', 'n'),
+                                                       ('date_order', '>=', line.next_period_date_start),
+                                                       ('date_order', '<=', line.next_period_date_end)])
+                contract.count_orders = orders
+
+
+
+    @api.multi
+    def show_orders_to_invoice(self):
+        orders = False
+        for line in self.contract_line_ids:
+            partner = self.partner_id
+            partner_ids = partner.mapped('child_ids.id')
+            partner_ids.append(partner.id)
+            orders = self.env['pos.order'].search([('partner_id', 'in', partner_ids),
+                                                   ('credit_amount', '>', 0),
+                                                   ('state_order_fac', '=', 'n'),
+                                                   ('date_order', '>=', line.next_period_date_start),
+                                                   ('date_order', '<=', line.next_period_date_end)])
+        return {
+            'name': "Órdenes a facturar",
+            'type': 'ir.actions.act_window',
+            'res_model': "pos.order",
+            'view_mode': "tree,form",
+            'domain': [('id', 'in', orders.mapped('id'))]
+        }
+
     @api.model
     def is_valid_order_date(self, customer_id):
         today = fields.Date.today()
