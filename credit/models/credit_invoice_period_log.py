@@ -23,5 +23,5 @@ class CreditInvoicePeriodLog(models.Model):
                 period.name = datetime.strftime(period.start_date, "%d-%m-%Y")
             if period.end_date:
                 period.name += " a " + datetime.strftime(period.end_date, "%d-%m-%Y") + " "
-            if self.contract_line_id.contract_id.name:
-                period.name += self.contract_line_id.contract_id.name
+            if period.contract_line_id.contract_id.name:
+                period.name += period.contract_line_id.contract_id.name
