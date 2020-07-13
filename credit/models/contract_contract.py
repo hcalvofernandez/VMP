@@ -51,11 +51,19 @@ class ContractContract(models.Model):
                     )
                     if invoice_line_values:
                         if contract.type_contract == 'credito':
-                            new_log = line.invoice_period_log_ids.filtered(lambda log: log.state == 'new')
-                            orders = False
-                            if len(new_log) > 0:
-                                orders = new_log[0].order_ids
-                                new_log[0].state = 'invoiced'
+                            # new_log = line.invoice_period_log_ids.filtered(lambda log: log.state == 'new')
+                            # orders = False
+                            # if len(new_log) > 0:
+                            #     orders = new_log[0].order_ids
+                            #     new_log[0].state = 'invoiced'
+                            partner = contract.partner_id
+                            partner_ids = partner.mapped('child_ids.id')
+                            partner_ids.append(partner.id)
+                            orders = self.env['pos.order'].search([('partner_id', 'in', partner_ids),
+                                                                   ('credit_amount', '>', 0),
+                                                                   ('state_order_fac', '=', 'n'),
+                                                                   ('date_order', '>=', line.next_period_date_start),
+                                                                   ('date_order', '<=', line.next_period_date_end)])
                             sum = 0
                             if orders:
                                 for order in orders:
