@@ -104,21 +104,32 @@ class ContractContract(models.Model):
     @api.model
     def create(self, vals):
         contract = super(ContractContract, self).create(vals)
-        partner = self.env['res.partner'].browse(self.partner_id.id)
-        partner.sudo().update({'type_contract':self.type_contract})
-        partner_childs = self.env['res.partner'].search([('parent_id','=',partner.id)])
-        for partner_child in partner_childs:
-            _partner_child = self.env['res.partner'].browse(partner_child.id)
-            _partner_child.sudo().update({'type_contract':self.type_contract})
-            _partner_child.sudo().write({'type_contract':self.type_contract})
+        partner = contract.partner_id
+        partner_childs = partner.child_ids
+        all_partner = partner + partner_childs
+        if 'type_contract' in vals:
+            all_partner.sudo().write(
+                {'type_contract': vals['type_contract'], 'type_contract_hide': vals['type_contract']})
+        if 'credit_schemes_line_ids' in vals:
+            all_partner.sudo().write({'ids_schemes_contracts': (6, 0, vals['credit_schemes_line_ids'])})
+        if 'esquema_subsidio_ids' in vals:
+            all_partner.sudo().write({'ids_schemes_sub': (6, 0, vals['esquema_subsidio_ids'])})
 
-            _partner_child.sudo().update({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
-            _partner_child.sudo().write({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
-
-            _partner_child.sudo().update({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
-            _partner_child.sudo().write({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
-
-            _partner_child.type_contract = self.type_contract
+        # partner = self.env['res.partner'].browse(self.partner_id.id)
+        # partner.sudo().update({'type_contract':self.type_contract})
+        # partner_childs = self.env['res.partner'].search([('parent_id','=',partner.id)])
+        # for partner_child in partner_childs:
+        #     _partner_child = self.env['res.partner'].browse(partner_child.id)
+        #     _partner_child.sudo().update({'type_contract':self.type_contract})
+        #     _partner_child.sudo().write({'type_contract':self.type_contract})
+        #
+        #     _partner_child.sudo().update({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
+        #     _partner_child.sudo().write({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
+        #
+        #     _partner_child.sudo().update({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+        #     _partner_child.sudo().write({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+        #
+        #     _partner_child.type_contract = self.type_contract
         
         return contract
     
@@ -126,25 +137,35 @@ class ContractContract(models.Model):
     def write(self, vals):
         contract = super(ContractContract, self).write(vals)
         partner = self.env['res.partner'].browse(self.partner_id.id)
-        partner.sudo().update({'type_contract':self.type_contract})
-        partner.sudo().update({'type_contract_hide':self.type_contract})
-        partner.sudo().update({'ids_schemes_contracts':self.credit_schemes_line_ids})
-        partner.sudo().update({'ids_schemes_sub':self.esquema_subsidio_ids})
-       
-        partner_childs = self.env['res.partner'].search([('parent_id','=',partner.id)])
+        partner_childs = partner.child_ids
+        all_partner = partner + partner_childs
+        if 'type_contract' in vals:
+            all_partner.sudo().write({'type_contract': vals['type_contract'], 'type_contract_hide': vals['type_contract']})
+        if 'credit_schemes_line_ids' in vals:
+            all_partner.sudo().write({'ids_schemes_contracts': vals['credit_schemes_line_ids']})
+        if 'esquema_subsidio_ids' in vals:
+            all_partner.sudo().write({'ids_schemes_sub': vals['esquema_subsidio_ids']})
 
-        for partner_child in partner_childs:
-                _partner_child = self.env['res.partner'].browse(partner_child.id)
-                _partner_child.sudo().update({'type_contract':self.type_contract})
-                _partner_child.sudo().write({'type_contract_hide':self.type_contract})
-                
-                _partner_child.sudo().update({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
-                _partner_child.sudo().write({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
-
-                _partner_child.sudo().update({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
-                _partner_child.sudo().write({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
-                _partner_child.type_contract = self.partner_id.type_contract
-                _partner_child.type_contract_hide = self.partner_id.type_contract
+        # partner = self.env['res.partner'].browse(self.partner_id.id)
+        # partner.sudo().update({'type_contract':self.type_contract})
+        # partner.sudo().update({'type_contract_hide':self.type_contract})
+        # partner.sudo().update({'ids_schemes_contracts':self.credit_schemes_line_ids})
+        # partner.sudo().update({'ids_schemes_sub':self.esquema_subsidio_ids})
+        #
+        # partner_childs = self.env['res.partner'].search([('parent_id','=',partner.id)])
+        #
+        # for partner_child in partner_childs:
+        #         _partner_child = self.env['res.partner'].browse(partner_child.id)
+        #         _partner_child.sudo().update({'type_contract':self.type_contract})
+        #         _partner_child.sudo().write({'type_contract_hide':self.type_contract})
+        #
+        #         _partner_child.sudo().update({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
+        #         _partner_child.sudo().write({'ids_schemes_contracts':self.partner_id.ids_schemes_contracts})
+        #
+        #         _partner_child.sudo().update({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+        #         _partner_child.sudo().write({'ids_schemes_sub':self.partner_id.ids_schemes_sub})
+        #         _partner_child.type_contract = self.partner_id.type_contract
+        #         _partner_child.type_contract_hide = self.partner_id.type_contract
         
         return contract
     

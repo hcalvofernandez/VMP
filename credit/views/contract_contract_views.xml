@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
           <xpath expr="//div[@name='button_box']/button[@name='action_show_invoices']" position="after">
             <button name="show_orders_to_invoice" type="object" icon="fa-list" class="oe_stat_button">
-                <field string="Órdenes" name="count_orders" widget="statinfo"/>
+                <field string="Órdenes a Facturar" name="count_orders" widget="statinfo"/>
             </button>
           </xpath>
         </field>
