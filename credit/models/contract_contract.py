@@ -109,6 +109,7 @@ class ContractContract(models.Model):
                                     order.state_order_fac = 'p'
                                     invoice_line_values['quantity'] = 1
                                     invoice_line_values['price_unit'] = sum
+                                    invoice_line_values['invoice_line_tax_ids'] = self.env.ref('l10n_mx.1_tax12').id
 
                                 invoice_values['invoice_line_ids'].append(
                                     (0, 0, invoice_line_values)
