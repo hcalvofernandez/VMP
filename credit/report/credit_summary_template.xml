@@ -182,23 +182,27 @@
                             <tr>
                               <td style="text-align: center !important;"><span t-esc="o['client_number']"/></td>
                               <td style="text-align: center !important;"><span t-esc="o['cliente']"/></td>
-                              <td style="text-align: right !important;" class="font-weight-bold">$ <span t-esc="o['importe']"/></td>
+                              <td style="text-align: right !important;" class="font-weight-bold"><span t-esc="o['importe']"
+                              t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                             </tr>
                         </t>
                         <tr class="font-weight-bold text-uppercase">
                           <td colspan="2" style="text-align: right !important;" >subtotales:</td>
-                          <td style="text-align: right !important;" >$ <span t-esc="sub_total"/></td>
+                          <td style="text-align: right !important;" ><span t-esc="sub_total"
+                          t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                         </tr>
                         <tr class="font-weight-bold text-uppercase">
                           <td colspan="2" style="text-align: right !important;">iva:</td>
                           <t t-set = "iva" t-value = "sub_total * .16" />
-                          <td style="text-align: right !important;" >$ <span t-esc="'%.2f'% iva"/></td>
+                          <td style="text-align: right !important;" ><span t-esc="iva"
+                          t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                         </tr>
                         <tr class="table-highlight font-weight-bold">
                           <td></td>
                           <td style="text-align: left !important;">Total:</td>
                           <t t-set = "total" t-value = "sub_total + iva" />
-                          <td style="text-align: right !important;" >$ <span t-esc="'%.2f'% total"/></td>
+                          <td style="text-align: right !important;" ><span t-esc="total"
+                          t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                         </tr>
                       </tbody>
                   </table><br/>

@@ -2,6 +2,18 @@
 <odoo>
   <data>
         <!-- res.partner tree Inherit-->
+    <record id="credit_contract_contract_form_view" model="ir.ui.view">
+        <field name="name">contract.contract form view (in contract)</field>
+        <field name="model">contract.contract</field>
+        <field name="inherit_id" ref="contract.contract_contract_form_view"/>
+        <field name="arch" type="xml">
+          <xpath expr="//div[@name='button_box']/button[@name='action_show_invoices']" position="after">
+            <button name="show_orders_to_invoice" type="object" icon="fa-list" class="oe_stat_button">
+                <field string="Órdenes" name="count_orders" widget="statinfo"/>
+            </button>
+          </xpath>
+        </field>
+    </record>
     <record model="ir.ui.view" id="res_partner_tree_view_inherit_credit">
         <field name="name">res.partner.tree.view.inherit.credit</field>
         <field name="model">res.partner</field>
