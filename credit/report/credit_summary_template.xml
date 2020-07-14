@@ -87,7 +87,8 @@
                           </tr>
                           <tr>
                             <td>compras y cargos</td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="float(total) * 1.16"
+                                                      t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr class="table-highlight">
                             <td>saldo actual al corte</td>
@@ -116,7 +117,7 @@
                   </table>
                   <table style="width:100%;" class="text-center mt-4">
                     <th>
-                      Cuenta con 90 días naturales a partir de su fecha de corte para cualquier             aclaración contenida en el presente Estado de Cuenta
+                      Cuenta con 90 días naturales a partir de su fecha de corte para cualquier aclaración contenida en el presente Estado de Cuenta
                     </th>
                   </table>
                   <h4 class="text-center text-uppercase pt-4 pb-4">Detalle de movimientos</h4>

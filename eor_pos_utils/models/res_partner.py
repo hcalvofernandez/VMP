@@ -57,13 +57,13 @@ class ResPartner(models.Model):
 
     # Computed fields
     order_postpago_count = fields.Integer(string="Ordenes postpago", compute="_compute_order_count", store=True)
-    ids_schemes_sub = fields.Many2many('contract.scheme.contract', compute='_compute_schemes_subsidio', store=True,
+    ids_schemes_sub = fields.Many2many('contract.scheme.contract',
                                        string='Esquemas de Subsidio')
     credit_s_id = fields.Many2one('credit.credit_schemes', string='Esquema de Crédito')
-    ids_schemes_contracts = fields.Many2many('credit.credit_schemes', compute='_compute_schemes_credit', store=True,
+    ids_schemes_contracts = fields.Many2many('credit.credit_schemes',
                                              string='Esquemas de Crédito')
 
-    type_contract_hide = fields.Char(compute='_compute_type_credit', string='Tipo de contrato', store=True,
+    type_contract_hide = fields.Char(string='Tipo de contrato',
                                      help=' tipos de  contrato - , credito, prepago, mealplan, subsidio')
 
     credit_limit_computed = fields.Float(compute='_credit_limit_computed', string='Límite de Crédito',
@@ -75,31 +75,37 @@ class ResPartner(models.Model):
     # TODO: Esquema por producto
 
     @api.multi
-    @api.depends('contract_ids')
+    @api.depends('contract_ids.esquema_subsidio_ids', 'parent_id.contract_ids.esquema_subsidio_ids')
     def _compute_schemes_subsidio(self):
-        try:
-            acumulador = []
-            partner_id = self.id
-            contracts = self.env['contract.contract'].search([('partner_id', '=', partner_id), ('active', '=', True)])
-            for con in contracts:
-                if con.type_contract == "subsidio":
-                    for sch in con.esquema_subsidio_ids:
-                        acumulador.append(sch.id)
-            self.ids_schemes_sub = [(6, 0, acumulador)]
+        for partner in self:
+            contracts = partner.contract_ids + partner.parent_id.contract_ids
+            sub_contracts = contracts.filtered(lambda contract: contract.type_contract == 'subsidio')
+            partner.ids_schemes_sub = [(6, 0, sub_contracts.esquema_subsidio_ids.mapped('id'))]
 
-            if (len(acumulador) == 0):
-                if (self.parent_id):
-                    parent_partner = self.env['res.partner'].browse(self.parent_id.id)
-                    if parent_partner.type_contract_hide == "subsidio":
-                        for sch in parent_partner.ids_schemes_sub:
-                            acumulador.append(sch.id)
-                        self.ids_schemes_sub = [(6, 0, acumulador)]
-                        # acumulador = []
-                        # for contract in parent_partner.contract_ids:
-                        #    acumulador.append(contract.id)
-                        # self.contract_ids = [(6, 0, acumulador)]
-        except:
-            pass
+
+            # try:
+            #     acumulador = []
+            #     partner_id = partner.id
+            #     contracts = self.env['contract.contract'].search([('partner_id', '=', partner_id), ('active', '=', True)])
+            #     for con in contracts:
+            #         if con.type_contract == "subsidio":
+            #             for sch in con.esquema_subsidio_ids:
+            #                 acumulador.append(sch.id)
+            #     partner.ids_schemes_sub = [(6, 0, acumulador)]
+            #
+            #     if (len(acumulador) == 0):
+            #         if (partner.parent_id):
+            #             parent_partner = self.env['res.partner'].browse(partner.parent_id.id)
+            #             if parent_partner.type_contract_hide == "subsidio":
+            #                 for sch in parent_partner.ids_schemes_sub:
+            #                     acumulador.append(sch.id)
+            #                 partner.ids_schemes_sub = [(6, 0, acumulador)]
+            #                 # acumulador = []
+            #                 # for contract in parent_partner.contract_ids:
+            #                 #    acumulador.append(contract.id)
+            #                 # self.contract_ids = [(6, 0, acumulador)]
+            # except:
+            #     pass
 
     @api.model
     def update_pin(self, partner_id, new_pin):
@@ -122,30 +128,34 @@ class ResPartner(models.Model):
             rec.credit_limit_computed = rec.credit_limit
 
     @api.multi
-    @api.depends('contract_ids', 'parent_id')
+    @api.depends('contract_ids.credit_schemes_line_ids', 'parent_id.contract_ids.credit_schemes_line_ids')
     def _compute_schemes_credit(self):
         for partner in self:
-            acumulador = []
-            contracts = partner.contract_ids
+            contracts = partner.contract_ids + partner.parent_id.contract_ids
+            sub_contracts = contracts.filtered(lambda contract: contract.type_contract == 'credito')
+            partner.ids_schemes_contracts = sub_contracts.mapped('credit_schemes_line_ids')
 
-            for con in contracts:
-                if con.type_contract == "credito":
-                    for sch in con.credit_schemes_line_ids:
-                        acumulador.append(sch.id)
-            partner.ids_schemes_contracts = [(6, 0, acumulador)]
-
-            if (len(acumulador) == 0):
-                if (partner.parent_id):
-                    parent_partner = partner.env['res.partner'].browse(partner.parent_id.id)
-                    if parent_partner.type_contract_hide == "credito":
-                        acumulador = []
-                        for sch in parent_partner.ids_schemes_contracts:
-                            acumulador.append(sch.id)
-                        partner.ids_schemes_contracts = [(6, 0, acumulador)]
-                        # acumulador = []
-                        # for contract in parent_partner.contract_ids:
-                        #    acumulador.append(contract.id)
-                        # self.contract_ids = [(6, 0, acumulador)]
+            # acumulador = []
+            # contracts = partner.contract_ids
+            #
+            # for con in contracts:
+            #     if con.type_contract == "credito":
+            #         for sch in con.credit_schemes_line_ids:
+            #             acumulador.append(sch.id)
+            # partner.ids_schemes_contracts = [(6, 0, acumulador)]
+            #
+            # if (len(acumulador) == 0):
+            #     if (partner.parent_id):
+            #         parent_partner = partner.env['res.partner'].browse(partner.parent_id.id)
+            #         if parent_partner.type_contract_hide == "credito":
+            #             acumulador = []
+            #             for sch in parent_partner.ids_schemes_contracts:
+            #                 acumulador.append(sch.id)
+            #             partner.ids_schemes_contracts = [(6, 0, acumulador)]
+            #             # acumulador = []
+            #             # for contract in parent_partner.contract_ids:
+            #             #    acumulador.append(contract.id)
+            #             # self.contract_ids = [(6, 0, acumulador)]
 
     @api.multi
     @api.depends('contract_ids', 'parent_id', 'contract_ids.credit_schemes_line_ids')
@@ -235,3 +245,5 @@ class ResPartner(models.Model):
                 saldo = partner.credit_limit - suma
                 partner.remaining_credit_amount = suma
                 partner.remaining_credit_limit = saldo
+            else:
+                partner.remaining_credit_limit = 0
