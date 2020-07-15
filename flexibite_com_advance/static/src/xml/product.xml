@@ -668,6 +668,49 @@
         </t>
     </t>
 
+    <t t-name="CategoryButtonBack">
+        <span class='category-button-back category-simple-button js-category-switch' t-att-data-category-id="category.id" >
+            <i class="fa fa-chevron-left"/>
+            <t t-if="category.name != 'Root'" t-esc="category.name"/>
+        </span>
+    </t>
+
+    <t t-extend="ProductCategoriesWidget">
+        <t t-jquery="div" t-operation="replace">
+            <div>
+                <header class='rightpane-header'>
+                    <div class="breadcrumbs">
+                        <span class="breadcrumb">
+                            <span class=" breadcrumb-button breadcrumb-home js-category-switch">
+                                <i class='fa fa-home' role="img" aria-label="Home" title="Home"></i>
+                            </span>
+                        </span>
+                        <t t-foreach="widget.breadcrumb" t-as="category">
+                            <span class="breadcrumb">
+                                <img src="/point_of_sale/static/src/img/bc-arrow-big.png" class="breadcrumb-arrow" alt="Slash"/>
+                                <span class="breadcrumb-button js-category-switch" t-att-data-category-id="category.id">
+                                    <t t-esc="category.name"/>
+                                </span>
+                            </span>
+                        </t>
+                    </div>
+                    <div class="searchbox">
+                        <input placeholder="Search Products" />
+                        <span class="search-clear"></span>
+                    </div>
+                </header>
+                <t t-if="true">
+                    <div class="categories">
+                        <div class="category-list-scroller touch-scrollable">
+                            <div class="category-list">
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </t>
+
     <t t-extend="ProductCategoriesWidget">
     	<t t-jquery="div.searchbox" t-operation="before">
 			<div class="category_searchbox">
@@ -696,7 +739,7 @@
                 </span>
             </t>
 	   	</t>
-		<t t-jquery="div.categories" t-operation="replace">
+        <t t-jquery="div.categories" t-operation="replace">
             <t t-if="widget.pos.config and !widget.pos.config.vertical_categories">
                 <div class="categories">
                     <div class="category-list-scroller touch-scrollable">

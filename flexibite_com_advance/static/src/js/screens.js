@@ -565,8 +565,69 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
             }
         },
+        render_category: function( category, with_image, is_back){
+            if(is_back){
+                var category_html = QWeb.render('CategoryButtonBack',{
+                            widget:  this,
+                            category: category,
+                        });
+                var category_node = document.createElement('div');
+                category_node.innerHTML = category_html.trim();
+                category_node = category_node.childNodes[0];
+                return category_node;
+            }
+            return this._super(category, with_image)
+        },
         renderElement: function(){
-            this._super();
+            var el_str  = QWeb.render(this.template, {widget: this});
+            var el_node = document.createElement('div');
+
+            el_node.innerHTML = el_str;
+            el_node = el_node.childNodes[1];
+
+            if(this.el && this.el.parentNode){
+                this.el.parentNode.replaceChild(el_node,this.el);
+            }
+
+            this.el = el_node;
+
+            var withpics = this.pos.config.iface_display_categ_images;
+
+            var list_container = el_node.querySelector('.category-list');
+            if (list_container) {
+                if (!withpics) {
+                    list_container.classList.add('simple');
+                } else {
+                    list_container.classList.remove('simple');
+                }
+                if(this.category.name != 'Root' && !this.category.parent_id){
+                    list_container.appendChild(this.render_category(this.pos.db.get_category_by_id(this.pos.db.root_category_id), withpics, true));
+                }
+                if(this.category.name != 'Root' && this.category.parent_id){
+                    list_container.appendChild(this.render_category(this.pos.db.get_category_by_id(this.category.parent_id[0]), withpics, true));
+                }
+                for(var i = 0, len = this.subcategories.length; i < len; i++){
+                    list_container.appendChild(this.render_category(this.subcategories[i],withpics,false));
+                }
+            }
+
+            var buttons = el_node.querySelectorAll('.js-category-switch');
+            for(var i = 0; i < buttons.length; i++){
+                buttons[i].addEventListener('click',this.switch_category_handler);
+            }
+
+            var products = this.pos.db.get_product_by_category(this.category.id);
+            this.product_list_widget.set_product_list(products); // FIXME: this should be moved elsewhere ...
+
+            this.el.querySelector('.searchbox input').addEventListener('keypress',this.search_handler);
+
+            this.el.querySelector('.searchbox input').addEventListener('keydown',this.search_handler);
+
+            this.el.querySelector('.search-clear').addEventListener('click',this.clear_search_handler);
+
+            if(this.pos.config.iface_vkeyboard && this.chrome.widget.keyboard){
+                this.chrome.widget.keyboard.connect($(this.el.querySelector('.searchbox input')));
+            }
             var self = this;
             //Category search
 //            $('.category_home').click(function(){
