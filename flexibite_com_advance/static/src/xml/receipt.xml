@@ -2928,6 +2928,42 @@
         </div>
     </t>
 
+    <t t-name="withdrawMoney">
+        <div class="pos-sale-ticket" style="border:0px solid;">
+            <style>
+                .o_loading {
+                    display: none !important;
+                }
+            </style>
+            <div id="withdraw_date_now" class="pos-center-align">
+<!--                <t t-esc="moment(new Date()).format('YYYY-MM-DD HH:mm:ss')"/>-->
+            </div>
+            <div class="pos-center-align">
+                <t t-if="widget.pos">
+                    <img width="210" t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}"/>
+                </t>
+            </div>
+            <div class="pos-center-align">
+                <table class="receipt-orderlines">
+                    <colgroup>
+                        <col width="50%"/>
+                        <col width="50%"/>
+                    </colgroup>
+                    <tbody>
+                        <tr t-if="widget.init_receipt_data">
+                            <td style="text-align: left">
+                                Cajero:
+                            </td>
+                            <td class="pos-right-align">
+                                 <t t-esc='widget.init_receipt_data.user_name'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
+
     <t t-name="EndBalanceTicket">
         <div class="pos-sale-ticket" style="border:0px solid;">
             <style>
