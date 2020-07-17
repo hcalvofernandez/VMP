@@ -318,22 +318,35 @@
                                 <tr>
                                     <td style="width:50%;padding-left:15px;">SUBTOTAL</td>
                                     <td style="width:50%" class="text-right">
-                                        <t t-esc="vals.get('balance_end_real')"
-                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        <t t-if="vals.get('balance_end_real')">
+                                            <t t-esc="float(vals.get('balance_end_real'))"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </t>
+                                        <t t-else="">
+                                            0.00
+                                        </t>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="width:50%">- DESCUENTOS</td>
                                     <td style="width:50%" class="text-right">
-                                        <t t-esc="vals.get('balance_discount')"
-                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        <t t-if="vals.get('balance_discount')">
+                                            <t t-esc="float(vals.get('balance_discount'))"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </t>
+                                        <t t-else="">
+                                            0.00
+                                        </t>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="width:50%">VENTA NETA</td>
                                     <td style="width:50%" class="text-right">
-                                        <t t-esc="vals.get('venta_neta')"
-                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        <t t-if="vals.get('venta_neta')">
+                                            <t t-esc="vals.get('venta_neta')"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </t>
+                                        <t t-else="">0.00</t>
                                     </td>
                                 </tr>
                             </table>
