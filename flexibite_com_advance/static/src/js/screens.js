@@ -4598,8 +4598,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             ret.resolve();
                         } else{
                             self.gui.show_popup('error_popup',{
-                                'title':_t('Password Incorrect !!!'),
-                                'body':_('Entered Password Is Incorrect ')
+                                'title':_t('Contraseña incorrecta.'),
+                                'body':_('La contraseña no es correcta.')
                             });
                         }
                     },
