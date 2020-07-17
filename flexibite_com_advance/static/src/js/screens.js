@@ -870,7 +870,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.gui.show_screen('initialBalanceTicket');
                     setTimeout(function () {
                         self.gui.show_screen(view_initial);
-                    }, 1000)
+                    }, 1000);
                 }
                 else {
                     self.gui.show_screen(view_initial);
@@ -3427,7 +3427,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         show: function(){
-            self = this;
+            var self = this;
             var params = {
                 model: 'pos.session',
                 method: 'get_datetime_now',
@@ -3436,6 +3436,39 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             };
             rpc.query(params, {async: false}).then(function(pos_session){
                 $('#date_now').html(pos_session['date_now']);
+                self._super();
+            });
+        },
+    });
+
+    gui.define_screen({name:'initialBalanceTicket', widget: InitialBalanceTicket});
+
+    var WithdrawMoneyTicket = InitialBalanceTicket.extend({
+        template: 'withdrawMoney',
+        willStart: function() {
+            var self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'search_read',
+                fields: ['id', 'user_id', 'cash_register_balance_start'],
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
+            };
+            return rpc.query(params, {async: false}).then(function(pos_session){
+                self.init_receipt_data = {
+                    user_name: pos_session[0]['user_id'][1],
+                };
+            });
+        },
+        show: function(){
+            var self = this;
+            var params = {
+                model: 'pos.session',
+                method: 'get_datetime_now',
+                context: session.user_context,
+                domain: [['id','=', this.pos.config.current_session_id[0]]],
+            };
+            rpc.query(params, {async: false}).then(function(pos_session){
+                $('#withdraw_date_now').html(pos_session['date_now']);
                 self._super();
             });
         },
@@ -3449,7 +3482,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
 
-    gui.define_screen({name:'initialBalanceTicket', widget: InitialBalanceTicket});
+    gui.define_screen({name:'withdrawMoneyTicket', widget: WithdrawMoneyTicket});
 
     var EndBalanceTicket = screens.ReceiptScreenWidget.extend({
         template: 'EndBalanceTicket',
@@ -4414,22 +4447,29 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     });
                     if(users_pass && users_pass.length > 0){
                         self.ask_password(users_pass).then(function(){
-                            if(self.pos.config.cash_control){
-                                var msg_show_take_money_out = "<div class='container'>" +
-                                    "<div class='sub-container'>" +
-                                        "<table id='tbl_id'>" +
-                                            "<tr>" +
-                                                "<td>Reason</td>" +
-                                                "<td id='td_id'><input id='txt_reason_out_id' type='text' name='txt_reason_in'></td>" +
-                                            "</tr>" +
-                                            "<tr>" +
-                                                "<td>Amount</td>" +
-                                                "<td id='td_id'><input id='txt_amount_out_id' type='text' name='txt_amount_in'></td>" +
-                                            "<tr>" +
-                                        "</table>" +
-                                    "</div>" +
-                                "</div>";
-                                self.gui.show_popup('take_money_out',{msg_show_take_money_out:msg_show_take_money_out});
+                            if(self.pos.config.cash_control)
+                            {
+                                if (self.pos.config.iface_print_auto) {
+                                    self.gui.show_screen('withdrawMoneyTicket');
+                                }
+                                setTimeout(function() {
+                                    self.gui.show_screen('products');
+                                    var msg_show_take_money_out = "<div class='container'>" +
+                                        "<div class='sub-container'>" +
+                                            "<table id='tbl_id'>" +
+                                                "<tr>" +
+                                                    "<td>Reason</td>" +
+                                                    "<td id='td_id'><input id='txt_reason_out_id' type='text' name='txt_reason_in'></td>" +
+                                                "</tr>" +
+                                                "<tr>" +
+                                                    "<td>Amount</td>" +
+                                                    "<td id='td_id'><input id='txt_amount_out_id' type='text' name='txt_amount_in'></td>" +
+                                                "<tr>" +
+                                            "</table>" +
+                                        "</div>" +
+                                    "</div>";
+                                    self.gui.show_popup('take_money_out',{msg_show_take_money_out:msg_show_take_money_out});
+                                }, 1000);
                             }else{
                                 self.pos.db.notification('danger',_t('Please enable cash control from pos configuration.'));
                             }
