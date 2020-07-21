@@ -56,6 +56,25 @@ odoo.define('flexibite_com_advance.db', function (require) {
 //            Cashbox line 
             this.cash_box_line_by_id = {};
 	    },
+        get_product_by_category: function(category_id){
+            var product_ids  = this.product_by_category_id[category_id];
+            var list = [];
+            if (product_ids) {
+                for (var i = 0, len = Math.min(product_ids.length, this.limit); i < len; i++) {
+                    list.push(this.product_by_id[product_ids[i]]);
+                }
+            }
+            list = list.sort(function(a, b){
+                if(a.display_name > b.display_name){
+                    return 1;
+                }
+                if(a.display_name < b.display_name){
+                    return -1;
+                }
+                return 0;
+            });
+            return list;
+        },
 	    add_account_cash_box_line: function(cash_box_lines){
         	var self = this;
         	cash_box_lines.map(function(line){

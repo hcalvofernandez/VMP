@@ -1746,6 +1746,11 @@ thead.bgcolorset tr td {
 	margin-left: 0 !important;
 }
 
+span.category-button-back {
+	background-color: #333333 !important;
+	color: white !important;
+}
+
 .v-category {
 	width: 125px;
 	text-align: center !important;
