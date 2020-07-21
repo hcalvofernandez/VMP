@@ -51,7 +51,7 @@ class ResConfigSettings(models.TransientModel):
         return res_config_settings or False
 
     google_api_key = fields.Char('Google API key')
-    theme_selector = fields.Selection([('black_yellow','Black Yellow'),('multi_color','Restaurant')])
+    theme_selector = fields.Selection([('gray_scale', 'Escala de Grises'),('black_yellow','Black Yellow'),('multi_color','Restaurant')])
 #     theme_selector = fields.Selection([('black_yellow','Black Yellow'),('multi_color','Restaurant'),
 #                                        ('blue_white','Blue White')])
     gen_ean13 = fields.Boolean("On Product create generate EAN13")

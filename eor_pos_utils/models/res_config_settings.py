@@ -9,6 +9,6 @@ _logger = logging.getLogger(__name__)
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    theme_selector = fields.Selection([
-        ('gray_scale', 'Escala de Grises')
-    ])
+    # theme_selector = fields.Selection([
+    #     ('gray_scale', 'Escala de Grises')
+    # ])
