@@ -61,6 +61,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="editable"></attribute>
+            </xpath>
             <xpath expr="//field[@name='active']" position="after">
                 <field name="credit_blocked" widget="checkbox"/>
                 <field name="remaining_credit_limit"/>
