@@ -144,6 +144,7 @@ class ReportPosWizard(models.TransientModel):
         mail = self.env['mail.mail']
         if not self.email_to:
             raise ValidationError("No se encontraron destinatarios de correo")
+        email_to = ""
         for partner in self.email_to:
             email_to += partner.email
             email_to += ','

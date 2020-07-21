@@ -29,7 +29,10 @@
                             C.P
                             <t t-esc="o.get_company_data_x().zip"/>
                         </div>
-                        <br/>
+                        <div class="row-xreport">
+<!--                            Caja:-->
+                            <t t-esc="o.config_id.name"/>
+                        </div>
                         <div class="row-xreport">
                             CORTE DE CAJA X
                         </div>
@@ -43,10 +46,7 @@
                             <span t-esc="o.get_current_date_x()"/>
                             <span t-esc="o.get_current_time_x()"/>
                         </div>
-                        <br/>
-
                         <div t-if="cash">
-
                             <table style="width:100%;">
                                 <tr>
                                     <td style="width:50%">Monto Apertura:</td>
@@ -106,7 +106,7 @@
                             </table>
                         </div>
                         <br/>
-                        <div style="border-top:2px dashed #111; padding-top:20px; padding-bottom:35px;">
+                        <div style="border-top:2px dashed #111; padding-top:10px; padding-bottom:25px;">
                             <div align="center" style="padding-bottom:25px;">FLUJO DE EFECTIVO</div>
                             <table style="width:100%;">
                                 <!--<t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(True)"/>
@@ -197,7 +197,7 @@
                             </table>
                         </div>
 
-                        <div style="border-bottom:2px dashed #111; padding-top:20px; padding-bottom:35px;">
+                        <div style="border-bottom:2px dashed #111; padding-top:10px; padding-bottom:25px;">
                             <div align="center" style="padding-bottom:25px;">FORMA DE PAGO VENTAS</div>
                             <table style="width:100%;">
                                 <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(False)"/>
@@ -218,7 +218,7 @@
                             </table>
                         </div>
 
-                        <div style="border-bottom:2px dashed #111; padding-top:20px; padding-bottom:35px;" t-if="tips">
+                        <div style="border-bottom:2px dashed #111; padding-top:10px; padding-bottom:25px;" t-if="tips">
                             <div align="center" style="padding-bottom:25px;">FORMA DE PAGO PROPINA</div>
                             <table style="width:100%;">
                                 <t t-set="payment_summary_without_prices" t-value="o.get_payments_by_method(False)"/>
@@ -270,7 +270,7 @@
                                 </tr>
                             </table>
                         </div>
-                        <div style="padding-top:0px; padding-bottom:35px;" t-if="service_type">
+                        <div style="padding-top:0px; padding-bottom:25px;" t-if="service_type">
                             <div align="center" style="padding-bottom:10px;">VENTAS POR TIPO DE SERVICIO</div>
                             <table style="width:100%;">
                                 <t t-set="services" t-value="o.get_payments_by_service_type()"/>
@@ -318,22 +318,35 @@
                                 <tr>
                                     <td style="width:50%;padding-left:15px;">SUBTOTAL</td>
                                     <td style="width:50%" class="text-right">
-                                        <t t-esc="vals.get('balance_end_real')"
-                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        <t t-if="vals.get('balance_end_real')">
+                                            <t t-esc="float(vals.get('balance_end_real'))"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </t>
+                                        <t t-else="">
+                                            0.00
+                                        </t>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="width:50%">- DESCUENTOS</td>
                                     <td style="width:50%" class="text-right">
-                                        <t t-esc="vals.get('balance_discount')"
-                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        <t t-if="vals.get('balance_discount')">
+                                            <t t-esc="float(vals.get('balance_discount'))"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </t>
+                                        <t t-else="">
+                                            0.00
+                                        </t>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="width:50%">VENTA NETA</td>
                                     <td style="width:50%" class="text-right">
-                                        <t t-esc="vals.get('venta_neta')"
-                                           t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        <t t-if="vals.get('venta_neta')">
+                                            <t t-esc="vals.get('venta_neta')"
+                                               t-options='{"widget": "monetary", "display_currency": o.get_company_data_x().currency_id}'/>
+                                        </t>
+                                        <t t-else="">0.00</t>
                                     </td>
                                 </tr>
                             </table>
@@ -465,9 +478,6 @@
                                             CAJERO
                                             <br/>
                                             <t t-esc="o.user_id.name"/>
-                                            <br/>
-                                            Caja:
-                                            <t t-esc="o.config_id.name"/>
                                         </td>
                                     </tr>
                                 </tbody>
