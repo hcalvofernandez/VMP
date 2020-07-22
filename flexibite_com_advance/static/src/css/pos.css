@@ -4303,6 +4303,7 @@ input:checked+.slider:before {
 }
 
 #cashbox_data_table {
+	display: inline-block;
 	width: 100%;
 }
 
