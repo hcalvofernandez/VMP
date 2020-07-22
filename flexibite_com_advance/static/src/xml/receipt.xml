@@ -547,7 +547,7 @@
 	                       </t>
 	                   </t>
                     </td>
-                    <td class="pos-right-align">
+                    <td class="pos-center-align">
                         <t t-esc="orderline.get_quantity_str_with_unit()"/>
                     </td>
                     <td class="pos-right-align">
@@ -632,7 +632,7 @@
 			                </t>
 			            </t>
                     </td>
-                    <td class="pos-right-align">
+                    <td class="pos-center-align">
                         <t t-esc="orderline.get_quantity_str_with_unit()"/>
                     </td>
                     <td class="pos-right-align">
