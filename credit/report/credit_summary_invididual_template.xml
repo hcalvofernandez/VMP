@@ -54,7 +54,6 @@
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
                         <p><span t-esc="partner.parent_id.name"/></p>
-<!--                        <p><t t-esc="partner.parent_id.street"/></p>-->
                       </th>
                     </tr>
                     <tr>
