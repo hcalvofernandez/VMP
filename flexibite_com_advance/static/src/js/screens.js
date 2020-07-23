@@ -4418,11 +4418,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                                 "<div class='sub-container'>" +
                                                     "<table id='tbl_id'>" +
                                                         "<tr>" +
-                                                            "<td>Reason</td>" +
+                                                            "<td>Razón</td>" +
                                                             "<td id='td_id'><input id='txt_reason_in_id' type='text' name='txt_reason_in'></td>" +
                                                         "</tr>" +
                                                         "<tr>" +
-                                                            "<td>Amount</td>" +
+                                                            "<td>Importe</td>" +
                                                             "<td id='td_id'><input id='txt_amount_in_id' type='text' name='txt_amount_in'></td>" +
                                                         "<tr>" +
                                                     "</table>" +
@@ -4458,11 +4458,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                         "<div class='sub-container'>" +
                                             "<table id='tbl_id'>" +
                                                 "<tr>" +
-                                                    "<td>Reason</td>" +
+                                                    "<td>Razón</td>" +
                                                     "<td id='td_id'><input id='txt_reason_out_id' type='text' name='txt_reason_in'></td>" +
                                                 "</tr>" +
                                                 "<tr>" +
-                                                    "<td>Amount</td>" +
+                                                    "<td>Importe</td>" +
                                                     "<td id='td_id'><input id='txt_amount_out_id' type='text' name='txt_amount_in'></td>" +
                                                 "<tr>" +
                                             "</table>" +
