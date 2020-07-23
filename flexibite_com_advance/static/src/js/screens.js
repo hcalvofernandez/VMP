@@ -4595,7 +4595,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             }
                         }
                         if(flag){
-                            ret.resolve();
+                            if (self.pos.config.iface_cashdrawer) {
+                                self.pos.proxy.open_cashbox();
+                            }
+                            self.gui.show_screen('endBalanceTicket');
+                            setTimeout(function () {
+                                ret.resolve();
+                            }, 1000);
                         } else{
                             self.gui.show_popup('error_popup',{
                                 'title':_t('Contraseña incorrecta.'),
