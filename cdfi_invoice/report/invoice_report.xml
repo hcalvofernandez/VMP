@@ -89,8 +89,16 @@
 
 					<!--INICIA LOGO DE LA EMPRESA-->
 						<div class="col-4">
-							<img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % to_text(o.company_id.logo)"
-							style="max-height: 130px;max-width: 130px;" />
+							<t t-if="o.company_id.parent_id">
+								<img t-if="o.company_id.parent_id.logo"
+									 t-att-src="'data:image/png;base64,%s' % to_text(o.company_id.parent_id.logo)"
+									 style="max-height: 130px;max-width: 130px;"/>
+							</t>
+							<t t-else="">
+								<img t-if="o.company_id.logo" t-att-src="'data:image/png;base64,%s' % to_text(o.company_id.logo)"
+									style="max-height: 130px;max-width: 130px;"/>
+							</t>
+
 						</div>
 					<!--TERMINA LOGO DE LA EMPRESA-->
 
