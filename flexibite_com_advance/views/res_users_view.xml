@@ -32,7 +32,7 @@
                                                                                                     ('user_role', '!=', 'delivery_user'),
                                                                                                     ('user_role', '=', 'cashier'),
                                                                                                     ('user_role','=','ass_cashier')]}"/>
-                        <field name="login_with_pos_screen" attrs="{'invisible' : [('user_role', '!=', False)]}" options="{'no_create':True}"/>
+                        <field name="login_with_pos_screen" attrs="{'invisible' : [('user_role', '=', False)]}" options="{'no_create':True}"/>
                         <field name="sales_persons" widget="many2many_tags" attrs="{'invisible' : [('user_role' ,'!=', 'cashier')]}"
                                context="{'from_sales_person': True}" options="{'no_create':True}"
                                domain="[('user_role','=','ass_cashier')]"/>

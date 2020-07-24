@@ -51,7 +51,9 @@
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
-                        <p><t t-esc="partner.street"/></p>
+                        <p><t t-esc="partner.street+' '+partner.street2"/></p>
+                        <p><t t-esc="partner.city+' '+partner.state_id.name"/></p>
+                        <p><t t-esc="partner.country_id.name+' CP:'+partner.zip"/></p>
                       </th>
                     </tr>
                     <tr>

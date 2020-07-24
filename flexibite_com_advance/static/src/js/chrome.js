@@ -151,8 +151,15 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 	        			'width':'100%',
 	        		});
 	        	}
-				self.gui.set_startup_screen('login');
-				self.gui.show_screen('login');
+
+				if(self.pos.user.login_with_pos_screen) {
+					var username = self.pos.user.login;
+					var pin = self.pos.user.pos_security_pin;
+					self.login_user(username,pin);
+            	}else{
+					self.gui.set_startup_screen('login');
+					self.gui.show_screen('login');
+				}
 			}
 			self.call('bus_service', 'updateOption','lock.data',session.uid);
 			self.call('bus_service', 'updateOption','pos.order.line',session.uid);
@@ -168,6 +175,80 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 //	        	self.$el.find('#product_sync').trigger('click');
 //	        }
 		},
+		login_user: function(username, password){
+            var self = this;
+            var user = _.find(self.pos.users, function(obj) { return obj.login == username && obj.pos_security_pin == password });
+            var view_initial = 'products';
+            if(user){
+                $('.pos-topheader').show();
+                self.pos.set_cashier(user);
+                self.pos.chrome.screens.products.actionpad.renderElement();
+                $('.pos-login-topheader').hide();
+                self.chrome.widget.username.renderElement();
+                if(self.pos.pos_session.opening_balance){
+                    return self.gui.show_screen('openingbalancescreen');
+                }
+                if(self.pos.config.module_pos_restaurant){
+                    if (self.pos.config.iface_floorplan) {
+                        self.gui.set_startup_screen('floors');
+                        self.gui.show_screen("floors");
+                        view_initial = 'floors';
+                    } else {
+                        self.gui.show_screen("products");
+                        view_initial = 'products';
+                    }
+                }else{
+                    self.gui.show_screen("products");
+                    view_initial = 'products';
+                }
+                self.pos.chrome.slider_widget.renderElement();
+                self.pos.set_login_from('login');
+                if(self.pos.get_locked_screen()){
+                    self.gui.show_screen(self.pos.get_locked_screen());
+                    if(self.pos.get_locked_screen() !== 'floors'){
+                        setTimeout(function(){
+                            $('#slidemenubtn').show();
+                        }, 10);
+                    }
+                }else{
+                    self.gui.set_default_screen('products');
+                }
+                self.pos.set_locked_screen(false);
+                self.pos.set_locked_user(false);
+                if($('.show-left-cart').css('display') == 'block'){
+                    $('.show-left-cart').hide();
+                }
+                self.pos.chrome.screens.products.order_widget.update_summary();
+                var params = {
+                    model: 'pos.session',
+                    method: 'write',
+                    args: [self.pos.pos_session.id,{'is_lock_screen' : false}],
+                }
+                rpc.query(params, {async: false}).then(function(result){
+                    if(result){
+                         $('.lock_button').css('background-color', '#eee');
+                    }
+                }).fail(function(){
+                    self.pos.db.notification('danger',"Connection lost");
+                });
+                if(self.pos.config.enable_automatic_lock && self.pos.get_cashier().access_pos_lock){
+                    start_lock_timer(self.pos.config.time_interval, self);
+                }
+                //   print initial amount ticket
+                if (self.pos.config.iface_print_auto) {
+                    self.gui.show_screen('initialBalanceTicket');
+                    setTimeout(function () {
+                        self.gui.show_screen(view_initial);
+                    }, 1000);
+                }
+                else {
+                    self.gui.show_screen(view_initial);
+                }
+
+            }else{
+                self.pos.db.notification('danger',_t('Invalid Username or Pin!!!'));
+            }
+        },
 		_onNotification: function(notifications){
 			var self = this;
 			var order = self.pos.get_order();

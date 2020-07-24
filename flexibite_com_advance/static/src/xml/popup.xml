@@ -705,17 +705,17 @@
     <t t-name="PutMoneyInPopup">
         <div class="modal-dialog">
             <div class="popup popup-textinput put-money-in">
-                <p class="title title_in_out">Put Money In</p>
+                <p class="title title_in_out">Ingresar dinero</p>
                 <div class="money_in_popup">
-                    Fill in this form if you put money in the cash register:
+                    Complete este formulario si ingresa dinero en la caja registradora:
                 </div>
                 <t t-raw="widget.msg_show_put_money_in"/>
                 <div class="footer">
                     <div class="button confirm">
-                        OK
+                        Aceptar
                     </div>
                     <div class="button cancel">
-                        Close 
+                        Cerrar
                     </div>
                 </div>
             </div>
@@ -725,17 +725,17 @@
     <t t-name="TakeMoneyOutPopup">
         <div class="modal-dialog">
             <div class="popup popup-textinput take-money-out">
-                <p class="title title_in_out">Take Money Out</p>
+                <p class="title title_in_out">Retirar dinero</p>
                 <div style="font-size: 16px;margin: 10px auto;">
-                    Describe why you take money from the cash register:
+                    Describa por qué toma dinero de la caja registradora:
                 </div>
                 <t t-raw="widget.msg_show_take_money_out"/>
                 <div class="footer">
                     <div class="button confirm">
-                        OK
+                        Aceptar
                     </div>
                     <div class="button cancel">
-                        Close 
+                        Cerrar
                     </div>
                 </div>
             </div>
