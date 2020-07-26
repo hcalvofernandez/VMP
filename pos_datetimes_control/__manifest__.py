@@ -18,7 +18,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','point_of_sale'],
+    'depends': ['base','point_of_sale', 'eor_pos_utils'],
 
     # always loaded
     'data': [

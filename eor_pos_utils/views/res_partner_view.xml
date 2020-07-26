@@ -53,6 +53,10 @@
             <xpath expr="//button[last()]" position="after">
                 <button name="%(credit.action_view_report_pos_wizard)d" type="action" string="Reporte POS" class="oe_highlight" context="{'company_id': company_id,'partner_id': id}"/>
             </xpath>
+
+            <xpath expr="//field[@name='child_ids']//field[@name='display_name']" position="replace">
+
+            </xpath>
         </field>
     </record>
 
