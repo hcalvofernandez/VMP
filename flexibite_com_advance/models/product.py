@@ -59,7 +59,7 @@ class ProductTemplate(models.Model):
     non_refundable = fields.Boolean(string="Non Refundable")
     return_valid_days = fields.Integer(string="Return Valid Days")
     send_to_kitchen = fields.Boolean(string="Send To Kitchen", default=True)
-    priority = fields.Selection([('low','Low'),('medium','Medium'),('high','High')], string="Priority")
+    priority = fields.Selection([('low','Baja'),('medium','Media'),('high','Alta')], string="Priority")
     make_time = fields.Integer("Making Time")
 
 class ProductProduct(models.Model):
