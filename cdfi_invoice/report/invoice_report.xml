@@ -108,11 +108,21 @@
 								<strong>Emisor</strong>
 							</div>
 							<div>
-								<t t-if="o.factura_cfdi">
-								<span t-field="o.company_id.nombre_fiscal" />
+								<t t-if="o.company_id.parent_id">
+									<t t-if="o.factura_cfdi">
+										<span t-field="o.company_id.parent_id.nombre_fiscal" />
+									</t>
+									<t t-if="not o.factura_cfdi">
+										<span t-field="o.company_id.parent_id.partner_id.name" />
+									</t>
 								</t>
-								<t t-if="not o.factura_cfdi">
-								<span t-field="o.company_id.partner_id.name" />
+								<t t-else="">
+									<t t-if="o.factura_cfdi">
+										<span t-field="o.company_id.nombre_fiscal" />
+									</t>
+									<t t-if="not o.factura_cfdi">
+										<span t-field="o.company_id.partner_id.name" />
+									</t>
 								</t>
 
 							</div>
