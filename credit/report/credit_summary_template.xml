@@ -43,7 +43,10 @@
                     }
                 </style>
                   <table style="width:100%">
-                    <div class="text-center"><img src="http://www.vmp.com.mx/Images/web-vmp.png" class="img-fluid"/></div>
+                    <tr class="text-uppercase text-center">
+                      <td><div class="text-center"><img style="width:200px; height:130px;" src="/credit/static/src/img/web-vmp.png" class="img-fluid"/></div></td>
+                      <td></td>
+                    </tr>
                     <tr class="text-uppercase text-center">
                       <th>
                         <p><t t-esc="partner.name"/></p>
