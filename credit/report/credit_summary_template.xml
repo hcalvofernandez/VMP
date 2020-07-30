@@ -67,11 +67,11 @@
                             <td>fecha de corte</td>
                             <td><t t-esc="cut_date"/></td>
                           </tr>
-                          <tr>
+                          <tr t-if="partner.account_number">
                             <td>no. de cuenta</td>
                             <td><t t-esc="partner.account_number"/></td>
                           </tr>
-                          <tr>
+                          <tr t-if="partner.spei_key">
                             <td>clave spei</td>
                             <td><t t-esc="partner.spei_key"/></td>
                           </tr>
