@@ -960,7 +960,9 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     if (self.pos.config.iface_cashdrawer) {
                         self.pos.proxy.open_cashbox();
                     }
-                    self.gui.show_screen('endBalanceTicket');
+                    if(self.pos.config.iface_print_auto){
+                        self.gui.show_screen('endBalanceTicket');
+                    }
                     setTimeout(function () {
                         self.gui.show_popup('cash_control',{
                             title:'Declaración de Efectivo',
