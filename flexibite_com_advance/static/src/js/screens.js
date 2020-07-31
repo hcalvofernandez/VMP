@@ -1186,7 +1186,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }else if(amount <= credit_amount){
                             if (valid_credit){
                                 if(!self.order_is_valid()){
-                                    return
+                                    return;
                                 }
                                 self.gui.show_popup('show_pop_pin', {cashier: client, payment: payment, type: 'credit'});
                                 return;
@@ -1251,8 +1251,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         order_is_valid: function(force_validation) {
             var self = this;
-
             var order = this.pos.get_order();
+            // Validación para el método de pago por tarjeta bancaria
+            var amount_card_payment = 0;
+            var order_lines = order.get_paymentlines();
+            var amount = order.getNetTotalTaxIncluded();
+            _.map(order_lines, function(lines){
+                    if(lines.name == "Tarjeta Bancaria (MXN)"){
+                        amount_card_payment += lines.amount;
+                    }
+                });
+            if(amount_card_payment > amount){
+                self.pos.db.notification('danger', 'El total de pagos por tarjeta bancaria no puede ser mayor al monto de la orden');
+                return false;
+            }
+            // --------------------------------------------------------
+
             var client = order.get_client();
             if (client){
                 var params = {
@@ -2738,9 +2752,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             if(self.pos.pos_session.locked){
                 self.pos.db.notification('danger',"This session has been blocked can't process order.");
-                return
+                return;
             }
-            if (this.order_is_valid(force_validation)) {
+            if(this.order_is_valid(force_validation)) {
                 //Bind notes for Order for store on database
                 if(this.pos.config.enable_order_note) {
                     order.set_order_note($('#order_note').val());
@@ -2812,6 +2826,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     order.add_orderline(new_line);
                     order.set_order_total_discount(0);
                 }
+            }else{
+                return;
             }
             if(self.pos.config.enable_card_charges && self.pos.get_cashier().access_card_charges){
                 self.add_charge_product();
@@ -2890,8 +2906,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
                 return false;
             }
+            // Validación para el método de pago por tarjeta bancaria
+            var amount_card_payment = 0;
+            var order_lines = order.get_paymentlines();
+            var amount = order.getNetTotalTaxIncluded();
+            _.map(order_lines, function(lines){
+                    if(lines.name == "Tarjeta Bancaria (MXN)"){
+                        amount_card_payment += lines.amount;
+                    }
+                });
+            if(amount_card_payment > amount){
+                self.pos.db.notification('danger', 'El total de pagos por tarjeta bancaria no puede ser mayor al monto de la orden');
+                return false;
+            }
+            // --------------------------------------------------------
             var client = order.get_client();
-            if (client){
+            if(client){
                 var params = {
                     model: 'contract.contract',
                     method: 'is_valid_order_date',
@@ -3090,7 +3120,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var cashregister = _.find(self.pos.cashregisters, function(cashregister){
                 return cashregister.journal_id[0] === id;
             });
-
+            var order = this.pos.get_order();
+            var repeat = false;
+            var order_lines = order.get_paymentlines();
+            _.map(order_lines, function(lines){
+                    if(lines.name == cashregister.journal_id[1]){
+                        repeat = true;
+                    }
+                });
+            if(repeat){
+                self.pos.db.notification('danger', 'No puede incluir dos métodos de pago del mismo tipo');
+                return false;
+            }
             if(cashregister && cashregister.journal.is_online_journal){
                 is_online_journal = true;
             }
@@ -3254,7 +3295,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 }
                 if(!self.order_is_valid()){
-                    return
+                    return;
                 }
                 if (order.get_orderlines().length === 0){
                     return self.pos.db.notification('danger', 'Agregue una línea de Venta!.');
