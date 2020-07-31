@@ -50,13 +50,13 @@
                     <tr class="text-uppercase text-center">
                       <th>
                         <p><t t-esc="partner.name"/></p>
-                        <p>ms10102212</p>
+                        <p><t t-esc="partner.rfc"/></p>
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
-                        <p><t t-esc="partner.street+' '+partner.street2"/></p>
-                        <p><t t-esc="partner.city+' '+partner.state_id.name"/></p>
-                        <p><t t-esc="partner.country_id.name+' CP:'+partner.zip"/></p>
+                        <p><t t-if="partner.street and partner.street2" t-esc="partner.street+' '+partner.street2"/></p>
+                        <p><t t-if="partner.city and partner.state_id" t-esc="partner.city+' '+partner.state_id.name"/></p>
+                        <p><t t-if="partner.country_id and partner.zip" t-esc="partner.country_id.name+' CP:'+partner.zip"/></p>
                       </th>
                     </tr>
                     <tr>
