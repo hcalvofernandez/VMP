@@ -51,8 +51,7 @@
                     <tr class="text-uppercase text-center">
                       <th>
                         <p><t t-esc="partner.name"/></p>
-                        <p>no. cliente: <t t-esc="partner.client_number"/></p>
-                        <p>ms10102212</p>
+                        <p><t t-esc="partner.rfc"/></p>
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
