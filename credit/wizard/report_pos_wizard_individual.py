@@ -129,29 +129,39 @@ class ReportPosIndividualWizard(models.TransientModel):
 
     @api.multi
     def send_mail_report(self, action):
-        template = self.env.ref('credit.email_template_reporte_credito_individual')
-        template.report_template = action
-        template = template.generate_email(self.id)
-        self.send(template)  # enviar
+        data_context = {
+            'context': action['context'],
+            'orders': action['data']['orders'],
+            'total': action['data']['total'],
+            'start_date': action['data']['start_date'],
+            'end_date': action['data']['end_date'],
+            'cut_date': action['data']['cut_date'],
+            'days': action['data']['days'],
+        }
+        email_send = self.with_context(data_context)
+        template = email_send.env.ref('credit.email_template_reporte_credito_individual')
+        email_send.send(template)  # enviar
 
     def send(self, template):
         # objeto odoo de correo
-        mail = self.env['mail.mail']
-        email_to = ""
         if not self.email_to:
-            raise ValidationError("No se encontraron destinatarios de correo")
+            raise ValidationError("Especifique destinatarios de correo")
+        mail_server = self.env['ir.mail_server'].search([], limit=1, order='sequence')
+        if not mail_server:
+            raise ValidationError("Configure un servidor de correo saliente")
+        email_to = ""
         for partner in self.email_to:
             email_to += partner.email
             email_to += ','
         email_to = email_to[:-1]
-        print(email_to)
-        mail_data = {
-            'subject': 'Reporte De Crédito Individual',
-            'body_html': template['body_html'],
+        mail_data = template
+        mail_data.update({
             'email_to': email_to,
-            'email_from': template['email_from'],
-        }
-        mail_out = mail.create(mail_data)
-        if mail_out:
-            mail.send(mail_out)
-            _logger.info("Reporte de Pos Enviado📬")
+            'email_from': mail_server.smtp_user,
+            'mail_server_id': mail_server.id,
+        })
+        try:
+            mail_data.send_mail(self.id, raise_exception=True, force_send=True)
+        except:
+            raise ValidationError("No se pudieron enviar los correos")
+        _logger.info("Reporte de Pos Enviado📬")

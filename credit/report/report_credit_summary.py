@@ -10,7 +10,10 @@ class ReportCreditSummaryIndividual(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        partner_id = self._context.get('partner_id')
+        data = data.copy()
+        if 'start_date' not in data:
+            data.update(self._context)
+        partner_id = data['context']['partner_id']
         partner = self.env['res.partner'].browse(partner_id)
         partner_ids = [partner_id, partner.parent_id.id]
         contract_id = self.env['contract.contract'].search([('partner_id', 'in', partner_ids),
@@ -28,7 +31,13 @@ class ReportCreditSummaryIndividual(models.AbstractModel):
                 result = contract.payment_term_id.compute(5, data['end_date'])
                 max_pay_date = date.strftime(datetime.strptime(result[0][0][0], '%Y-%m-%d'), '%d-%b-%Y')
         return {
-            'data': data,
+            'context': data['context'],
+            'orders': data['orders'],
+            'total': data['total'],
+            'start_date': data['start_date'],
+            'end_date': data['end_date'],
+            'cut_date': data['cut_date'],
+            'days': data['days'],
             "company_currency": self.env.user.company_id.currency_id,
             "partner": partner,
             "max_pay_date": max_pay_date
@@ -40,7 +49,10 @@ class ReportCreditSummary(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        partner_id = self._context.get('partner_id')
+        data = data.copy()
+        if 'start_date' not in data:
+            data.update(self._context)
+        partner_id = data['context']['partner_id']
         partner = self.env['res.partner'].browse(partner_id)
         partner_ids = [partner_id, partner.parent_id.id]
         contract_id = self.env['contract.contract'].search([('partner_id', 'in', partner_ids),
@@ -58,7 +70,13 @@ class ReportCreditSummary(models.AbstractModel):
                 result = contract.payment_term_id.compute(5, data['end_date'])
                 max_pay_date = date.strftime(datetime.strptime(result[0][0][0], '%Y-%m-%d'), '%d-%b-%Y')
         return {
-            'data': data,
+            'context': data['context'],
+            'orders': data['orders'],
+            'total': data['total'],
+            'start_date': data['start_date'],
+            'end_date': data['end_date'],
+            'cut_date': data['cut_date'],
+            'days': data['days'],
             'company_currency': self.env.user.company_id.currency_id,
             'partner': partner,
             "max_pay_date": max_pay_date

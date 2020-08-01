@@ -7,6 +7,7 @@
             <field name="model_id" ref="credit.model_credit_report_pos_wizard"/>
             <field name="email_from">fcecodev@gmail.com</field>
             <field name="subject">Reporte de Crédito</field>
+            <field name="report_template" ref="credit.action_report_credit_summary"/>
             <field name="auto_delete" eval="False"/>
             <field name="report_name">Reporte de Crédito</field>
             <field name="body_html">
@@ -20,6 +21,7 @@
             <field name="model_id" ref="credit.model_credit_report_pos_individual_wizard"/>
             <field name="email_from">fcecodev@gmail.com</field>
             <field name="subject">Reporte de Crédito Inidividual</field>
+            <field name="report_template" ref="credit.action_report_credit_summary_individual"/>
             <field name="auto_delete" eval="False"/>
             <field name="report_name">Reporte de Crédito Inidividual</field>
             <field name="body_html">
