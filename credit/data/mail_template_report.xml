@@ -12,7 +12,7 @@
             <field name="report_name">Reporte de Crédito</field>
             <field name="body_html">
                 <![CDATA[ 
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                Su reporte de crédito está listo. Tenga excelente día.
                 ]]>
             </field>
         </record>
@@ -23,10 +23,10 @@
             <field name="subject">Reporte de Crédito Inidividual</field>
             <field name="report_template" ref="credit.action_report_credit_summary_individual"/>
             <field name="auto_delete" eval="False"/>
-            <field name="report_name">Reporte de Crédito Inidividual</field>
+            <field name="report_name">Reporte de Crédito Individual</field>
             <field name="body_html">
                 <![CDATA[
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                Su reporte de crédito individual está listo. Tenga excelente día.
                 ]]>
             </field>
         </record>
