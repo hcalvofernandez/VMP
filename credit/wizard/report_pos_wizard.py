@@ -4,6 +4,7 @@ from odoo.exceptions import ValidationError
 from dateutil import relativedelta
 from datetime import datetime, date, timedelta
 from odoo.http import request
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import pytz
 import logging
 import locale
@@ -64,14 +65,18 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def consult_credit_details(self):
-        one = self.start_date
-        two = self.end_date
+        tz = pytz.timezone(self._context.get('tz'))
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
+
         partner_ids = self.partner_id.child_ids.mapped('id')
         partner_ids.append(self.partner_id.id)
         orders = self.env['pos.order'].search([('company_id', '=', self.company_id.id),
                                                ('partner_id', 'in', partner_ids),
                                                ('credit_amount', '>', 0),
-                                               ('date_order', '>=', one), ('date_order', '<=', two)])
+                                               ('date_order', '>=', start_date), ('date_order', '<=', end_date)])
         importes_por_persona = dict()
         res = []
         sum = 0
@@ -103,26 +108,33 @@ class ReportPosWizard(models.TransientModel):
     @api.multi
     def get_details(self):
         res, sum = self.consult_credit_details()
-        try:
-            locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
-        except:
-            pass
+
+        tz = pytz.timezone(self._context.get('tz'))
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
+        diff = end_date - start_date
         data = {
             'orders': res,
             'total': sum,
-            'start_date': self.start_date,
-            'end_date': self.end_date,
-            'cut_date': datetime.strftime(self.end_date, '%d-%b-%Y'),
-            'days': (self.end_date - self.start_date).days,
+            'start_date': start_date,
+            'end_date': end_date,
+            'cut_date': datetime.strftime(end_date, '%d-%b-%Y'),
+            'client': self.partner_id,
+            'days': diff.days + (1 if diff.seconds else 0),
         }
         return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data, config=False)
 
     @api.multi
     def sale_report_pos(self):
-        one = self.start_date
-        two = self.end_date
+        tz = pytz.timezone(self._context.get('tz'))
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
         view_id = self.env.ref('point_of_sale.view_pos_order_tree').id
-        domain = [('date_order', '>=', one), ('date_order', '<=', two)]
+        domain = [('date_order', '>=', start_date), ('date_order', '<=', end_date)]
         return {
             'type': 'ir.actions.act_window',
             'name': 'Ventas de los Clientes',

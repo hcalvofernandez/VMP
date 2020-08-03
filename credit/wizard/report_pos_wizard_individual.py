@@ -61,16 +61,19 @@ class ReportPosIndividualWizard(models.TransientModel):
 
     @api.multi
     def consult_report_individual_details(self):
-        one = self.start_date
-        two = self.end_date
+        tz = pytz.timezone(self._context.get('tz'))
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
         # start = one.strftime("%m-%d-%Y %H:%M:%S.%f")
         # end = two.strftime("%m-%d-%Y %H:%M:%S.%f")
         res = []
         sum = 0
         orders = self.env['pos.order'].search([('partner_id.id', '=', self.partner_id.id),
                                                ('credit_amount', '>', 0),
-                                               ('date_order', '>=', one),
-                                               ('date_order', '<=', two)])
+                                               ('date_order', '>=', start_date),
+                                               ('date_order', '<=', end_date)])
 
         # for order in orders:
         #     credit_amount = order.credit_amount
@@ -110,17 +113,19 @@ class ReportPosIndividualWizard(models.TransientModel):
 
     @api.multi
     def get_details(self):
-        days = (self.end_date - self.start_date).days
+        tz = pytz.timezone(self._context.get('tz'))
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
+        diff = end_date - start_date
+        days = diff.days + (1 if diff.seconds else 0)
         orders, total = self.consult_report_individual_details()
-        try:
-            locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
-        except:
-            pass
         data = {
             'orders': orders,
-            'start_date': self.start_date,
-            'end_date': self.end_date,
-            'cut_date': datetime.strftime(self.end_date, '%d-%b-%Y'),
+            'start_date': start_date,
+            'end_date': end_date,
+            'cut_date': datetime.strftime(end_date, '%d-%b-%Y'),
             'total': total,
             'days': days,
         }

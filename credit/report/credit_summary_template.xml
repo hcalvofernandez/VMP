@@ -104,13 +104,15 @@
                             <td>saldo vencido</td>
                             <td  class="text-right">$0.00</td>
                           </tr>
-                          <tr class="table-highlight">
+                          <tr t-if="not len(partner.child_ids)" class="table-highlight">
                             <td>limite de crédito</td>
-                            <td  class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="partner.credit_limit"
+                                   t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>crédito disponible</td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="partner.credit_limit"
+                                   t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td colspan="2" class="text-center">Días del periodo:
