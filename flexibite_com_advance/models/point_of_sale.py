@@ -2279,7 +2279,7 @@ class pos_session(models.Model):
     def get_datetime_now(self):
         tz = self._context.get('tz')
         tz = pytz.timezone(tz)
-        date_utc = fields.Datetime.now().astimezone(tz)
+        date_utc = pytz.utc.localize(fields.Datetime.now()).astimezone(tz)
         date = date_utc.strftime('%Y-%m-%d %H:%M:%S')
         return {'date_now': date}
 
