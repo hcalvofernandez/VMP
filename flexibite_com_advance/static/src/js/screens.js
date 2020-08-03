@@ -565,28 +565,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
             }
         },
-        render_category: function( category, with_image, is_back){
-            if(is_back){
-                var category_html = QWeb.render('CategoryButtonBack',{
-                            widget:  this,
-                            category: category,
-                        });
+        render_category: function (category, with_image, is_back, color) {
+            if (is_back) {
+                var category_html = QWeb.render('CategoryButtonBack', {
+                    widget: this,
+                    category: category,
+                });
                 var category_node = document.createElement('div');
                 category_node.innerHTML = category_html.trim();
                 category_node = category_node.childNodes[0];
+                category_node.setAttribute('style', 'background-color: #'+color);
                 return category_node;
             }
             return this._super(category, with_image)
         },
-        renderElement: function(){
-            var el_str  = QWeb.render(this.template, {widget: this});
+        renderElement: function () {
+            var el_str = QWeb.render(this.template, {widget: this});
             var el_node = document.createElement('div');
+            self = this;
 
             el_node.innerHTML = el_str;
             el_node = el_node.childNodes[1];
 
-            if(this.el && this.el.parentNode){
-                this.el.parentNode.replaceChild(el_node,this.el);
+            if (this.el && this.el.parentNode) {
+                this.el.parentNode.replaceChild(el_node, this.el);
             }
 
             this.el = el_node;
@@ -600,17 +602,63 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 } else {
                     list_container.classList.remove('simple');
                 }
-                if(this.category.name != 'Root' && !this.category.parent_id){
-                    list_container.appendChild(this.render_category(this.pos.db.get_category_by_id(this.pos.db.root_category_id), withpics, true));
+                // =====================Add the parent categories===========================
+                var parent = this.category.parent_id
+                var c = 999999;
+                var last_child = this.category;
+                var node_category_parent = false;
+                while(parent){
+                    node_category_parent = list_container.cloneNode();
+                    var parent_category = this.pos.db.get_category_by_id(parent[0]);
+                    var super_parent = false;
+                    _.each(parent_category.child_id, function (super_child) {
+                        var child_obj = self.pos.db.get_category_by_id(super_child);
+                        var real_color = c+"";
+                        if(last_child.id == super_child){
+                            real_color = "bbbbbb";
+                            last_child = parent_category;
+                        }
+                        node_category_parent.appendChild(self.render_category(child_obj, withpics, true, real_color));
+                        if (!super_parent) {
+                            super_parent = parent_category.parent_id;
+                        }
+                    });
+                    list_container.parentElement.prepend(node_category_parent);
+                    parent = super_parent;
+                    c -= 333333;
                 }
-                if(this.category.name != 'Root' && this.category.parent_id){
-                    list_container.appendChild(this.render_category(this.pos.db.get_category_by_id(this.category.parent_id[0]), withpics, true));
+                if (this.category.id != 0) {
+                    var all_categories = this.pos.db.category_by_id;
+                    var list_home = [];
+                    _.each(all_categories, function(category_item){
+                        if (category_item.parent_id == false) {
+                            list_home.push(category_item);
+                        }
+                    });
+                    list_home = list_home.sort(function(a, b){
+                        if(a.name > b.name){
+                                return 1;
+                            }
+                            if(a.name < b.name){
+                                return -1;
+                            }
+                        return 0;
+                    });
+                    var div_list_home = list_container.cloneNode();
+                    _.each(list_home, function (item_home) {
+                        var real_color = c+"";
+                        if(last_child.id == item_home.id){
+                            real_color = "bbbbbb";
+                        }
+                        div_list_home.appendChild(self.render_category(item_home, withpics, true, real_color));
+                    });
+                    list_container.parentElement.prepend(div_list_home);
                 }
-                for(var i = 0, len = this.subcategories.length; i < len; i++){
-                    list_container.appendChild(this.render_category(this.subcategories[i],withpics,false));
+                // =========Ending the addition of parent categories================================
+                for (var i = 0, len = this.subcategories.length; i < len; i++) {
+                    list_container.appendChild(this.render_category(this.subcategories[i], withpics, false));
                 }
             }
-
             var buttons = el_node.querySelectorAll('.js-category-switch');
             for(var i = 0; i < buttons.length; i++){
                 buttons[i].addEventListener('click',this.switch_category_handler);
@@ -2827,7 +2875,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     order.set_order_total_discount(0);
                 }
             }else{
-                return;
+                return false;
             }
             if(self.pos.config.enable_card_charges && self.pos.get_cashier().access_card_charges){
                 self.add_charge_product();

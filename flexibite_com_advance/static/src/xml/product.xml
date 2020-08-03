@@ -670,7 +670,7 @@
 
     <t t-name="CategoryButtonBack">
         <span class='category-button-back category-simple-button js-category-switch' t-att-data-category-id="category.id" >
-            <i class="fa fa-chevron-left"/>
+<!--            <i class="fa fa-chevron-left"/>-->
             <t t-if="category.name != 'Root'" t-esc="category.name"/>
         </span>
     </t>
