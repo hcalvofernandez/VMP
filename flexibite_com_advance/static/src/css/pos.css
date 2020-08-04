@@ -1750,7 +1750,7 @@ thead.bgcolorset tr td {
 }
 
 span.category-button-back {
-	background-color: #333333 !important;
+	/*background-color: #333333 !important;*/
 	color: white !important;
 }
 

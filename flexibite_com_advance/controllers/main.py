@@ -62,7 +62,7 @@ class DataSet(http.Controller):
         if country_id:
 #             return json.dumps(country_id.read())
             data = country_id.read()
-            data[0]['image'] = False 
+            data[0]['image'] = False
             return json.dumps(data)
         else:
             return False
@@ -97,7 +97,7 @@ class DataSet(http.Controller):
                      template_ids.append(each_rec['product_tmpl_id'][0])
                      new_date = each_rec['write_date']
                      each_rec['write_date'] = new_date.strftime('%Y-%m-%d %H:%M:%S')
- 
+
                  template_fields = fields + ['name', 'display_name', 'product_variant_ids','product_variant_count']
                  template_ids = list(dict.fromkeys(template_ids))
                  product_temp_ids = request.env['product.template'].with_context({'location' : stock_location_id, 'compute_child': False}).search_read([('id', 'in', template_ids)], template_fields)
@@ -119,12 +119,12 @@ class DataSet(http.Controller):
         else:
             pos_cache = request.env['pos.cache']
             pos_cache.create({
-                'config_id': self.id,
+                'config_id': config.id,
                 'product_domain': str(domain),
                 'product_fields': str(fields),
-                'compute_user_id': self.env.uid
+                'compute_user_id': request.env.uid
             })
-            new_cache = request.env['pos.config']._get_cache_for_user()
+            new_cache = config._get_cache_for_user()
             return json.dumps(new_cache.get_cache(domain, fields) or [])
 
 
@@ -210,7 +210,7 @@ class TerminalLockController(BusController):
         return super(TerminalLockController, self)._poll(dbname, channels, last, options)
 
 class PosMirrorController(http.Controller):
- 
+
     @http.route('/web/customer_display', type='http', auth='user')
     def white_board_web(self, **k):
         config_id = False
