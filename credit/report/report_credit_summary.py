@@ -36,6 +36,8 @@ class ReportCreditSummaryIndividual(models.AbstractModel):
             'total': data['total'],
             'start_date': data['start_date'],
             'end_date': data['end_date'],
+            'start_date_format': date.strftime(datetime.strptime(data['start_date'], '%Y-%m-%d %H:%M:%S'), '%d-%b-%Y'),
+            'end_date_format': date.strftime(datetime.strptime(data['end_date'], '%Y-%m-%d %H:%M:%S'), '%d-%b-%Y'),
             'cut_date': data['cut_date'],
             'days': data['days'],
             "company_currency": self.env.user.company_id.currency_id,
@@ -69,12 +71,15 @@ class ReportCreditSummary(models.AbstractModel):
             if contract.payment_term_id:
                 result = contract.payment_term_id.compute(5, data['end_date'])
                 max_pay_date = date.strftime(datetime.strptime(result[0][0][0], '%Y-%m-%d'), '%d-%b-%Y')
+
         return {
             'context': data['context'],
             'orders': data['orders'],
             'total': data['total'],
             'start_date': data['start_date'],
             'end_date': data['end_date'],
+            'start_date_format': date.strftime(datetime.strptime(data['start_date'], '%Y-%m-%d %H:%M:%S'), '%d-%b-%Y'),
+            'end_date_format': date.strftime(datetime.strptime(data['end_date'], '%Y-%m-%d %H:%M:%S'), '%d-%b-%Y'),
             'cut_date': data['cut_date'],
             'days': data['days'],
             'company_currency': self.env.user.company_id.currency_id,

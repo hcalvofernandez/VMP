@@ -63,6 +63,14 @@
                       <td>
                         <table class="text-uppercase table-sm table-striped table-center table-attenuate">
                           <tr>
+                            <td>fecha inicio</td>
+                            <td><t t-esc="start_date_format"/></td>
+                          </tr>
+                          <tr>
+                            <td>fecha fin</td>
+                            <td><t t-esc="end_date_format"/></td>
+                          </tr>
+                          <tr>
                             <td>fecha límite de pago</td>
                             <td><t t-esc="max_pay_date"/></td>
                           </tr>
