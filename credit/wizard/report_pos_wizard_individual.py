@@ -159,7 +159,7 @@ class ReportPosIndividualWizard(models.TransientModel):
         # objeto odoo de correo
         if not self.email_to:
             raise ValidationError("Especifique destinatarios de correo")
-        mail_server = self.env['ir.mail_server'].search([], limit=1, order='sequence')
+        mail_server = self.env['ir.mail_server'].sudo().search([], limit=1, order='sequence')
         if not mail_server:
             raise ValidationError("Configure un servidor de correo saliente")
         email_to = ""
