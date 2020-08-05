@@ -2,7 +2,7 @@
 import locale
 
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from dateutil import relativedelta
 from datetime import datetime, timedelta
 import pytz
@@ -38,7 +38,10 @@ class ReportPosIndividualWizard(models.TransientModel):
                     end_date = datetime(year=lc.next_period_date_end.year, month=lc.next_period_date_end.month,
                                         day=lc.next_period_date_end.day, hour=23, minute=59, second=59)
 
-                    tz = pytz.timezone(self._context.get('tz'))
+                    time_zone = self._context.get('tz')
+                    if not time_zone:
+                        time_zone = 'Mexico/General'
+                    tz = pytz.timezone(time_zone)
                     start_date = tz.localize(start_date).astimezone(pytz.utc)
                     end_date = tz.localize(end_date).astimezone(pytz.utc)
                     self.start_date = datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S")
@@ -52,8 +55,10 @@ class ReportPosIndividualWizard(models.TransientModel):
                                       hour=0, minute=0, second=0)
                 end_date = datetime(year=self.start_date.year, month=self.start_date.month, day=self.start_date.day,
                                     hour=23, minute=59, second=59)
-
-                tz = pytz.timezone(self._context.get('tz'))
+                time_zone = self._context.get('tz')
+                if not time_zone:
+                    time_zone = 'Mexico/General'
+                tz = pytz.timezone(time_zone)
                 start_date = tz.localize(start_date).astimezone(pytz.utc)
                 end_date = tz.localize(end_date).astimezone(pytz.utc)
                 self.start_date = datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S")
@@ -61,7 +66,10 @@ class ReportPosIndividualWizard(models.TransientModel):
 
     @api.multi
     def consult_report_individual_details(self):
-        tz = pytz.timezone(self._context.get('tz'))
+        time_zone = self._context.get('tz')
+        if not time_zone:
+            time_zone = 'Mexico/General'
+        tz = pytz.timezone(time_zone)
         start_date = fields.Datetime.from_string(self.start_date)
         start_date = pytz.utc.localize(start_date).astimezone(tz)
         end_date = fields.Datetime.from_string(self.end_date)
@@ -166,7 +174,7 @@ class ReportPosIndividualWizard(models.TransientModel):
             'mail_server_id': mail_server.id,
         })
         try:
-            mail_data.send_mail(self.id, raise_exception=True, force_send=True)
-        except:
-            raise ValidationError("No se pudieron enviar los correos")
+            mail_data.sudo().send_mail(self.id, raise_exception=True, force_send=True)
+        except Exception as e:
+            raise UserError (e)
         _logger.info("Reporte de Pos Enviado📬")
