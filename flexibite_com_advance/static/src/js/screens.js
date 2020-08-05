@@ -2419,6 +2419,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         },
                     });
                 } else {
+                    _.each(order.get_paymentlines(),function(paymentline){
+                        self.chrome.screens.payment.click_delete_paymentline(paymentline.cid)
+                    });
                     self._super();
                 }
             }
