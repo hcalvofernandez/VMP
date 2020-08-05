@@ -87,11 +87,9 @@ class ContractContract(models.Model):
                 )
                 if invoice_line_values:
                     if contract.type_contract == 'credito':
-                        # new_log = line.invoice_period_log_ids.filtered(lambda log: log.state == 'new')
-                        # orders = False
-                        # if len(new_log) > 0:
-                        #     orders = new_log[0].order_ids
-                        #     new_log[0].state = 'invoiced'
+                        new_log = line.invoice_period_log_ids.filtered(lambda log: log.state == 'new')
+                        if new_log:
+                            new_log.write({'state': 'invoiced'})
                         partner = contract.partner_id
                         partner_ids = partner.mapped('child_ids.id')
                         partner_ids.append(partner.id)
@@ -145,13 +143,18 @@ class CreditContractLine(models.Model):
             recurring_interval,
             max_date_end=max_date_end,
         )
+
         if next_invoice_date:  # Create one record to the model credit.invoice_period_log
-            if self.contract_id.type_contract == "credito":
-                log = self.env['credit.invoice_period_log']
-                vals = {
-                    "start_date": next_period_date_start,
-                    "end_date": next_period_date_end,
-                    "contract_line_id": self.id,
-                }
-                log.create(vals)
+            period = self.env['credit.invoice_period_log'].search([('contract_line_id', '=', self.id),
+                                                                   ('end_date', '>=', next_period_date_start),
+                                                                   ('start_date', '<=', next_period_date_start)])
+            if not period:
+                if self.contract_id.type_contract == "credito":
+                    log = self.env['credit.invoice_period_log']
+                    vals = {
+                        "start_date": next_period_date_start,
+                        "end_date": next_period_date_end,
+                        "contract_line_id": self.id,
+                    }
+                    log.create(vals)
         return next_invoice_date
