@@ -34,6 +34,7 @@ class PosConfig(models.Model):
     _inherit = 'pos.config'
 
     enable_meal_plan = fields.Boolean("Gestión de Meal Plan")
+    computer_equipment_id = fields.Many2one('flexibite_com_advance.computer_equipment', 'Equipo de cómputo')
 
     @api.constrains('time_interval','prod_qty_limit')
     def _check_time_interval(self):

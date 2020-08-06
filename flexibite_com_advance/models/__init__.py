@@ -9,6 +9,7 @@
 #
 #################################################################################
 
+from . import computer_equipment
 from . import point_of_sale
 from . import lock_data
 from . import message_terminal

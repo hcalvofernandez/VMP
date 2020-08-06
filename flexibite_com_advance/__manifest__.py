@@ -97,6 +97,7 @@
         'wizard/product_expiry_report_wizard_view.xml',
         'wizard/wizard_pos_modify_payment_method.xml',
         'views/product_expiry_report_view.xml',
+        'views/computer_equipment_view.xml',
         'data/send_mail.xml'
     ],
     'qweb': ['static/src/xml/*.xml'],
