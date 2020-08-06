@@ -146,8 +146,8 @@ class ReportPosIndividualWizard(models.TransientModel):
             'context': action['context'],
             'orders': action['data']['orders'],
             'total': action['data']['total'],
-            'start_date': action['data']['start_date'],
-            'end_date': action['data']['end_date'],
+            'start_date': datetime.strftime(action['data']['start_date'], '%Y-%m-%d %H:%M:%S'),
+            'end_date': datetime.strftime(action['data']['end_date'], '%Y-%m-%d %H:%M:%S'),
             'cut_date': action['data']['cut_date'],
             'days': action['data']['days'],
         }

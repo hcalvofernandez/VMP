@@ -2,11 +2,15 @@
 
 from odoo import models, fields, api
 
+from datetime import datetime
+
 
 class ContractContract(models.Model):
     _inherit = "contract.contract"
 
     count_orders = fields.Integer(string="Órdenes", compute="compute_orders_to_invoice")
+    contacts_mail_to = fields.Many2many('res.partner', string='Enviar reporte a')
+    auto_send = fields.Boolean(string='Enviar reportes automáticamente')
 
     @api.multi
     def compute_orders_to_invoice(self):
@@ -60,6 +64,41 @@ class ContractContract(models.Model):
                         return {'result': True}
         return {'result': False}
 
+
+    @api.multi
+    def button_send(self):
+        for line in self.contract_line_ids:
+            self.send_report(line)
+
+    @api.multi
+    def send_report(self, line):
+        start_date = line.next_period_date_start
+        start_date = datetime(year=start_date.year, month=start_date.month, day=start_date.day,
+                                       hour=0, minute=0, second=0)
+        end_date = line.next_period_date_end
+        end_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day,
+                                       hour=23, minute=59, second=59)
+        default_values = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'end_date_copy': end_date,
+        'company_id': self.partner_id.company_id.id,
+        'partner_id': self.partner_id.id,
+        'check_mail': True,
+        'check_format_date': False,
+        'email_to': [(6, 0, self.contacts_mail_to.mapped('id'))],
+        }
+        self.send_mail_report(default_values)
+
+    @api.model
+    def send_mail_report(self, default_values):
+        wizard = self.env['credit.report_pos_wizard'].create(default_values)
+        context_wizard = self.env.context.copy()
+        context_wizard.update({'partner_id': default_values['partner_id']})
+        wizard = wizard.with_context(context_wizard)
+        action = wizard.get_details()
+        wizard.send_mail_report(action)
+
     @api.multi
     def _prepare_recurring_invoices_values(self, date_ref=False):
         """
@@ -87,11 +126,9 @@ class ContractContract(models.Model):
                 )
                 if invoice_line_values:
                     if contract.type_contract == 'credito':
-                        # new_log = line.invoice_period_log_ids.filtered(lambda log: log.state == 'new')
-                        # orders = False
-                        # if len(new_log) > 0:
-                        #     orders = new_log[0].order_ids
-                        #     new_log[0].state = 'invoiced'
+                        new_log = line.invoice_period_log_ids.filtered(lambda log: log.state == 'new')
+                        if new_log:
+                            new_log.write({'state': 'invoiced'})
                         partner = contract.partner_id
                         partner_ids = partner.mapped('child_ids.id')
                         partner_ids.append(partner.id)
@@ -108,6 +145,8 @@ class ContractContract(models.Model):
                             invoice_values['invoice_line_ids'].append(
                                 (0, 0, invoice_line_values)
                             )
+                            if contract.auto_send:
+                                contract.send_report(line)
                     else:
                         invoice_values['invoice_line_ids'].append(
                             (0, 0, invoice_line_values)
@@ -145,13 +184,18 @@ class CreditContractLine(models.Model):
             recurring_interval,
             max_date_end=max_date_end,
         )
+
         if next_invoice_date:  # Create one record to the model credit.invoice_period_log
-            if self.contract_id.type_contract == "credito":
-                log = self.env['credit.invoice_period_log']
-                vals = {
-                    "start_date": next_period_date_start,
-                    "end_date": next_period_date_end,
-                    "contract_line_id": self.id,
-                }
-                log.create(vals)
+            period = self.env['credit.invoice_period_log'].search([('contract_line_id', '=', self.id),
+                                                                   ('end_date', '>=', next_period_date_start),
+                                                                   ('start_date', '<=', next_period_date_start)])
+            if not period:
+                if self.contract_id.type_contract == "credito":
+                    log = self.env['credit.invoice_period_log']
+                    vals = {
+                        "start_date": next_period_date_start,
+                        "end_date": next_period_date_end,
+                        "contract_line_id": self.id,
+                    }
+                    log.create(vals)
         return next_invoice_date

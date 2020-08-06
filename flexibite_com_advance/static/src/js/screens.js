@@ -2419,6 +2419,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         },
                     });
                 } else {
+                    _.each(order.get_paymentlines(),function(paymentline){
+                        self.chrome.screens.payment.click_delete_paymentline(paymentline.cid)
+                    });
                     self._super();
                 }
             }
@@ -3171,6 +3174,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var order = this.pos.get_order();
             var repeat = false;
             var order_lines = order.get_paymentlines();
+            if(order_lines.length && order.get_due() <= 0){
+                self.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
+                return false;
+            }
             _.map(order_lines, function(lines){
                     if(lines.name == cashregister.journal_id[1]){
                         repeat = true;
