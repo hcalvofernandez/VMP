@@ -7,11 +7,19 @@
         <field name="model">contract.contract</field>
         <field name="inherit_id" ref="contract.contract_contract_form_view"/>
         <field name="arch" type="xml">
-          <xpath expr="//div[@name='button_box']/button[@name='action_show_invoices']" position="after">
-            <button name="show_orders_to_invoice" type="object" icon="fa-list" class="oe_stat_button">
-                <field string="Órdenes a Facturar" name="count_orders" widget="statinfo"/>
+            <button name="recurring_create_invoice" position="after">
+                <button name="button_send" type="object" string="Enviar reporte" groups="base.group_no_one"
+                        attrs="{'invisible': [('type_contract', '!=', 'credito')]}"/>
             </button>
-          </xpath>
+            <xpath expr="//div[@name='button_box']/button[@name='action_show_invoices']" position="after">
+                <button name="show_orders_to_invoice" type="object" icon="fa-list" class="oe_stat_button">
+                    <field string="Órdenes a Facturar" name="count_orders" widget="statinfo"/>
+                </button>
+            </xpath>
+            <field name="type_contract" position="after">
+                <field name="auto_send" attrs="{'invisible': [('type_contract', '!=', 'credito')]}"/>
+                <field name="contacts_mail_to" widget="many2many_tags" attrs="{'invisible': [('type_contract', '!=', 'credito')]}"/>
+            </field>
         </field>
     </record>
     <record model="ir.ui.view" id="res_partner_tree_view_inherit_credit">
