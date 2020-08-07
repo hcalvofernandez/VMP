@@ -615,7 +615,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         var child_obj = self.pos.db.get_category_by_id(super_child);
                         var real_color = c+"";
                         if(last_child.id == super_child){
-                            real_color = "bbbbbb";
+                            real_color = "6ec89b";
                             last_child = parent_category;
                         }
                         node_category_parent.appendChild(self.render_category(child_obj, withpics, true, real_color));
@@ -648,7 +648,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     _.each(list_home, function (item_home) {
                         var real_color = c+"";
                         if(last_child.id == item_home.id){
-                            real_color = "bbbbbb";
+                            real_color = "6ec89b";
                         }
                         div_list_home.appendChild(self.render_category(item_home, withpics, true, real_color));
                     });
