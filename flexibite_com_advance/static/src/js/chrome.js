@@ -152,6 +152,9 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 	        		});
 	        	}
 
+	        	if(self.popups.cash_control){
+	        		self.popups.cash_control.do_hide()
+				}
 				if(self.pos.user.login_with_pos_screen) {
 					var username = self.pos.user.login;
 					var pin = self.pos.user.pos_security_pin;
