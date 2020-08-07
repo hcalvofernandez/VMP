@@ -2568,6 +2568,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             var customer_display = self.pos.config.customer_display;
 
+            var old_inputbuffer = this.inputbuffer;
             var newbuf = this.gui.numpad_input(this.inputbuffer, input, {'firstinput': this.firstinput});
             this.firstinput = (newbuf.length === 0);
 
@@ -2586,8 +2587,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         amount = field_utils.parse.float(this.inputbuffer);
                     }
 
-                    if (order.selected_paymentline.name == "Tarjeta Bancaria (MXN)" && amount > order.get_due()){
+                    if (order.selected_paymentline.name == "Tarjeta Bancaria (MXN)" && order.get_subtotal() < order.get_total_paid() - order.selected_paymentline.get_amount() + amount){
                         self.pos.db.notification('danger',"No puede pagar más del total a pagar usando Tarjeta Barcaria.");
+                        this.inputbuffer = old_inputbuffer;
+                        this.firstinput = (this.inputbuffer.length === 0);
                         return;
                     }
 
