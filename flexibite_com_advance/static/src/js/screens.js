@@ -2565,8 +2565,38 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(order.selected_paymentline && order.selected_paymentline.get_freeze()){
                 return
             }
+
             var customer_display = self.pos.config.customer_display;
-            this._super(input);
+
+            var newbuf = this.gui.numpad_input(this.inputbuffer, input, {'firstinput': this.firstinput});
+            this.firstinput = (newbuf.length === 0);
+
+            // popup block inputs to prevent sneak editing.
+            if (this.gui.has_popup()) {
+                return;
+            }
+
+            if (newbuf !== this.inputbuffer) {
+                this.inputbuffer = newbuf;
+                var order = this.pos.get_order();
+                if (order.selected_paymentline) {
+                    var amount = this.inputbuffer;
+
+                    if (this.inputbuffer !== "-") {
+                        amount = field_utils.parse.float(this.inputbuffer);
+                    }
+
+                    if (order.selected_paymentline.name == "Tarjeta Bancaria (MXN)" && amount > order.get_due()){
+                        self.pos.db.notification('danger',"No puede pagar más del total a pagar usando Tarjeta Barcaria.");
+                        return;
+                    }
+
+                    order.selected_paymentline.set_amount(amount);
+                    this.order_changes();
+                    this.render_paymentlines();
+                    this.$('.paymentline.selected .edit').text(this.format_currency_no_symbol(amount));
+                }
+            }
             if(customer_display){
                 order.mirror_image_data();
             }
