@@ -675,6 +675,18 @@
         </span>
     </t>
 
+    <t t-name="SubCategoryButtonBack">
+        <span class='subcategory-button-back category-simple-button' style="width: 32px; flex-shrink: 0;">
+            <i class="fa fa-chevron-left"/>
+        </span>
+    </t>
+
+    <t t-name="SubCategoryButtonForward">
+        <span class='subcategory-button-forward category-simple-button' style="width: 32px; flex-shrink: 0;">
+            <i class="fa fa-chevron-right"/>
+        </span>
+    </t>
+
     <t t-extend="ProductCategoriesWidget">
         <t t-jquery="div" t-operation="replace">
             <div>
