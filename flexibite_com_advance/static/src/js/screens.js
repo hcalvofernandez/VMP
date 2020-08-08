@@ -607,22 +607,96 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var c = 999999;
                 var last_child = this.category;
                 var node_category_parent = false;
+                var start_range = -1;
+                var end_range = -1;
                 while(parent){
                     node_category_parent = list_container.cloneNode();
                     var parent_category = this.pos.db.get_category_by_id(parent[0]);
+                    if(start_range == -1 && parent_category.child_id.length > 10){
+                        var position = -1;
+                        var i = 0;
+                        while(position == -1 && i < parent_category.child_id.length){
+                            if(parent_category.child_id[i] == this.category.id){
+                                position = i;
+                            }
+                            i++;
+                        }
+                        if(position < 4){
+                            start_range = Math.max(0, position - 4);
+                            end_range = position + 9 - (position - start_range);
+                        }else{
+                            end_range = Math.min(parent_category.child_id.length - 1, position + 5);
+                            start_range = position - ( 9 - (end_range - position));
+                        }
+                    }
                     var super_parent = false;
-                    _.each(parent_category.child_id, function (super_child) {
+                    if (parent_category.child_id.length > 10){
+                        var back_button_html = QWeb.render('SubCategoryButtonBack', {});
+                        back_button_html = _.str.trim(back_button_html);
+                        var back_button_node = document.createElement('div');
+                        back_button_node.innerHTML = back_button_html;
+                        back_button_node = back_button_node.childNodes[0];
+                        back_button_node.addEventListener('click', function(event){
+                            var container = $(node_category_parent)[0];
+                            var start = -1;
+                            var i = 1;
+                            while(i < container.children.length - 1 && start < 0){
+                                var children = $(container.children[i])
+                                if(!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')){
+                                    start = i;
+                                }
+                                i++;
+                            }
+                            if(start > 1){
+                                $(container.children[start-1]).toggleClass('d-none');
+                                if(start + 9 < container.children.length - 1){
+                                    $(container.children[start + 9]).toggleClass('d-none');
+                                }
+                            }
+                        });
+                        node_category_parent.appendChild(back_button_node);
+                    }
+                    for(var i = 0; i < parent_category.child_id.length; i++) {
+                        var super_child = parent_category.child_id[i];
                         var child_obj = self.pos.db.get_category_by_id(super_child);
                         var real_color = c+"";
                         if(last_child.id == super_child){
                             real_color = "6ec89b";
                             last_child = parent_category;
                         }
-                        node_category_parent.appendChild(self.render_category(child_obj, withpics, true, real_color));
+                        var category_node = self.render_category(child_obj, withpics, true, real_color);
+                        if ((i < start_range || i > end_range) && category_node.getAttribute('class').indexOf('d-none') == -1 && parent_category.child_id.length > 10){
+                            category_node.setAttribute('class', category_node.getAttribute('class') + ' d-none')
+                        }
+                        node_category_parent.appendChild(category_node);
                         if (!super_parent) {
                             super_parent = parent_category.parent_id;
                         }
-                    });
+                    }
+                    if (parent_category.child_id.length > 10){
+                        var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
+                        forward_button_html = _.str.trim(forward_button_html);
+                        var forward_button_node = document.createElement('div');
+                        forward_button_node.innerHTML = forward_button_html;
+                        forward_button_node = forward_button_node.childNodes[0];
+                        forward_button_node.addEventListener('click', function(event){
+                            var container = $(node_category_parent)[0];
+                            var start = -1;
+                            var i = 1;
+                            while(i < container.children.length - 1 && start < 0){
+                                var children = $(container.children[i]);
+                                if(!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')){
+                                    start = i;
+                                }
+                                i++;
+                            }
+                            if(start > -1 && start + 10 < container.children.length - 1){
+                                  $(container.children[start]).toggleClass('d-none');
+                                  $(container.children[start + 10]).toggleClass('d-none');
+                            }
+                        });
+                        node_category_parent.appendChild(forward_button_node);
+                    }
                     list_container.parentElement.prepend(node_category_parent);
                     parent = super_parent;
                     c -= 333333;
@@ -654,9 +728,67 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     });
                     list_container.parentElement.prepend(div_list_home);
                 }
+
                 // =========Ending the addition of parent categories================================
+                if (this.subcategories.length > 10){
+                    var back_button_html = QWeb.render('SubCategoryButtonBack', {});
+                    back_button_html = _.str.trim(back_button_html);
+                    var back_button_node = document.createElement('div');
+                    back_button_node.innerHTML = back_button_html;
+                    back_button_node = back_button_node.childNodes[0];
+                    back_button_node.addEventListener('click', function(event){
+                        var container = $(list_container)[0];
+                        var cant = container.children.length - 2;
+                        var start = -1;
+                        var i = 1;
+                        while(i < container.children.length - 1 && start < 0){
+                            var children = $(container.children[i])
+                            if(!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')){
+                                start = i;
+                            }
+                            i++;
+                        }
+                        if(start > 1){
+                            $(container.children[start-1]).toggleClass('d-none');
+                            if(start + 9 < container.children.length - 1){
+                                $(container.children[start + 9]).toggleClass('d-none');
+                            }
+                        }
+                    });
+                    list_container.appendChild(back_button_node);
+                }
+
                 for (var i = 0, len = this.subcategories.length; i < len; i++) {
-                    list_container.appendChild(this.render_category(this.subcategories[i], withpics, false));
+                    var category_node = this.render_category(this.subcategories[i], withpics, false);
+                    if (i > 9 && category_node.getAttribute('class').indexOf('d-none') == -1){
+                        category_node.setAttribute('class', category_node.getAttribute('class') + ' d-none')
+                    }
+                    list_container.appendChild(category_node);
+                }
+
+                if (this.subcategories.length > 10){
+                    var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
+                    forward_button_html = _.str.trim(forward_button_html);
+                    var forward_button_node = document.createElement('div');
+                    forward_button_node.innerHTML = forward_button_html;
+                    forward_button_node = forward_button_node.childNodes[0];
+                    forward_button_node.addEventListener('click', function(event){
+                        var container = $(list_container)[0];
+                        var start = -1;
+                        var i = 1;
+                        while(i < container.children.length - 1 && start < 0){
+                            var children = $(container.children[i]);
+                            if(!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')){
+                                start = i;
+                            }
+                            i++;
+                        }
+                        if(start > -1 && start + 10 < container.children.length - 1){
+                              $(container.children[start]).toggleClass('d-none');
+                              $(container.children[start + 10]).toggleClass('d-none');
+                        }
+                    });
+                    list_container.appendChild(forward_button_node);
                 }
             }
             var buttons = el_node.querySelectorAll('.js-category-switch');
