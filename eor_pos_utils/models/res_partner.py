@@ -60,7 +60,7 @@ class ResPartner(models.Model):
     ids_schemes_sub = fields.Many2many('contract.scheme.contract',
                                        string='Esquemas de Subsidio')
     credit_s_id = fields.Many2one('credit.credit_schemes', string='Esquema de Crédito')
-    ids_schemes_contracts = fields.Many2many('credit.credit_schemes',
+    ids_schemes_contracts = fields.Many2many('credit.credit_schemes', compute='_compute_schemes_credit', store=True,
                                              string='Esquemas de Crédito')
 
     type_contract_hide = fields.Char(string='Tipo de contrato',
@@ -214,23 +214,24 @@ class ResPartner(models.Model):
         #    new_credit_limit = self.credit_s_id.quantity
         # self.update({"credit_limit":new_credit_limit})
         #
-        self.update({"credit_limit": self.credit_s_id.quantity})
+        if self.credit_s_id and self.has_credit_contract:
+            self.update({"credit_limit": self.credit_s_id.quantity})
+        else:
+            self.update({"credit_limit": 0.0})
 
         # for partner_child in self.child_ids:
         #     _partner_child = self.env['res.partner'].browse(partner_child.id)
         #     if not _partner_child.credit_s_id:
         #         _partner_child.sudo().update({"credit_limit": 0})
 
+    @api.multi
     def write(self, vals):
+        if 'ids_schemes_contracts' in vals and 'credit_s_id' not in vals:
+            if len(self) == 1:
+                if self.credit_s_id and self.credit_s_id.id not in vals['ids_schemes_contracts'][0][2]:
+                    vals['credit_s_id'] = False
+                    vals['credit_limit'] = 0
         partner = super(ResPartner, self).write(vals)
-        # for partner in self:
-        #     if (partner.child_ids):
-        #         for partner_child in partner.child_ids:
-        #             _partner_child = self.env['res.partner'].browse(partner_child.id)
-        #             if (_partner_child.schemes_sub_id):
-        #                 pass
-        #             else:
-        #                 _partner_child.sudo().update({"credit_limit": 0})
         return partner
     
 
