@@ -145,6 +145,7 @@ class ContractContract(models.Model):
                             invoice_values['invoice_line_ids'].append(
                                 (0, 0, invoice_line_values)
                             )
+                            invoice_values['pos_order_ids'] = [(6, 0, orders.mapped('id'))]
                             if contract.auto_send:
                                 contract.send_report(line)
                     else:
