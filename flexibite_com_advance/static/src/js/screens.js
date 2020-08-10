@@ -2134,6 +2134,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         pos_credit: function(e){
             this.to_invoice = true;
             var order = self.pos.get_order();
+            var order_lines = order.get_paymentlines();
+            if(order_lines.length && order.get_due() <= 0){
+                this.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
+                return false;
+            }
             if(order.is_empty()){
                 self.pos.db.notification('danger',_t('Add product(s) in cart!'));
                 return
@@ -2580,9 +2585,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         },
                     });
                 } else {
-                    _.each(order.get_paymentlines(),function(paymentline){
-                        self.chrome.screens.payment.click_delete_paymentline(paymentline.cid)
+                    var paymentlines = order.get_paymentlines();
+                    var cid_paymentlines = [];
+                    _.each(paymentlines, function(paymentline){
+                       cid_paymentlines.push(paymentline.cid);
                     });
+                    _.each(cid_paymentlines, function (cid) {
+                        self.chrome.screens.payment.click_delete_paymentline(cid);
+                    });
+                    order.set_client(false);
                     self._super();
                 }
             }
