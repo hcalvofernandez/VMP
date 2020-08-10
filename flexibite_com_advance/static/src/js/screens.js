@@ -612,7 +612,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 while(parent){
                     node_category_parent = list_container.cloneNode();
                     var parent_category = this.pos.db.get_category_by_id(parent[0]);
-                    if(start_range == -1 && parent_category.child_id.length > 10){
+                    if(start_range == -1 && parent_category.child_id.length > 20){
                         var position = -1;
                         var i = 0;
                         while(position == -1 && i < parent_category.child_id.length){
@@ -621,16 +621,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             }
                             i++;
                         }
-                        if(position < 4){
-                            start_range = Math.max(0, position - 4);
-                            end_range = position + 9 - (position - start_range);
+                        if(position < 9){
+                            start_range = Math.max(0, position - 9);
+                            end_range = position + 19 - (position - start_range);
                         }else{
-                            end_range = Math.min(parent_category.child_id.length - 1, position + 5);
-                            start_range = position - ( 9 - (end_range - position));
+                            end_range = Math.min(parent_category.child_id.length - 1, position + 10);
+                            start_range = position - ( 19 - (end_range - position));
                         }
                     }
                     var super_parent = false;
-                    if (parent_category.child_id.length > 10){
+                    if (parent_category.child_id.length > 20){
                         var back_button_html = QWeb.render('SubCategoryButtonBack', {});
                         back_button_html = _.str.trim(back_button_html);
                         var back_button_node = document.createElement('div');
@@ -641,7 +641,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             var start = -1;
                             var i = 1;
                             while(i < container.children.length - 1 && start < 0){
-                                var children = $(container.children[i])
+                                var children = $(container.children[i]);
                                 if(!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')){
                                     start = i;
                                 }
@@ -650,7 +650,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             if(start > 1){
                                 $(container.children[start-1]).toggleClass('d-none');
                                 if(start + 9 < container.children.length - 1){
-                                    $(container.children[start + 9]).toggleClass('d-none');
+                                    $(container.children[start + 19]).toggleClass('d-none');
                                 }
                             }
                         });
@@ -665,7 +665,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             last_child = parent_category;
                         }
                         var category_node = self.render_category(child_obj, withpics, true, real_color);
-                        if ((i < start_range || i > end_range) && category_node.getAttribute('class').indexOf('d-none') == -1 && parent_category.child_id.length > 10){
+                        if ((i < start_range || i > end_range) && category_node.getAttribute('class').indexOf('d-none') == -1 && parent_category.child_id.length > 20){
                             category_node.setAttribute('class', category_node.getAttribute('class') + ' d-none')
                         }
                         node_category_parent.appendChild(category_node);
@@ -673,7 +673,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             super_parent = parent_category.parent_id;
                         }
                     }
-                    if (parent_category.child_id.length > 10){
+                    if (parent_category.child_id.length > 20){
                         var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
                         forward_button_html = _.str.trim(forward_button_html);
                         var forward_button_node = document.createElement('div');
@@ -690,9 +690,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 }
                                 i++;
                             }
-                            if(start > -1 && start + 10 < container.children.length - 1){
+                            if(start > -1 && start + 20 < container.children.length - 1){
                                   $(container.children[start]).toggleClass('d-none');
-                                  $(container.children[start + 10]).toggleClass('d-none');
+                                  $(container.children[start + 20]).toggleClass('d-none');
                             }
                         });
                         node_category_parent.appendChild(forward_button_node);
@@ -730,7 +730,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
 
                 // =========Ending the addition of parent categories================================
-                if (this.subcategories.length > 10){
+                if (this.subcategories.length > 20){
                     var back_button_html = QWeb.render('SubCategoryButtonBack', {});
                     back_button_html = _.str.trim(back_button_html);
                     var back_button_node = document.createElement('div');
@@ -738,7 +738,6 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     back_button_node = back_button_node.childNodes[0];
                     back_button_node.addEventListener('click', function(event){
                         var container = $(list_container)[0];
-                        var cant = container.children.length - 2;
                         var start = -1;
                         var i = 1;
                         while(i < container.children.length - 1 && start < 0){
@@ -751,7 +750,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         if(start > 1){
                             $(container.children[start-1]).toggleClass('d-none');
                             if(start + 9 < container.children.length - 1){
-                                $(container.children[start + 9]).toggleClass('d-none');
+                                $(container.children[start + 19]).toggleClass('d-none');
                             }
                         }
                     });
@@ -760,13 +759,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
                 for (var i = 0, len = this.subcategories.length; i < len; i++) {
                     var category_node = this.render_category(this.subcategories[i], withpics, false);
-                    if (i > 9 && category_node.getAttribute('class').indexOf('d-none') == -1){
+                    if (i > 19 && category_node.getAttribute('class').indexOf('d-none') == -1){
                         category_node.setAttribute('class', category_node.getAttribute('class') + ' d-none')
                     }
                     list_container.appendChild(category_node);
                 }
 
-                if (this.subcategories.length > 10){
+                if (this.subcategories.length > 20){
                     var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
                     forward_button_html = _.str.trim(forward_button_html);
                     var forward_button_node = document.createElement('div');
@@ -783,9 +782,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             }
                             i++;
                         }
-                        if(start > -1 && start + 10 < container.children.length - 1){
+                        if(start > -1 && start + 20 < container.children.length - 1){
                               $(container.children[start]).toggleClass('d-none');
-                              $(container.children[start + 10]).toggleClass('d-none');
+                              $(container.children[start + 20]).toggleClass('d-none');
                         }
                     });
                     list_container.appendChild(forward_button_node);
