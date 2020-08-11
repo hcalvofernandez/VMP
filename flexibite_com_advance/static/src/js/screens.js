@@ -579,6 +579,29 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             return this._super(category, with_image)
         },
+        getRangeOfDisplayedCategories: function(listContainer){
+            var container = $(listContainer)[0];
+            var start = -1;
+            var i = 1;
+            while (i < container.children.length - 1 && start < 0) {
+                var children = $(container.children[i])
+                if (!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')) {
+                    start = i;
+                }
+                i++;
+            }
+            if (i < container.children.length - 1){
+                var end = 0;
+                var children;
+                do {
+                    children = $(container.children[i]);
+                    end = i;
+                    i++;
+                } while(i < container.children.length - 1 && !children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward'))
+                return { 'start': start, 'end': end };
+            }
+            return { 'start': 0, 'end': 19 };
+        },
         renderElement: function () {
             var el_str = QWeb.render(this.template, {widget: this});
             var el_node = document.createElement('div');
@@ -649,7 +672,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             }
                             if(start > 1){
                                 $(container.children[start-1]).toggleClass('d-none');
-                                if(start + 9 < container.children.length - 1){
+                                if(start + 19 < container.children.length - 1){
                                     $(container.children[start + 19]).toggleClass('d-none');
                                 }
                             }
@@ -665,8 +688,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             last_child = parent_category;
                         }
                         var category_node = self.render_category(child_obj, withpics, true, real_color);
-                        if ((i < start_range || i > end_range) && category_node.getAttribute('class').indexOf('d-none') == -1 && parent_category.child_id.length > 20){
-                            category_node.setAttribute('class', category_node.getAttribute('class') + ' d-none')
+                        if ((i < start_range || i > end_range)  && parent_category.child_id.length > 20){
+                            $(category_node).addClass('d-none');
+                        }else if(parent_category.child_id.length > 20){
+                            $(category_node).removeClass('d-none');
                         }
                         node_category_parent.appendChild(category_node);
                         if (!super_parent) {
@@ -731,6 +756,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
                 // =========Ending the addition of parent categories================================
                 if (this.subcategories.length > 20){
+                    var range = this.getRangeOfDisplayedCategories(list_container);
+                    start_range = range['start'];
+                    end_range = range['end'];
                     var back_button_html = QWeb.render('SubCategoryButtonBack', {});
                     back_button_html = _.str.trim(back_button_html);
                     var back_button_node = document.createElement('div');
@@ -749,7 +777,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }
                         if(start > 1){
                             $(container.children[start-1]).toggleClass('d-none');
-                            if(start + 9 < container.children.length - 1){
+                            if(start + 19 < container.children.length - 1){
                                 $(container.children[start + 19]).toggleClass('d-none');
                             }
                         }
@@ -759,8 +787,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
                 for (var i = 0, len = this.subcategories.length; i < len; i++) {
                     var category_node = this.render_category(this.subcategories[i], withpics, false);
-                    if (i > 19 && category_node.getAttribute('class').indexOf('d-none') == -1){
-                        category_node.setAttribute('class', category_node.getAttribute('class') + ' d-none')
+                    if (i >= start_range && i <= end_range && this.subcategories.length > 20){
+                        $(category_node).removeClass('d-none');
+                    }else if(this.subcategories.length > 20){
+                        $(category_node).addClass('d-none');
                     }
                     list_container.appendChild(category_node);
                 }
@@ -2104,6 +2134,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         pos_credit: function(e){
             this.to_invoice = true;
             var order = self.pos.get_order();
+            var order_lines = order.get_paymentlines();
+            if(order_lines.length && order.get_due() <= 0){
+                this.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
+                return false;
+            }
             if(order.is_empty()){
                 self.pos.db.notification('danger',_t('Add product(s) in cart!'));
                 return
@@ -2550,9 +2585,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         },
                     });
                 } else {
-                    _.each(order.get_paymentlines(),function(paymentline){
-                        self.chrome.screens.payment.click_delete_paymentline(paymentline.cid)
+                    var paymentlines = order.get_paymentlines();
+                    var cid_paymentlines = [];
+                    _.each(paymentlines, function(paymentline){
+                       cid_paymentlines.push(paymentline.cid);
                     });
+                    _.each(cid_paymentlines, function (cid) {
+                        self.chrome.screens.payment.click_delete_paymentline(cid);
+                    });
+                    order.set_client(false);
                     self._super();
                 }
             }

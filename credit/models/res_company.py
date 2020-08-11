@@ -14,6 +14,7 @@ class ResCompany(models.Model):
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
+    invoice_id = fields.Many2one('account.invoice', string="Factura")
     period_log_id = fields.Many2one("credit.invoice_period_log", string="Periodo de la orden")
     state_order_fac = fields.Selection([
         ('n', 'Nuevo'),
