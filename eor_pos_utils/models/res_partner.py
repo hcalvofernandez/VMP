@@ -3,13 +3,47 @@
 import logging
 
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger("______________________________________________________" + __name__)
 
 
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    @api.constrains('default_code')
+    def validate_default_code(self):
+        if self.default_code and self.default_code is not '':
+            exist = self.env['product.product'].search(
+                [('product_tmpl_id', '!=', self.id), ('product_tmpl_id.company_id', '=', self.company_id.id),
+                 ('default_code', '=', self.default_code)])
+            if exist:
+                raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+            else:
+                exist = self.env['product.template'].search(
+                    [('id', '!=', self.id), ('company_id', '=', self.company_id.id),
+                     ('default_code', '=', self.default_code)])
+                if exist:
+                    raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+
+
 class ProductProduct(models.Model):
     _inherit = 'product.product'
-    
+
+    @api.constrains('default_code')
+    def validate_default_code(self):
+        if self.default_code and self.default_code is not '':
+            exist = self.env['product.product'].search([('id', '!=', self.id), ('product_tmpl_id.company_id', '=', self.product_tmpl_id.company_id.id), ('default_code', '=', self.default_code)])
+            if exist:
+                raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+            else:
+                exist = self.env['product.template'].search(
+                    [('id', '!=', self.product_tmpl_id.id), ('company_id', '=', self.product_tmpl_id.company_id.id),
+                     ('default_code', '=', self.default_code)])
+                if exist:
+                    raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+
+
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
         if 'search_product' in self.env.context:
