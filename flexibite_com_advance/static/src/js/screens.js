@@ -2130,6 +2130,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 this.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
                 return false;
             }
+            var client = order.get_client() || false;
+            if (client && client.remaining_credit_limit <= 0) {
+                this.pos.db.notification('danger', 'No es posible pagar utilizando crédito ya que el cliente seleccionado no tiene crédito disponible.');
+                return false;
+            }
             if(order.is_empty()){
                 self.pos.db.notification('danger',_t('Add product(s) in cart!'));
                 return
@@ -2139,8 +2144,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.pos.gui.show_screen('clientlist', {valid_credit: true, payment: self});
                 return
             }
-            var client = order.get_client() || false;
-            
+
             if (client){
                 if (client.client_pin){
                     var credit_amount = client.remaining_credit_limit;
