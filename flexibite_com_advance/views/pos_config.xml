@@ -6,6 +6,10 @@
         <field name="model">pos.config</field>
         <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
         <field name="arch" type="xml">
+            <field name="default_cashbox_lines_ids" position="after">
+                <label string="Poner apertura automáticamente" for="automatic_balance_start" class="col-lg-3 o_light_label"/>
+                <field name="automatic_balance_start"/>
+            </field>
             <xpath expr="//div[@id='crm_team_id']" position="before">
                 <div class="row mt16 o_settings_container" id="computer_equipment_id">
                   <div class="col-12 col-lg-6 o_setting_box">
