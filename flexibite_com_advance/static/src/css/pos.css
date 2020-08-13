@@ -1747,6 +1747,7 @@ thead.bgcolorset tr td {
 	top: 1;
 	left: 0;
 	margin-left: 0 !important;
+	flex-basis: 15%;
 }
 
 span.category-button-back {
