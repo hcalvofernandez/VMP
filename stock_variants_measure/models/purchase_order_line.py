@@ -32,7 +32,7 @@ class purchase_order_line(models.Model):
     }
 
 
-    @api.onchange('product_id', 'price_unit', 'product_uom', 'product_qty', 'tax_id', 'qty_custom')
+    @api.onchange('cost_price','product_id', 'price_unit', 'product_uom', 'product_qty', 'tax_id', 'qty_custom')
     def update_after_product_id(self):
         if(self.product_id.id): 
             product_template =  self.env['product.template'].search([('id','=',self.product_id.product_tmpl_id.id)])
@@ -51,10 +51,12 @@ class purchase_order_line(models.Model):
                         variant_puom = variant_puom.split('-')
                         variant_puom_id = variant_puom[0]
 
+                        cost_price = product_variant.cost_price if self.cost_price <= 0.0 else self.cost_price
+
                         self.rendimiento = float(product_variant.variant_ratio) * float(self.qty_custom)
                         self.product_qty = self.rendimiento
-                        self.price_unit =  (float(product_variant.cost_price)  / float(self.rendimiento)) * float(self.qty_custom)
-                        self.cost_price = product_variant.cost_price
+                        self.price_unit =  (float(cost_price) / float(self.rendimiento)) * float(self.qty_custom)
+                        # self.cost_price = product_variant.cost_price
 
                         if not (self.product_id and self.product_uom and
 
