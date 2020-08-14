@@ -9,7 +9,7 @@ _logger = logging.getLogger('___________________________________________________
 class PosConfig(models.Model):
     _inherit = 'pos.config'
 
-    pos_category_ids = fields.Many2many('pos.category', string='Categorías TPV')
+    pos_category_ids = fields.Many2many('pos.category', string='Categorías TPV', domain="[('parent_id', '=', False)]")
 
     @api.onchange('pos_category_ids')
     def _onchange_pos_category_ids(self):
