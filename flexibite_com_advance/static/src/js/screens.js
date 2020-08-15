@@ -2484,7 +2484,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var key = '';
                 if (event.type === "keypress") {
                     if (event.keyCode === 13 && self.pos.get_login_from() != 'login') { // Enter
-                        self.validate_order();
+                        self.validate_order(false);
                     } else if ( event.keyCode === 190 || // Dot
                                 event.keyCode === 110 ||  // Decimal point (numpad)
                                 event.keyCode === 188 ||  // Comma
@@ -2787,7 +2787,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.render_paymentlines();
         },
         show: function() {
-            self = this;
+            var self = this;
             self._super();
 
             var order = self.pos.get_order();
@@ -3406,10 +3406,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         pre_validate_order: function(){
-            var order = self.pos.get_order();
+            var order = this.pos.get_order();
 
             if (!order.get_client()){
-                self.validate_order();
+                this.validate_order(false);
             }
         },
         renderElement: function(){
@@ -3471,6 +3471,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             this.$('div.1quickpay').click(function(){
+                var order = self.pos.get_order();
+                var order_lines = order.get_paymentlines();
+                if(order_lines.length && order.get_due() <= 0){
+                    self.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
+                    return false;
+                }
                 var amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
                 if(amt){
                     var cashregister = false;
@@ -3481,7 +3487,6 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }
                     }
                     if (cashregister){
-                        var order = self.pos.get_order();
                         order.add_paymentline(cashregister);
                         order.selected_paymentline.set_amount( Math.max(amt),0 );
                         self.reset_input();
