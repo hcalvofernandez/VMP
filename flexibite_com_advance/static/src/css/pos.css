@@ -3187,10 +3187,8 @@ ul.sidebar-nav li.sidebar-brand .user_name {
 
 .pos .payment-numpad .numpad {
 	width: 100%;
-	max-width: 41%;
 	float: left;
 	position: relative;
-	border-right: 1px solid #fff;
 }
 
 .selected-menu {
@@ -5159,7 +5157,8 @@ li div.divider span {
 
 .quickpay {
 	max-width: 100%;
-	display: inline-block;
+	display: flex;
+	justify-content: center;
 }
 
 .quickpay_credit {

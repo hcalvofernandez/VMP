@@ -13,6 +13,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     var PosBaseWidget = require('point_of_sale.BaseWidget');
     var field_utils = require('web.field_utils');
     var framework = require('web.framework');
+    var utils = require('web.utils');
+
+    var round_di = utils.round_decimals;
     var splitbill = require('pos_restaurant.splitbill').SplitbillButton;
     var QWeb = core.qweb;
     var _t = core._t;
@@ -2430,9 +2433,25 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 index += 1;
             }
-            for(var j = 0; j < index; j++) {
-                this.div_btns += "<div id=" + payment_buttons_order[j].id + " class='control-button 1quickpay' data=" + payment_buttons_order[j].display_name + ">" + self.format_currency(payment_buttons_order[j].display_name) + "</div>";
+            var columns = index % 4 > 0 ? Math.floor(index / 4) + 1 : Math.floor(index / 4);
+            var columns_html = [];
+            for (var i = 0; i < columns; i++) {
+                columns_html.push("<div>");
             }
+
+            for(var j = index - 1; j >= 0; j -= columns) {
+                for (var i = 1; i <= columns; i++){
+                    if(j - (i - 1) >= 0) {
+                        var amount_data = round_di(payment_buttons_order[j - (i - 1)].display_name, 0).toFixed(0);
+                        var amount = field_utils.format.float(round_di(payment_buttons_order[j - (i - 1)].display_name, 0), {digits: [69, 0]});
+                        columns_html[i - 1] += "<div id=" + payment_buttons_order[j - (i - 1)].id + " class='control-button 1quickpay' data=" + amount_data + "><span>" + amount + "</span></div>";
+                    }
+                }
+            }
+            for (var i = columns - 1; i >= 0; i--) {
+                this.div_btns += columns_html[i] + "</div>"
+            }
+
             this.use_credit = function(event){
                 var order = self.pos.get_order();
                 if(order.get_due() <= 0){

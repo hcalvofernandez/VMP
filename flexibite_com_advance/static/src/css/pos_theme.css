@@ -127,7 +127,7 @@
 }
 
 .pos .control-button {
-	background: #fff;
+	background: #e2e2e2;
 }
 
 .payment-buttons .control-button {
@@ -164,15 +164,20 @@
 
 .quickpay .control-button {
 	color: #fff;
-	float: left;
-	margin: 5px;
-	padding: 10px 0 10px 0;
-	width: 100px;
+	display: table;
+	width: 87px;
+	height: 86px;
+	padding: 0 !important;
+	color: #000000;
+}
+
+.quickpay .control-button span{
+	display: table-cell;
+	vertical-align: middle;
 }
 
 .quickpay .control-button:hover {
 	background: #fff none repeat scroll 0 0;
-	float: left;
 }
 
 .quickpay_credit .control-button {
