@@ -7375,7 +7375,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         clickChangeMode: function(event) {
             var newMode = event.currentTarget.attributes['data-mode'].nodeValue;
-            if(newMode == "price"){
+            if(newMode == "price" || newMode == "discount"){
                 this.user_access(newMode);
                 return;
             }else{
