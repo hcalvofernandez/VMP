@@ -7371,6 +7371,67 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
         },
+        clickChangeMode: function(event) {
+            var newMode = event.currentTarget.attributes['data-mode'].nodeValue;
+            if(newMode == "price"){
+                this.user_access(newMode);
+                return;
+            }else{
+                return this.state.changeMode(newMode);
+            }
+        },
+        user_access: function(newMode){
+            var self = this;
+            if(self.pos.config.authentication_user_ids && self.pos.config.authentication_user_ids.length > 0) {
+                var users_pass = [];
+                _.each(self.pos.users, function (user) {
+                    self.pos.config.authentication_user_ids.map(function (user_id) {
+                        if (user.id == user_id) {
+                            if (user.pos_security_pin) {
+                                users_pass.push(user.pos_security_pin);
+                            }
+                        }
+                    });
+                });
+                if (users_pass && users_pass.length > 0) {
+                    self.ask_password(users_pass, newMode);
+                }
+            }
+        },
+        ask_password: function(password, newMode) {
+            var self = this;
+            var ret = new $.Deferred();
+            if (password) {
+                this.gui.show_popup('password',{
+                    'title': _t('Password ?'),
+                    confirm: function(pw) {
+                        var flag = false;
+                        for (var i = 0; i < password.length; i++){
+                            if(password[i] == pw) {
+                                flag = true;
+                            }
+                        }
+                        if(flag){
+                            self.state.changeMode(newMode)
+                        }else{
+                            self.gui.show_popup('error_popup',{
+                                'title':_t('Contraseña incorrecta.'),
+                                'body':_('La contraseña no es correcta.')
+                            });
+                        }
+                    },
+                    cancel: function() {
+                        if(self.gui.current_screen && self.gui.current_screen.order_widget &&
+                        self.gui.current_screen.order_widget.numpad_state){
+                            self.gui.current_screen.order_widget.numpad_state.reset();
+                        }
+                    }
+                });
+            } else {
+                ret.resolve();
+            }
+            return ret;
+        },
         clickDeleteLastChar: function() {
             var order = this.pos.get_order();
             var selected_orderline = order.get_selected_orderline() || false;
