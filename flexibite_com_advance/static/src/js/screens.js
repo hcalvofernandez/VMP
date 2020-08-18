@@ -13,6 +13,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     var PosBaseWidget = require('point_of_sale.BaseWidget');
     var field_utils = require('web.field_utils');
     var framework = require('web.framework');
+    var utils = require('web.utils');
+
+    var round_di = utils.round_decimals;
     var splitbill = require('pos_restaurant.splitbill').SplitbillButton;
     var QWeb = core.qweb;
     var _t = core._t;
@@ -2034,6 +2037,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         do_order: function(order, type){
+            var self = this;
             var order = order || this.pos.get_order();
             var tdebit = type === 'debit';
             var tcredit = type === 'credit';
@@ -2048,14 +2052,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 order.set_order_on_meal_plan(tmealplan);
                 order.set_is_meal_plan(tmealplan);
             }
-            
+
             order.set_delivery(true);
             var currentOrderLines = order.get_orderlines();
             var orderLines = [];
             _.each(currentOrderLines,function(item) {
                 return orderLines.push(item.export_as_JSON());
             });
-            
+
             var client = order.get_client();
 
             if (tdebit){
@@ -2123,6 +2127,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         // pos debit click
         pos_credit: function(e){
+            var self = this;
             this.to_invoice = true;
             var order = self.pos.get_order();
             var order_lines = order.get_paymentlines();
@@ -2189,7 +2194,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
 
             if(order.get_ret_o_id()){
@@ -2232,9 +2237,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.pos.gui.show_screen('clientlist', {'valid_debit': true, 'payment': this});
                 return
             }
-            
+
             var client = order.get_client() || false;
-            
+
             if (client){
                 if (client.client_pin){
                      self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'debit'});
@@ -2242,7 +2247,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
 
             if(order.get_ret_o_id()){
@@ -2274,7 +2279,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
             /*if (client && client.client_pin){
                 self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'mealplan'});
@@ -2312,7 +2317,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $(".account_payment_btn").html("");
             var self = this;
             var order = self.pos.get_order();
-            
+
             var partner = order.get_client();
             var add_class = false;
             if($(e.currentTarget).hasClass('account_pay')){
@@ -2396,7 +2401,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var tabs = QWeb.render('FromCredit',{widget:self});
                 this.$('.foreign_infoline').html(tabs);
             }
-            var p_line = order.get_paymentlines(); 
+            var p_line = order.get_paymentlines();
             if(p_line.length > 0){
                 self.pos.gui.screen_instances.payment.render_paymentlines()
             }
@@ -2430,9 +2435,25 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 index += 1;
             }
-            for(var j = 0; j < index; j++) {
-                this.div_btns += "<div id=" + payment_buttons_order[j].id + " class='control-button 1quickpay' data=" + payment_buttons_order[j].display_name + ">" + self.format_currency(payment_buttons_order[j].display_name) + "</div>";
+            var columns = index % 4 > 0 ? Math.floor(index / 4) + 1 : Math.floor(index / 4);
+            var columns_html = [];
+            for (var i = 0; i < columns; i++) {
+                columns_html.push("<div>");
             }
+
+            for(var j = index - 1; j >= 0; j -= columns) {
+                for (var i = 1; i <= columns; i++){
+                    if(j - (i - 1) >= 0) {
+                        var amount_data = round_di(payment_buttons_order[j - (i - 1)].display_name, 0).toFixed(0);
+                        var amount = field_utils.format.float(round_di(payment_buttons_order[j - (i - 1)].display_name, 0), {digits: [69, 0]});
+                        columns_html[i - 1] += "<div id=" + payment_buttons_order[j - (i - 1)].id + " class='control-button 1quickpay' data=" + amount_data + "><span>" + amount + "</span></div>";
+                    }
+                }
+            }
+            for (var i = columns - 1; i >= 0; i--) {
+                this.div_btns += columns_html[i] + "</div>"
+            }
+
             this.use_credit = function(event){
                 var order = self.pos.get_order();
                 if(order.get_due() <= 0){
@@ -2814,7 +2835,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 self.$el.find('.paymentlines-container').after(QWeb.render('Payment-Sub', {data: data[0]}));
                                 $('.button-add-sub').click(function(){
                                     var amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
-                                    
+
                                     if(amt){
                                         var cashregister = false;
                                         for(var i in self.pos.cashregisters){
@@ -2868,7 +2889,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if((order.get_paying_due())){
                 self.$('#partial_pay').text("Pay");
             }
-            
+
             $("#payment_total").html(this.format_currency(order.getNetTotalTaxIncluded()));
             $("#payment_total").attr('amount',order.getNetTotalTaxIncluded());
 
@@ -2883,7 +2904,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 this.$el.find("#remaining_credit_amount").text('0.0');
                 this.$el.find("#remaining_meal_plan_limit").text('0.0');
             }
-            
+
             $("#email_id").focus(function() {
                 $('body').off('keypress', self.keyboard_handler);
                 $('body').off('keydown',self.keyboard_keydown_handler);
@@ -3086,7 +3107,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(order.get_change() && self.pos.config.enable_wallet && self.pos.get_cashier().access_wallet){
                 return self.gui.show_popup('AddToWalletPopup');
             }
-            
+
             this._super(force_validation);
         },
         add_charge_product: function(){
@@ -3640,7 +3661,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self._super(button);
         },
     });
-    
+
     var OrderDetailScreenWidget = screens.ScreenWidget.extend({
         template: 'OrderDetailScreenWidget',
          init: function(parent, options){
@@ -7351,6 +7372,67 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.chrome.screens.products.modifier_widget.hide_modifiers();
                 }
             });
+        },
+        clickChangeMode: function(event) {
+            var newMode = event.currentTarget.attributes['data-mode'].nodeValue;
+            if(newMode == "price"){
+                this.user_access(newMode);
+                return;
+            }else{
+                return this.state.changeMode(newMode);
+            }
+        },
+        user_access: function(newMode){
+            var self = this;
+            if(self.pos.config.authentication_user_ids && self.pos.config.authentication_user_ids.length > 0) {
+                var users_pass = [];
+                _.each(self.pos.users, function (user) {
+                    self.pos.config.authentication_user_ids.map(function (user_id) {
+                        if (user.id == user_id) {
+                            if (user.pos_security_pin) {
+                                users_pass.push(user.pos_security_pin);
+                            }
+                        }
+                    });
+                });
+                if (users_pass && users_pass.length > 0) {
+                    self.ask_password(users_pass, newMode);
+                }
+            }
+        },
+        ask_password: function(password, newMode) {
+            var self = this;
+            var ret = new $.Deferred();
+            if (password) {
+                this.gui.show_popup('password',{
+                    'title': _t('Password ?'),
+                    confirm: function(pw) {
+                        var flag = false;
+                        for (var i = 0; i < password.length; i++){
+                            if(password[i] == pw) {
+                                flag = true;
+                            }
+                        }
+                        if(flag){
+                            self.state.changeMode(newMode)
+                        }else{
+                            self.gui.show_popup('error_popup',{
+                                'title':_t('Contraseña incorrecta.'),
+                                'body':_('La contraseña no es correcta.')
+                            });
+                        }
+                    },
+                    cancel: function() {
+                        if(self.gui.current_screen && self.gui.current_screen.order_widget &&
+                        self.gui.current_screen.order_widget.numpad_state){
+                            self.gui.current_screen.order_widget.numpad_state.reset();
+                        }
+                    }
+                });
+            } else {
+                ret.resolve();
+            }
+            return ret;
         },
         clickDeleteLastChar: function() {
             var order = this.pos.get_order();
