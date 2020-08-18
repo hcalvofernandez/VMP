@@ -2037,6 +2037,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         do_order: function(order, type){
+            var self = this;
             var order = order || this.pos.get_order();
             var tdebit = type === 'debit';
             var tcredit = type === 'credit';
@@ -2051,14 +2052,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 order.set_order_on_meal_plan(tmealplan);
                 order.set_is_meal_plan(tmealplan);
             }
-            
+
             order.set_delivery(true);
             var currentOrderLines = order.get_orderlines();
             var orderLines = [];
             _.each(currentOrderLines,function(item) {
                 return orderLines.push(item.export_as_JSON());
             });
-            
+
             var client = order.get_client();
 
             if (tdebit){
@@ -2126,6 +2127,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         // pos debit click
         pos_credit: function(e){
+            var self = this;
             this.to_invoice = true;
             var order = self.pos.get_order();
             var order_lines = order.get_paymentlines();
@@ -2192,7 +2194,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
 
             if(order.get_ret_o_id()){
@@ -2235,9 +2237,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.pos.gui.show_screen('clientlist', {'valid_debit': true, 'payment': this});
                 return
             }
-            
+
             var client = order.get_client() || false;
-            
+
             if (client){
                 if (client.client_pin){
                      self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'debit'});
@@ -2245,7 +2247,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
 
             if(order.get_ret_o_id()){
@@ -2277,7 +2279,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
             /*if (client && client.client_pin){
                 self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'mealplan'});
@@ -2315,7 +2317,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $(".account_payment_btn").html("");
             var self = this;
             var order = self.pos.get_order();
-            
+
             var partner = order.get_client();
             var add_class = false;
             if($(e.currentTarget).hasClass('account_pay')){
@@ -2399,7 +2401,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var tabs = QWeb.render('FromCredit',{widget:self});
                 this.$('.foreign_infoline').html(tabs);
             }
-            var p_line = order.get_paymentlines(); 
+            var p_line = order.get_paymentlines();
             if(p_line.length > 0){
                 self.pos.gui.screen_instances.payment.render_paymentlines()
             }
@@ -2833,7 +2835,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 self.$el.find('.paymentlines-container').after(QWeb.render('Payment-Sub', {data: data[0]}));
                                 $('.button-add-sub').click(function(){
                                     var amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
-                                    
+
                                     if(amt){
                                         var cashregister = false;
                                         for(var i in self.pos.cashregisters){
@@ -2887,7 +2889,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if((order.get_paying_due())){
                 self.$('#partial_pay').text("Pay");
             }
-            
+
             $("#payment_total").html(this.format_currency(order.getNetTotalTaxIncluded()));
             $("#payment_total").attr('amount',order.getNetTotalTaxIncluded());
 
@@ -2902,7 +2904,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 this.$el.find("#remaining_credit_amount").text('0.0');
                 this.$el.find("#remaining_meal_plan_limit").text('0.0');
             }
-            
+
             $("#email_id").focus(function() {
                 $('body').off('keypress', self.keyboard_handler);
                 $('body').off('keydown',self.keyboard_keydown_handler);
@@ -3105,7 +3107,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(order.get_change() && self.pos.config.enable_wallet && self.pos.get_cashier().access_wallet){
                 return self.gui.show_popup('AddToWalletPopup');
             }
-            
+
             this._super(force_validation);
         },
         add_charge_product: function(){
@@ -3659,7 +3661,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self._super(button);
         },
     });
-    
+
     var OrderDetailScreenWidget = screens.ScreenWidget.extend({
         template: 'OrderDetailScreenWidget',
          init: function(parent, options){
