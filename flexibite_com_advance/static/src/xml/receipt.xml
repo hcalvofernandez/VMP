@@ -1142,6 +1142,11 @@
                 </tr>
                 </table>
             </t>
+            <div class="span4 pull-right mt8" t-if="order.order_on_credit">
+                <span>
+                    <i class="fa fa-check" aria-hidden="true">Firma Electrónica</i>
+                </span>
+            </div>
         </t>
     </t>
 
