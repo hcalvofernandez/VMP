@@ -965,6 +965,7 @@ odoo.define('flexibite_com_advance.models', function (require) {
 //		},
         _save_to_server: function (orders, options) {
             var self = this;
+            arguments[1].timeout = 10500 * orders.length;
             return posmodel_super._save_to_server.apply(this, arguments)
             .done(function(server_ids){
                 _.each(orders, function(order) {
