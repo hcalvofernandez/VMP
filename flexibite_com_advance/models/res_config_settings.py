@@ -75,6 +75,18 @@ class res_company(models.Model):
                 shop.company_id = self
         return res
 
+    @api.model
+    def get_info_to_receipt(self, company_id, partner_id):
+        company = self.env['res.company'].search([('id', '=', company_id)])
+        partner = self.env['res.partner'].search([('id', '=', partner_id)])
+        response = {
+            'rfc': company.rfc,
+            'zip': company.zip,
+            'regimen_fiscal': company.regimen_fiscal,
+            'partner_rfc': partner.rfc,
+        }
+        return response
+
     pos_price = fields.Char(string="Pos Price", size=1)
     pos_quantity = fields.Char(string="Pos Quantity", size=1)
     pos_discount = fields.Char(string="Pos Discount", size=1)

@@ -5406,18 +5406,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.pos.last_receipt_render_env = this._super();
             var order = this.pos.get_order();
             var client_data = this.get_client_data();
-            
+            var info = false;
+            var company_id = this.pos.company.id;
+            var partner_id = order.get_client();
+            if(order.order_on_credit){
+                rpc.query({
+                    model: 'res.company',
+                    method: 'get_info_to_receipt',
+                    args: [company_id, partner_id.id],
+                }, {async: false}).then(function(response_info){
+                    info = response_info;
+                });
+            }
             return {
-                        widget: this,
-                        pos: this.pos,
-                        order: order,
-                        receipt: order.export_for_printing(),
-                        orderlines: order.get_orderlines(),
-                        paymentlines: order.get_paymentlines(),
-                        do_debit_payment:this.do_debit_payment(),
-                        client_data:client_data,
-                        //credit_balance: this.pos.get_client().remaining_credit_amount
-                    };
+                widget: this,
+                pos: this.pos,
+                order: order,
+                receipt: order.export_for_printing(),
+                orderlines: order.get_orderlines(),
+                paymentlines: order.get_paymentlines(),
+                do_debit_payment:this.do_debit_payment(),
+                client_data:client_data,
+                info:info,
+                //credit_balance: this.pos.get_client().remaining_credit_amount
+            };
         },
         get_client_data: function()
         {
