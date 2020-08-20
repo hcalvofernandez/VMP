@@ -365,7 +365,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.clear_category_search_handler = function(event){
                 self.clear_cat_search();
             };
-            if(!self.pos.load_background){
+            // if(!self.pos.load_background){
+            if(false){
                 var product_ids_list = [];
                 var product_fields = self.pos.product_fields.concat(['name', 'display_name', 'product_variant_ids', 'product_variant_count'])
                 $.ajax({
