@@ -90,7 +90,8 @@ class DataSet(http.Controller):
          fields = eval(kw.get('fields'))
          stock_location_id = eval(kw.get('stock_location_id'))
          if product_ids and fields:
-             records = request.env['product.product'].with_context({'location' : stock_location_id, 'compute_child': False}).search_read([('id', 'in', product_ids)], fields)
+             # records = request.env['product.product'].with_context({'location' : stock_location_id, 'compute_child': False}).search_read([('id', 'in', product_ids)], fields)
+             records = request.env['product.product'].search_read([('id', 'in', product_ids)], fields)
              template_ids = []
              if records:
                  for each_rec in records:

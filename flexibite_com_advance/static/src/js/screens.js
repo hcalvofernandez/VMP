@@ -365,7 +365,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.clear_category_search_handler = function(event){
                 self.clear_cat_search();
             };
-            if(!self.pos.load_background){
+            // if(!self.pos.load_background){
+            if(false){
                 var product_ids_list = [];
                 var product_fields = self.pos.product_fields.concat(['name', 'display_name', 'product_variant_ids', 'product_variant_count'])
                 $.ajax({
@@ -2446,7 +2447,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     if(j - (i - 1) >= 0) {
                         var amount_data = round_di(payment_buttons_order[j - (i - 1)].display_name, 0).toFixed(0);
                         var amount = field_utils.format.float(round_di(payment_buttons_order[j - (i - 1)].display_name, 0), {digits: [69, 0]});
-                        columns_html[i - 1] += "<div id=" + payment_buttons_order[j - (i - 1)].id + " class='control-button 1quickpay' data=" + amount_data + "><span>" + amount + "</span></div>";
+                        var symbol = (self.pos && self.pos.currency) ? self.pos.currency.symbol : '$';
+                        columns_html[i - 1] += "<div id=" + payment_buttons_order[j - (i - 1)].id + " class='control-button 1quickpay' data=" + amount_data + "><span>" + symbol + ' ' + amount + "</span></div>";
                     }
                 }
             }
