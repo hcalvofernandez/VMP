@@ -5502,6 +5502,15 @@ header.rightpane-header .listview:hover {
 	background: transparent;
 }
 
+.product-list.list .barcode-tag{
+	left: 680px !important;
+	visibility:visible !important;
+}
+
+.barcode-tag{
+	visibility:collapse;
+}
+
 .pos .product-list.list .product-name {
 	position: absolute !important;
 	padding: 0 !important;
