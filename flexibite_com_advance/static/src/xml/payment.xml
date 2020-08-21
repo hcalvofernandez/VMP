@@ -120,10 +120,12 @@
                                 </span>
                             </span>
                             
-                    <table class="client-amount-available">
+                    <table class="client-amount-available" t-if="widget.pos.get_client()">
                         <tr t-if="payment-of"><td><h5 class=""><span id="payment_total"/></h5></td></tr>
-                        <tr><td><h5 class="">Débito <span id="remaining_debit_amount"> $ 0.0</span></h5></td></tr>
-                        <tr><td><h5 class="">Crédito <span id="remaining_credit_amount"> $ 0.0</span></h5></td></tr>
+                        <tr>
+                            <td style="margin-right: 30px;"><h5>Débito <span id="remaining_debit_amount"> $ 0.0</span></h5></td>
+                            <td><h5>Crédito <span id="remaining_credit_amount"> $ 0.0</span></h5></td>
+                        </tr>
                         <tr t-if="widget.pos.config.enable_meal_plan"><td><h5 class="">Meal Plan <span id="remaining_meal_plan_limit"> $ 0.0</span></h5></td></tr>
                     </table>
 
