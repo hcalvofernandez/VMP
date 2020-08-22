@@ -6,12 +6,14 @@
 {
     padding-left: 59px;
     display: block;
-    max-width: 265px;
+    max-width: 600px;
     min-width: 200px;
     float: left;
     padding-top: 1px;
 	font-size: 18px;
 	color: white;
+	border-collapse: separate;
+	border-spacing: 20px 20px;
 }
 
 .color-black{
@@ -5500,6 +5502,15 @@ header.rightpane-header .listview:hover {
 	font-size: 14px;
 	font-weight: bold;
 	background: transparent;
+}
+
+.product-list.list .barcode-tag{
+	left: 680px !important;
+	visibility:visible !important;
+}
+
+.barcode-tag{
+	visibility:collapse;
 }
 
 .pos .product-list.list .product-name {

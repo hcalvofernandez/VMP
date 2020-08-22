@@ -661,9 +661,10 @@
         <t t-jquery="div.product-list" t-operation="append">
             <span class="header" style="color: #fff;">
                 <div class="product-img-lable">Image</div>
-                <div class="product-header-name">Product Name</div>
-                <div class="product-header-qty">On-hand Qty</div>
-                <div class="product-price-tag">Sale Price</div>
+                <div class="product-header-name">Nombre de Producto</div>
+                <div class="product-header-qty">Stock</div>
+                <div class="product-price-tag">Precio</div>
+                <div class="product-price-tag">Código de Barras</div>
             </span>
         </t>
     </t>
@@ -1205,6 +1206,11 @@
                         </t>
                         <t t-if="product.product_variant_count &lt;= 1 or !product.product_variant_count">
                             <t t-esc="widget.format_currency(product.lst_price)"/>
+                        </t>
+                    </span>
+                    <span class="price-tag price-tag1 barcode-tag">
+                        <t t-if="product.barcode">
+                            <t t-esc="product.barcode"/>
                         </t>
                     </span>
                     <t t-if="widget.pos.config.show_qty and widget.pos.get_cashier().access_show_qty">
