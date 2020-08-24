@@ -35,6 +35,7 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="period_log_id"/>
+                    <field name="pos_reference"/>
                 </field>
                 <filter name="session" position="after">
                     <filter name="Periodos" string="Periodos" domain="[]" context="{'group_by':'period_log_id'}"/>
