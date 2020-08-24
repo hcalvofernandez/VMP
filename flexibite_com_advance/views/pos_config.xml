@@ -6,6 +6,20 @@
         <field name="model">pos.config</field>
         <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
         <field name="arch" type="xml">
+            <field name="sequence_id" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </field>
+            <xpath expr="//div[@id='order_reference']" position="inside">
+                <div class="o_setting_right_pane">
+                    <span class="o_form_label">Referencia de Línea de orden</span>
+                    <div class="text-muted">
+                        Creación de las referencias de sus líneas de pedido
+                    </div>
+                    <div class="content-group mt16">
+                        <field name="sequence_line_id" readonly="0"/>
+                    </div>
+                </div>
+            </xpath>
             <field name="default_cashbox_lines_ids" position="after">
                 <label string="Poner apertura automáticamente" for="automatic_balance_start" class="col-lg-3 o_light_label"/>
                 <field name="automatic_balance_start"/>
@@ -1032,7 +1046,7 @@
                                 Manejo de Débito en POS
                             </div>
                         </div>
-                    
+
                         <div class="o_setting_left_pane">
                             <field name="print_ledger"
                                    attrs="{'invisible' : [('enable_credit', '=', False)],'required':[('enable_credit','==',True)]}"/>
@@ -1071,7 +1085,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </xpath>
             <xpath expr="//div[@id='pricelist_setting']//div[hasclass('o_setting_right_pane')]//div[hasclass('content-group')]//div[last()]"
@@ -1083,5 +1097,5 @@
             </xpath>
         </field>
     </record>
-    
+
 </odoo>
