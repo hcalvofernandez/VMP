@@ -45,7 +45,7 @@ class PosSession(models.Model):
                 for order in session.mapped('order_ids'):
                     for st in order.statement_ids:
                         if st.journal_id.name == 'Efectivo':
-                            ventas = sum(order.mapped('amount_total'))
+                            ventas += sum(order.mapped('amount_total'))
                 #ventas = sum(session.mapped('order_ids').filtered(lambda o: o.mapped('statement_ids.journal_id.name')[0] == 'Efectivo').mapped('amount_total'))
                 vals = {
                     'balance_start': balance_start,
