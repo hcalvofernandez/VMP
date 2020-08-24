@@ -48,13 +48,13 @@
                                 <td><label for="cash_register_balance_start" class="eor_subtotal" string="Opening Balance"/>:</td>
                                 <td class="eor_subtotal_separator eor_right"><field name="cash_register_balance_start" nolabel="1" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
                             </tr>
-                            <tr>
+                            <tr class="eor_subtotal" attrs="{'invisible' : [('state', '=', 'opening_control')]}">
                                 <td><label for="cash_register_total_entry_encoding" class="eor_subtotal" attrs="{'invisible' : [('state', '=', 'opening_control')]}" string="+ Transactions"/>:</td>
-                                <td class="eor_right"><field name="cash_register_total_entry_encoding" nolabel="1" attrs="{'invisible' : [('state', '=', 'opening_control')]}" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                                <td class="eor_right"><field name="cash_register_total_entry_encoding" nolabel="1" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
                             </tr>
-                            <tr>
+                            <tr class="eor_subtotal" attrs="{'invisible' : [('state', '=', 'opening_control')]}">
                                 <td><label for="cash_register_balance_end" class="eor_subtotal" attrs="{'invisible' : [('state', '=', 'opening_control')]}" string="= Theoretical Closing Balance"/>:</td>
-                                <td class="eor_right"><field name="cash_register_balance_end" nolabel="1" attrs="{'invisible' : [('state', '=', 'opening_control')]}" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                                <td class="eor_right"><field name="cash_register_balance_end" nolabel="1" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
                             </tr>
                             <tr class="eor_subtotal">
                                 <td><label for="cash_register_balance_end_real" class="eor_subtotal" string="Real Closing Balance"/>:</td>
