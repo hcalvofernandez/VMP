@@ -18,6 +18,56 @@
                     <span class="o_stat_text">Reporte Z</span>
                 </button>
             </xpath>
+            <xpath expr="//group[1]" position="replace">
+                <group>
+                    <field name="cash_control" invisible="1" />
+                    <group>
+                        <field name="user_id"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="config_id"/>
+                    </group>
+                    <group>
+                        <field name="start_at" attrs="{'invisible' : [('state', '=', 'opening_control')]}"/>
+                        <field name="stop_at" attrs="{'invisible' : [('state', '!=', 'closed')]}"/>
+                    </group>
+                </group>
+                <group>
+                    <group attrs="{'invisible' : ['|', ('cash_journal_id', '=', False), ('state', '!=', 'opening_control')]}" class="o_field_nocontent" groups="point_of_sale.group_pos_manager">
+                        <p>
+                            You can define another list of available currencies on the
+                            <i>Cash Registers</i> tab of the <b><field name="cash_journal_id" class="oe_inline"/></b>
+                            payment method.
+                        </p>
+                    </group>
+                    <group class="oe_clear"/>
+                </group>
+                <group>
+                    <group attrs="{'invisible' : [('cash_control', '=', False)]}">
+                        <table>
+                            <tr class="eor_subtotal">
+                                <td><label for="cash_register_balance_start" class="eor_subtotal" string="Opening Balance"/>:</td>
+                                <td class="eor_subtotal_separator eor_right"><field name="cash_register_balance_start" nolabel="1" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="cash_register_total_entry_encoding" class="eor_subtotal" attrs="{'invisible' : [('state', '=', 'opening_control')]}" string="+ Transactions"/>:</td>
+                                <td class="eor_right"><field name="cash_register_total_entry_encoding" nolabel="1" attrs="{'invisible' : [('state', '=', 'opening_control')]}" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="cash_register_balance_end" class="eor_subtotal" attrs="{'invisible' : [('state', '=', 'opening_control')]}" string="= Theoretical Closing Balance"/>:</td>
+                                <td class="eor_right"><field name="cash_register_balance_end" nolabel="1" attrs="{'invisible' : [('state', '=', 'opening_control')]}" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                            </tr>
+                            <tr class="eor_subtotal">
+                                <td><label for="cash_register_balance_end_real" class="eor_subtotal" string="Real Closing Balance"/>:</td>
+                                <td class="eor_subtotal_separator eor_right"><field name="cash_register_balance_end_real" nolabel="1" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                            </tr>
+                            <tr class="eor_subtotal">
+                                <td><label for="cash_register_difference" class="eor_subtotal"/>:</td>
+                                <td class="eor_subtotal_separator eor_right"><field name="cash_register_difference" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                            </tr>
+                        </table>
+                    </group>
+                </group>
+            </xpath>
             <field name="statement_ids" position="after">
                 <div name="resume_journal" attrs="{'invisible' : [('cash_control', '=', False)]}">
                     <separator string="Resumen Diarios Efectivo"/>
