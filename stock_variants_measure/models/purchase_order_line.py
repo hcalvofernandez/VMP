@@ -7,6 +7,15 @@ from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 
 class purchase_order(models.Model):
     _inherit = 'purchase.order'
+
+    @api.multi
+    def button_confirm(self):
+        res = super(purchase_order, self).button_confirm()
+        if res:
+            for order in self:
+                for line in order.order_line:
+                    line.product_id.write({'standard_price': line.cost_price})
+        return res
   
     
 class purchase_order_line(models.Model):
