@@ -3,6 +3,9 @@
 from odoo import models, fields, api
 
 from datetime import datetime
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ContractContract(models.Model):
@@ -149,8 +152,8 @@ class ContractContract(models.Model):
                             if contract.auto_send:
                                 try:
                                     contract.send_report(line)
-                                except:
-                                    pass
+                                except Exception as e:
+                                    _logger.info("Cannot to send the email for exception: %s" % [str(e)])
                     else:
                         invoice_values['invoice_line_ids'].append(
                             (0, 0, invoice_line_values)
