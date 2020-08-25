@@ -1869,7 +1869,7 @@ odoo.define('flexibite_com_advance.models', function (require) {
                 }else{
                     var img_src = "<i style='font-size:50px;padding: 8px;' class='fa fa-user' aria-hidden='true'></i>";
                      $('span.avatar-img').html(img_src);
-                    $('.c-user').text('Guest Customer');
+                    $('.c-user').text('Público General');
                 }
             }
             this.mirror_image_data();

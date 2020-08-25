@@ -1045,7 +1045,7 @@
                     </span>
                     <div class="c-name">
                         <span class="c-user">
-                        	<t t-esc="widget.pos.get_client() ? widget.pos.get_client().name : 'Guest Customer'"/>
+                        	<t t-esc="widget.pos.get_client() ? widget.pos.get_client().name : 'Público General'"/>
 						</span>
                     </div>
                     <span class="customer-icon-action icon icon-plus set_customer">

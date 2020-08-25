@@ -98,7 +98,9 @@
         'wizard/wizard_pos_modify_payment_method.xml',
         'views/product_expiry_report_view.xml',
         'views/computer_equipment_view.xml',
-        'data/send_mail.xml'
+        'data/send_mail.xml',
+        'report/report_stockinventory.xml',
+        'views/stock_views.xml'
     ],
     'qweb': ['static/src/xml/*.xml'],
     'installable': True,

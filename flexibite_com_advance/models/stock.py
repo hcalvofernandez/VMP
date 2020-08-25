@@ -203,4 +203,14 @@ class StockMove(models.Model):
            """%(res.write_date, res.product_id.id))
        return res
 
+
+class StockInventoryLine(models.Model):
+    _inherit = 'stock.inventory.line'
+
+    difference_qty = fields.Float('Diferencia', compute='_compute_difference')
+
+    def _compute_difference(self):
+        for record in self:
+            record.difference_qty = abs(record.theoretical_qty - record.product_qty)
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

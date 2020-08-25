@@ -5014,7 +5014,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             order.set_is_categ_sideber_open(false)
             var img_src = "<i style='font-size: 50px;' class='fa fa-user' aria-hidden='true'></i>";
-            var user_nm = "Guest Customer";
+            var user_nm = "Público General";
             if(order && order.get_client()){
                 img_src = "<img style='height:50px;width:50px' src='"+this.partner_icon_url(order.get_client().id)+"'/>";
                 user_nm = order.get_client().name;
