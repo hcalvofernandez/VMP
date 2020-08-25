@@ -6,7 +6,7 @@
             <field name="model">pos.session</field>
             <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[@name='resume_journal']" position="after">
+                <xpath expr="//group[3]/group/table" position="before">
                     <div name="resume_daily_dt">
                         <div class="o_horizontal_separator">Control de Horarios</div>
                         <div>
@@ -33,7 +33,7 @@
                                 </tr>
                             </table>
                         </div>
-                    </div>
+                    </div><br/>
                 </xpath>
             </field>
         </record>

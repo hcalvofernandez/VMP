@@ -11,6 +11,10 @@
     text-align: right;
 }
 
+.eor_space_top{
+    margin-top: 20px;
+}
+
 .eor_subtotal{
     font-weight:bold !important;
 }
