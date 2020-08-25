@@ -153,7 +153,7 @@ class ContractContract(models.Model):
                                 try:
                                     contract.send_report(line)
                                 except Exception as e:
-                                    _logger.info("Cannot to send the email for exception: %s" % [str(e)])
+                                    _logger.info("Cannot to send the email by exception: %s" % [str(e)])
                     else:
                         invoice_values['invoice_line_ids'].append(
                             (0, 0, invoice_line_values)
