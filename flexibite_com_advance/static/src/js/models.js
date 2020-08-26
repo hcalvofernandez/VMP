@@ -3261,7 +3261,7 @@ odoo.define('flexibite_com_advance.models', function (require) {
 
             function DecenasY(strSin, numUnidades) {
                 if (numUnidades > 0)
-                    return strSin + ' Y ' + Unidades(numUnidades)
+                    return strSin + ' y ' + Unidades(numUnidades)
 
                 return strSin;
             } //DecenasY()
