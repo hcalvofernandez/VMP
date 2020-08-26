@@ -16,6 +16,7 @@ from odoo.http import request
 from odoo.tools.translate import _
 import werkzeug.utils
 import hashlib
+import odoo
 from odoo import http
 from odoo.http import request
 import json
@@ -27,29 +28,67 @@ from odoo.addons.bus.controllers.main import BusController
 _logger = logging.getLogger(__name__)
 
 class Home(Home):
+
+    def _render_login_response(self, error=''):
+        values = request.params.copy()
+        try:
+            values['databases'] = http.db_list()
+        except odoo.exceptions.AccessDenied:
+            values['databases'] = None
+
+        if not odoo.tools.config['list_db']:
+            values['disable_database_manager'] = True
+
+        if 'debug' in values:
+            values['debug'] = True
+
+        values['error'] = error
+        values['login_success'] = False
+        response = request.render('web.login', values)
+        response.headers['X-Frame-Options'] = 'DENY'
+        return response
+
     @http.route('/web/login', type='http', auth="none", sitemap=False)
     def web_login(self, redirect=None, **kw):
         res = super(Home, self).web_login(redirect, **kw)
         if request.params['login_success']:
-            uid = request.session.authenticate(request.session.db, request.params['login'], request.params['password'])
+            uid = request.uid
             users = request.env['res.users'].browse([uid])
             if users.login_with_pos_screen or users.user_role == 'cook':
-                pos_session = request.env['pos.session'].sudo().search(
-                    [('config_id', '=', users.default_pos.id), ('state', '=', 'opened')])
-                if pos_session:
-                    return http.redirect_with_hash('/pos/web')
+                ip = request.httprequest.remote_addr
+                computer_equipment = request.env['flexibite_com_advance.computer_equipment'].sudo().search([('ip', '=', ip)])
+                if computer_equipment:
+                    pos_config = request.env['pos.config'].search([('computer_equipment_id', '=', computer_equipment.id)])
+                    if pos_config:
+                        pos_session = request.env['pos.session'].sudo().search(
+                            [('config_id', '=', pos_config.id), ('state', '=', 'opened')])
+                        if pos_session and pos_session.user_id.id == uid:
+                            return http.redirect_with_hash('/pos/web')
+                        elif pos_session:
+                            request.session.logout(keep_db=True)
+                            error = _('La caja asociada a su equipo de cómputo tiene otra sesión abierta.')
+                            return self._render_login_response(error)
+                        else:
+                            session_id = pos_config.open_session_cb()
+                            pos_session = request.env['pos.session'].sudo().search(
+                                [('config_id', '=', pos_config.id), ('state', '=', 'opening_control')])
+                            if pos_config.cash_control:
+                                pos_session.write({'opening_balance': True})
+                            session_open = pos_session.action_pos_session_open()
+                            return http.redirect_with_hash('/pos/web')
+                    else:
+                        request.session.logout(keep_db=True)
+                        error = _('Su equipo de cómputo no esta registrado o no tiene una caja asociada.')
+                        return self._render_login_response(error)
                 else:
-                    session_id = users.default_pos.open_session_cb()
-                    pos_session = request.env['pos.session'].sudo().search(
-                        [('config_id', '=', users.default_pos.id), ('state', '=', 'opening_control')])
-                    if users.default_pos.cash_control:
-                        pos_session.write({'opening_balance': True})
-                    session_open = pos_session.action_pos_session_open()
-                    return http.redirect_with_hash('/pos/web')
+                    request.session.logout(keep_db=True)
+                    error = _('Su equipo de cómputo no esta registrado.')
+                    return self._render_login_response(error)
             else:
                 return res
         else:
             return res
+
 
 class DataSet(http.Controller):
 

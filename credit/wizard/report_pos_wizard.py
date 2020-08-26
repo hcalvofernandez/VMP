@@ -116,7 +116,10 @@ class ReportPosWizard(models.TransientModel):
     def get_details(self):
         res, sum = self.consult_credit_details()
 
-        tz = pytz.timezone(self._context.get('tz'))
+        time_zone = self._context.get('tz')
+        if not time_zone:
+            time_zone = 'Mexico/General'
+        tz = pytz.timezone(time_zone)
         start_date = fields.Datetime.from_string(self.start_date)
         start_date = pytz.utc.localize(start_date).astimezone(tz)
         end_date = fields.Datetime.from_string(self.end_date)

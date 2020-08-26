@@ -1175,10 +1175,10 @@
         <t t-jquery=".product-name" t-operation="replace">
             <div class="product-name" t-attf-id="article_product_#{product.id}">
                 <t t-if="product.product_variant_count &gt; 1 and product.original_name">
-                    <t t-esc="product.original_name"/>
+                    <t t-esc="product.name"/>
                 </t>
                 <t t-if="product.product_variant_count &lt;= 1 or !product.original_name">
-                    <t t-esc="product.display_name"/>
+                    <t t-esc="product.name"/>
                 </t>
             </div>
         </t>
