@@ -1208,14 +1208,24 @@
                             <th class="pos-right-align"><span t-esc="widget.format_currency(credit_amount)"/></th>
                         </tr>
                     </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">(<span t-esc="order.number_to_letter(credit_amount)"/>)</td>
+                        </tr>
+                    </tbody>
                 </table>
                 <p class="pos-center-align" style="font-size:0.8em;">POR ESTE PAGARÉ RECONOZCO DEBER Y ME COMPROMETO A PAGAR INCONDICIONALMENTE
                     A LA ORDEN DE <span t-esc="widget.pos.company.name"/>, PRECISAMENTE EN SU DOMICILIO O EN CUALQUIER PLAZA
                     EN QUE SE ME REQUIERA EL PAGO, LA CANTIDAD ARRIBA SEÑALADA EN EL TOTAL, EN MONEDA NACIONAL,
                     RECONOCIENDO COMO MÍA LA FIRMA AL CALCEO O MI FIRMA ELECTRÓNICA IDENTIFICADA COMO PIN.</p>
-                <div class="pos-center-align" style="font-size:1em;">
-                    <p>_____________________</p>
-                    <p>Firma</p>
+<!--                <div class="pos-center-align" style="font-size:1em;">-->
+<!--                    <p>_____________________</p>-->
+<!--                    <p>Firma</p>-->
+<!--                </div>-->
+                <div class="span4 pull-right mt8" t-if="order.order_on_credit">
+                    <span>
+                        <i class="fa fa-check" aria-hidden="true">Firma Electrónica</i>
+                    </span>
                 </div>
                 <t t-if='receipt.order_no'>
                     <br/>
