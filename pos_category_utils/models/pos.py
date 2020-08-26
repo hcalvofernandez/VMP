@@ -21,6 +21,8 @@ class PosConfig(models.Model):
 class PosCategory(models.Model):
     _inherit = "pos.category"
 
+    pos_config_ids = fields.Many2many('pos.config', string='Cajas')
+
     @api.multi
     def read(self, fields=None, load='_classic_read'):
         if self.env.context.get('pos_category_utils_read', False) and 'child_id' in fields:
