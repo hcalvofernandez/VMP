@@ -21,6 +21,9 @@
                     <div class="col-md-12 login-form-container">
                         <form action="/customer/portal/login" class="login-form" method="POST">
                             <h3>Portal de Cliente</h3>
+                            <div class="text-center">
+                                <img alt="Brand" src="/customer_portal/static/src/img/web-vmp.png" class="cp_logo"/>
+                            </div>
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Número de Cliente*" name="login"
                                        value=""/>

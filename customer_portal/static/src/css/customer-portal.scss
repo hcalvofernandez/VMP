@@ -23,11 +23,16 @@
       margin-left: auto;
       margin-right: auto;
     }
+
+    .cp_logo {
+      max-width: 200px;
+      margin-bottom: 4%;
+    }
   }
 
   .login-form h3 {
     text-align: center;
-    margin-bottom: 12%;
+    margin-bottom: 4%;
     color: #fff;
   }
 
@@ -48,28 +53,35 @@
 
 .customer-portal-container {
   background: #d0d0d0;
+
   .navbar {
     background: #262534;
+
     a {
       color: #fff;
       font-size: 18px;
       margin-left: 4px;
       text-decoration: none;
     }
-    a:hover{
+
+    a:hover {
       color: #fff;
       text-decoration: none;
     }
   }
-  .navbar-brand img{
+
+  .navbar-brand img {
     max-width: 100px;
   }
+
   .navbar-container {
     padding: 0;
   }
+
   .cp_topbar_avatar {
     height: 34px;
   }
+
   .cp_topbar_name {
     color: #fff;
     font-weight: 600;
