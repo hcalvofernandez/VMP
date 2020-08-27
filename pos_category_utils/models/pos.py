@@ -15,11 +15,13 @@ class PosConfig(models.Model):
     @api.onchange('pos_category_ids')
     def _onchange_pos_category_ids(self):
         if len(self.pos_category_ids):
-            return {'domain': {'iface_start_categ_id': ['|', ('id', 'in', self.pos_category_ids.ids), ('child_id', 'in', self.pos_category_ids.ids)]}}
+            return {'domain': {'iface_start_categ_id': ['|', '|',('id', 'in', self.pos_category_ids.ids), ('child_id', 'in', self.pos_category_ids.ids), ('id', 'child_of', self.pos_category_ids.ids)]}}
 
 
 class PosCategory(models.Model):
     _inherit = "pos.category"
+
+    pos_config_ids = fields.Many2many('pos.config', string='Cajas')
 
     @api.multi
     def read(self, fields=None, load='_classic_read'):
@@ -45,7 +47,7 @@ class PosCategory(models.Model):
         if self.env.context.get('pos_category_utils_search', False):
             pos_session = self.env['pos.session'].search([('user_id', '=', self.env.context.get('uid')), ('state', '=', 'opened')])
             if pos_session and len(pos_session.config_id.pos_category_ids):
-                args += ['|', ('id', 'in', pos_session.config_id.pos_category_ids.ids), ('child_id', 'in', pos_session.config_id.pos_category_ids.ids)]
+                args += ['|', '|', ('id', 'in', pos_session.config_id.pos_category_ids.ids), ('child_id', 'in', pos_session.config_id.pos_category_ids.ids), ('id', 'child_of', pos_session.config_id.pos_category_ids.ids)]
                 context = dict(self.env.context)
                 del context['pos_category_utils_search']
                 context['pos_category_utils_read'] = True

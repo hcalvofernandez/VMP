@@ -1150,81 +1150,96 @@
         </t>
         <t t-jquery="[t-if='receipt.footer']" t-operation="after">
 <!--            ###################Ticket pagaré########################-->
-            <div style="font-size:0.7em !important;" t-if="order.order_on_credit">
-                <div>
-                    <t t-if="widget.pos.company_logo_base64">
-                        <p class="pos-center-align">---------------------------------</p>
-                        <div style="text-align:center;">
-                           <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" style="max-height: 70px;width:auto;height:auto;"/>
-                           <br/>
+            <div t-if="order.order_on_credit">
+                <p class="pos-center-align">---------------------------------</p>
+                <div class="pos-center-align"><span>Pagaré</span></div>
+                <div style="font-size:0.7em !important; border:1px solid black">
+                    <div>
+                        <t t-if="widget.pos.company_logo_base64">
+                            <div style="text-align:center;">
+                               <img t-attf-src="data:image/png;base64,#{widget.pos.config.imagen}" style="max-height: 70px;width:auto;height:auto;"/>
+                               <br/>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="pos-center-align info-company">
+                        <t t-esc="widget.pos.company.name"/>
+                        <div t-if="info.regimen_fiscal">
+                            <span>Régimen Fiscal: </span>
+                            <span t-esc="info.regimen_fiscal"/>
                         </div>
-                    </t>
-                </div>
-                <div class="pos-center-align info-company">
-                    <t t-esc="widget.pos.company.name"/>
-                    <div t-if="info.regimen_fiscal">
-                        <span>Régimen Fiscal: </span>
-                        <span t-esc="info.regimen_fiscal"/>
+                        <div t-if="info.rfc">
+                            <span>R.F.C. </span>
+                            <span t-esc="info.rfc"/>
+                        </div>
+                        <div>
+                            <span>Lugar de Expedición</span>
+                        </div>
+                        <div t-if="info.zip">
+                            <span>C.P.</span>
+                            <span t-esc="info.zip"/>
+                        </div>
                     </div>
-                    <div t-if="info.rfc">
-                        <span>R.F.C. </span>
-                        <span t-esc="info.rfc"/>
+                    <div class="pos-center-align info-order" style="margin-top:10px;">
+                        <div>
+                            <span t-esc="order.name"/>
+                            <t t-esc="order.get_date_order() ? order.get_date_order() : moment().format('L LT')"/>
+                        </div>
                     </div>
-                    <div>
-                        <span>Lugar de Expedición</span>
+                    <div class="info-order">
+                        <t t-set="customer" t-value="order.get_client()"/>
+                        <div>
+                            <span>Cliente: </span>
+                            <span t-esc="customer.name"/>
+                        </div>
+                        <div>
+                            <span>R.F.C. </span>
+                            <span t-esc="info.partner_rfc"/>
+                        </div>
                     </div>
-                    <div t-if="info.zip">
-                        <span>C.P.</span>
-                        <span t-esc="info.zip"/>
+                    <div class="pos-center-align info-operation" style="margin-top:10px;">
+                        <span>Transacciones</span>
                     </div>
-                </div>
-                <div class="pos-center-align info-order" style="margin-top:10px;">
-                    <div>
+                    <table width="100%">
+                        <thead>
+                            <t t-set="credit_amount" t-value="order.getNetTotalTaxIncluded()"/>
+                            <t t-foreach="paymentlines" t-as="payline">
+                                <t t-if="payline.name != 'POS-Crédito (MXN)'"
+                                   t-set="credit_amount" t-value="credit_amount-payline.amount"/>
+                            </t>
+                            <tr >
+                                <th>Total de Crédito</th>
+                                <th class="pos-right-align"><span t-esc="widget.format_currency(credit_amount)"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2">(<span t-esc="order.number_to_letter(credit_amount)"/>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="pos-center-align" style="font-size:0.8em;">POR ESTE PAGARÉ RECONOZCO DEBER Y ME COMPROMETO A PAGAR INCONDICIONALMENTE
+                        A LA ORDEN DE <span t-esc="widget.pos.company.name"/>, PRECISAMENTE EN SU DOMICILIO O EN CUALQUIER PLAZA
+                        EN QUE SE ME REQUIERA EL PAGO, LA CANTIDAD ARRIBA SEÑALADA EN EL TOTAL, EN MONEDA NACIONAL,
+                        RECONOCIENDO COMO MÍA LA FIRMA AL CALCEO O MI FIRMA ELECTRÓNICA IDENTIFICADA COMO PIN.</p>
+    <!--                <div class="pos-center-align" style="font-size:1em;">-->
+    <!--                    <p>_____________________</p>-->
+    <!--                    <p>Firma</p>-->
+    <!--                </div>-->
+                    <div class="span4 pos-center-align mt8" style="margin-top:50px;" t-if="order.order_on_credit">
+                        <span>
+                            <b class="fa fa-check">Firma Electrónica</b>
+                        </span>
+                    </div>
+                    <div class="pos-center-align" t-if='receipt.order_no'>
+                        <br/>
+                        <img t-att-src="'/report/barcode/?type=Code128&amp;value='+receipt.order_no+'&amp;width=280&amp;height=50'" alt="Barcode"/>
+                        <br/>
+                    </div>
+                    <div class="pos-center-align">
                         <span t-esc="order.name"/>
                         <t t-esc="order.get_date_order() ? order.get_date_order() : moment().format('L LT')"/>
                     </div>
-                    <t t-set="customer" t-value="order.get_client()"/>
-                    <div>
-                        <span>Cliente: </span>
-                        <span t-esc="customer.name"/>
-                    </div>
-                    <div>
-                        <span>R.F.C. </span>
-                        <span t-esc="info.partner_rfc"/>
-                    </div>
-                </div>
-                <div class="pos-center-align info-operation" style="margin-top:10px;">
-                    <span>Transacciones</span>
-                </div>
-                <table width="100%">
-                    <thead>
-                        <t t-set="credit_amount" t-value="order.getNetTotalTaxIncluded()"/>
-                        <t t-foreach="paymentlines" t-as="payline">
-                            <t t-if="payline.name != 'POS-Crédito (MXN)'"
-                               t-set="credit_amount" t-value="credit_amount-payline.amount"/>
-                        </t>
-                        <tr >
-                            <th>Total de Crédito</th>
-                            <th class="pos-right-align"><span t-esc="widget.format_currency(credit_amount)"/></th>
-                        </tr>
-                    </thead>
-                </table>
-                <p class="pos-center-align" style="font-size:0.8em;">POR ESTE PAGARÉ RECONOZCO DEBER Y ME COMPROMETO A PAGAR INCONDICIONALMENTE
-                    A LA ORDEN DE <span t-esc="widget.pos.company.name"/>, PRECISAMENTE EN SU DOMICILIO O EN CUALQUIER PLAZA
-                    EN QUE SE ME REQUIERA EL PAGO, LA CANTIDAD ARRIBA SEÑALADA EN EL TOTAL, EN MONEDA NACIONAL,
-                    RECONOCIENDO COMO MÍA LA FIRMA AL CALCEO O MI FIRMA ELECTRÓNICA IDENTIFICADA COMO PIN.</p>
-                <div class="pos-center-align" style="font-size:1em;">
-                    <p>_____________________</p>
-                    <p>Firma</p>
-                </div>
-                <t t-if='receipt.order_no'>
-                    <br/>
-                    <img t-att-src="'/report/barcode/?type=Code128&amp;value='+receipt.order_no+'&amp;width=300&amp;height=50'" alt="Barcode"/>
-                    <br/>
-                </t>
-                <div class="pos-center-align">
-                    <span t-esc="order.name"/>
-                    <t t-esc="order.get_date_order() ? order.get_date_order() : moment().format('L LT')"/>
                 </div>
             </div>
         </t>
