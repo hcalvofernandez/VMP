@@ -25,8 +25,9 @@
         'views/pos_session_view.xml',
         'views/contract_scheme_contract_views.xml',
         'views/contract_view.xml',
+        'report/pos_receipt.xml',
     ],
-    'qweb': ['static/src/xml/*.xml'],
+    'qweb': ['static/src/xml/*.xml',],
     'auto_install': True,
     'application': True,
 }
