@@ -1,0 +1,77 @@
+.full-viewport-height {
+  height: 100vh;
+}
+
+.customer-portal-login-container {
+  background: #262534;
+  height: 100vh;
+
+  .login-container {
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+
+  .login-form {
+    padding: 9%;
+
+    input.form-control {
+      padding: 30px;
+      border: none;
+      border-radius: 90px;
+      font-size: 20px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  .login-form h3 {
+    text-align: center;
+    margin-bottom: 12%;
+    color: #fff;
+  }
+
+  .btnSubmit {
+    font-weight: 900;
+    color: #fff;
+    background-color: #e42f3f;
+    border: none;
+    border-radius: 30px;
+    padding: 10px;
+    width: 200px;
+    font-size: 20px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+}
+
+.customer-portal-container {
+  background: #d0d0d0;
+  .navbar {
+    background: #262534;
+    a {
+      color: #fff;
+      font-size: 18px;
+      margin-left: 4px;
+      text-decoration: none;
+    }
+    a:hover{
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+  .navbar-brand img{
+    max-width: 100px;
+  }
+  .navbar-container {
+    padding: 0;
+  }
+  .cp_topbar_avatar {
+    height: 34px;
+  }
+  .cp_topbar_name {
+    color: #fff;
+    font-weight: 600;
+  }
+}
