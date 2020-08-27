@@ -22,6 +22,7 @@
             <field name="report_type">qweb-pdf</field>
             <field name="name">Ticket de Venta</field>
             <field name="file">eor_pos_utils.pos_tickets</field>
+            <field name="report_name">eor_pos_utils.pos_tickets</field>
             <field name="print_report_name">'Print receipt - %s' % (object.name).replace('/', '')</field>
             <field name="paperformat_id" ref="eor_pos_utils.eor_pos_ticket_paperformat"/>
         </record>
