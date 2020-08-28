@@ -64,8 +64,14 @@
                                         </div>
                                         <div class="pull-right">
                                             <div>
-                                                <img alt="Avatar" class="rounded-circle cp_topbar_avatar"
-                                                     t-att-src="image_data_uri(partner.image_small)"/>
+                                                <t t-if="partner.image_small">
+                                                    <img alt="Avatar" class="rounded-circle cp_topbar_avatar"
+                                                         t-att-src="image_data_uri(partner.image_small)"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <img alt="Avatar" class="rounded-circle cp_topbar_avatar"
+                                                         src="/customer_portal/static/src/img/user_menu_avatar.png"/>
+                                                </t>
                                                 <span t-esc="partner.name" class="cp_topbar_name"></span>
                                                 <a class="fa fa-power-off" href="/customer/portal/logout"></a>
                                             </div>
