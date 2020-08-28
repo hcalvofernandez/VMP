@@ -1,0 +1,61 @@
+@font-face{
+    font-family: 'Inconsolata';
+    src: url(../fonts/Inconsolata.otf);
+}
+.pos-sale-ticket {
+    line-height: 100%;
+    text-align: left;
+    background-color: white;
+    padding: 15px;
+    font-size: 22px !important;
+    display: inline-block;
+    font-family: "Inconsolata";
+    border: solid 1px rgb(220,220,220);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.pos-sale-ticket{
+    margin: 0;
+    margin-right: auto !important;
+    border: none !important;
+    font-size: 22px !important;
+}
+.pos-sale-ticket .table_lines{
+    font-size: 22px;
+}
+.pos-sale-ticket pre{
+    font-family: "Inconsolata";
+}
+.pos-sale-ticket .emph{
+    font-size: 22px;
+    margin:5px;
+}
+.pos-sale-ticket table {
+    width: 100%;
+    border: 0;
+    table-layout: fixed;
+}
+.pos-sale-ticket table td {
+    border: 0;
+    word-wrap: break-word;
+}
+.pos-disc-font {
+    font-size: 15px;
+    font-style:italic;
+    color: #808080;
+}
+.pos-center-align {
+    text-align: center;
+}
+.pos-right-align {
+    text-align: right;
+}
+.pos-sale-ticket
+{
+    border: 0px!important;
+    background: white;
+    font-size: 22px;
+}
+.upper_case_text{
+    text-transform: uppercase;
+}

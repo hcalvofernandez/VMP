@@ -11,6 +11,7 @@
     'category': 'Odoo Experts',
     'depends': [
         'base',
+        'credit',
         'website',
     ],
     'data': [

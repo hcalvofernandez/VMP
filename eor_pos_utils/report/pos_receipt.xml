@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+        <template id="reports_assets_common" inherit_id="web.report_assets_common">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/css" href="/eor_pos_utils/static/src/css/pos_receipt.css"/>
+            </xpath>
+        </template>
+
         <record id="eor_pos_ticket_paperformat" model="report.paperformat">
             <field name="name">EOR POS Ticket Letter</field>
             <field name="default" eval="True"/>
             <field name="format">custom</field>
-            <field name="page_height">375</field>
+            <field name="page_height">385</field>
             <field name="page_width">80</field>
             <field name="orientation">Portrait</field>
             <field name="margin_top">0</field>
             <field name="margin_bottom">0</field>
             <field name="margin_left">0</field>
             <field name="margin_right">0</field>
-            <field name="header_line" eval="False" />
+            <field name="header_line" eval="False"/>
             <field name="header_spacing">0</field>
         </record>
 
@@ -30,70 +36,19 @@
         <template id="pos_tickets">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="eor_pos_utils.pos_ticket_receipt" t-lang="o.partner_id.lang"/>
+                    <t t-call="eor_pos_utils.receipt_external_layout">
+                        <div class="page">
+                            <t t-call="eor_pos_utils.pos_ticket_receipt" t-lang="o.partner_id.lang"/>
+                        </div>
+                    </t>
                 </t>
             </t>
         </template>
 
         <template id="pos_ticket_receipt">
-            <style>
-                .pos-sale-ticket {
-                text-align: left;
-                background-color: white;
-                padding: 15px;
-                font-size: 25px !important;
-                display: inline-block;
-                font-family: "Inconsolata";
-                border: solid 1px rgb(220,220,220);
-                border-radius: 3px;
-                overflow: hidden;
-            }
-            .pos-sale-ticket{
-                margin: 0;
-                margin-right: auto !important;
-                border: none !important;
-                font-size: 25px !important;
-            }
-            .pos-sale-ticket .table_lines{
-                font-size: 25px;
-            }
-            .pos-sale-ticket pre{
-                font-family: "Inconsolata";
-            }
-            .pos-sale-ticket .emph{
-                font-size: 25px;
-                margin:5px;
-            }
-            .pos-sale-ticket table {
-                width: 100%;
-                border: 0;
-                table-layout: fixed;
-            }
-            .pos-sale-ticket table td {
-                border: 0;
-                word-wrap: break-word;
-            }
-            .pos-disc-font {
-                font-size: 18px;
-                font-style:italic;
-                color: #808080;
-            }
-            .pos-center-align {
-                text-align: center;
-            }
-            .pos-right-align {
-                text-align: right;
-            }
-            .pos-sale-ticket
-            {
-                border: 0px!important;
-                background: white;
-                font-size: 25px;
-            }
-            </style>
             <div class="pos-sale-ticket">
                 <div class="pos-center-align">
-<!--                    <t t-esc="o.formatted_validation_date"/>-->
+                    <!--                    <t t-esc="o.formatted_validation_date"/>-->
                     <t t-esc="o.pos_reference"/>
                     <t t-esc="datetime.datetime.strftime(o.date_order, '%d-%m-%Y %H:%M')"/>
                     <t t-if="o.session_id.config_id.imagen">
@@ -106,7 +61,7 @@
                     <t t-if="o.session_id.config_id.generate_token">
                         <t t-if="o.increment_number">
                             <center>
-                                <div style="margin-bottom: 0;margin-top: 0;font-size: 25px;font-weight: bold;">
+                                <div style="margin-bottom: 0;margin-top: 0;font-size: 22px;font-weight: bold;">
                                     <div style="display: inline-block;width: 100%;">
                                         <div style="width: 50%;float: left;text-align: right;">Token No:</div>
                                         <div style="width: 15%;float: left;text-align: center;">
@@ -207,9 +162,9 @@
                 </t>
                 <t t-if="o.partner_id and o.partner_id">
                     <div>
-                        Direccion:
-                        <t t-esc="o.partner_id"
-                        t-options='{"widget": "contact", "fields": ["address"], "no_marker": True, "phone_icons": False}'/>
+                        <span class="pull-left">Dirección: </span>
+                        <span style="display:inline" t-esc="o.partner_id"
+                                  t-options='{"widget": "contact", "fields": ["address"], "no_marker": True, "phone_icons": False}'/>
                     </div>
                 </t>
                 <br/>
@@ -259,13 +214,13 @@
                                         With a<t t-esc="orderline.discount"/>% discount
                                     </div>
                                 </t>
-<!--                                <t t-if="widget.pos.config.use_pricelist and order.pricelist != widget.pos.default_pricelist-->
-<!--                                        and orderline.get_display_price() != orderline.get_original_price()">-->
-<!--                                    <div class="pos-disc-font">-->
-<!--                                        Original Price-->
-<!--                                        <t t-esc="widget.format_currency(orderline.get_original_price())"/>-->
-<!--                                    </div>-->
-<!--                                </t>-->
+                                <!--                                <t t-if="widget.pos.config.use_pricelist and order.pricelist != widget.pos.default_pricelist-->
+                                <!--                                        and orderline.get_display_price() != orderline.get_original_price()">-->
+                                <!--                                    <div class="pos-disc-font">-->
+                                <!--                                        Original Price-->
+                                <!--                                        <t t-esc="widget.format_currency(orderline.get_original_price())"/>-->
+                                <!--                                    </div>-->
+                                <!--                                </t>-->
                                 <t t-if="orderline.deliver">
                                     <div class="pos-disc-font">
                                         To Be Deliver...
@@ -298,11 +253,11 @@
                                         <t t-esc="orderline.line_note"/>
                                     </div>
                                 </t>
-<!--                                <t t-if="orderline.get_promotion_data() and orderline.get_promotion_data().promotion_code">-->
-<!--                                    <div class="pos-disc-font">-->
-<!--                                        <t t-esc="orderline.get_promotion_data().promotion_code"/>-->
-<!--                                    </div>-->
-<!--                                </t>-->
+                                <!--                                <t t-if="orderline.get_promotion_data() and orderline.get_promotion_data().promotion_code">-->
+                                <!--                                    <div class="pos-disc-font">-->
+                                <!--                                        <t t-esc="orderline.get_promotion_data().promotion_code"/>-->
+                                <!--                                    </div>-->
+                                <!--                                </t>-->
                                 <t t-if="len(orderline.mod_lines) > 0">
                                     <t t-foreach="orderline.mod_lines" t-as="modifier">
                                         <div>
@@ -310,9 +265,11 @@
                                                t-value="modifier.product_id"/>
                                             <t t-if="mod_product">
                                                 <t t-esc="mod_product.display_name"/>
-                                                (<t t-esc="modifier.qty"/>X<t
-                                                    t-esc="modifier.price"
-                                                    t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>)
+                                                (<t t-esc="modifier.qty"/>X
+                                                <t
+                                                        t-esc="modifier.price"
+                                                        t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                )
                                             </t>
                                         </div>
                                     </t>
@@ -330,103 +287,103 @@
                 </table>
                 <br/>
                 <table class='receipt-total'>
-<!--                    <t t-if="o.amount_due == 0">-->
-<!--                        <tr t-if="not o.get_amount_debit() > 0">-->
-<!--                            <td>Subtotal:</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(order.get_total_without_tax())"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
-<!--                    <t t-if="o.session_id.config_id.enable_credit and o.partner_id and o.credit_amount and-->
-<!--                        o.session_id.config_id.get_credit_detail() and widget.pos.get_order().get_credit_detail()[0]">-->
-<!--                        <tr>-->
-<!--                            <td>From Credit:</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="-o.credit_amount"-->
-<!--                                   t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
-<!--                    <t t-foreach="order.tax_ids_after_fiscal_position" t-as="taxdetail">-->
-<!--                        <tr>-->
-<!--                            <td>-->
-<!--                                <t t-esc="taxdetail.name"/>-->
-<!--                            </td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(taxdetail.amount)"-->
-<!--                                   t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
-<!--                    <tr>-->
-<!--                        <t t-if="order.get_total_discount() > 0">-->
-<!--                            <td>Discount:</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(order.get_total_discount())"/>-->
-<!--                            </td>-->
-<!--                        </t>-->
-<!--                    </tr>-->
+                    <!--                    <t t-if="o.amount_due == 0">-->
+                    <!--                        <tr t-if="not o.get_amount_debit() > 0">-->
+                    <!--                            <td>Subtotal:</td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="widget.format_currency(order.get_total_without_tax())"/>-->
+                    <!--                            </td>-->
+                    <!--                        </tr>-->
+                    <!--                    </t>-->
+                    <!--                    <t t-if="o.session_id.config_id.enable_credit and o.partner_id and o.credit_amount and-->
+                    <!--                        o.session_id.config_id.get_credit_detail() and widget.pos.get_order().get_credit_detail()[0]">-->
+                    <!--                        <tr>-->
+                    <!--                            <td>From Credit:</td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="-o.credit_amount"-->
+                    <!--                                   t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>-->
+                    <!--                            </td>-->
+                    <!--                        </tr>-->
+                    <!--                    </t>-->
+                    <!--                    <t t-foreach="order.tax_ids_after_fiscal_position" t-as="taxdetail">-->
+                    <!--                        <tr>-->
+                    <!--                            <td>-->
+                    <!--                                <t t-esc="taxdetail.name"/>-->
+                    <!--                            </td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="widget.format_currency(taxdetail.amount)"-->
+                    <!--                                   t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>-->
+                    <!--                            </td>-->
+                    <!--                        </tr>-->
+                    <!--                    </t>-->
+                    <!--                    <tr>-->
+                    <!--                        <t t-if="order.get_total_discount() > 0">-->
+                    <!--                            <td>Discount:</td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="widget.format_currency(order.get_total_discount())"/>-->
+                    <!--                            </td>-->
+                    <!--                        </t>-->
+                    <!--                    </tr>-->
                     <t t-if="o.id">
                         <tr class="emph">
                             <td>Total:</td>
                             <td class="pos-right-align">
-<!--                                <t t-if="last_paid_amt">-->
-<!--                                    <t t-esc="widget.format_currency(order.get_total_with_tax()- last_paid_amt)"/>-->
-<!--                                </t>-->
-<!--                                <t t-if="not last_paid_amt">-->
+                                <!--                                <t t-if="last_paid_amt">-->
+                                <!--                                    <t t-esc="widget.format_currency(order.get_total_with_tax()- last_paid_amt)"/>-->
+                                <!--                                </t>-->
+                                <!--                                <t t-if="not last_paid_amt">-->
                                 <t>
                                     <t t-esc="o.amount_total"
-                                    t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                       t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                 </t>
                             </td>
                         </tr>
                     </t>
-<!--                    <t t-if="not o.id">-->
-<!--                        <t t-if="order.get_amount_debit() > 0">-->
-<!--                            <tr style="border-bottom: 1px dotted #BCBCBC;font-size: 18px;font-weight: 900;">-->
-<!--                                <td>Abono a débito</td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="widget.format_currency(order.get_amount_debit())"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            <tr class="emph">-->
-<!--                                <td>Total:</td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="widget.format_currency(order.get_amount_debit())"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </t>-->
-<!--                        <t t-else="">-->
-<!--                            <tr class="emph">-->
-<!--                                <td>Total:</td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="widget.format_currency(order.get_total_with_tax())"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </t>-->
-<!--                    </t>-->
-<!--                    <t t-if="(order.get_total_paid()-last_paid_amt) == 0">-->
-<!--                        <tr>-->
-<!--                            <td>Total Paid Amount :</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(order.get_total_paid()-last_paid_amt)"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
-<!--                    <t t-if="order.get_rounding_applied()">-->
-<!--                        <tr class="emph">-->
-<!--                            <td>ROUNDED:</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(order.get_total_with_tax() + order.get_rounding_applied())"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
+                    <!--                    <t t-if="not o.id">-->
+                    <!--                        <t t-if="order.get_amount_debit() > 0">-->
+                    <!--                            <tr style="border-bottom: 1px dotted #BCBCBC;font-size: 18px;font-weight: 900;">-->
+                    <!--                                <td>Abono a débito</td>-->
+                    <!--                                <td class="pos-right-align">-->
+                    <!--                                    <t t-esc="widget.format_currency(order.get_amount_debit())"/>-->
+                    <!--                                </td>-->
+                    <!--                            </tr>-->
+                    <!--                            <tr class="emph">-->
+                    <!--                                <td>Total:</td>-->
+                    <!--                                <td class="pos-right-align">-->
+                    <!--                                    <t t-esc="widget.format_currency(order.get_amount_debit())"/>-->
+                    <!--                                </td>-->
+                    <!--                            </tr>-->
+                    <!--                        </t>-->
+                    <!--                        <t t-else="">-->
+                    <!--                            <tr class="emph">-->
+                    <!--                                <td>Total:</td>-->
+                    <!--                                <td class="pos-right-align">-->
+                    <!--                                    <t t-esc="widget.format_currency(order.get_total_with_tax())"/>-->
+                    <!--                                </td>-->
+                    <!--                            </tr>-->
+                    <!--                        </t>-->
+                    <!--                    </t>-->
+                    <!--                    <t t-if="(order.get_total_paid()-last_paid_amt) == 0">-->
+                    <!--                        <tr>-->
+                    <!--                            <td>Total Paid Amount :</td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="widget.format_currency(order.get_total_paid()-last_paid_amt)"/>-->
+                    <!--                            </td>-->
+                    <!--                        </tr>-->
+                    <!--                    </t>-->
+                    <!--                    <t t-if="order.get_rounding_applied()">-->
+                    <!--                        <tr class="emph">-->
+                    <!--                            <td>ROUNDED:</td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="widget.format_currency(order.get_total_with_tax() + order.get_rounding_applied())"/>-->
+                    <!--                            </td>-->
+                    <!--                        </tr>-->
+                    <!--                    </t>-->
                 </table>
                 <t t-if="o.session_id.config_id.enable_rounding">
                     <table>
                         <t t-if="o.rounding">
-                            <tr style="font-size: 25px;">
+                            <tr style="font-size: 22px;">
                                 <td>Rounding:</td>
                                 <td class="pos-right-align">
                                     <t t-esc="o.rounding"
@@ -434,7 +391,7 @@
                                 </td>
                             </tr>
                         </t>
-                        <tr style="font-size: 25px;">
+                        <tr style="font-size: 22px;">
                             <td>Net Total:</td>
                             <td class="pos-right-align">
                                 <t t-esc="o.amount_total"
@@ -445,77 +402,77 @@
                 </t>
                 <br/>
                 <br/>
-<!--                <table class='receipt-paymentlines'>-->
-<!--                    <t t-foreach="o.statement_ids" t-as="line">-->
-<!--                        <tr>-->
-<!--                            <td>-->
-<!--                                <t t-esc="line.name"/>-->
-<!--                            </td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="line.amount"-->
-<!--                                t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td colspan="2">-->
-<!--                                <t t-if="line.mercury_data">-->
-<!--                                    &amp;nbsp;&amp;nbsp;APPROVAL CODE:-->
-<!--                                    <t t-esc="line.mercury_auth_code"/>-->
-<!--                                </t>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
-<!--                    <t t-if="o.journal_id">-->
-<!--                        <tr t-foreach="order.get_journal()" t-as="line">-->
-<!--                            <td>-->
-<!--                                <t t-esc="line.journal"/>-->
-<!--                            </td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(line.amount)"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
-<!--                </table>-->
+                <!--                <table class='receipt-paymentlines'>-->
+                <!--                    <t t-foreach="o.statement_ids" t-as="line">-->
+                <!--                        <tr>-->
+                <!--                            <td>-->
+                <!--                                <t t-esc="line.name"/>-->
+                <!--                            </td>-->
+                <!--                            <td class="pos-right-align">-->
+                <!--                                <t t-esc="line.amount"-->
+                <!--                                t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                        <tr>-->
+                <!--                            <td colspan="2">-->
+                <!--                                <t t-if="line.mercury_data">-->
+                <!--                                    &amp;nbsp;&amp;nbsp;APPROVAL CODE:-->
+                <!--                                    <t t-esc="line.mercury_auth_code"/>-->
+                <!--                                </t>-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                    </t>-->
+                <!--                    <t t-if="o.journal_id">-->
+                <!--                        <tr t-foreach="order.get_journal()" t-as="line">-->
+                <!--                            <td>-->
+                <!--                                <t t-esc="line.journal"/>-->
+                <!--                            </td>-->
+                <!--                            <td class="pos-right-align">-->
+                <!--                                <t t-esc="widget.format_currency(line.amount)"/>-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                    </t>-->
+                <!--                </table>-->
                 <br/>
-                <table class='receipt-change'>
-<!--                    <t t-if="order.get_change_amount_for_credit() and !order.get_change_and_cash()">-->
-<!--                        <tr>-->
-<!--                            <td>Added Credit:</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(order.attributes.change_amount_for_credit)"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </t>-->
-<!--                    <t t-if="order.get_change_and_cash()">-->
-<!--                        <tr>-->
-<!--                            <td>Added Credit:</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="widget.format_currency(order.get_change_amount_for_credit().toFixed(2))"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-                        <tr>
-                            <td>Cambio:</td>
-                            <td class="pos-right-align">
-                                <t t-esc="o.amount_paid - o.amount_total"
-                                t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
-                            </td>
-                        </tr>
+                <table class='receipt-change table_lines'>
+                    <!--                    <t t-if="order.get_change_amount_for_credit() and !order.get_change_and_cash()">-->
+                    <!--                        <tr>-->
+                    <!--                            <td>Added Credit:</td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="widget.format_currency(order.attributes.change_amount_for_credit)"/>-->
+                    <!--                            </td>-->
+                    <!--                        </tr>-->
+                    <!--                    </t>-->
+                    <!--                    <t t-if="order.get_change_and_cash()">-->
+                    <!--                        <tr>-->
+                    <!--                            <td>Added Credit:</td>-->
+                    <!--                            <td class="pos-right-align">-->
+                    <!--                                <t t-esc="widget.format_currency(order.get_change_amount_for_credit().toFixed(2))"/>-->
+                    <!--                            </td>-->
+                    <!--                        </tr>-->
+                    <tr>
+                        <td>Cambio:</td>
+                        <td class="pos-right-align">
+                            <t t-esc="o.amount_paid - o.amount_total"
+                               t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                        </td>
+                    </tr>
 
-<!--                    </t>-->
-<!--                    <t t-if="order.get_change_amount_for_wallet()">-->
-<!--                        <td>Added to Wallet:</td>-->
-<!--                        &lt;!&ndash; <td class="pos-right-align"><t t-esc="widget.format_currency(order.get_change())"/></td> &ndash;&gt;-->
-<!--                    </t>-->
-<!--                    <t t-if="(!order.get_change_amount_for_wallet()) and (!order.get_change_amount_for_credit() and !order.get_change_and_cash())">-->
-<!--                        <td>Cambio:</td>-->
-<!--                        &lt;!&ndash; <td class="pos-right-align"><t t-esc="widget.format_currency(order.get_change())"/></td> &ndash;&gt;-->
-<!--                    </t>-->
-<!--                    <tr t-if="order.order_on_debit">-->
-<!--                        <td>Débito Disponible:</td>-->
-<!--                        <td class="pos-right-align">-->
-<!--                            <t t-esc="widget.format_currency(widget.pos.get_client().remaining_debit_amount - order.get_total_with_tax())"/>-->
-<!--                        </td>-->
-<!--                    </tr>-->
+                    <!--                    </t>-->
+                    <!--                    <t t-if="order.get_change_amount_for_wallet()">-->
+                    <!--                        <td>Added to Wallet:</td>-->
+                    <!--                        &lt;!&ndash; <td class="pos-right-align"><t t-esc="widget.format_currency(order.get_change())"/></td> &ndash;&gt;-->
+                    <!--                    </t>-->
+                    <!--                    <t t-if="(!order.get_change_amount_for_wallet()) and (!order.get_change_amount_for_credit() and !order.get_change_and_cash())">-->
+                    <!--                        <td>Cambio:</td>-->
+                    <!--                        &lt;!&ndash; <td class="pos-right-align"><t t-esc="widget.format_currency(order.get_change())"/></td> &ndash;&gt;-->
+                    <!--                    </t>-->
+                    <!--                    <tr t-if="order.order_on_debit">-->
+                    <!--                        <td>Débito Disponible:</td>-->
+                    <!--                        <td class="pos-right-align">-->
+                    <!--                            <t t-esc="widget.format_currency(widget.pos.get_client().remaining_debit_amount - order.get_total_with_tax())"/>-->
+                    <!--                        </td>-->
+                    <!--                    </tr>-->
                     <tr t-if="o.credit_amount > 0">
                         <td>Crédito Disponible:</td>
                         <td class="pos-right-align">
@@ -525,246 +482,253 @@
                             <!--client_data['remaining_credit_limit']-->
                         </td>
                     </tr>
-<!--                    <tr t-if="order.order_on_meal_plan">-->
-<!--                        <td>Meal Plan Crédito Disponible:</td>-->
-<!--                        <td class="pos-right-align">-->
-<!--                            <t t-if="'remaining_meal_plan_limit' in client_data"-->
-<!--                               t-esc="widget.format_currency(client_data['remaining_meal_plan_limit']  - order.get_total_with_tax() )"/>-->
-<!--                        </td>-->
-<!--                    </tr>-->
+                    <!--                    <tr t-if="order.order_on_meal_plan">-->
+                    <!--                        <td>Meal Plan Crédito Disponible:</td>-->
+                    <!--                        <td class="pos-right-align">-->
+                    <!--                            <t t-if="'remaining_meal_plan_limit' in client_data"-->
+                    <!--                               t-esc="widget.format_currency(client_data['remaining_meal_plan_limit']  - order.get_total_with_tax() )"/>-->
+                    <!--                        </td>-->
+                    <!--                    </tr>-->
                 </table>
                 <br/>
-                <table style="margin-left: 54px;">
+                <table>
                     <tbody>
-                        <tr id="barcode1"></tr>
+                        <tr id="barcode1">
+                            <td>
+                                <t t-set="barcode" t-value="o.pos_reference[-10:]"/>
+                                <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=250&amp;height=30' % barcode"
+                                     style="width:100%;height:60px;"/>
+                                <br/>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
-<!--                <t t-if="order.get_discount_price() and order.get_discount_price() > 0">-->
-<!--                    <br/>-->
-<!--                    <div style='text-align:left'>-->
-<!--                        <span>Total Discount:-->
-<!--                            <t t-esc="widget.format_currency(order.get_discount_price())"/>-->
-<!--                        </span>-->
-<!--                    </div>-->
-<!--                </t>-->
-<!--                <t t-if="order.get_is_delivery() and order.get_delivery_date() and order.get_delivery_address()">-->
-<!--                    <hr/>-->
-<!--                    <div class="pos-center-align">Delivery Details</div>-->
-<!--                    <table>-->
-<!--                        <tr>-->
-<!--                            <td class="pos-left-align">Delivery Type</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-if="order.get_delivery_type() == 'pending'">-->
-<!--                                    Pending-->
-<!--                                </t>-->
-<!--                                <t t-if="order.get_delivery_type() == 'delivered'">-->
-<!--                                    Delivered-->
-<!--                                </t>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <t t-if="order.get_delivery_user_id()">-->
-<!--                            <tr>-->
-<!--                                <td class="pos-left-align">-->
-<!--                                    Delivery User-->
-<!--                                </td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="widget.pos.user_by_id[order.get_delivery_user_id()].name"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </t>-->
-<!--                        <tr>-->
-<!--                            <td class="pos-left-align">Delivery Date</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="order.get_delivery_date() or ''"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td class="pos-left-align">Delivery Time</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="order.get_delivery_time() or ''"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td class="pos-left-align" style="vertical-align: top;">Delivery Address</td>-->
-<!--                            <td class="pos-right-align">-->
-<!--                                <t t-esc="order.get_delivery_address() or ''"/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </table>-->
-<!--                </t>-->
-<!--                <t t-if="widget.pos.config.enable_print_valid_days-->
-<!--                    and widget.pos.get_cashier().access_print_valid_days and !widget.pos.get_order().get_ret_o_id()">-->
-<!--                    <hr/>-->
-<!--                    <div class="pos-center-align">Return Valid Days</div>-->
-<!--                    <table>-->
-<!--                        <tr t-foreach="orderlines" t-as="orderline">-->
-<!--                            <t t-if="orderline.return_valid_days &gt; 0">-->
-<!--                                <td>-->
-<!--                                    <t t-esc="orderline.product.display_name"/>-->
-<!--                                </td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="orderline.return_valid_days"/>-->
-<!--                                </td>-->
-<!--                            </t>-->
-<!--                        </tr>-->
-<!--                    </table>-->
-<!--                    <hr/>-->
-<!--                </t>-->
-<!--                <t t-if="widget.pos.config.enable_pos_loyalty and widget.pos.get_cashier().access_pos_loyalty-->
-<!--                     and order.get_client() and order.get_total_loyalty_points() > 0">-->
-<!--                    <div class="pos-center-align">Loyalty Points</div>-->
-<!--                    <table>-->
-<!--                        <t t-if="order.get_client() and order.get_client().total_remaining_points">-->
-<!--                            <tr>-->
-<!--                                <td>Your Points:</td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="order.get_client().total_remaining_points.toFixed(2)"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </t>-->
-<!--                        <t t-if="order.get_loyalty_earned_point() and order.get_client()">-->
-<!--                            <tr>-->
-<!--                                <td>Earned Points:</td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="order.get_loyalty_earned_point()"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </t>-->
-<!--                        <t t-if="order.get_loyalty_redeemed_point() and order.get_client()">-->
-<!--                            <tr>-->
-<!--                                <td>Redeemed Points:</td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="order.get_loyalty_redeemed_point()"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </t>-->
-<!--                        <t t-if="order.get_client()">-->
-<!--                            <tr class="emph">-->
-<!--                                <td>Total Points:</td>-->
-<!--                                <td class="pos-right-align">-->
-<!--                                    <t t-esc="order.get_total_loyalty_points()"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </t>-->
-<!--                    </table>-->
-<!--                    <hr/>-->
-<!--                </t>-->
-<!--                <t t-if="order.get_order_note()">-->
-<!--                    <br/>-->
-<!--                    <div style='text-align:left'>-->
-<!--                        <span>Note:</span>-->
-<!--                        <span>-->
-<!--                            <p>-->
-<!--                                <t t-esc="order.get_order_note()"/>-->
-<!--                            </p>-->
-<!--                        </span>-->
-<!--                    </div>-->
-<!--                </t>-->
-<!--                <t t-if="order.get_giftcard().length &gt; 0">-->
-<!--                    <br/>-->
-<!--                    <div>-->
-<!--                        <hr/>-->
-<!--                        <div class="pos-center-align">Card Details</div>-->
-<!--                        <hr/>-->
-<!--                        <table>-->
-<!--                            <t t-foreach="order.get_giftcard()" t-as="giftcard">-->
-<!--                                <tr>-->
-<!--                                    <t t-if="giftcard['giftcard_customer_name']">-->
-<!--                                        <td>Customer:</td>-->
-<!--                                        <td class="pos-right-align">-->
-<!--                                            <t t-esc="giftcard['giftcard_customer_name']"/>-->
-<!--                                        </td>-->
-<!--                                    </t>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>Card No.:</td>-->
-<!--                                    <td class="pos-right-align">-->
-<!--                                        <t t-esc="giftcard['giftcard_card_no']"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>Expire Date:</td>-->
-<!--                                    <td class="pos-right-align">-->
-<!--                                        <t t-esc="giftcard['giftcard_expire_date']"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>Card Balance:</td>-->
-<!--                                    <td class="pos-right-align">-->
-<!--                                        <t t-esc="widget.format_currency(giftcard['giftcard_amount'])"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                            </t>-->
-<!--                        </table>-->
-<!--                    </div>-->
-<!--                    <br/>-->
-<!--                </t>-->
-<!--                <t t-if="order.get_recharge_giftcard().length &gt; 0">-->
-<!--                    <br/>-->
-<!--                    <div>-->
-<!--                        <hr/>-->
-<!--                        <div class="pos-center-align">Card Details</div>-->
-<!--                        <hr/>-->
-<!--                        <table>-->
-<!--                            <t t-foreach="order.get_recharge_giftcard()" t-as="recharge">-->
-<!--                                <tr>-->
-<!--                                    <t t-if="recharge['customer_name']">-->
-<!--                                        <td>Customer:</td>-->
-<!--                                        <td class="pos-right-align">-->
-<!--                                            <t t-esc="recharge['customer_name']"/>-->
-<!--                                        </td>-->
-<!--                                    </t>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>Card No.:</td>-->
-<!--                                    <td class="pos-right-align">-->
-<!--                                        <t t-esc="recharge['recharge_card_no']"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>Total Card Balance:</td>-->
-<!--                                    <td class="pos-right-align">-->
-<!--                                        <t t-esc="widget.format_currency(recharge['total_card_amount'])"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                            </t>-->
-<!--                        </table>-->
-<!--                    </div>-->
-<!--                    <br/>-->
-<!--                </t>-->
-<!--                <t t-if="order.get_redeem_giftcard().length &gt; 0">-->
-<!--                    <br/>-->
-<!--                    <div>-->
-<!--                        <hr/>-->
-<!--                        <div class="pos-center-align">Card Details</div>-->
-<!--                        <hr/>-->
-<!--                        <table>-->
-<!--                            <t t-foreach="order.get_redeem_giftcard()" t-as="redeem">-->
-<!--                                <tr>-->
-<!--                                    <t t-if="redeem['customer_name']">-->
-<!--                                        <td>Customer:</td>-->
-<!--                                        <td class="pos-right-align">-->
-<!--                                            <t t-esc="redeem['customer_name']"/>-->
-<!--                                        </td>-->
-<!--                                    </t>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>Card No.:</td>-->
-<!--                                    <td class="pos-right-align">-->
-<!--                                        <t t-esc="redeem['redeem_card']"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <td>Card Balance:</td>-->
-<!--                                    <td class="pos-right-align">-->
-<!--                                        <t t-esc="widget.format_currency(redeem['redeem_remaining'])"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                            </t>-->
-<!--                        </table>-->
-<!--                    </div>-->
-<!--                    <br/>-->
-<!--                </t>-->
+                <!--                <t t-if="order.get_discount_price() and order.get_discount_price() > 0">-->
+                <!--                    <br/>-->
+                <!--                    <div style='text-align:left'>-->
+                <!--                        <span>Total Discount:-->
+                <!--                            <t t-esc="widget.format_currency(order.get_discount_price())"/>-->
+                <!--                        </span>-->
+                <!--                    </div>-->
+                <!--                </t>-->
+                <!--                <t t-if="order.get_is_delivery() and order.get_delivery_date() and order.get_delivery_address()">-->
+                <!--                    <hr/>-->
+                <!--                    <div class="pos-center-align">Delivery Details</div>-->
+                <!--                    <table>-->
+                <!--                        <tr>-->
+                <!--                            <td class="pos-left-align">Delivery Type</td>-->
+                <!--                            <td class="pos-right-align">-->
+                <!--                                <t t-if="order.get_delivery_type() == 'pending'">-->
+                <!--                                    Pending-->
+                <!--                                </t>-->
+                <!--                                <t t-if="order.get_delivery_type() == 'delivered'">-->
+                <!--                                    Delivered-->
+                <!--                                </t>-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                        <t t-if="order.get_delivery_user_id()">-->
+                <!--                            <tr>-->
+                <!--                                <td class="pos-left-align">-->
+                <!--                                    Delivery User-->
+                <!--                                </td>-->
+                <!--                                <td class="pos-right-align">-->
+                <!--                                    <t t-esc="widget.pos.user_by_id[order.get_delivery_user_id()].name"/>-->
+                <!--                                </td>-->
+                <!--                            </tr>-->
+                <!--                        </t>-->
+                <!--                        <tr>-->
+                <!--                            <td class="pos-left-align">Delivery Date</td>-->
+                <!--                            <td class="pos-right-align">-->
+                <!--                                <t t-esc="order.get_delivery_date() or ''"/>-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                        <tr>-->
+                <!--                            <td class="pos-left-align">Delivery Time</td>-->
+                <!--                            <td class="pos-right-align">-->
+                <!--                                <t t-esc="order.get_delivery_time() or ''"/>-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                        <tr>-->
+                <!--                            <td class="pos-left-align" style="vertical-align: top;">Delivery Address</td>-->
+                <!--                            <td class="pos-right-align">-->
+                <!--                                <t t-esc="order.get_delivery_address() or ''"/>-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                    </table>-->
+                <!--                </t>-->
+                <!--                <t t-if="widget.pos.config.enable_print_valid_days-->
+                <!--                    and widget.pos.get_cashier().access_print_valid_days and !widget.pos.get_order().get_ret_o_id()">-->
+                <!--                    <hr/>-->
+                <!--                    <div class="pos-center-align">Return Valid Days</div>-->
+                <!--                    <table>-->
+                <!--                        <tr t-foreach="orderlines" t-as="orderline">-->
+                <!--                            <t t-if="orderline.return_valid_days &gt; 0">-->
+                <!--                                <td>-->
+                <!--                                    <t t-esc="orderline.product.display_name"/>-->
+                <!--                                </td>-->
+                <!--                                <td class="pos-right-align">-->
+                <!--                                    <t t-esc="orderline.return_valid_days"/>-->
+                <!--                                </td>-->
+                <!--                            </t>-->
+                <!--                        </tr>-->
+                <!--                    </table>-->
+                <!--                    <hr/>-->
+                <!--                </t>-->
+                <!--                <t t-if="widget.pos.config.enable_pos_loyalty and widget.pos.get_cashier().access_pos_loyalty-->
+                <!--                     and order.get_client() and order.get_total_loyalty_points() > 0">-->
+                <!--                    <div class="pos-center-align">Loyalty Points</div>-->
+                <!--                    <table>-->
+                <!--                        <t t-if="order.get_client() and order.get_client().total_remaining_points">-->
+                <!--                            <tr>-->
+                <!--                                <td>Your Points:</td>-->
+                <!--                                <td class="pos-right-align">-->
+                <!--                                    <t t-esc="order.get_client().total_remaining_points.toFixed(2)"/>-->
+                <!--                                </td>-->
+                <!--                            </tr>-->
+                <!--                        </t>-->
+                <!--                        <t t-if="order.get_loyalty_earned_point() and order.get_client()">-->
+                <!--                            <tr>-->
+                <!--                                <td>Earned Points:</td>-->
+                <!--                                <td class="pos-right-align">-->
+                <!--                                    <t t-esc="order.get_loyalty_earned_point()"/>-->
+                <!--                                </td>-->
+                <!--                            </tr>-->
+                <!--                        </t>-->
+                <!--                        <t t-if="order.get_loyalty_redeemed_point() and order.get_client()">-->
+                <!--                            <tr>-->
+                <!--                                <td>Redeemed Points:</td>-->
+                <!--                                <td class="pos-right-align">-->
+                <!--                                    <t t-esc="order.get_loyalty_redeemed_point()"/>-->
+                <!--                                </td>-->
+                <!--                            </tr>-->
+                <!--                        </t>-->
+                <!--                        <t t-if="order.get_client()">-->
+                <!--                            <tr class="emph">-->
+                <!--                                <td>Total Points:</td>-->
+                <!--                                <td class="pos-right-align">-->
+                <!--                                    <t t-esc="order.get_total_loyalty_points()"/>-->
+                <!--                                </td>-->
+                <!--                            </tr>-->
+                <!--                        </t>-->
+                <!--                    </table>-->
+                <!--                    <hr/>-->
+                <!--                </t>-->
+                <!--                <t t-if="order.get_order_note()">-->
+                <!--                    <br/>-->
+                <!--                    <div style='text-align:left'>-->
+                <!--                        <span>Note:</span>-->
+                <!--                        <span>-->
+                <!--                            <p>-->
+                <!--                                <t t-esc="order.get_order_note()"/>-->
+                <!--                            </p>-->
+                <!--                        </span>-->
+                <!--                    </div>-->
+                <!--                </t>-->
+                <!--                <t t-if="order.get_giftcard().length &gt; 0">-->
+                <!--                    <br/>-->
+                <!--                    <div>-->
+                <!--                        <hr/>-->
+                <!--                        <div class="pos-center-align">Card Details</div>-->
+                <!--                        <hr/>-->
+                <!--                        <table>-->
+                <!--                            <t t-foreach="order.get_giftcard()" t-as="giftcard">-->
+                <!--                                <tr>-->
+                <!--                                    <t t-if="giftcard['giftcard_customer_name']">-->
+                <!--                                        <td>Customer:</td>-->
+                <!--                                        <td class="pos-right-align">-->
+                <!--                                            <t t-esc="giftcard['giftcard_customer_name']"/>-->
+                <!--                                        </td>-->
+                <!--                                    </t>-->
+                <!--                                </tr>-->
+                <!--                                <tr>-->
+                <!--                                    <td>Card No.:</td>-->
+                <!--                                    <td class="pos-right-align">-->
+                <!--                                        <t t-esc="giftcard['giftcard_card_no']"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                                <tr>-->
+                <!--                                    <td>Expire Date:</td>-->
+                <!--                                    <td class="pos-right-align">-->
+                <!--                                        <t t-esc="giftcard['giftcard_expire_date']"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                                <tr>-->
+                <!--                                    <td>Card Balance:</td>-->
+                <!--                                    <td class="pos-right-align">-->
+                <!--                                        <t t-esc="widget.format_currency(giftcard['giftcard_amount'])"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                            </t>-->
+                <!--                        </table>-->
+                <!--                    </div>-->
+                <!--                    <br/>-->
+                <!--                </t>-->
+                <!--                <t t-if="order.get_recharge_giftcard().length &gt; 0">-->
+                <!--                    <br/>-->
+                <!--                    <div>-->
+                <!--                        <hr/>-->
+                <!--                        <div class="pos-center-align">Card Details</div>-->
+                <!--                        <hr/>-->
+                <!--                        <table>-->
+                <!--                            <t t-foreach="order.get_recharge_giftcard()" t-as="recharge">-->
+                <!--                                <tr>-->
+                <!--                                    <t t-if="recharge['customer_name']">-->
+                <!--                                        <td>Customer:</td>-->
+                <!--                                        <td class="pos-right-align">-->
+                <!--                                            <t t-esc="recharge['customer_name']"/>-->
+                <!--                                        </td>-->
+                <!--                                    </t>-->
+                <!--                                </tr>-->
+                <!--                                <tr>-->
+                <!--                                    <td>Card No.:</td>-->
+                <!--                                    <td class="pos-right-align">-->
+                <!--                                        <t t-esc="recharge['recharge_card_no']"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                                <tr>-->
+                <!--                                    <td>Total Card Balance:</td>-->
+                <!--                                    <td class="pos-right-align">-->
+                <!--                                        <t t-esc="widget.format_currency(recharge['total_card_amount'])"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                            </t>-->
+                <!--                        </table>-->
+                <!--                    </div>-->
+                <!--                    <br/>-->
+                <!--                </t>-->
+                <!--                <t t-if="order.get_redeem_giftcard().length &gt; 0">-->
+                <!--                    <br/>-->
+                <!--                    <div>-->
+                <!--                        <hr/>-->
+                <!--                        <div class="pos-center-align">Card Details</div>-->
+                <!--                        <hr/>-->
+                <!--                        <table>-->
+                <!--                            <t t-foreach="order.get_redeem_giftcard()" t-as="redeem">-->
+                <!--                                <tr>-->
+                <!--                                    <t t-if="redeem['customer_name']">-->
+                <!--                                        <td>Customer:</td>-->
+                <!--                                        <td class="pos-right-align">-->
+                <!--                                            <t t-esc="redeem['customer_name']"/>-->
+                <!--                                        </td>-->
+                <!--                                    </t>-->
+                <!--                                </tr>-->
+                <!--                                <tr>-->
+                <!--                                    <td>Card No.:</td>-->
+                <!--                                    <td class="pos-right-align">-->
+                <!--                                        <t t-esc="redeem['redeem_card']"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                                <tr>-->
+                <!--                                    <td>Card Balance:</td>-->
+                <!--                                    <td class="pos-right-align">-->
+                <!--                                        <t t-esc="widget.format_currency(redeem['redeem_remaining'])"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                            </t>-->
+                <!--                        </table>-->
+                <!--                    </div>-->
+                <!--                    <br/>-->
+                <!--                </t>-->
                 <table>
                     <tbody>
                         <tr id="barcode_giftcard" align="center"></tr>
@@ -781,32 +745,32 @@
                         </tr>
                     </tbody>
                 </table>
-<!--                <t t-if="o.session_id.config_id.enable_gift_voucher">-->
-<!--                    <br/>-->
-<!--                    <t t-if="order.get_voucher().length > 0 and order.get_remaining_redeemption()">-->
-<!--                        <hr/>-->
-<!--                        <div class="pos-center-align">Voucher Information</div>-->
-<!--                        <hr/>-->
-<!--                        <table>-->
-<!--                            <colgroup>-->
-<!--                                <col width='80%'/>-->
-<!--                                <col width='20%'/>-->
-<!--                            </colgroup>-->
-<!--                            <th>Name</th>-->
-<!--                            <th>Remaining Uses</th>-->
-<!--                            <t t-foreach="order.get_remaining_redeemption()" t-as="voucher">-->
-<!--                                <tr>-->
-<!--                                    <td>-->
-<!--                                        <t t-esc="voucher.voucher_name"/>(<t t-esc="voucher.voucher_code"/>)-->
-<!--                                    </td>-->
-<!--                                    <td>-->
-<!--                                        <t t-esc="voucher.remaining_redeemption"/>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                            </t>-->
-<!--                        </table>-->
-<!--                    </t>-->
-<!--                </t>-->
+                <!--                <t t-if="o.session_id.config_id.enable_gift_voucher">-->
+                <!--                    <br/>-->
+                <!--                    <t t-if="order.get_voucher().length > 0 and order.get_remaining_redeemption()">-->
+                <!--                        <hr/>-->
+                <!--                        <div class="pos-center-align">Voucher Information</div>-->
+                <!--                        <hr/>-->
+                <!--                        <table>-->
+                <!--                            <colgroup>-->
+                <!--                                <col width='80%'/>-->
+                <!--                                <col width='20%'/>-->
+                <!--                            </colgroup>-->
+                <!--                            <th>Name</th>-->
+                <!--                            <th>Remaining Uses</th>-->
+                <!--                            <t t-foreach="order.get_remaining_redeemption()" t-as="voucher">-->
+                <!--                                <tr>-->
+                <!--                                    <td>-->
+                <!--                                        <t t-esc="voucher.voucher_name"/>(<t t-esc="voucher.voucher_code"/>)-->
+                <!--                                    </td>-->
+                <!--                                    <td>-->
+                <!--                                        <t t-esc="voucher.remaining_redeemption"/>-->
+                <!--                                    </td>-->
+                <!--                                </tr>-->
+                <!--                            </t>-->
+                <!--                        </table>-->
+                <!--                    </t>-->
+                <!--                </t>-->
                 <t t-if="o.session_id.config_id.enable_credit and o.session_id.config_id.receipt_balance
             and o.partner_id and o.partner_id.credit_amount > 0">
                     ------------------------------------------
@@ -821,7 +785,7 @@
                         </tr>
                         <br/>
                         <tr>
-                            <td>Credito Disponible:</td>
+                            <td>Crédito Disponible:</td>
                             <td class="pos-right-align">
                                 <!-- <t t-if="widget.pos.get_client() and widget.pos.get_client().remaining_credit_amount"> -->
                                 <t t-esc="o.partner_id.remaining_credit_amount"
@@ -831,9 +795,10 @@
                         </tr>
                     </table>
                 </t>
-                <div class="span4 pull-right mt8" t-if="o.credit_amount > 0">
+                <div class="span4 pos-right-align mt8" t-if="o.credit_amount > 0">
                     <span>
-                        <i class="fa fa-check" aria-hidden="true">Firma Electrónica</i>
+                        <i class="fa fa-check" aria-hidden="true"/>
+                        <i>Firma Electrónica</i>
                     </span>
                 </div>
                 <t t-if="o.session_id.config_id.receipt_footer">
@@ -844,11 +809,11 @@
                 </t>
                 <!--            ###################Ticket pagaré########################-->
                 <div t-if="o.credit_amount > 0">
-                    <p class="pos-center-align">---------------------------------</p>
+                    <p class="pos-center-align">----------------------------</p>
                     <div class="pos-center-align">
                         <span>Pagaré</span>
                     </div>
-                    <div style="font-size:0.7em !important; border:1px solid black">
+                    <div style="font-size:0.7em !important; border:1px solid black;padding-top:2px">
                         <div>
                             <t t-if="o.session_id.config_id.imagen">
                                 <div style="text-align:center;">
@@ -908,33 +873,39 @@
                                     </th>
                                 </tr>
                             </thead>
-<!--                            <tbody>-->
-<!--                                <tr>-->
-<!--                                    <td colspan="2">(<span t-esc="order.number_to_letter(credit_amount)"/>)-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                            </tbody>-->
+                            <!--                            <tbody>-->
+                            <!--                                <tr>-->
+                            <!--                                    <td colspan="2">(<span t-esc="order.number_to_letter(credit_amount)"/>)-->
+                            <!--                                    </td>-->
+                            <!--                                </tr>-->
+                            <!--                            </tbody>-->
                         </table>
-                        <p class="pos-center-align" style="font-size:0.8em;">POR ESTE PAGARÉ RECONOZCO DEBER Y ME
+                        <p class="pos-center-align" style="font-size:0.8em;">POR ESTE PAGARÉ RECONOZCO DEBER Y
+                            ME
                             COMPROMETO A PAGAR INCONDICIONALMENTE
-                            A LA ORDEN DE<span t-esc="o.company_id.name"/>, PRECISAMENTE EN SU DOMICILIO O EN
+                            A LA ORDEN DE<span class="upper_case_text" t-esc="o.company_id.name"/>, PRECISAMENTE
+                            EN SU DOMICILIO O EN
                             CUALQUIER PLAZA
-                            EN QUE SE ME REQUIERA EL PAGO, LA CANTIDAD ARRIBA SEÑALADA EN EL TOTAL, EN MONEDA NACIONAL,
-                            RECONOCIENDO COMO MÍA LA FIRMA AL CALCEO O MI FIRMA ELECTRÓNICA IDENTIFICADA COMO PIN.
+                            EN QUE SE ME REQUIERA EL PAGO, LA CANTIDAD ARRIBA SEÑALADA EN EL TOTAL, EN MONEDA
+                            NACIONAL,
+                            RECONOCIENDO COMO MÍA LA FIRMA AL CALCEO O MI FIRMA ELECTRÓNICA IDENTIFICADA COMO
+                            PIN.
                         </p>
                         <!--                <div class="pos-center-align" style="font-size:1em;">-->
                         <!--                    <p>_____________________</p>-->
                         <!--                    <p>Firma</p>-->
                         <!--                </div>-->
-                        <div class="span4 pos-center-align mt8" style="margin-top:50px;">
+                        <div class="span4 pos-center-align mt8" style="margin-top:100px;">
                             <span>
-                                <b class="fa fa-check">Firma Electrónica</b>
+                                <b class="fa fa-check"></b>
+                                <b>Firma Electrónica</b>
                             </span>
                         </div>
                         <div class="pos-center-align" t-if='o.pos_reference'>
                             <br/>
-                            <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=1000&amp;height=200' % o.pos_reference[-10:]"
-                                 style="width:100%;height:60px;"/>
+                            <t t-set="barcode" t-value="o.pos_reference[-10:]"/>
+                            <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=250&amp;height=30' % barcode"
+                                 style="width:99%;height:60px;"/>
                             <br/>
                         </div>
                         <div class="pos-center-align">
@@ -944,6 +915,14 @@
                     </div>
                 </div>
             </div>
+        </template>
+
+        <template id="receipt_external_layout">
+            <div class="header"/>
+            <div class="article o_report_layout_standard">
+                <t t-raw="0"/>
+            </div>
+            <div class="footer"/>
         </template>
     </data>
 </odoo>
