@@ -209,6 +209,7 @@ class StockInventoryLine(models.Model):
 
     difference_qty = fields.Float('Diferencia', compute='_compute_difference')
 
+    @api.depends('theoretical_qty', 'product_qty')
     def _compute_difference(self):
         for record in self:
             record.difference_qty = abs(record.theoretical_qty - record.product_qty)
