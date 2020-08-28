@@ -123,13 +123,12 @@ class ReportPosIndividualWizard(models.TransientModel):
     def get_details(self):
         tz = pytz.timezone(self._context.get('tz'))
         start_date = fields.Datetime.from_string(self.start_date)
-        start_date = pytz.utc.localize(start_date).astimezone(tz)
         end_date = fields.Datetime.from_string(self.end_date)
-        end_date = pytz.utc.localize(end_date).astimezone(tz)
         diff = end_date - start_date
         days = diff.days + (1 if diff.seconds else 0)
         orders, total = self.consult_report_individual_details()
         data = {
+            'partner_id': self.partner_id.id,
             'orders': orders,
             'start_date': start_date,
             'end_date': end_date,
@@ -148,7 +147,7 @@ class ReportPosIndividualWizard(models.TransientModel):
             'total': action['data']['total'],
             'start_date': datetime.strftime(action['data']['start_date'], '%Y-%m-%d %H:%M:%S'),
             'end_date': datetime.strftime(action['data']['end_date'], '%Y-%m-%d %H:%M:%S'),
-            'cut_date': action['data']['cut_date'],
+            'cut_date': datetime.strftime(action['data']['end_date'], '%d-%b-%Y'),
             'days': action['data']['days'],
         }
         email_send = self.with_context(data_context)
