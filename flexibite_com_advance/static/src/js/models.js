@@ -994,23 +994,23 @@ odoo.define('flexibite_com_advance.models', function (require) {
                         }
                     });
                 });
-                if(server_ids.length > 0){
-                    $.ajax({
-                        type: "GET",
-                        url: '/web/dataset/send_pos_ordermail',
-                        data: {
-                            order_ids: JSON.stringify(server_ids),
-                        },
-                        success: function(res) {
-//                        	self.db.notification('success',"Mail send successfully");
-                            console.info("Mail send successfull!")
-                        },
-                        error: function() {
-//                        	self.db.notification('danger',"Mail Not send.");
-                             console.error("Mail sending error!")
-                        },
-                    });
-                }
+//                 if(server_ids.length > 0){
+//                     $.ajax({
+//                         type: "GET",
+//                         url: '/web/dataset/send_pos_ordermail',
+//                         data: {
+//                             order_ids: JSON.stringify(server_ids),
+//                         },
+//                         success: function(res) {
+// //                        	self.db.notification('success',"Mail send successfully");
+//                             console.info("Mail send successfull!")
+//                         },
+//                         error: function() {
+// //                        	self.db.notification('danger',"Mail Not send.");
+//                              console.error("Mail sending error!")
+//                         },
+//                     });
+//                 }
                 if(server_ids.length > 0 && self.config.enable_reorder){
                     var params = {
                         model: 'pos.order',
