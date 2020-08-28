@@ -965,8 +965,11 @@ odoo.define('flexibite_com_advance.models', function (require) {
 //		},
         _save_to_server: function (orders, options) {
             var self = this;
-            /* Probamos a ver que pasa con un delay alto*/
-            arguments[1].timeout = 60500 * orders.length;
+            var timeout = 65000;
+            if (orders.length > 1){
+                timeout = 65000 * orders.length
+            }
+            arguments[1].timeout = timeout;
             return posmodel_super._save_to_server.apply(this, arguments)
             .done(function(server_ids){
                 _.each(orders, function(order) {
@@ -991,23 +994,23 @@ odoo.define('flexibite_com_advance.models', function (require) {
                         }
                     });
                 });
-                if(server_ids.length > 0){
-                    $.ajax({
-                        type: "GET",
-                        url: '/web/dataset/send_pos_ordermail',
-                        data: {
-                            order_ids: JSON.stringify(server_ids),
-                        },
-                        success: function(res) {
-//                        	self.db.notification('success',"Mail send successfully");
-                            console.info("Mail send successfull!")
-                        },
-                        error: function() {
-//                        	self.db.notification('danger',"Mail Not send.");
-                             console.error("Mail sending error!")
-                        },
-                    });
-                }
+//                 if(server_ids.length > 0){
+//                     $.ajax({
+//                         type: "GET",
+//                         url: '/web/dataset/send_pos_ordermail',
+//                         data: {
+//                             order_ids: JSON.stringify(server_ids),
+//                         },
+//                         success: function(res) {
+// //                        	self.db.notification('success',"Mail send successfully");
+//                             console.info("Mail send successfull!")
+//                         },
+//                         error: function() {
+// //                        	self.db.notification('danger',"Mail Not send.");
+//                              console.error("Mail sending error!")
+//                         },
+//                     });
+//                 }
                 if(server_ids.length > 0 && self.config.enable_reorder){
                     var params = {
                         model: 'pos.order',
