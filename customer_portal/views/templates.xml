@@ -5,21 +5,21 @@
             <link rel="stylesheet" type="text/scss" href="/customer_portal/static/src/css/customer-portal.scss"/>
         </xpath>
         <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/customer_portal/static/src/js/customer_portal.js"/>
         </xpath>
     </template>
 
     <template id="login">
         <t t-call="web.layout">
             <t t-set="head">
-                <t t-call-assets="web.assets_common" t-js="true"/>
-                <t t-call-assets="web.assets_frontend" t-js="true"/>
-                <t t-call-assets="web.assets_common" t-css="true"/>
-                <t t-call-assets="web.assets_frontend" t-css="true"/>
+                <t t-call-assets="web.assets_common"/>
+                <t t-call-assets="web.assets_frontend"/>
             </t>
             <div class="container-fluid customer-portal-login-container">
                 <div class="row full-viewport-height">
                     <div class="col-md-12 login-form-container">
                         <form action="/customer/portal/login" class="login-form" method="POST">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <h3>Portal de Cliente</h3>
                             <div class="text-center">
                                 <img alt="Brand" src="/customer_portal/static/src/img/web-vmp.png" class="cp_logo"/>
@@ -45,16 +45,70 @@
     <template id="portal">
         <t t-call="web.layout">
             <t t-set="head">
-                <t t-call-assets="web.assets_common" t-js="true"/>
-                <t t-call-assets="web.assets_frontend" t-js="true"/>
-                <t t-call-assets="web.assets_common" t-css="true"/>
-                <t t-call-assets="web.assets_frontend" t-css="true"/>
+                <t t-call-assets="web.assets_common"/>
+                <t t-call-assets="web.assets_frontend"/>
             </t>
             <div class="container-fluid customer-portal-container">
                 <div class="row full-viewport-height">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-12 navbar-container">
+                                <div class="modal fade" id="cp_modal_change_pin" tabindex="-1" role="dialog"
+                                     aria-labelledby="cp_change_pin_modal_title" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="cp_change_pin_modal_title">Cambiar PIN</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="false">&#215;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="cp_form_change_pin">
+                                                    <input type="hidden" name="csrf_token"
+                                                           t-att-value="request.csrf_token()"/>
+                                                    <div class="form-group">
+                                                        <label for="cp_old_pin" class="col-form-label">PIN Actual:
+                                                        </label>
+                                                        <input type="password" class="form-control" id="cp_old_pin"
+                                                               onpaste="return false" ondrop="return false"
+                                                               ondrag="return false"
+                                                               oncopy="return false" oncut="return false"
+                                                               autocomplete="off"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="cp_new_pin" class="col-form-label">Nuevo PIN:
+                                                        </label>
+                                                        <input type="password" class="form-control" id="cp_new_pin"
+                                                               onpaste="return false" ondrop="return false"
+                                                               ondrag="return false"
+                                                               oncopy="return false" oncut="return false"
+                                                               autocomplete="off"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="cp_new_pin_repeat" class="col-form-label">Repetir
+                                                            PIN:
+                                                        </label>
+                                                        <input type="password" class="form-control"
+                                                               id="cp_new_pin_repeat" onpaste="return false"
+                                                               ondrop="return false" ondrag="return false"
+                                                               oncopy="return false" oncut="return false"
+                                                               autocomplete="off"/>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                                    Cerrar
+                                                </button>
+                                                <button type="button" id="cp_change_pin_button" class="btn btn-primary">
+                                                    Cambiar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <nav class="navbar navbar-default">
                                     <div class="container-fluid">
                                         <div class="navbar-header">
@@ -62,18 +116,36 @@
                                                 <img alt="Brand" src="/customer_portal/static/src/img/web-vmp.png"/>
                                             </a>
                                         </div>
-                                        <div class="pull-right">
-                                            <div>
-                                                <t t-if="partner.image_small">
-                                                    <img alt="Avatar" class="rounded-circle cp_topbar_avatar"
-                                                         t-att-src="image_data_uri(partner.image_small)"/>
-                                                </t>
-                                                <t t-else="">
-                                                    <img alt="Avatar" class="rounded-circle cp_topbar_avatar"
-                                                         src="/customer_portal/static/src/img/user_menu_avatar.png"/>
-                                                </t>
-                                                <span t-esc="partner.name" class="cp_topbar_name"></span>
-                                                <a class="fa fa-power-off" href="/customer/portal/logout"></a>
+                                        <div class="navbar-right">
+                                            <div class="dropdown">
+                                                <a href="#" class="dropdown-toggle cp_topbar_name"
+                                                   data-toggle="dropdown" role="button" aria-haspopup="true"
+                                                   aria-expanded="false">
+                                                    <t t-if="partner.image_small">
+                                                        <img alt="Avatar"
+                                                             class="rounded-circle cp_topbar_avatar"
+                                                             t-att-src="image_data_uri(partner.image_small)"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <img alt="Avatar"
+                                                             class="rounded-circle cp_topbar_avatar"
+                                                             src="/customer_portal/static/src/img/user_menu_avatar.png"/>
+                                                    </t>
+                                                    <span t-esc="partner.name" class=""></span>
+                                                </a>
+                                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                                    <a class="dropdown-item" id="cp_change_customer_pin"
+                                                       data-toggle="modal" data-target="#cp_modal_change_pin"
+                                                       href="#" role="menuitem">
+                                                        <span class="">Cambiar PIN</span>
+                                                    </a>
+                                                    <a class="dropdown-item"
+                                                       data-menu="logout"
+                                                       href="/customer/portal/logout"
+                                                       role="menuitem">
+                                                        <span class="">Cerrar sesión</span>
+                                                    </a>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -98,7 +170,8 @@
                                                         </div>
                                                         <div class="cp_float_left cp_width_50">
                                                             <div class="progress">
-                                                                <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                                <div class="progress-bar progress-bar-striped"
+                                                                     role="progressbar"
                                                                      t-att-style="('width: %.0f' % ( (((partner.remaining_credit_limit) * 100)/partner.credit_limit) if partner.credit_limit else 0)) + '%;'"
                                                                      t-att-aria-valuenow="'%.0f' % (partner.remaining_credit_limit)"
                                                                      aria-valuemin="0"
@@ -151,7 +224,13 @@
                                                         <div class="clearfix"></div>
                                                     </div>
                                                     <div class="mt8">
-                                                        <a target="new" class="btn btn-primary pull-right" href="/customer/portal/account/status" role="button">Imprimir</a>
+                                                        <a target="new" class="btn btn-primary pull-right"
+                                                           href="/customer/portal/account/status" role="button">Imprimir
+                                                        </a>
+                                                        <button t-if="partner.email" id="cp_account_status_email"
+                                                                class="btn btn-primary pull-right mr-1"
+                                                                role="button">Enviar
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
