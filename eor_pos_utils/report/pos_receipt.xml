@@ -22,17 +22,6 @@
             <field name="header_spacing">0</field>
         </record>
 
-        <record id="pos_ticket_receipts_report" model="ir.actions.report">
-            <field name="string">Print receipts</field>
-            <field name="model">pos.order</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="name">Ticket de Venta</field>
-            <field name="file">eor_pos_utils.pos_tickets</field>
-            <field name="report_name">eor_pos_utils.pos_tickets</field>
-            <field name="print_report_name">'Print receipt - %s' % (object.name).replace('/', '')</field>
-            <field name="paperformat_id" ref="eor_pos_utils.eor_pos_ticket_paperformat"/>
-        </record>
-
         <template id="pos_tickets">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
@@ -924,5 +913,17 @@
             </div>
             <div class="footer"/>
         </template>
+
+        <report id="pos_ticket_receipts_report"
+            model="pos.order"
+            string="Ticket de Venta"
+            report_type="qweb-pdf"
+            name="eor_pos_utils.pos_tickets"
+            file="eor_pos_utils.pos_tickets"
+            print_report_name="'Print receipt - %s' % (object.name).replace('/', '')"/>
+
+        <record id="eor_pos_utils.pos_ticket_receipts_report" model="ir.actions.report">
+            <field name="paperformat_id" ref="eor_pos_utils.eor_pos_ticket_paperformat"/>
+        </record>
     </data>
 </odoo>
