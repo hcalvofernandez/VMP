@@ -35,7 +35,7 @@ class Home(http.Controller):
         else:
             return False
 
-    @http.route('/customer/portal/login', type='http', auth="none", sitemap=False, csrf=False)
+    @http.route('/customer/portal/login', type='http', auth="none", sitemap=False)
     def customer_portal_login(self, **kw):
         if request.httprequest.method == 'POST':
             session_obj = request.env['customer_portal.session'].sudo()
@@ -64,7 +64,7 @@ class Home(http.Controller):
         response.headers['X-Frame-Options'] = 'DENY'
         return response
 
-    @http.route('/customer/portal/logout', type='http', auth="none", sitemap=False, csrf=False)
+    @http.route('/customer/portal/logout', type='http', auth="none", sitemap=False)
     def customer_portal_logout(self, **kw):
         session = self.is_authenticated()
         if self.is_authenticated():
@@ -85,7 +85,7 @@ class Home(http.Controller):
             return werkzeug.utils.redirect('/customer/portal/login', 303)
 
     @http.route('/customer/portal/account/status', type='http', auth="none", sitemap=False)
-    def account_status_report(self):
+    def account_status_report(self, **kw):
         session = self.is_authenticated()
         if session:
             data = self._prepare_portal_values(session.partner_id)
@@ -93,6 +93,28 @@ class Home(http.Controller):
         else:
             return werkzeug.utils.redirect('/customer/portal', 303)
 
+    @http.route('/customer/portal/account/status/send', type='json', auth="none", sitemap=False)
+    def account_status_send_report(self, **kw):
+        session = self.is_authenticated()
+        if session and session.partner_id.email:
+            wizard = request.env['credit.report_pos_individual_wizard'].sudo().create({'partner_id': session.partner_id.id, 'email_to': [(4, session.partner_id.id, False)]})
+            data = self._prepare_portal_values(session.partner_id)
+            wizard.send_mail_report({'data': data})
+            return True
+        else:
+            return False
+
+    @http.route('/customer/portal/change/pin', type='json', auth="none", sitemap=False)
+    def customer_portal_change_pin(self, old_pin, new_pin, **kw):
+        session = self.is_authenticated()
+        if session:
+            if session.partner_id.client_pin == old_pin:
+                session.partner_id.write({'client_pin': new_pin})
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def _customer_sale_period(self, partner_id):
         result = {

@@ -130,8 +130,8 @@ class ReportPosIndividualWizard(models.TransientModel):
         data = {
             'partner_id': self.partner_id.id,
             'orders': orders,
-            'start_date': start_date,
-            'end_date': end_date,
+            'start_date': datetime.strftime(start_date, '%Y-%m-%d %H:%M:%S'),
+            'end_date': datetime.strftime(end_date, '%Y-%m-%d %H:%M:%S'),
             'cut_date': datetime.strftime(end_date, '%d-%b-%Y'),
             'total': total,
             'days': days,
@@ -142,12 +142,12 @@ class ReportPosIndividualWizard(models.TransientModel):
     @api.multi
     def send_mail_report(self, action):
         data_context = {
-            'context': action['context'],
+            'partner_id': self.partner_id.id,
             'orders': action['data']['orders'],
             'total': action['data']['total'],
-            'start_date': datetime.strftime(action['data']['start_date'], '%Y-%m-%d %H:%M:%S'),
-            'end_date': datetime.strftime(action['data']['end_date'], '%Y-%m-%d %H:%M:%S'),
-            'cut_date': datetime.strftime(action['data']['end_date'], '%d-%b-%Y'),
+            'start_date': action['data']['start_date'],
+            'end_date': action['data']['end_date'],
+            'cut_date': action['data']['cut_date'],
             'days': action['data']['days'],
         }
         email_send = self.with_context(data_context)
