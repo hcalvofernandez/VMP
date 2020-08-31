@@ -10,6 +10,7 @@ import uuid
 from datetime import datetime, timedelta, date
 import pytz
 import re
+from odoo.tools import consteq
 
 try:
     from secrets import token_bytes
@@ -93,6 +94,15 @@ class Home(http.Controller):
         else:
             return werkzeug.utils.redirect('/customer/portal', 303)
 
+    @http.route('/customer/portal/orders/<int:order_id>', type='http', auth="none", sitemap=False)
+    def order_ticket_report(self, order_id, access_token=None, report_type=None, download=False, **kw):
+        session = self.is_authenticated()
+        if session:
+            order = self._document_check_access('pos.order', order_id, access_token)
+            return self._show_report(order, 'pdf', 'eor_pos_utils.pos_ticket_receipts_report', {}, 'Ticket orden %s' % (order.pos_reference),True)
+        else:
+            return werkzeug.utils.redirect('/customer/portal', 303)
+
     @http.route('/customer/portal/account/status/send', type='json', auth="none", sitemap=False)
     def account_status_send_report(self, **kw):
         session = self.is_authenticated()
@@ -160,6 +170,7 @@ class Home(http.Controller):
                                                                     ('date_order', '<=', end_date)])
             for order in orders_period:
                 orders.append({
+                    'portal_url': order.get_portal_url(),
                     'order': order.name,
                     'date': datetime.strftime(order.date_order, '%Y-%m-%d %H:%M:%S'),
                     'ticket': order.pos_reference,
@@ -237,3 +248,13 @@ class Home(http.Controller):
             filename = "%s.pdf" % (re.sub('\W+', '-', file_name))
             reporthttpheaders.append(('Content-Disposition', content_disposition(filename)))
         return request.make_response(report, headers=reporthttpheaders)
+
+    def _document_check_access(self, model_name, document_id, access_token=None):
+        document = request.env[model_name].browse([document_id])
+        document_sudo = document.sudo().exists()
+        if not document_sudo:
+            raise MissingError(_("Este documento no existe."))
+
+        if not access_token or not consteq(document_sudo.access_token, access_token):
+            raise
+        return document_sudo

@@ -155,6 +155,15 @@
   .cp_orders_list .cp_panel_content {
     max-height: 240px;
     overflow-y: scroll;
+
+    a {
+      color: #262534;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
   }
 
   .cp_account_status .cp_panel_content .btn-primary {
@@ -192,16 +201,18 @@
 
   #cp_modal_change_pin {
     color: #73879C;
+
     .modal-dialog {
       max-width: 300px;
     }
+
     .btn-primary {
       background-color: #262534;
       border-color: #262534;
     }
   }
 
-  .cp_floating_notification{
+  .cp_floating_notification {
     position: absolute;
     top: 16px;
     right: 16px;
