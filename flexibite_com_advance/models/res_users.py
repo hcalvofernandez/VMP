@@ -102,9 +102,50 @@ class ResUsers(models.Model):
     access_out_of_stock_details = fields.Boolean("Out of Stock", default=True)
     access_int_trans = fields.Boolean("Internal Stock Transfer", default=True)
     shop_ids = fields.Many2many("pos.shop", 'pos_shop_user_rel', 'shop_id', 'user_id', string='Allow Shops')
-    allow_switch_store = fields.Boolean(string="Allow Switch Store")
+    allow_switch_store = fields.Boolean(string="Allow Switch Store", default=True)
     rfid_no = fields.Char('RFID No.')
     default_pos_ids = fields.Many2many('pos.config', 'default_pos_config_rel', string="Default Point of Sale(s)")
 
+    @api.onchange('user_role')
+    def _onchange_user_role(self):
+        if self.user_role == 'cashier':
+            self.access_ereceipt = True
+            self.access_quick_cash_payment = True
+            self.access_order_note = True
+            self.access_product_note = True
+            self.access_pos_return = True
+            self.access_reorder = True
+            self.access_draft_order = True
+            self.access_rounding = True
+            self.access_bag_charges = True
+            self.access_delivery_charges = True
+            self.access_pos_lock = True
+            self.access_keyboard_shortcut = True
+            self.access_product_sync = True
+            self.access_display_warehouse_qty = True
+            self.access_pos_graph = True
+            self.access_x_report = True
+            self.access_pos_loyalty = True
+            self.access_today_sale_report = True
+            self.access_money_in_out = True
+            self.access_gift_card = True
+            self.access_gift_voucher = True
+            self.access_print_last_receipt = True
+            self.access_pos_promotion = True
+            self.lock_terminal = True
+            self.delete_msg_log = True
+            self.access_show_qty = True
+            self.access_print_valid_days = True
+            self.access_card_charges = True
+            self.access_wallet = True
+            self.access_send_order_kitchen = True
+            self.access_modifiers = True
+            self.access_combo = True
+            self.access_takeaway = True
+            self.access_merge_table = True
+            self.access_pos_dashboard = True
+            self.access_out_of_stock_details = True
+            self.access_int_trans = True
+            self.allow_switch_store = True
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
