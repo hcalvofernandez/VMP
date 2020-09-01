@@ -468,13 +468,13 @@
                 </t>
                 <t t-if="!orderline.bag_color and !orderline.get_delivery_charges_flag()">
                     <td>
-                        <t t-esc="orderline.get_product().display_name"/>
+                        <t t-esc="orderline.get_product().name"/>
                         <t t-if="orderline.get_combo_prod_info()">
                             <table>
                                 <tr t-foreach="orderline.get_combo_prod_info()" t-as="prod_info"> 
                                     <td>
                                         <span class="pos-disc-font">
-                                            &#8594; <t t-esc="prod_info.product.display_name"/>
+                                            &#8594; <t t-esc="prod_info.product.name"/>
                                             <t t-esc="prod_info.qty"/>
                                             <t t-if="widget.pos.config.hide_uom">
                                                 <span>Cantidad</span>
@@ -517,11 +517,11 @@
                                 </div>
                             </t>
                             -->
-                            <t t-if="orderline.get_online_mode()">
-                               <div class="pos-disc-font">
-                                   Online
-                               </div>
-                           </t>
+<!--                            <t t-if="orderline.get_online_mode()">-->
+<!--                               <div class="pos-disc-font">-->
+<!--                                   Online-->
+<!--                               </div>-->
+<!--                           </t>-->
                             <t t-if="orderline.get_note()">
 	                           <div class="pos-disc-font">
 	                               <t t-esc="orderline.get_note()"/>
@@ -604,11 +604,11 @@
                                Dine In
                            </div>
                        </t>
-                        <t t-if="orderline.get_online_mode()">
-                           <div class="pos-disc-font">
-                               Online
-                           </div>
-                       </t>
+<!--                        <t t-if="orderline.get_online_mode()">-->
+<!--                           <div class="pos-disc-font">-->
+<!--                               Online-->
+<!--                           </div>-->
+<!--                       </t>-->
                         <t t-if="orderline.get_note()">
 			                <div class="pos-disc-font">
 			                    <t t-esc="orderline.get_note()"/>

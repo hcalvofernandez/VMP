@@ -26,7 +26,7 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="eor_pos_utils.receipt_external_layout">
-                        <div class="page">
+                        <div class="page" style="page-break-inside:avoid">
                             <t t-call="eor_pos_utils.pos_ticket_receipt" t-lang="o.partner_id.lang"/>
                         </div>
                     </t>
@@ -175,14 +175,14 @@
                             <t t-set="last_paid_amt" t-value='orderline.price_unit'/>
                         </t>
                         <td>
-                            <t t-esc="orderline.product_id.display_name"/>
+                            <t t-esc="orderline.product_id.name"/>
                             <t t-if="orderline.combo_product_id">
                                 <table>
                                     <tr t-foreach="orderline.combo_product_id" t-as="prod_info">
                                         <td>
                                             <span>
                                                 &#8594;
-                                                <t t-esc="orderline.product_id.display_name"/>
+                                                <t t-esc="orderline.product_id.name"/>
                                                 <t t-esc="orderline.qty"/>
                                                 <t t-if="o.session_id.config_id.hide_uom">
                                                     <span>Cantidad</span>
@@ -232,11 +232,11 @@
                                     </div>
                                 </t>
                                 -->
-                                <t t-if="orderline.online_mode">
-                                    <div class="pos-disc-font">
-                                        En línea
-                                    </div>
-                                </t>
+<!--                                <t t-if="orderline.online_mode">-->
+<!--                                    <div class="pos-disc-font">-->
+<!--                                        En línea-->
+<!--                                    </div>-->
+<!--                                </t>-->
                                 <t t-if="orderline.line_note">
                                     <div class="pos-disc-font">
                                         <t t-esc="orderline.line_note"/>
@@ -869,7 +869,7 @@
                             <!--                                </tr>-->
                             <!--                            </tbody>-->
                         </table>
-                        <p class="pos-center-align" style="font-size:0.8em;">POR ESTE PAGARÉ RECONOZCO DEBER Y
+                        <p class="pos-center-align" style="font-size:0.8em;line-height:100%">POR ESTE PAGARÉ RECONOZCO DEBER Y
                             ME
                             COMPROMETO A PAGAR INCONDICIONALMENTE
                             A LA ORDEN DE<span class="upper_case_text" t-esc="o.company_id.name"/>, PRECISAMENTE
