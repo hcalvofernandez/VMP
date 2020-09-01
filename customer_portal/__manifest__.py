@@ -11,7 +11,9 @@
     'category': 'Odoo Experts',
     'depends': [
         'base',
+        'portal',
         'credit',
+        'eor_pos_utils',
         'website',
     ],
     'data': [

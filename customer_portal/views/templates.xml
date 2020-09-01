@@ -260,6 +260,8 @@
                                                                     <td class="cp_bt_none cp_pt_none">
                                                                         <strong>IMPORTE</strong>
                                                                     </td>
+                                                                    <td class="cp_bt_none cp_pt_none">
+                                                                    </td>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -278,6 +280,9 @@
                                                                     <td>
                                                                         <span t-esc="order['amount']"
                                                                               t-options='{"widget": "monetary", "display_currency": partner.company_id.currency_id}'></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a target="new" class="fa fa-print cp_print_order_button" t-att-href="order['portal_url']"></a>
                                                                     </td>
                                                                     <t t-set="i" t-value="i + 1"/>
                                                                 </tr>
