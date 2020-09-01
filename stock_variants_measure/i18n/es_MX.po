@@ -20,3 +20,7 @@ msgstr ""
 #: model:ir.actions.act_window,name:purchase.purchase_rfq
 msgid "Requests for Quotation"
 msgstr "Órdenes de compra"
+
+#: selection:purchase.order,state:0 selection:purchase.report,state:0
+msgid "Purchase Order"
+msgstr "Mercancía recibida"
