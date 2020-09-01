@@ -1400,12 +1400,17 @@ h6,
         width: 33.3333333%
     }
     .table-responsive {
-        overflow: auto
+        overflow: auto;
     }
     .table-responsive>.table tr th,
     .table-responsive>.table tr td {
         white-space: normal !important
     }
+}
+
+.overflow_fix{
+    overflow-y: auto;
+    max-height: 100%;
 }
 
 .table-stats table td {
