@@ -322,138 +322,138 @@
         </div>
 
         <!--PAYMENT BY JOURNAL-->
-        <div class="row" style="margin-left: 0; margin-right: 0;">
-            <div class="col-md-12">
-                <div class="box box-success">
-                    <div class="box-header with-border">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <h3 class="box-title">Payment By Journal</h3>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="box-tools">
-                                    <span class="form-group">
-                                        <span class="pull-right">
-                                            <select class="journal-option form-control" placeholder="select option">
-                                            </select>
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="chart">
-                                    <div id="journal_pie_chart" style="width: 100%; height:400px;"/>
-                                </div>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="chart">
-                                    <div id="journal_line_chart" style="width: 100%; height:400px;"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div class="row" style="margin-left: 0; margin-right: 0;">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="box box-success">-->
+<!--                    <div class="box-header with-border">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-4">-->
+<!--                                <h3 class="box-title">Payment By Journal</h3>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-8">-->
+<!--                                <div class="box-tools">-->
+<!--                                    <span class="form-group">-->
+<!--                                        <span class="pull-right">-->
+<!--                                            <select class="journal-option form-control" placeholder="select option">-->
+<!--                                            </select>-->
+<!--                                        </span>-->
+<!--                                    </span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="box-body">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-3">-->
+<!--                                <div class="chart">-->
+<!--                                    <div id="journal_pie_chart" style="width: 100%; height:400px;"/>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-9">-->
+<!--                                <div class="chart">-->
+<!--                                    <div id="journal_line_chart" style="width: 100%; height:400px;"/>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="box box-danger">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Sale By Salesman</h3>
-                            <div class="box-tools pull-right">
-                                <select class="top_salesman_w_m_y form-control pull-left" placeholder="select Month">
-                                    <option data-value="week" selected="selected">This Week</option>
-                                    <option data-value="month">This Month</option>
-                                    <option data-value="year">This Year</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="box-body" style="height:288px">
-                            <div class="table-responsive">
-                                <table class="top_salesperson table no-margin">
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8" style="padding-left:0">
-                    <div class="box box-danger">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Top 5 Categories by Sales</h3>
-                            <div class="box-tools pull-right">
-                                <div class="form-group">
-                                    <span class="pull-right">
-                                        <select class="product-option form-control pull-left" placeholder="select option">
-                                            <option select="selected">Price</option>
-                                            <option>Quantity</option>
-                                        </select>
-                                    </span>
-                                    <span class="pull-right">
-                                        <select class="product-order form-control pull-left" placeholder="select order" style="margin-left: - 5px;">
-                                            <option select="selected">Top</option>
-                                            <option >Bottom</option>
-                                        </select>
-                                    </span>
-                                    <span class="pull-right">
-                                        <select class="top_product_catg_w_m_y form-control" placeholder="select Month">
-                                                <option data-value="week" selected="selected">This Week</option>
-                                                <option data-value="month">This Month</option>
-                                                <option data-value="year">This Year</option>
-                                        </select>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="box-body">
-                            <div id="top_product_category" style="width: 100%; height: 255px;" class="graph-div"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div class="container-fluid">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-4">-->
+<!--                    <div class="box box-danger">-->
+<!--                        <div class="box-header with-border">-->
+<!--                            <h3 class="box-title">Sale By Salesman</h3>-->
+<!--                            <div class="box-tools pull-right">-->
+<!--                                <select class="top_salesman_w_m_y form-control pull-left" placeholder="select Month">-->
+<!--                                    <option data-value="week" selected="selected">This Week</option>-->
+<!--                                    <option data-value="month">This Month</option>-->
+<!--                                    <option data-value="year">This Year</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="box-body" style="height:288px">-->
+<!--                            <div class="table-responsive">-->
+<!--                                <table class="top_salesperson table no-margin">-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-8" style="padding-left:0">-->
+<!--                    <div class="box box-danger">-->
+<!--                        <div class="box-header with-border">-->
+<!--                            <h3 class="box-title">Top 5 Categories by Sales</h3>-->
+<!--                            <div class="box-tools pull-right">-->
+<!--                                <div class="form-group">-->
+<!--                                    <span class="pull-right">-->
+<!--                                        <select class="product-option form-control pull-left" placeholder="select option">-->
+<!--                                            <option select="selected">Price</option>-->
+<!--                                            <option>Quantity</option>-->
+<!--                                        </select>-->
+<!--                                    </span>-->
+<!--                                    <span class="pull-right">-->
+<!--                                        <select class="product-order form-control pull-left" placeholder="select order" style="margin-left: - 5px;">-->
+<!--                                            <option select="selected">Top</option>-->
+<!--                                            <option >Bottom</option>-->
+<!--                                        </select>-->
+<!--                                    </span>-->
+<!--                                    <span class="pull-right">-->
+<!--                                        <select class="top_product_catg_w_m_y form-control" placeholder="select Month">-->
+<!--                                                <option data-value="week" selected="selected">This Week</option>-->
+<!--                                                <option data-value="month">This Month</option>-->
+<!--                                                <option data-value="year">This Year</option>-->
+<!--                                        </select>-->
+<!--                                    </span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="box-body">-->
+<!--                            <div id="top_product_category" style="width: 100%; height: 255px;" class="graph-div"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="box">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Weekly Sales Details</h3>
-                            <div class="box-tools pull-right">
-                                <div class="form-group">
-                                    <span class="pull-right">
-                                        <select class="week-option form-control pull-left" placeholder="select Week"/>
-                                    </span>
-                                    <span class="pull-right">
-                                        <select class="month-option form-control pull-left" placeholder="select Month">
-                                            <option value="1">January</option>
-                                            <option value="2">February</option>
-                                            <option value="3">March</option>
-                                            <option value="4">April</option>
-                                            <option value="5">May</option>
-                                            <option value="6">June</option>
-                                            <option value="7">July</option>
-                                            <option value="8">August</option>
-                                            <option value="9">September</option>
-                                            <option value="10">October</option>
-                                            <option value="11">November</option>
-                                            <option value="12">December</option>
-                                        </select>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="box-body">
-                            <div id="chartweekly" style="width: 100%; height: 400px;" class="graph-div"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div class="container-fluid">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-12">-->
+<!--                    <div class="box">-->
+<!--                        <div class="box-header with-border">-->
+<!--                            <h3 class="box-title">Weekly Sales Details</h3>-->
+<!--                            <div class="box-tools pull-right">-->
+<!--                                <div class="form-group">-->
+<!--                                    <span class="pull-right">-->
+<!--                                        <select class="week-option form-control pull-left" placeholder="select Week"/>-->
+<!--                                    </span>-->
+<!--                                    <span class="pull-right">-->
+<!--                                        <select class="month-option form-control pull-left" placeholder="select Month">-->
+<!--                                            <option value="1">January</option>-->
+<!--                                            <option value="2">February</option>-->
+<!--                                            <option value="3">March</option>-->
+<!--                                            <option value="4">April</option>-->
+<!--                                            <option value="5">May</option>-->
+<!--                                            <option value="6">June</option>-->
+<!--                                            <option value="7">July</option>-->
+<!--                                            <option value="8">August</option>-->
+<!--                                            <option value="9">September</option>-->
+<!--                                            <option value="10">October</option>-->
+<!--                                            <option value="11">November</option>-->
+<!--                                            <option value="12">December</option>-->
+<!--                                        </select>-->
+<!--                                    </span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="box-body">-->
+<!--                            <div id="chartweekly" style="width: 100%; height: 400px;" class="graph-div"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </templates>

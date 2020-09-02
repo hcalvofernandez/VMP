@@ -57,18 +57,18 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             var company_id = self.$el.find(".pos-company option:selected").attr('data-id')
             self.header_data(company_id)
             self.filter_by_d_m_y('', company_id);
-            self.payment_by_journal_pie_chart_data(company_id)
-            self.sales_per_salesperson(company_id);
-            self.customer_avg_visit(company_id)
-            self.top_items_by_purchase(company_id);
             self.get_top_vendor(company_id)
-            self.get_top_product_category(company_id);
-            self.on_change_journal(company_id);
-            self.onchange_week_option(company_id, '');
-            self.employee_work_hour(company_id)
-            self.show_inventory_cycle(company_id);
-            self.customer_avg_spent_per_visit(company_id)
+            self.top_items_by_purchase(company_id);
             self.chart_available_supplies(company_id);
+            self.show_inventory_cycle(company_id);
+            // self.payment_by_journal_pie_chart_data(company_id)
+            // self.sales_per_salesperson(company_id);
+            // self.customer_avg_visit(company_id)
+            // self.get_top_product_category(company_id);
+            // self.on_change_journal(company_id);
+            // self.onchange_week_option(company_id, '');
+            // self.employee_work_hour(company_id)
+            // self.customer_avg_spent_per_visit(company_id)
         },
 
         prepare_pie_chart : function(chart_id, pie_data, value_field, titleField, flag){
@@ -1073,18 +1073,18 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             setTimeout(function(){
                 self.header_data();
                 self.filter_by_d_m_y('', '');
-                self.sales_per_salesperson();
-                self.payment_by_journal_pie_chart_data()
-                self.customer_avg_visit()
-                self.employee_work_hour();
-                self.top_items_by_purchase();
                 self.get_top_vendor()
-                self.get_top_product_category();
-                self.on_change_journal();
-                self.onchange_week_option();
-                self.show_inventory_cycle();
-                self.customer_avg_spent_per_visit()
+                self.top_items_by_purchase();
                 self.chart_available_supplies();
+                self.show_inventory_cycle();
+                // self.sales_per_salesperson();
+                // self.payment_by_journal_pie_chart_data()
+                // self.customer_avg_visit()
+                // self.employee_work_hour();
+                // self.get_top_product_category();
+                // self.on_change_journal();
+                // self.onchange_week_option();
+                // self.customer_avg_spent_per_visit()
             },0)
         },
     });
