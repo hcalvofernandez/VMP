@@ -9,6 +9,7 @@
     'depends': [
         'base',
         'stock',
+        'purchase',
         'flexibite_com_advance',
     ],
     'data': [

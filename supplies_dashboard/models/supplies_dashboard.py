@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api
+from odoo import models, api, _
 
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 import pytz
 import calendar
+
 
 def start_end_date_global(start, end, tz):
     tz = pytz.timezone(tz) or 'UTC'
@@ -30,6 +31,7 @@ def start_end_date_global(start, end, tz):
             "%Y-%m-%d %H:%M:%S")
     return start_date, end_date
 
+
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
@@ -43,40 +45,45 @@ class ProductTemplate(models.Model):
         s_date, e_date = start_end_date_global(start_date, end_date, current_time_zone)
 
         supplies = self.env['product.template'].with_context(force_company=company_id).search([('es_insumo', '=', True),])
-        ids_supplies = supplies.mapped('product_variant_ids.id')
-        with_stock = supplies.filtered(lambda s: s.qty_available > 0)
+        supplies_with_stock = supplies.filtered(lambda s: s.qty_available > 0)
 
         str_company = str(company_id)
+
         today_purchase_sql = """SELECT 
                                 SUM(pol.price_total) AS today_purchase
                                 FROM purchase_order as po
                                 INNER JOIN purchase_order_line AS pol ON po.id = pol.order_id
+                                INNER JOIN product_product AS pp ON pp.id = pol.product_id
+                                INNER JOIN product_template as pt ON pt.id = pp.product_tmpl_id
                                 WHERE po.date_order >= '%s' 
                                 AND po.date_order <= '%s' 
                                 AND po.company_id = %s
                                 AND po.state IN ('purchase', 'lock')
-                                AND pol.product_id IN %s
-                            """ % (s_date, e_date, str_company, str(tuple(ids_supplies)))
+                                AND pt.es_insumo = true
+                            """ % (s_date, e_date, str_company)
         self._cr.execute(today_purchase_sql)
         today_purchase_data = self._cr.dictfetchall()
 
         total_purchase_sql = """SELECT 
                                         SUM(pol.price_total) AS total_purchase
-                                        FROM purchase_order as po
+                                        FROM purchase_order AS po
                                         INNER JOIN purchase_order_line AS pol ON po.id = pol.order_id
+                                        INNER JOIN product_product AS pp ON pp.id = pol.product_id
+                                        INNER JOIN product_template AS pt ON pt.id = pp.product_tmpl_id
                                         WHERE po.company_id = %s
                                         AND po.state IN ('purchase','lock')
-                                        AND pol.product_id IN %s
-                                    """ % (str_company, str(tuple(ids_supplies)))
+                                        AND pt.es_insumo = true
+                                    """ % (str_company)
         self._cr.execute(total_purchase_sql)
         total_purchase_data = self._cr.dictfetchall()
 
         return {
-            'with_stock': len(with_stock),
+            'with_stock': len(supplies_with_stock),
             'today_purchase': self.convert_number(today_purchase_data[0].get('today_purchase') or 0),
             'total_purchase': self.convert_number(total_purchase_data[0].get('total_purchase') or 0),
             'login_user': self.env.user.name,
-            'login_user_img': self.env.user.image
+            'login_user_img': self.env.user.image,
+            'supplies_data': supplies.read(['id', 'name', 'qty_available'])
         }
 
     @api.multi
@@ -84,7 +91,7 @@ class ProductTemplate(models.Model):
         if number:
             if number < 1000:
                 return number
-            if number >= 1000 and number < 1000000:
+            if 1000 <= number < 1000000:
                 total = number / 1000
                 return str("%.2f" % total) + 'K'
             if number >= 1000000:
@@ -92,6 +99,60 @@ class ProductTemplate(models.Model):
                 return str("%.2f" % total) + 'M'
         else:
             return 0
+
+    @api.model
+    def get_available_supplies(self, company_id):
+        if company_id:
+            company_id = int(company_id)
+        else:
+            company_id = self.env.user.company_id.id
+        supplies = self.env['product.template'].with_context(force_company=company_id).search(
+            [('es_insumo', '=', True), ('qty_available', '>', 0)]).read(['id', 'name', 'qty_available', 'uom_id'])
+        for sup in supplies:
+            sup['uom_id'] = sup['uom_id'][1]
+        return {'availables': supplies}
+
+    @api.model
+    def data_inventory_cycle(self, product_id, available, start_date, end_date, company_id):
+        current_time_zone = self.env.user.tz or 'UTC'
+        s_date, e_date = start_end_date_global(start_date, end_date, current_time_zone)
+
+        inventory_cycle_sql = """SELECT
+            sml.date AS date_time,
+            sml.qty_done AS qty,
+            spt.code AS type_move
+            FROM
+            stock_move_line AS sml
+            INNER JOIN stock_move AS sm ON sm.id = sml.move_id
+            INNER JOIN stock_picking_type AS spt ON spt.id = sm.picking_type_id
+            INNER JOIN product_product AS pp ON pp.id = sml.product_id
+            WHERE pp.product_tmpl_id = %s
+            AND sml.date >= '%s'
+            AND sml.date <= '%s'
+            AND sm.company_id = %s
+        """ % (product_id, s_date, e_date, company_id)
+
+        self._cr.execute(inventory_cycle_sql)
+        data = self._cr.dictfetchall()
+        data = data.copy()
+        available = float(available)
+        for i in range(len(data)-1, -1, -1):
+            data[i]['stock'] = available
+            if data[i]['type_move'] == 'incoming':
+                available = available - float(data[i]['qty'])
+            else:
+                available = available + float(data[i]['qty'])
+                data[i]['qty'] *= -1
+        data.insert(0, {
+            'date_time': _('Previous Stock'),
+            'qty': 0,
+            'type_move': False,
+            'stock': available,
+        })
+
+        return {'data': data}
+
+
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
@@ -222,3 +283,64 @@ class PurchaseOrder(models.Model):
             each['order_month'] = calendar.month_abbr[int(each['order_month'])]
         return {'final_list': final_list, 'currency': self.env.user.currency_id.symbol}
 
+    @api.model
+    def get_the_top_vendor(self, start, end, company_id):
+        if company_id:
+            pass
+        else:
+            company_id = self.env.user.company_id.id
+        current_time_zone = self.env.user.tz or 'UTC'
+        s_date, e_date = start_end_date_global(start, end, current_time_zone)
+        sql_query = """SELECT 
+                            SUM(pol.qty_received * pol.price_unit) AS amount, 
+                            vend.name AS vendor,
+                            SUM(pol.qty_received) AS total_product
+                            FROM purchase_order_line AS pol
+                            INNER JOIN purchase_order AS po ON po.id = pol.order_id
+                            INNER JOIN res_partner AS vend ON vend.id = po.partner_id
+                            WHERE po.date_order >= '%s'
+                            AND po.date_order <= '%s'
+                            AND po.company_id = %s
+                            AND pol.product_id IN %s
+                            AND pol.qty_received > 0
+                            GROUP BY vend.name
+                            ORDER BY amount DESC LIMIT 10
+                        """ % (s_date, e_date, company_id, self.get_supplies_ids(company_id))
+        self._cr.execute(sql_query)
+        top_vendor = self._cr.dictfetchall()
+        return {'top_vendor': top_vendor, 'currency': self.env.user.currency_id.symbol}
+
+    @api.model
+    def top_items_by_purchase(self, start, end, company_id):
+        if company_id:
+            pass
+        else:
+            company_id = self.env.user.company_id.id
+        current_time_zone = self.env.user.tz or 'UTC'
+        s_date, e_date = start_end_date_global(start, end, current_time_zone)
+        sql_query = """SELECT 
+                            SUM(pol.qty_received * pol.price_unit) AS amount, 
+                            pt.name AS product_name,
+                            SUM(pol.qty_received) AS total_qty
+                            FROM purchase_order_line AS pol
+                            INNER JOIN purchase_order AS po ON po.id = pol.order_id
+                            INNER JOIN product_product AS pp ON pol.product_id=pp.id
+                            INNER JOIN product_template AS pt ON pt.id=pp.product_tmpl_id
+                            WHERE po.date_order >= '%s'
+                            AND po.date_order <= '%s'
+                            AND po.company_id = %s
+                            AND pt.es_insumo = true
+                            AND pol.qty_received > 0
+                            GROUP BY product_name
+                            ORDER BY amount DESC LIMIT 5
+                        """ % (s_date, e_date, company_id)
+        self._cr.execute(sql_query)
+        result_top_product = self._cr.dictfetchall()
+        data_source = []
+        count = 0
+        for each in result_top_product:
+            count += 1
+            data_source.append(['<strong>' + str(count) + '</strong>', each.get('product_name'),
+                                self.env.user.currency_id.symbol + str("%.2f" % each.get('amount')),
+                                each.get('total_qty')])
+        return data_source

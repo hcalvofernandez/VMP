@@ -7,11 +7,16 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
     var rpc = require('web.rpc');
     // var view_dialogs = require('web.view_dialogs');
     var core = require('web.core');
+    var _t = core._t;
     // var session = require('web.session');
     var ajax = require('web.ajax');
+    var formatter = new Intl.NumberFormat('es-MX',{
+        maximumFractionDigits:2,
+        minimumFractionDigits:2,
+    })
 
     var SuppliesDashboard = AbstractAction.extend(ControlPanelMixin, {
-        title: core._t('Supplies Dashboard'),
+        title: _t('Supplies Dashboard'),
         template: 'SuppliesDashboard',
 
         init: function (parent, params) {
@@ -21,20 +26,23 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             this.params = params;
             this.startDate = false;
             this.endDate = false;
+            this.supplies_data = false;
         },
 
         events: {
             'change .product-option': 'get_top_product_category',
             'change .product-order': 'get_top_product_category',
+            'change .inventory_cycle_w_m_y': 'show_inventory_cycle',
+            'change .supplies_inventory_cycle': 'show_inventory_cycle',
             'click .dmy': 'filter_by_d_m_y',
             'change .top-product':'onchange_product_option',
             'change .month-option':'onchange_month_option',
             'change .week-option':'onchange_week_option',
             'change .journal-option':'on_change_journal',
             'change .pos-company': 'filter_dashboard_by_company',
-            'change .top_items_sales_w_m_y': 'top_items_by_sales',
+            'change .top_items_purchase_w_m_y': 'top_items_by_purchase',
             'change .top_product_catg_w_m_y': 'get_top_product_category',
-            'change .top_customer_w_m_y': 'get_top_customer',
+            'change .top_vendor_w_m_y': 'get_top_vendor',
             'change .top_salesman_w_m_y': 'sales_per_salesperson',
             },
 
@@ -49,18 +57,18 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             var company_id = self.$el.find(".pos-company option:selected").attr('data-id')
             self.header_data(company_id)
             self.filter_by_d_m_y('', company_id);
-            self.payment_by_journal_pie_chart_data(company_id)
-            self.sales_per_salesperson(company_id);
-            self.customer_avg_visit(company_id)
-            self.top_items_by_sales(company_id);
-            self.get_top_customer(company_id)
-            self.get_top_product_category(company_id);
-            self.on_change_journal(company_id);
-            self.onchange_week_option(company_id, '');
-            self.employee_work_hour(company_id)
-            self.daily_gross_sales(company_id);
-            self.customer_avg_spent_per_visit(company_id)
-            self.weekly_gross_salse(company_id);
+            self.get_top_vendor(company_id)
+            self.top_items_by_purchase(company_id);
+            self.chart_available_supplies(company_id);
+            self.show_inventory_cycle(company_id);
+            // self.payment_by_journal_pie_chart_data(company_id)
+            // self.sales_per_salesperson(company_id);
+            // self.customer_avg_visit(company_id)
+            // self.get_top_product_category(company_id);
+            // self.on_change_journal(company_id);
+            // self.onchange_week_option(company_id, '');
+            // self.employee_work_hour(company_id)
+            // self.customer_avg_spent_per_visit(company_id)
         },
 
         prepare_pie_chart : function(chart_id, pie_data, value_field, titleField, flag){
@@ -78,11 +86,6 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                     "type": "pie",
                     "theme": "light",
                     "addClassNames": true,
-                    "legend":{
-                        "position":"bottom",
-                        "marginRight":110,
-                        "autoMargins":false
-                    },
                     "innerRadius": "30%",
                     "defs": {
                         "filter": [{
@@ -119,9 +122,9 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             }
         },
 
-        top_items_by_sales : function(company_id){
+        top_items_by_purchase : function(company_id){
             var self = this;
-            var option = $(".top_items_sales_w_m_y option:selected").attr('data-value')
+            var option = $(".top_items_purchase_w_m_y option:selected").attr('data-value')
             var selectedoption = $(".top-product option:selected").val();
             var start = moment().startOf(option).locale('en').format('YYYY-MM-DD');
             var end = moment().endOf(option).locale('en').format('YYYY-MM-DD');
@@ -134,8 +137,8 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             }
 
             rpc.query({
-                model: 'pos.order',
-                method: 'top_items_by_sales',
+                model: 'purchase.order',
+                method: 'top_items_by_purchase',
                 args : [start, end, company_id]
             }, {async: false}).then(function (res) {
                 $(document).find('#top_items_sold').empty();
@@ -159,18 +162,18 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                             data: dataSet,
                             columns: [
                                 { title: "#" },
-                                { title: "Products" },
-                                { title: "Amount" },
-                                { title: "Quantity" }
+                                { title: _t("Products") },
+                                { title: _t("Amount") },
+                                { title: _t("Quantity") }
                             ]
                         });
                     }else{
                         $(document).find('#top_items_sold').empty();
-                        $(document).find('#top_items_sold').append('<div class="alert alert-info"><strong>No data found</strong></div>');
+                        $(document).find('#top_items_sold').append('<div class="alert alert-info"><strong>'+_t('No data found')+'</strong></div>');
                     }
                 }else{
                     $(document).find('#top_items_sold').empty();
-                    $(document).find('#top_items_sold').append('<div class="alert alert-info"><strong>No data found</strong></div>');
+                    $(document).find('#top_items_sold').append('<div class="alert alert-info"><strong>'+_t('No data found')+'</strong></div>');
                 }
             });
         },
@@ -219,7 +222,6 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
               "categoryField": "Date",
               "categoryAxis": {
                 "gridPosition": "start",
-                "gridAlpha": 0,
                 "minorGridAlpha": 0.1,
                 "gridAlpha": 0.15,
                 "fillAlpha": 0.2,
@@ -300,7 +302,7 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                     args : [start_year, end_year, company_id]
                 }, {async: false}).then(function (res) {
                     if(res['final_list'].length > 0){
-                        self.dmy_chart(res['final_list'], 'order_month', 'Months',  "This Year Purchase", "Purchase : "+ res['currency']+"[[value]]", 'price_total')
+                        self.dmy_chart(res['final_list'], 'order_month', _t('Months'),  _t("This Year Purchase"), _t("Purchase : ")+ res['currency']+"[[value]]", 'price_total')
                     }else{
                         $(document).find('#chart_day_month_year').empty();
                         $(document).find('#chart_day_month_year').append('<div class="alert alert-info"><strong><center>No data found</center></strong></div>');
@@ -317,7 +319,7 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                 }, {async: false}).then(function (res) {
                     if(res['final_list']){
                         if(res['final_list'].length > 0){
-                            self.dmy_chart(res['final_list'], 'days', 'Days',  "This Month Purchase", "Day :[[days]] Purchases :"+res['currency']+"[[value]]")
+                            self.dmy_chart(res['final_list'], 'days', _t('Days'),  _t("This Month Purchase"), _t("Day :[[days]] Purchases :")+res['currency']+"[[value]]")
                         }else{
                             $(document).find('#chart_day_month_year').empty();
                             $(document).find('#chart_day_month_year').append('<div class="alert alert-info"><strong><center>No data found</center></strong></div>');
@@ -349,7 +351,7 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                     self.$el.find('#top_hour_amount').append(result['top_hour']['top_hour'] + " - " + hour)
 
                     if(hrs_pay_data.length > 0){
-                        self.dmy_chart(hrs_pay_data, 'hours','Hours' ,"Today's Hourly Purchase", 'Purchases : '+ result['currency']+' [[value]]')
+                        self.dmy_chart(hrs_pay_data, 'hours',_t('Hours') ,_t("Today's Hourly Purchase"), _t('Purchases: ')+ result['currency']+' [[value]]')
                     }else{
                         $(document).find('#chart_day_month_year').empty();
                         self.$el.find('#top_hours_hour').empty()
@@ -384,7 +386,7 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                         "balloonText": baloon_text,
                         "fillAlphas": 0.8,
                         "lineAlpha": 0.2,
-                        "title": title,
+                        "title": _t(title),
                         "type": "column",
                         "valueField": price_total || "price",
                         "autoColor": false
@@ -402,14 +404,14 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                          "ignoreAxisWidth": true,
                          "position": "bottom",
                          "labelsEnabled":true,
-                         "title":graph_title,
+                         "title": graph_title,
                          "autoGridCount": flag,
                          "gridCount": 31
                     },
                     "valueAxes": [
                         {
                             "position": "left",
-                            "title": "Price",
+                            "title": _t("Amount"),
                             "axisAlpha": 0,
                             "inside": false,
                         }
@@ -427,7 +429,6 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                         }
                     ],
                     "marginBottom": 75,
-                    "dataProvider": graph_data,
                     "export": {
                         "enabled": true
                     }
@@ -435,7 +436,7 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             }
         },
 
-        daily_gross_sales_line_chart : function(source_data, today, last){
+        inventory_cicle_line_chart : function(source_data){
             var chart = AmCharts.makeChart("daily_gross_sale", {
                 "type": "serial",
                 "theme": "light",
@@ -449,24 +450,14 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                 "startDuration": 1,
                 "graphs": [
                     {
-                        "title": today,
-                        "balloonText": "[[title]]: <b>[[value]]</b>",
+                        "title": _t('Stock Move'),
+                        "balloonText": "[[title]]: ([[qty]])<b>[[value]]</b>",
                         "bullet": "round",
                         "bulletSize": 10,
                         "bulletBorderColor": "#ffffff",
                         "bulletBorderAlpha": 1,
                         "bulletBorderThickness": 2,
-                        "valueField": "today"
-                    },
-                    {
-                        "title": last,
-                        "balloonText": "[[title]]: <b>[[value]]</b>",
-                        "bullet": "round",
-                        "bulletSize": 10,
-                        "bulletBorderColor": "#ffffff",
-                        "bulletBorderAlpha": 1,
-                        "bulletBorderThickness": 2,
-                        "valueField": "last"
+                        "valueField": "stock"
                     },
                 ],
                 "chartCursor": {
@@ -474,10 +465,9 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                         "cursorAlpha": 0,
                         "zoomable": false
                 },
-                "categoryField": "hours",
+                "categoryField": "date_time",
                 "categoryAxis": {
                     "gridPosition": "start",
-                    "gridAlpha": 0,
                     "minorGridAlpha": 0.1,
                     "minorGridEnabled": true,
                     "gridAlpha": 0.15,
@@ -492,74 +482,55 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             });
         },
 
-        daily_gross_sales: function(company_id){
+        show_inventory_cycle: function(company_id){
             var self = this;
-            var today = moment().locale('en').format('YYYY-MM-DD');
-            var last_today_day = moment().subtract(7, "days").locale('en').format('YYYY-MM-DD');
-            var weekDayNameToday =  moment(today).locale('en').format('dddd');
-            var weekDayNameLastToday =  moment(last_today_day).locale('en').format('dddd');
-
+            var option = $(".inventory_cycle_w_m_y option:selected").attr('data-value')
+            var start = moment().startOf(option).locale('en').format('YYYY-MM-DD');
+            var end = moment().endOf(option).locale('en').format('YYYY-MM-DD');
+            var supplies_id = self.$el.find(".supplies_inventory_cycle option:selected").attr('data-id');
+            var available = self.$el.find(".supplies_inventory_cycle option:selected").attr('value')
+            var company = self.$el.find(".pos-company option:selected").attr('data-id');
+            if(company){
+                company_id = company;
+            }
             rpc.query({
-                model: 'pos.order',
-                method: 'daily_gross_sales',
-                args : [today, last_today_day, company_id]
+                model: 'product.template',
+                method: 'data_inventory_cycle',
+                args : [supplies_id, available, start, end, company_id]
             }, {async: false}).then(function (res) {
-                var hrs_pay_data = []
-                var today_day = moment().locale('en').format('dddd, MMMM Do YYYY');
-                var last_day = moment().subtract(7, "days").locale('en').format('dddd, MMMM Do YYYY');
-                if(res['sales_based_on_hours'] && res['sales_based_on_hours'].length > 0){
-                    for(var i=0;i<res['sales_based_on_hours'].length;i++){
-                        hrs_pay_data.push({
-                                            'hours': res['sales_based_on_hours'][i].date_order_hour[0],
-                                            'today': res['sales_based_on_hours'][i].today,
-                                            'last': res['sales_based_on_hours'][i].last
-                                        });
-                    }
-                    self.daily_gross_sales_line_chart(hrs_pay_data, today_day, last_day)
+
+                if(!res.length > 0){
+
+                    self.inventory_cicle_line_chart(res['data'])
                 }else{
                     $(document).find('#daily_gross_sale').empty();
-                    $(document).find('#daily_gross_sale').append('<div class="alert alert-info"><strong><center>No data found</center></strong></div>');
+                    $(document).find('#daily_gross_sale').append('<div class="alert alert-info"><strong><center>'+_t('No data found')+'</center></strong></div>');
                 }
             })
         },
 
-        weekly_gross_sales_compare_bar_chart(data_provider, start, end){
+        get_available_supplies(data_provider){
             var self = this;
-            if(data_provider){
-                self.$el.find('#weekly_gross_date').empty()
-                self.$el.find('#weekly_gross_date').append('<i class="fa fa-circle" style="color: rgb(103, 183, 220);"> &nbsp;' + start + '</i><br/><i class="fa fa-circle" style="color: #A9A9A9;">&nbsp;' + end +'</i>')
-            }
+            var label = new Array();
+            _.each(data_provider,function(rec){
+                label.push(rec['id'])
+            });
             var chart = AmCharts.makeChart("weekly_gross_sales_compare_barchart", {
             "type": "serial",
              "theme": "light",
-            "categoryField": "day",
 
             "startDuration": 1,
-            "categoryAxis": {
-                "gridPosition": "start",
-                "position": "left"
-            },
             "trendLines": [],
             "graphs": [
                 {
-                    "balloonText": "Sales:[[value]]",
-                    "fillAlphas": 0.8,
-
-                    "id": "AmGraph-1",
-                    "lineAlpha": 0.2,
-                    "title": start,
-                    "type": "column",
-                    "valueField": "current_week"
-                },
-                {
-                    "balloonText": "Sales :[[value]]",
+                    "balloonText": "[[name]]: [[value]][[uom_id]]",
                     "fillColors": "#A9A9A9",
                     "fillAlphas": 0.8,
                     "id": "AmGraph-2",
                     "lineAlpha": 0.2,
-                    "title": end,
+                    "title": _t("Supplies"),
                     "type": "column",
-                    "valueField": "last_week"
+                    "valueField": "qty_available"
                 }
             ],
             "guides": [],
@@ -569,33 +540,37 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                     "axisAlpha": 0
                 }
             ],
-            "allLabels": [],
+            "categoryField": "name",
+            "categoryAxis": {
+                 "parseDates" : false,
+                 "gridPosition": "start",
+                 "ignoreAxisWidth": false,
+                 "position": "bottom",
+                 "labelsEnabled":false,
+                 "title": "Supplies",
+                 "autoGridCount": true,
+                 "gridCount": 31
+            },
             "balloon": {},
             "titles": [],
             "dataProvider": data_provider,
             "export": {
                 "enabled": true
-             }
+            }
 
         });
         },
 
-        weekly_gross_salse : function(company_id){
+        chart_available_supplies : function(company_id){
             var self = this;
-            var current_week_start_date = moment().startOf('week').locale('en').format('YYYY-MM-DD');
-            var current_week_end_date = moment().endOf('week').locale('en').format('YYYY-MM-DD');
-            var last_week_start_date = moment().subtract(1, 'weeks').startOf('week').locale('en').format('YYYY-MM-DD');
-            var last_week_end_date = moment().subtract(1, 'weeks').endOf('week').locale('en').format('YYYY-MM-DD');
 
             rpc.query({
-                model: 'pos.order',
-                method: 'weekly_gross_sales',
-                args : [current_week_start_date, current_week_end_date, last_week_start_date, last_week_end_date, company_id]
+                model: 'product.template',
+                method: 'get_available_supplies',
+                args : [company_id]
             }, {async: false}).then(function (res) {
-                if(res && res['weekly_compare_sales'].length > 0){
-                    var this_week = [moment(current_week_start_date).locale('en').format('MMM.DD') + ' - ' + moment(current_week_end_date).locale('en').format('MMM.DD')]
-                    var las_week = [moment(last_week_start_date).locale('en').format('MMM.DD') + ' - ' + moment(last_week_end_date).locale('en').format('MMM.DD')]
-                    self.weekly_gross_sales_compare_bar_chart(res['weekly_compare_sales'], this_week, las_week)
+                if(res && res['availables'].length > 0){
+                    self.get_available_supplies(res['availables'])
                 }else{
                     $(document).find('#daily_gross_sale').empty();
                     $(document).find('#daily_gross_sale').append('<div class="alert alert-info"><strong><center>No data found</center></strong></div>');
@@ -955,9 +930,9 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             })
         },
 
-        get_top_customer : function(company_id){
+        get_top_vendor : function(company_id){
             var self = this;
-            var option = $(".top_customer_w_m_y option:selected").attr('data-value')
+            var option = $(".top_vendor_w_m_y option:selected").attr('data-value')
             if (!Number.isInteger(company_id)){
                 company_id = self.$el.find('.pos-company option:selected').attr('data-id')
             }
@@ -968,17 +943,17 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             var end = moment().endOf(option).locale('en').format('YYYY-MM-DD');
 
             rpc.query({
-                model: 'pos.order',
-                method: 'get_the_top_customer',
+                model: 'purchase.order',
+                method: 'get_the_top_vendor',
                 args : [start, end, company_id]
             }, {async: false}).then(function (result) {
                 if(result){
                     var contents = self.$el.find('.top-client');
                     contents.empty();
-                    var res = result['top_customer']
+                    var res = result['top_vendor']
                     var dataSet = []
                     for(var i=0;i<res.length;i++){
-                        dataSet.push([res[i].customer, res[i].total_product,'<span class="label label-success">' + result['currency'] +' '+res[i].amount + '</span>'])
+                        dataSet.push([res[i].vendor, res[i].total_product,'<span class="label label-success">' + result['currency'] +''+formatter.format(res[i].amount) + '</span>'])
                     }
                     if(dataSet.length > 0){
                         $('.top-client').DataTable( {
@@ -997,14 +972,14 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                             searching: false,
                             data: dataSet,
                             columns: [
-                                { title: "Customer" },
-                                { title: "Products" },
-                                { title: "Amount" }
+                                { title: _t("Vendor") },
+                                { title: _t("Products") },
+                                { title: _t("Amount") }
                             ]
                         });
                     }else{
                         $(document).find('.top-client').empty();
-                        $(document).find('.top-client').append('<div class="alert alert-info"><strong><center>No data found</center></strong></div>');
+                        $(document).find('.top-client').append('<div class="alert alert-info"><strong><center>'+_t('No data found')+'</center></strong></div>');
                     }
                 }
             });
@@ -1037,6 +1012,18 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                     self.$el.find('.today-total-sales').text(res['today_sales'] || '0')
                     self.$el.find('.today-total-orders').text(res['today_purchase']|| '0')
                     self.$el.find('.today-product-sold').text(res['today_product']|| '0')
+                    self.supplies_data = res['supplies_data']
+                    var selected = true;
+                    _.each(self.supplies_data,function(data){
+                        if(selected){
+                            self.$el.find('.supplies_inventory_cycle').append('<option selected="selected" value="' + data['qty_available'] + '" data-id="'+ data['id']+'" >' + data['name'] + '</option>');
+                            selected = false;
+                        }else{
+                            self.$el.find('.supplies_inventory_cycle').append('<option value="' + data['qty_available'] + '" data-id="'+ data['id']+'" >' + data['name'] + '</option>');
+                        }
+
+                    });
+
                 }
             });
         },
@@ -1044,7 +1031,7 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
         renderElement: function () {
             var self = this;
             this._super.apply(this, arguments);
-             var month = moment().month() + 1
+            var month = moment().month() + 1
             var week = moment().isoWeek()
             var temp = self.$el.find('.week-option');
             self.$el.find('.month-option option[value='+String(month)+']').attr('selected', 'selected');
@@ -1068,7 +1055,6 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
                 }
                 temp.append('<option value="' + res[i] + '" data-id="'+ res[i]+'" >' + 'Week-'+res[i]+ '</option>');
             }
-
             rpc.query({
                 model: 'pos.session',
                 method: 'getCompany',
@@ -1087,18 +1073,18 @@ odoo.define('supplies_dashboard.dashboard', function (require) {
             setTimeout(function(){
                 self.header_data();
                 self.filter_by_d_m_y('', '');
-                self.sales_per_salesperson();
-                self.payment_by_journal_pie_chart_data()
-                self.customer_avg_visit()
-                self.employee_work_hour();
-                self.top_items_by_sales();
-                self.get_top_customer()
-                self.get_top_product_category();
-                self.on_change_journal();
-                self.onchange_week_option();
-                self.daily_gross_sales();
-                self.customer_avg_spent_per_visit()
-                self.weekly_gross_salse();
+                self.get_top_vendor()
+                self.top_items_by_purchase();
+                self.chart_available_supplies();
+                self.show_inventory_cycle();
+                // self.sales_per_salesperson();
+                // self.payment_by_journal_pie_chart_data()
+                // self.customer_avg_visit()
+                // self.employee_work_hour();
+                // self.get_top_product_category();
+                // self.on_change_journal();
+                // self.onchange_week_option();
+                // self.customer_avg_spent_per_visit()
             },0)
         },
     });
