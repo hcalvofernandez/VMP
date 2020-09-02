@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api
+from odoo import models, api, _
 
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 import pytz
 import calendar
+
 
 def start_end_date_global(start, end, tz):
     tz = pytz.timezone(tz) or 'UTC'
@@ -30,6 +31,7 @@ def start_end_date_global(start, end, tz):
             "%Y-%m-%d %H:%M:%S")
     return start_date, end_date
 
+
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
@@ -42,8 +44,8 @@ class ProductTemplate(models.Model):
         current_time_zone = self.env.user.tz or 'UTC'
         s_date, e_date = start_end_date_global(start_date, end_date, current_time_zone)
 
-        supplies_with_stock = self.env['product.template'].with_context(force_company=company_id).search([('es_insumo', '=', True),
-                                                                                               ('qty_available', '>', 0),])
+        supplies = self.env['product.template'].with_context(force_company=company_id).search([('es_insumo', '=', True),])
+        supplies_with_stock = supplies.filtered(lambda s: s.qty_available > 0)
 
         str_company = str(company_id)
 
@@ -64,10 +66,10 @@ class ProductTemplate(models.Model):
 
         total_purchase_sql = """SELECT 
                                         SUM(pol.price_total) AS total_purchase
-                                        FROM purchase_order as po
+                                        FROM purchase_order AS po
                                         INNER JOIN purchase_order_line AS pol ON po.id = pol.order_id
                                         INNER JOIN product_product AS pp ON pp.id = pol.product_id
-                                        INNER JOIN product_template as pt ON pt.id = pp.product_tmpl_id
+                                        INNER JOIN product_template AS pt ON pt.id = pp.product_tmpl_id
                                         WHERE po.company_id = %s
                                         AND po.state IN ('purchase','lock')
                                         AND pt.es_insumo = true
@@ -80,7 +82,8 @@ class ProductTemplate(models.Model):
             'today_purchase': self.convert_number(today_purchase_data[0].get('today_purchase') or 0),
             'total_purchase': self.convert_number(total_purchase_data[0].get('total_purchase') or 0),
             'login_user': self.env.user.name,
-            'login_user_img': self.env.user.image
+            'login_user_img': self.env.user.image,
+            'supplies_data': supplies.read(['id', 'name', 'qty_available'])
         }
 
     @api.multi
@@ -88,7 +91,7 @@ class ProductTemplate(models.Model):
         if number:
             if number < 1000:
                 return number
-            if number >= 1000 and number < 1000000:
+            if 1000 <= number < 1000000:
                 total = number / 1000
                 return str("%.2f" % total) + 'K'
             if number >= 1000000:
@@ -108,6 +111,47 @@ class ProductTemplate(models.Model):
         for sup in supplies:
             sup['uom_id'] = sup['uom_id'][1]
         return {'availables': supplies}
+
+    @api.model
+    def data_inventory_cycle(self, product_id, available, start_date, end_date, company_id):
+        current_time_zone = self.env.user.tz or 'UTC'
+        s_date, e_date = start_end_date_global(start_date, end_date, current_time_zone)
+
+        inventory_cycle_sql = """SELECT
+            sml.date AS date_time,
+            sml.qty_done AS qty,
+            spt.code AS type_move
+            FROM
+            stock_move_line AS sml
+            INNER JOIN stock_move AS sm ON sm.id = sml.move_id
+            INNER JOIN stock_picking_type AS spt ON spt.id = sm.picking_type_id
+            INNER JOIN product_product AS pp ON pp.id = sml.product_id
+            WHERE pp.product_tmpl_id = %s
+            AND sml.date >= '%s'
+            AND sml.date <= '%s'
+            AND sm.company_id = %s
+        """ % (product_id, s_date, e_date, company_id)
+
+        self._cr.execute(inventory_cycle_sql)
+        data = self._cr.dictfetchall()
+        data = data.copy()
+        available = float(available)
+        for i in range(len(data)-1, -1, -1):
+            data[i]['stock'] = available
+            if data[i]['type_move'] == 'incoming':
+                available = available - float(data[i]['qty'])
+            else:
+                available = available + float(data[i]['qty'])
+                data[i]['qty'] *= -1
+        data.insert(0, {
+            'date_time': _('Previous Stock'),
+            'qty': 0,
+            'type_move': False,
+            'stock': available,
+        })
+
+        return {'data': data}
+
 
 
 class PurchaseOrder(models.Model):

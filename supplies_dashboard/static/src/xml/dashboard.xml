@@ -281,8 +281,47 @@
             </div>
         </div>
 
+        <!--Inventory Cycle-->
+         <div class="row" style="margin-left:0; margin-right: 0;">
+            <div class="col-md-12">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h3 class="box-title">Inventory Cycle</h3>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="box-tools">
+                                    <span class="form-group">
+                                        <span class="pull-left">
+                                            <select class="supplies_inventory_cycle" placeholder="select Supplies"/>
+                                        </span>
+                                        <span class="pull-right">
+                                            <select class="inventory_cycle_w_m_y" placeholder="select Month">
+                                                <option data-value="week" selected="selected">This Week</option>
+                                                <option data-value="month">This Month</option>
+                                                <option data-value="year">This Year</option>
+                                            </select>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="chart">
+                                    <div id="daily_gross_sale" style="width: 100%; height:400px;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!--PAYMENT BY JOURNAL-->
-        <div hidden="false">
         <div class="row" style="margin-left: 0; margin-right: 0;">
             <div class="col-md-12">
                 <div class="box box-success">
@@ -415,36 +454,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <!--DAILY COMPARE GROSS SALES-->
-         <div class="row" style="margin-left:0; margin-right: 0;">
-            <div class="col-md-12">
-                <div class="box box-success">
-                    <div class="box-header with-border">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <h3 class="box-title">Daily Gross Sales</h3>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="box-tools">
-                                    <span class="form-group">
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="chart">
-                                    <div id="daily_gross_sale" style="width: 100%; height:400px;"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         </div>
     </div>
 </templates>

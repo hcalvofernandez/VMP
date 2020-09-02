@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 01:06+0000\n"
-"PO-Revision-Date: 2020-08-31 21:09-0400\n"
+"POT-Creation-Date: 2020-09-02 04:17+0000\n"
+"PO-Revision-Date: 2020-09-02 00:19-0400\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:166
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:414
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:994
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:169
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:417
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:983
 #, python-format
 msgid "Amount"
 msgstr "Importe"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:398
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:437
 #, python-format
 msgid "April"
 msgstr "Abril"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:402
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:441
 #, python-format
 msgid "August"
 msgstr "Agosto"
@@ -56,70 +56,70 @@ msgstr "Promedio de Visitas de Clientes"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:361
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:400
 #, python-format
 msgid "Bottom"
 msgstr "Abajo"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:426
-#, python-format
-msgid "Daily Gross Sales"
-msgstr "Tamaño de Ventas Diarias"
-
-#. module: supplies_dashboard
-#. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:322
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:325
 #, python-format
 msgid "Day :[[days]] Purchases :"
 msgstr "Dia :[[days]] Compras :"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:322
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:325
 #, python-format
 msgid "Days"
 msgstr "Días"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:406
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:445
 #, python-format
 msgid "December"
 msgstr "Diciembre"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:396
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:435
 #, python-format
 msgid "February"
 msgstr "Febrero"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:354
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:357
 #, python-format
 msgid "Hours"
 msgstr "Horas"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:395
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:291
+#, python-format
+msgid "Inventory Cycle"
+msgstr "Ciclo de Inventario"
+
+#. module: supplies_dashboard
+#. openerp-web
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:434
 #, python-format
 msgid "January"
 msgstr "Enero"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:401
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:440
 #, python-format
 msgid "July"
 msgstr "Julio"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:400
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:439
 #, python-format
 msgid "June"
 msgstr "Junio"
@@ -135,59 +135,65 @@ msgstr "Últimos 30 días"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:397
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:436
 #, python-format
 msgid "March"
 msgstr "Marzo"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:399
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:438
 #, python-format
 msgid "May"
 msgstr "Mayo"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:305
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:308
 #, python-format
 msgid "Months"
 msgstr "Meses"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:172
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:176
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:521
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:999
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:175
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:179
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:510
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:988
 #, python-format
 msgid "No data found"
 msgstr "No hay datos"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:405
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:444
 #, python-format
 msgid "November"
 msgstr "Noviembre"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:404
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:443
 #, python-format
 msgid "October"
 msgstr "Octubre"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:292
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:331
 #, python-format
 msgid "Payment By Journal"
 msgstr "Pago por Jornada"
 
 #. module: supplies_dashboard
+#: code:addons/supplies_dashboard/models/supplies_dashboard.py:147
+#, python-format
+msgid "Previous Stock"
+msgstr "Existencia Anterior"
+
+#. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:354
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:393
 #, python-format
 msgid "Price"
 msgstr "Precio"
@@ -199,15 +205,15 @@ msgstr "Plantilla de producto"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:165
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:993
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:168
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:982
 #, python-format
 msgid "Products"
 msgstr "Productos"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:305
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:308
 #, python-format
 msgid "Purchase : "
 msgstr "Compras : "
@@ -226,32 +232,39 @@ msgstr "Pedido de compra"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:354
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:357
 #, python-format
 msgid "Purchases: "
 msgstr "Compras: "
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:167
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:355
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:170
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:394
 #, python-format
 msgid "Quantity"
 msgstr "Cantidad"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:329
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:368
 #, python-format
 msgid "Sale By Salesman"
 msgstr "Ventas por Dependiente"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:403
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:442
 #, python-format
 msgid "September"
 msgstr "Septiembre"
+
+#. module: supplies_dashboard
+#. openerp-web
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:456
+#, python-format
+msgid "Stock Move"
+msgstr "Movimiento de Stock"
 
 #. module: supplies_dashboard
 #: model:ir.actions.client,name:supplies_dashboard.supplies_dashboard_action
@@ -260,7 +273,7 @@ msgstr "Panel de Insumos"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:545
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:534
 #, python-format
 msgid "Supplies"
 msgstr "Insumos"
@@ -299,15 +312,16 @@ msgstr "Insumos en existencia"
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:119
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:199
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:221
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:333
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:367
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:302
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:372
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:406
 #, python-format
 msgid "This Month"
 msgstr "Este Mes"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:322
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:325
 #, python-format
 msgid "This Month Purchase"
 msgstr "Compras de Este Mes"
@@ -316,8 +330,9 @@ msgstr "Compras de Este Mes"
 #. openerp-web
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:198
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:220
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:332
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:366
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:301
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:371
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:405
 #, python-format
 msgid "This Week"
 msgstr "Esta Semana"
@@ -327,15 +342,16 @@ msgstr "Esta Semana"
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:120
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:200
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:222
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:334
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:368
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:303
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:373
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:407
 #, python-format
 msgid "This Year"
 msgstr "Este Año"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:305
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:308
 #, python-format
 msgid "This Year Purchase"
 msgstr "Compas de Este Año"
@@ -370,17 +386,17 @@ msgstr "Órdenes de Producción Hoy"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:354
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:357
 #, python-format
 msgid "Today's Hourly Purchase"
 msgstr "Compras de Hoy"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:360
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:399
 #, python-format
 msgid "Top"
-msgstr "Top"
+msgstr ""
 
 #. module: supplies_dashboard
 #. openerp-web
@@ -391,7 +407,7 @@ msgstr "Top 10 Proveedores"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:349
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:388
 #, python-format
 msgid "Top 5 Categories by Sales"
 msgstr "Top 5 Categorías por Ventas"
@@ -433,14 +449,14 @@ msgstr "Total de Órdenes de Producción"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:992
+#: code:addons/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js:981
 #, python-format
 msgid "Vendor"
 msgstr "Proveedor"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:387
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:426
 #, python-format
 msgid "Weekly Sales Details"
 msgstr "Detalles de Ventas Semanal"
@@ -456,16 +472,24 @@ msgstr "Bienvenido"
 #. openerp-web
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:197
 #: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:219
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:331
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:365
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:394
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:300
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:370
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:404
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:433
 #, python-format
 msgid "select Month"
 msgstr "selecciona Mes"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:391
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:297
+#, python-format
+msgid "select Supplies"
+msgstr "selecciona Insumo"
+
+#. module: supplies_dashboard
+#. openerp-web
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:430
 #, python-format
 msgid "select Week"
 msgstr "selecciona Semana"
@@ -479,15 +503,15 @@ msgstr "selecciona Compañía"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:298
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:353
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:337
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:392
 #, python-format
 msgid "select option"
 msgstr "selecciona opciones"
 
 #. module: supplies_dashboard
 #. openerp-web
-#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:359
+#: code:addons/supplies_dashboard/static/src/xml/dashboard.xml:398
 #, python-format
 msgid "select order"
 msgstr "selecciona orden"
