@@ -381,13 +381,13 @@
         <t t-jquery="table.paymentlines thead" t-operation="replace">
             <thead>
                 <tr class='label'>
-                    <th>Due</th>
-                    <th>Entregado</th>
+                    <th>Total a Pagar</th>
+                    <th>Importe</th>
                     <t t-if="widget.pos.config.enable_card_charges and widget.pos.get_cashier().access_card_charges">
                     <th>Payment Charge</th>
                     </t>
-                    <th>Change</th>
-                    <th>Method</th>
+                    <th>Cambio</th>
+                    <th>Método de pago</th>
                     <th></th>
                 </tr>
             </thead>
