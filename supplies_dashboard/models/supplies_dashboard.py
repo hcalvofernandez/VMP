@@ -65,22 +65,52 @@ class ProductTemplate(models.Model):
         today_purchase_data = self._cr.dictfetchall()
 
         total_purchase_sql = """SELECT 
-                                        SUM(pol.price_total) AS total_purchase
-                                        FROM purchase_order AS po
-                                        INNER JOIN purchase_order_line AS pol ON po.id = pol.order_id
-                                        INNER JOIN product_product AS pp ON pp.id = pol.product_id
-                                        INNER JOIN product_template AS pt ON pt.id = pp.product_tmpl_id
-                                        WHERE po.company_id = %s
-                                        AND po.state IN ('purchase','lock')
-                                        AND pt.es_insumo = true
-                                    """ % (str_company)
+                                SUM(pol.price_total) AS total_purchase
+                                FROM purchase_order AS po
+                                INNER JOIN purchase_order_line AS pol ON po.id = pol.order_id
+                                INNER JOIN product_product AS pp ON pp.id = pol.product_id
+                                INNER JOIN product_template AS pt ON pt.id = pp.product_tmpl_id
+                                WHERE po.company_id = %s
+                                AND po.state IN ('purchase','lock')
+                                AND pt.es_insumo = true
+                                    """ % str_company
         self._cr.execute(total_purchase_sql)
         total_purchase_data = self._cr.dictfetchall()
+
+        today_mrp_order_sql = """SELECT 
+                                        SUM(sm.product_qty*ABS(sm.price_unit)) AS today_mrp_order
+                                        FROM stock_move AS sm
+                                        INNER JOIN mrp_production AS mp ON mp.id = sm.raw_material_production_id
+                                        WHERE sm.date >= '%s'
+                                        AND sm.date <= '%s'
+                                        AND mp.company_id = %s
+        """ % (s_date, e_date, str_company)
+        self._cr.execute(today_mrp_order_sql)
+        today_mrp_order = self._cr.dictfetchall()
+
+        total_mrp_order_sql = """SELECT 
+                                        SUM(sm.product_qty * ABS(sm.price_unit)) AS total_mrp_order
+                                        FROM stock_move AS sm
+                                        INNER JOIN mrp_production AS mp ON mp.id = sm.raw_material_production_id
+                                        WHERE mp.company_id = %s
+                """ % str_company
+        self._cr.execute(total_mrp_order_sql)
+        total_mrp_order = self._cr.dictfetchall()
+
+        total_qty_supplies = 0
+        total_cost_supplies = 0
+        for sup in supplies_with_stock:
+            total_qty_supplies += sup.qty_available
+            total_cost_supplies += sup.qty_available * sup.standard_price
 
         return {
             'with_stock': len(supplies_with_stock),
             'today_purchase': self.convert_number(today_purchase_data[0].get('today_purchase') or 0),
             'total_purchase': self.convert_number(total_purchase_data[0].get('total_purchase') or 0),
+            'today_mrp_order': self.convert_number(today_mrp_order[0].get('today_mrp_order') or 0),
+            'total_mrp_order': self.convert_number(total_mrp_order[0].get('total_mrp_order') or 0),
+            'total_qty_supplies': self.convert_number(total_qty_supplies or 0),
+            'total_cost_supplies': self.convert_number(total_cost_supplies or 0),
             'login_user': self.env.user.name,
             'login_user_img': self.env.user.image,
             'supplies_data': supplies.read(['id', 'name', 'qty_available'])
@@ -343,4 +373,5 @@ class PurchaseOrder(models.Model):
             data_source.append(['<strong>' + str(count) + '</strong>', each.get('product_name'),
                                 self.env.user.currency_id.symbol + str("%.2f" % each.get('amount')),
                                 each.get('total_qty')])
-        return data_source
+        return {'data_source': data_source,
+                'data_dict': result_top_product}

@@ -24,7 +24,7 @@ class purchase_order_line(models.Model):
     rendimiento = fields.Float('Rendimiento', digits = (12,3), store=True)
     qty_custom = fields.Float('Cantidad x Unidad', store=True, default=1.0)
     product_qty = fields.Float(string='Rendimiento', digits=dp.get_precision('Product Unit of Measure'), required=True, invisible=True)
-    cost_price = fields.Float('Precio Costo', default=0.0, help="Costo por compra.")
+    cost_price = fields.Float('Precio Costo', default=0.0, digits=(16, 3), help="Costo por compra.")
 
     _columns = {
                     'rendimiento': fields.Float('Rendimiento'),
