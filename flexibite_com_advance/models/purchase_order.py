@@ -35,7 +35,7 @@ class PurchaseOrder(models.Model):
                 'price_unit': price_unit,
                 'product_id': product_id.id,
                 'product_qty': qty,
-                'product_uom': product_id.uom_po_id.id or False,
+                'product_uom': product_id.product_tmpl_id.uom_po_id.id or False,
             }))
         purchase_order_obj = self.env['purchase.order']
         purchase_order_obj = purchase_order_obj.create({
