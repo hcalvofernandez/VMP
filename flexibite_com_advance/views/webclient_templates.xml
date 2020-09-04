@@ -13,9 +13,11 @@
             <div class="container mb-5 pb-5 pos-selector-container text-center">
                 <h3 class="mt-5">Seleccione una de las Cajas disponibles</h3>
                 <div class="row">
-                    <t t-foreach="pos_list" t-as="pos">
+                    <t t-foreach="pos_list" t-as="pos_dict">
+                        <t t-set="pos" t-value="pos_dict['pos']"/>
+                        <t t-set="occupied" t-value="pos_dict['occupied']"/>
                         <div class="col-md-4">
-                            <a class="pos-card-content mt-3 d-flex" t-att-href="'/pos/select?cash_register=%s' % pos.id">
+                            <a t-if="not occupied" class="pos-card-content mt-3 d-flex" t-att-href="'/pos/select?cash_register=%s' % pos.id">
                                 <div class="w-25">
                                     <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
                                 </div>
@@ -26,6 +28,18 @@
                                 </div>
                                 <div class="clearfix"/>
                             </a>
+                            <div t-else="" class="pos-card-content mt-3 d-flex">
+                                <div class="w-25">
+                                    <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
+                                </div>
+                                <div class="w-75">
+                                    <h5>
+                                        <span t-field="pos.name"></span>
+                                    </h5>
+                                    <strong t-if="occupied" class="badge-pill badge-danger">Ocupada</strong>
+                                </div>
+                                <div class="clearfix"/>
+                            </div>
                         </div>
                     </t>
                 </div>
