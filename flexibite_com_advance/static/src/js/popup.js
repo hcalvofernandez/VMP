@@ -2777,6 +2777,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
     var CashControlWizardPopup = PopupWidget.extend({
         template : 'CashControlWizardPopup',
         show : function(options) {
+            nobackbutton();
             var self = this;
             options = options || {};
             this.title = options.title || ' ';

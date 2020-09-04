@@ -49,6 +49,12 @@
             </xpath>
         </template>
 
+        <template id="assets" inherit_id="point_of_sale.assets" name="Custom Assets">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/flexibite_com_advance/static/src/js/custom.js"></script>
+            </xpath>
+        </template>
+
          <template id="flexibite_com_advance.assets_themes">
             <t t-set="pos_theme_selector" t-value="request.env['ir.config_parameter'].sudo().get_param('theme_selector')"/>
             <t t-if="pos_theme_selector == False">
