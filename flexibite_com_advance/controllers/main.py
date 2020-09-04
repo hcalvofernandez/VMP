@@ -16,7 +16,7 @@ from odoo.http import request
 from odoo.tools.translate import _
 import werkzeug.utils
 import hashlib
-from odoo import http
+from odoo import http, exceptions
 from odoo.http import request
 import json
 
@@ -34,22 +34,47 @@ class Home(Home):
             uid = request.session.authenticate(request.session.db, request.params['login'], request.params['password'])
             users = request.env['res.users'].browse([uid])
             if users.login_with_pos_screen or users.user_role == 'cook':
-                pos_session = request.env['pos.session'].sudo().search(
-                    [('config_id', '=', users.default_pos.id), ('state', '=', 'opened')])
-                if pos_session:
-                    return http.redirect_with_hash('/pos/web')
-                else:
-                    session_id = users.default_pos.open_session_cb()
-                    pos_session = request.env['pos.session'].sudo().search(
-                        [('config_id', '=', users.default_pos.id), ('state', '=', 'opening_control')])
-                    if users.default_pos.cash_control:
-                        pos_session.write({'opening_balance': True})
-                    session_open = pos_session.action_pos_session_open()
-                    return http.redirect_with_hash('/pos/web')
+                return werkzeug.utils.redirect('/pos/select')
             else:
                 return res
         else:
             return res
+
+    @http.route('/pos/select', type='http', auth="user", sitemap=False, website=True)
+    def web_select_pos(self, cash_register=None, **kw):
+        ensure_db()
+        if not request.session.uid:
+            return werkzeug.utils.redirect('/web/login', 303)
+        else:
+            users = request.env['res.users'].browse([request.session.uid])
+            pos_session = request.env['pos.session'].search(
+                [('user_id', '=', users.id), ('state', '=', 'opened')])
+            if pos_session:
+                return http.redirect_with_hash('/pos/web')
+            elif cash_register:
+                config = request.env['pos.config'].search([('id', '=', cash_register)])
+                if config:
+                    session_id = config.open_session_cb()
+                    pos_session = request.env['pos.session'].search(
+                        [('config_id', '=', config.id), ('state', '=', 'opening_control')])
+                    if config.cash_control:
+                        pos_session.write({'opening_balance': True})
+                    session_open = pos_session.action_pos_session_open()
+                    return http.redirect_with_hash('/pos/web')
+                else:
+                    raise exceptions.MissingError(_('La caja especificada no existe. Por favor contacte con el administrador'))
+
+            pos_list = request.env['pos.config']
+            pos_ids = request.env['pos.config'].search([('company_id', '=', request.env.user.company_id.id)])
+            for pos in pos_ids:
+                pos_session = request.env['pos.session'].sudo().search(
+                    [('config_id', '=', pos.id), ('state', '=', 'opened')])
+                if not pos_session:
+                    pos_list += pos
+
+            response = request.render('flexibite_com_advance.pos_selector', {'pos_list': pos_list.sudo()})
+            response.headers['X-Frame-Options'] = 'DENY'
+            return response
 
 class DataSet(http.Controller):
 
