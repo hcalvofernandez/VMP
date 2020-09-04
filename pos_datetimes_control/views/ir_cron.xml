@@ -6,10 +6,11 @@
             <field name="active" eval="True" />
             <field name="user_id" ref="base.user_root"/>
             <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
+            <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="model_id" ref="base.model_res_company"/>
             <field name="state">code</field>
+            <field name="nextcall" eval="(DateTime.now()).strftime('%Y-%m-%d 10:58:00')" />
             <field name="code">env['res.company'].cron_set_next_day_datetimes()</field>
         </record>
     </data>
