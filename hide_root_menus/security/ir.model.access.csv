@@ -1,0 +1,2 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+admin_user_menu_rel_security_rule, User menu relation admin access,model_hide_root_menus_user_menu_line,base.group_system,1,1,1,1
