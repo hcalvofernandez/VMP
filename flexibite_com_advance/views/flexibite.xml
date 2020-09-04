@@ -115,5 +115,11 @@
 	        <link rel="stylesheet" type="text/css" href="/web/static/lib/fontawesome/css/font-awesome.css"/>
 	    </template>
 
+        <template id="assets_frontend" name="Website Assets" inherit_id="web.assets_frontend">
+            <xpath expr="//link[last()]" position="after">
+                <link rel="stylesheet" type="text/scss" href="/flexibite_com_advance/static/src/css/pos_select.scss"/>
+            </xpath>
+        </template>
+
 	</data>
 </odoo>
