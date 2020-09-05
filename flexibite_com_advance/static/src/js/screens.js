@@ -1024,7 +1024,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     var params = {
                         model: 'pos.session',
                         method: 'open_balance',
-                        args:[self.pos.pos_session.id,total_open_balance]
+                        args:[self.pos.pos_session.id, 0.00]
                     };
                     await rpc.query(params, {async: false}).then(function(res){
                         if(res){
