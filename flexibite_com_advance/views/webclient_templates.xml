@@ -14,7 +14,7 @@
                         <t t-set="occupied" t-value="pos_dict['occupied']"/>
                         <div class="col-md-4">
                             <a t-if="not occupied" class="pos-card-content mt-3 d-flex" t-att-href="'/pos/select?cash_register=%s' % pos.id">
-                                <div class="w-25">
+                                <div class="w-25" t-if="pos.imagen">
                                     <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
                                 </div>
                                 <div class="w-75">
@@ -25,7 +25,7 @@
                                 <div class="clearfix"/>
                             </a>
                             <div t-else="" class="pos-card-content mt-3 d-flex">
-                                <div class="w-25">
+                                <div class="w-25" t-if="pos.imagen">
                                     <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
                                 </div>
                                 <div class="w-75">
