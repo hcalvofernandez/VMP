@@ -175,7 +175,7 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 //	        	self.$el.find('#product_sync').trigger('click');
 //	        }
 		},
-		login_user: async function(username, password){
+		login_user: function(username, password){
             var self = this;
             var user = _.find(self.pos.users, function(obj) { return obj.login == username && obj.pos_security_pin == password });
             var view_initial = 'products';
@@ -191,7 +191,7 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
                         method: 'open_balance',
                         args:[self.pos.pos_session.id, 0.00]
                     };
-                    await rpc.query(params, {async: false}).then(function(res){
+                    rpc.query(params, {async: false}).then(function(res){
                         if(res){
                         }
                         else {
