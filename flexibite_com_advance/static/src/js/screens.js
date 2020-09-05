@@ -1020,9 +1020,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.pos.chrome.screens.products.actionpad.renderElement();
                 $('.pos-login-topheader').hide();
                 self.chrome.widget.username.renderElement();
-                if(self.pos.pos_session.opening_balance){
-                    return self.gui.show_screen('openingbalancescreen');
-                }
+                // if(self.pos.pos_session.opening_balance){
+                //     return self.gui.show_screen('openingbalancescreen');
+                // }
                 if(self.pos.config.module_pos_restaurant){
                     if (self.pos.config.iface_floorplan) {
                         self.gui.set_startup_screen('floors');
