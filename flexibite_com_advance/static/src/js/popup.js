@@ -2952,6 +2952,11 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     }
                     rpc.query(params, {async: false}).then(function(res){
                             if(res){
+                            }else{
+                                self.gui.show_popup('error-traceback',{
+                                    'title': "Sessió Cerrada",
+                                    'body':  "Ya se ha cerrado la sesión, no puede editar el corte"
+                               });
                             }
                     }).fail(function (type, error){
                         if(error.code === 200 ){    // Business Logic Error, not a connection problem
@@ -2963,7 +2968,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     });
                 }
 
-                var params = {
+                    var params = {
                     model: 'pos.session',
                     method: 'cash_statement_ids',
                     args: [self.pos.pos_session.id,statement_ids]
@@ -3009,7 +3014,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                 $('.coins').addClass('disabled');
                 $('.cash').addClass('disabled');
                 $('.cash_paymentmethods').addClass('disabled');
-                //self.$('.button.close_session').trigger('click');
+                self.$('.button.close_session').trigger('click');
                 self.$('.button.cancel').hide();
             });
             this.$('.print_report_x').click(function(e){

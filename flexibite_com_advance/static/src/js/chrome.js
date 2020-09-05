@@ -138,6 +138,7 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 		build_widgets: function(){
 			var self = this;
 			this._super();
+			self.popups.cash_control.do_hide();
 			if(self.pos.user.user_role === 'cook'){
 				self.gui.set_startup_screen('kitchen_screen');
 				self.gui.show_screen('kitchen_screen');
@@ -151,10 +152,6 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 	        			'width':'100%',
 	        		});
 	        	}
-
-	        	if(self.popups.cash_control){
-	        		self.popups.cash_control.do_hide()
-				}
 				if(self.pos.user.login_with_pos_screen) {
 					var username = self.pos.user.login;
 					var pin = self.pos.user.pos_security_pin;
