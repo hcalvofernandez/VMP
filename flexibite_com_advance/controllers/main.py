@@ -21,13 +21,15 @@ from odoo.http import request
 import json
 
 import logging
-from odoo.addons.web.controllers.main import Home, ensure_db
+from odoo.addons.web.controllers.main import ensure_db
+from odoo.addons.website.controllers.main import Website
 from odoo.addons.bus.controllers.main import BusController
 
 _logger = logging.getLogger(__name__)
 
-class Home(Home):
-    @http.route('/web/login', type='http', auth="none", sitemap=False)
+class Home(Website):
+
+    @http.route()
     def web_login(self, redirect=None, **kw):
         res = super(Home, self).web_login(redirect, **kw)
         if request.params['login_success']:
