@@ -2276,6 +2276,7 @@ class pos_session(models.Model):
     opening_balance = fields.Boolean(string="Opening Balance")
     increment_number = fields.Integer(string="Increment Number", default=0, size=3, help="This is a field is used for show increment number on kitchen screen when create pos order from point of sale.")
     shop_id = fields.Many2one('pos.shop',string='Shop' ,related='config_id.multi_shop_id')
+    closed_flag = fields.Boolean('Is_Closed', default=False)
 
     @api.model
     def get_datetime_now(self):
@@ -2501,7 +2502,7 @@ class pos_session(models.Model):
 
     @api.multi
     def custom_close_pos_session(self):
-        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)        
+        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)
         if(postpaid_journal):
             account_bank_statements_lines = self.env['account.bank.statement.line'].sudo().search([('journal_id', '=', postpaid_journal.id)]) 
             for account_bank_statements_line in account_bank_statements_lines:
@@ -2555,6 +2556,10 @@ class pos_session(models.Model):
 
     @api.multi
     def cash_control_line(self,vals, statement_ids):
+        if self.closed_flag:
+            return False
+        else:
+            self.closed_flag = True
         total_amount = 0.00
         if vals:
             self.cashcontrol_ids.unlink()

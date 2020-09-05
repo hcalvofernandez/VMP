@@ -53,7 +53,9 @@ class Home(Home):
                 return http.redirect_with_hash('/pos/web')
             elif cash_register:
                 config = request.env['pos.config'].search([('id', '=', cash_register)])
-                if config:
+                pos_session = request.env['pos.session'].sudo().search(
+                    [('config_id', '=', config.id), ('state', '=', 'opened')])
+                if config and not pos_session:
                     session_id = config.open_session_cb()
                     pos_session = request.env['pos.session'].search(
                         [('config_id', '=', config.id), ('state', '=', 'opening_control')])
@@ -62,17 +64,19 @@ class Home(Home):
                     session_open = pos_session.action_pos_session_open()
                     return http.redirect_with_hash('/pos/web')
                 else:
-                    raise exceptions.MissingError(_('La caja especificada no existe. Por favor contacte con el administrador'))
+                    raise exceptions.MissingError(_('La caja especificada no existe o esta ocupada. Por favor contacte con el administrador'))
 
-            pos_list = request.env['pos.config']
+            pos_list = []
             pos_ids = request.env['pos.config'].search([('company_id', '=', request.env.user.company_id.id)])
             for pos in pos_ids:
+                occupied = False
                 pos_session = request.env['pos.session'].sudo().search(
                     [('config_id', '=', pos.id), ('state', '=', 'opened')])
-                if not pos_session:
-                    pos_list += pos
+                if pos_session:
+                    occupied = True
+                pos_list.append({'occupied': occupied, 'pos': pos})
 
-            response = request.render('flexibite_com_advance.pos_selector', {'pos_list': pos_list.sudo()})
+            response = request.render('flexibite_com_advance.pos_selector', {'pos_list': pos_list})
             response.headers['X-Frame-Options'] = 'DENY'
             return response
 
