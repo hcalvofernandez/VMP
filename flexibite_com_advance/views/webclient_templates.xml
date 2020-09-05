@@ -4,10 +4,6 @@
     <template id="flexibite_com_advance.pos_selector" name="POS Selector">
         <t t-call="website.layout">
             <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
-            <t t-set="head">
-                <t t-call-assets="web.assets_common"/>
-                <t t-call-assets="web.assets_frontend"/>
-            </t>
             <t t-set="body_classname" t-value="'bg-100'"/>
 
             <div class="container mb-5 pb-5 pos-selector-container text-center">
@@ -18,7 +14,7 @@
                         <t t-set="occupied" t-value="pos_dict['occupied']"/>
                         <div class="col-md-4">
                             <a t-if="not occupied" class="pos-card-content mt-3 d-flex" t-att-href="'/pos/select?cash_register=%s' % pos.id">
-                                <div class="w-25">
+                                <div class="w-25" t-if="pos.imagen">
                                     <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
                                 </div>
                                 <div class="w-75">
@@ -29,7 +25,7 @@
                                 <div class="clearfix"/>
                             </a>
                             <div t-else="" class="pos-card-content mt-3 d-flex">
-                                <div class="w-25">
+                                <div class="w-25" t-if="pos.imagen">
                                     <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
                                 </div>
                                 <div class="w-75">

@@ -2574,9 +2574,9 @@ class pos_session(models.Model):
 
     @api.multi
     def open_balance(self, vals):
-        for statement in self.statement_ids:
-            statement.write({'balance_start': vals})
-        self.write({'opening_balance':False})
+        # for statement in self.statement_ids:
+        #     statement.write({'balance_start': vals})
+        self.write({'opening_balance': False})
         return True
 
     @api.multi

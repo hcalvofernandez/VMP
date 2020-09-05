@@ -175,7 +175,7 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 //	        	self.$el.find('#product_sync').trigger('click');
 //	        }
 		},
-		login_user: function(username, password){
+		login_user: async function(username, password){
             var self = this;
             var user = _.find(self.pos.users, function(obj) { return obj.login == username && obj.pos_security_pin == password });
             var view_initial = 'products';
@@ -185,8 +185,30 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
                 self.pos.chrome.screens.products.actionpad.renderElement();
                 $('.pos-login-topheader').hide();
                 self.chrome.widget.username.renderElement();
-                if(self.pos.pos_session.opening_balance){
-                    return self.gui.show_screen('openingbalancescreen');
+                if(self.pos.pos_session.opening_balance) {
+                	var params = {
+                        model: 'pos.session',
+                        method: 'open_balance',
+                        args:[self.pos.pos_session.id,total_open_balance]
+                    };
+                    await rpc.query(params, {async: false}).then(function(res){
+                        if(res){
+                        }
+                        else {
+                        	self.gui.show_popup('error-traceback',{
+                                'title': "No se pudo entrar a la caja",
+                                'body':  "Por favor intentelo mas tarde",
+                           });
+						}
+                    }).fail(function (type, error){
+                        if(error.code === 200 ){    // Business Logic Error, not a connection problem
+                           self.gui.show_popup('error-traceback',{
+                                'title': error.data.message,
+                                'body':  error.data.debug
+                           });
+                        }
+                    });
+                    // return self.gui.show_screen('openingbalancescreen');
                 }
                 if(self.pos.config.module_pos_restaurant){
                     if (self.pos.config.iface_floorplan) {
