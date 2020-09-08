@@ -92,11 +92,13 @@
                         <table class="text-uppercase table-sm table-striped table-center table-attenuate">
                           <tr>
                             <td>saldo anterior</td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="float(last_period_total) * 1.16"
+                                                      t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>pagos y abonos</td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="float(last_period_total) * 1.16"
+                                                      t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>compras y cargos</td>
@@ -119,7 +121,7 @@
                           </tr>
                           <tr>
                             <td>crédito disponible</td>
-                            <td class="text-right"><t t-esc="partner.credit_limit"
+                            <td class="text-right"><t t-esc="partner.remaining_credit_limit"
                                    t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
