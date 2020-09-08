@@ -53,7 +53,7 @@ class ResUsers(models.Model):
         return categ_list
 
     login_with_pos_screen = fields.Boolean(string="Login with Direct POS")
-    default_pos = fields.Many2one('pos.config',string="POS Config")
+    # default_pos = fields.Many2one('pos.config',string="POS Config")
     user_role = fields.Selection([('cashier','Cashier'),
                                   ('ass_cashier','Asst. Cashier'),
                                   ('delivery_user','Delivery User'),

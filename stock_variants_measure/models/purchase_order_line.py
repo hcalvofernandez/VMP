@@ -15,6 +15,10 @@ class purchase_order(models.Model):
             for order in self:
                 for line in order.order_line:
                     line.product_id.write({'standard_price': line.cost_price})
+                    att_values = line.product_id.attribute_value_ids.mapped('id')
+                    template_attributes = self.env['product.template.attribute.value'].search([
+                        ('product_attribute_value_id', 'in', att_values)])
+                    template_attributes.write({'cost_price': line.cost_price})
         return res
   
     
