@@ -6,7 +6,6 @@ from odoo import models, fields
 class StockInventory(models.Model):
     _inherit = 'stock.inventory'
 
-    product_id = fields.Many2one(required=False)
     base_product_ids = fields.One2many('base_product_inventory.base_product_line', 'stock_inventory_id',
                                        string='Base Product Lines')
     product_tmpl_id = fields.Many2one('product.template', string='Inventoried Product')
@@ -49,7 +48,7 @@ class StockInventory(models.Model):
         # if self.lot_id:
         #     domain.append(('lot_id', '=', self.lot_id.id))
         # case 3: Filter on One product
-        if self.product_id:
+        if self.product_tmpl_id:
             domain.append(('id', '=', self.product_tmpl_id.id))
         # #case 4: Filter on A Pack
         # if self.package_id:
@@ -65,9 +64,12 @@ class StockInventory(models.Model):
 
     def action_validate(self):
         self.add_line_ids()
-        # return super(StockInventory, self).action_validate()
+        return super(StockInventory, self).action_validate()
 
     def add_line_ids(self):
+        # It add the product line ids from the base product list.
+        # It takes the real value in the base product and add a
+        # quantity to each variant according the itself available quantity
         data = []
         locations = self.env['stock.location'].search([('id', 'child_of', [self.location_id.id])])
         for line in self.base_product_ids:
@@ -80,22 +82,15 @@ class StockInventory(models.Model):
             for variant in variants:
                 end_iteration = (size-1 == i)
                 i += 1
-                att_values = variant.attribute_value_ids.mapped('id')
-                template_attributes = self.env['product.template.attribute.value'].search([
-                    ('product_attribute_value_id', 'in', att_values)])
-                ratio = 1
-                if template_attributes:
-                    ratio = template_attributes[0].variant_ratio
-                remaining_variant = ratio * qty
+                remaining_variant = qty
                 if remaining_variant >= variant.qty_available and not end_iteration:
                     qty_variant = variant.qty_available
                 elif remaining_variant >= variant.qty_available and end_iteration:
                     qty_variant = remaining_variant
                 else:
                     qty_variant = remaining_variant
-                if not ratio == 0:
-                    qty -= qty_variant / ratio
-                if qty_variant != 0 and variant.qty_available != 0:
+                qty -= qty_variant
+                if not (qty_variant == 0 and variant.qty_available == 0):
                     data.append((0, 0, {
                         'product_id': variant.id,
                         'product_qty': qty_variant,

@@ -11,6 +11,14 @@
                            attrs="{'invisible': [('filter', 'not in', ('product', 'product_owner'))], 'required': [('filter', 'in', ('product', 'product_owner'))]}"
                            options="{'no_create': True}"/>
                 </xpath>
+                <xpath expr="//field[@name='product_id']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//page" position="before">
                     <page string="Inventory Details">
                         <button name="action_reset_product_qty" states="confirm" string="⇒ Set quantities to 0"
