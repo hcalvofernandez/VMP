@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_inventory_form">
+            <field name="name">View Inventory Form</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="product_tmpl_id" domain="[('type','=','product')]"
+                           attrs="{'invisible': [('filter', 'not in', ('product', 'product_owner'))], 'required': [('filter', 'in', ('product', 'product_owner'))]}"
+                           options="{'no_create': True}"/>
+                </xpath>
+                <xpath expr="//page" position="before">
+                    <page string="Inventory Details">
+                        <button name="action_reset_product_qty" states="confirm" string="⇒ Set quantities to 0"
+                                type="object" class="oe_link oe_right" groups="stock.group_stock_user"/>
+                        <field name="base_product_ids">
+                            <tree editable="bottom" decoration-info="base_product_qty != base_theoretical_qty" decoration-danger="base_theoretical_qty &lt; 0">
+                                <field name="product_tmpl_id"/>
+                                <field name="base_uom"/>
+                                <field name="base_theoretical_qty" force_save="1"/>
+                                <field name="base_product_qty"/>
+                                <field name="base_difference_qty"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
