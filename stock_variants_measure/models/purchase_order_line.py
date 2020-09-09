@@ -44,6 +44,18 @@ class purchase_order_line(models.Model):
         'cost_price': 0.0
     }
 
+    @api.onchange('product_id')
+    def onchange_product_id(self):
+        result = super(purchase_order_line, self).onchange_product_id()
+        att_values = self.product_id.attribute_value_ids.mapped('id')
+        template_attributes = self.env['product.template.attribute.value'].search([
+            ('product_attribute_value_id', 'in', att_values)])
+        if template_attributes:
+            self.cost_price = template_attributes[0].cost_price
+        else:
+            self.cost_price = 0.0
+        return result
+
 
     @api.onchange('cost_price','product_id', 'price_unit', 'product_uom', 'product_qty', 'tax_id', 'qty_custom')
     def update_after_product_id(self):
