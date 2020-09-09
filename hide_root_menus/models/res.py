@@ -7,8 +7,8 @@ _logger = logging.getLogger(__name__)
 
 class UserMenuLine(models.Model):
     _name = 'hide_root_menus.user_menu_line'
-    user_id = fields.Many2one('res.users', 'Usuario', required=True)
-    menu_id = fields.Many2one('ir.ui.menu', u'Menú', required=True, domain="[('parent_id', '=', False)]")
+    user_id = fields.Many2one('res.users', 'Usuario', required=True, ondelete='cascade')
+    menu_id = fields.Many2one('ir.ui.menu', u'Menú', required=True, domain="[('parent_id', '=', False)]", ondelete='cascade')
     show = fields.Boolean('Mostrar', required=True, default=True)
 
 

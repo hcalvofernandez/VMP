@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, date
 import pytz
 import re
 from odoo.tools import consteq
+from dateutil.relativedelta import relativedelta
 
 try:
     from secrets import token_bytes
@@ -90,7 +91,8 @@ class Home(http.Controller):
         session = self.is_authenticated()
         if session:
             data = self._prepare_portal_values(session.partner_id)
-            return self._show_report(session.partner_id, 'pdf', 'credit.action_report_credit_summary_individual', data, 'Reporte de Ventas Individual',True)
+            return self._show_report(session.partner_id, 'pdf', 'credit.action_report_credit_summary_individual', data,
+                                     'Reporte de Ventas Individual', True)
         else:
             return werkzeug.utils.redirect('/customer/portal', 303)
 
@@ -99,7 +101,8 @@ class Home(http.Controller):
         session = self.is_authenticated()
         if session:
             order = self._document_check_access('pos.order', order_id, access_token)
-            return self._show_report(order, 'pdf', 'eor_pos_utils.pos_ticket_receipts_report', {}, 'Ticket orden %s' % (order.pos_reference),True)
+            return self._show_report(order, 'pdf', 'eor_pos_utils.pos_ticket_receipts_report', {},
+                                     'Ticket orden %s' % (order.pos_reference), True)
         else:
             return werkzeug.utils.redirect('/customer/portal', 303)
 
@@ -107,7 +110,8 @@ class Home(http.Controller):
     def account_status_send_report(self, **kw):
         session = self.is_authenticated()
         if session and session.partner_id.email:
-            wizard = request.env['credit.report_pos_individual_wizard'].sudo().create({'partner_id': session.partner_id.id, 'email_to': [(4, session.partner_id.id, False)]})
+            wizard = request.env['credit.report_pos_individual_wizard'].sudo().create(
+                {'partner_id': session.partner_id.id, 'email_to': [(4, session.partner_id.id, False)]})
             data = self._prepare_portal_values(session.partner_id)
             wizard.send_mail_report({'data': data})
             return True
@@ -145,6 +149,11 @@ class Home(http.Controller):
                     end_date = datetime(year=lc.next_period_date_end.year, month=lc.next_period_date_end.month,
                                         day=lc.next_period_date_end.day, hour=23, minute=59, second=59)
 
+                    last_date_invoiced = lc.last_date_invoiced - relativedelta(days=1)
+                    last_credit_period_log = request.env['credit.invoice_period_log'].sudo().search(
+                        [('start_date', '<=', last_date_invoiced), ('end_date', '>=', last_date_invoiced)],
+                        order='end_date desc', limit=1)
+
                     time_zone = request._context.get('tz')
                     if not time_zone:
                         time_zone = 'Mexico/General'
@@ -154,6 +163,12 @@ class Home(http.Controller):
 
                     result['start_date'] = datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S")
                     result['end_date'] = datetime.strftime(end_date, "%Y-%m-%d %H:%M:%S")
+                    if last_credit_period_log:
+                        result['last_period_start_date'] = datetime.strftime(last_credit_period_log.start_date, "%Y-%m-%d 00:00:00")
+                        result['last_period_end_date'] = datetime.strftime(last_credit_period_log.end_date, "%Y-%m-%d 23:59:59")
+                    else:
+                        result['last_period_start_date'] = False
+                        result['last_period_end_date'] = False
 
         return result
 
@@ -177,6 +192,17 @@ class Home(http.Controller):
                     'amount': order.credit_amount,
                 })
                 sum += order.credit_amount
+
+            last_period_amount = 0.0
+            if result['last_period_start_date'] and result['last_period_end_date']:
+                orders_last_period = request.env['pos.order'].sudo().search([('partner_id.id', '=', partner_id.id),
+                                                                             ('credit_amount', '>', 0),
+                                                                             ('date_order', '>=',
+                                                                              result['last_period_start_date']),
+                                                                             ('date_order', '<=',
+                                                                              result['last_period_end_date'])])
+                for order in orders_last_period:
+                    last_period_amount += order.credit_amount
 
             partner_ids = [partner_id.id, partner_id.parent_id.id]
             contract_id = request.env['contract.contract'].sudo().search([('partner_id', 'in', partner_ids),
@@ -213,6 +239,7 @@ class Home(http.Controller):
                 "partner": partner_id,
                 "partner_id": partner_id.id,
                 'cut_date': datetime.strftime(datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S'), '%d-%b-%Y'),
+                'last_period_total': last_period_amount
             }
         else:
             return {
@@ -226,6 +253,7 @@ class Home(http.Controller):
                 'days': 0,
                 "partner": partner_id,
                 "partner_id": partner_id.id,
+                'last_period_total': 0.0
             }
 
     def _show_report(self, model, report_type, report_ref, data={}, file_name='document', download=False):

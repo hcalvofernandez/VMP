@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
 from odoo.http import request
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
@@ -16,7 +16,21 @@ class ReportPosWizard(models.TransientModel):
     _name = 'credit.report_pos_wizard'
     _description = 'Wizard para el reporte de las ventas en POS '
 
+    @api.depends('partner_id')
+    def _compute_last_period(self):
+        contracts = self.env['contract.contract'].search(
+            [('partner_id', '=', self.partner_id.id), ('active', '=', True)])
+        if not contracts:
+            contracts = self.env['contract.contract'].search(
+                [('partner_id', '=', self.partner_id.parent_id.id), ('active', '=', True)])
 
+        for c in contracts:
+            for lc in c.contract_line_ids:
+                if lc.next_period_date_start and lc.next_period_date_end:
+                    last_date_invoiced = lc.last_date_invoiced - relativedelta(days=1)
+                    self.last_credit_period_log = self.env['credit.invoice_period_log'].search([('start_date', '<=', last_date_invoiced), ('end_date', '>=', last_date_invoiced)], order='end_date desc', limit=1)
+
+    last_credit_period_log = fields.Many2one('credit.invoice_period_log', string=u'Útimo período de facturación', compute=_compute_last_period, readonly=True)
     start_date = fields.Datetime(string='Fecha y Hora inicial')
     end_date = fields.Datetime(string='Fecha y Hora Final')
     end_date_copy = fields.Datetime(string='Fecha y Hora Final')
@@ -84,6 +98,24 @@ class ReportPosWizard(models.TransientModel):
                                                ('partner_id', 'in', partner_ids),
                                                ('credit_amount', '>', 0),
                                                ('date_order', '>=', start_date), ('date_order', '<=', end_date)])
+        last_period_amount = 0.0
+        if self.last_credit_period_log:
+            orders_last_period = self.env['pos.order'].search([('company_id', '=', self.company_id.id),
+                                                               ('partner_id', 'in', partner_ids),
+                                                               ('credit_amount', '>', 0),
+                                                               ('date_order', '>=',
+                                                                datetime(year=self.last_credit_period_log.start_date.year,
+                                                                         month=self.last_credit_period_log.start_date.month,
+                                                                         day=self.last_credit_period_log.start_date.day,
+                                                                         hour=0, minute=0, second=0)),
+                                                               ('date_order', '<=',
+                                                                datetime(year=self.last_credit_period_log.end_date.year,
+                                                                         month=self.last_credit_period_log.end_date.month,
+                                                                         day=self.last_credit_period_log.end_date.day,
+                                                                         hour=23, minute=59, second=59))])
+            for order in orders_last_period:
+                last_period_amount += order.credit_amount
+
         importes_por_persona = dict()
         res = []
         sum = 0
@@ -101,7 +133,7 @@ class ReportPosWizard(models.TransientModel):
                     'importe': value,
                     })
                 sum += value
-            return res, sum
+            return res, sum, last_period_amount
         else:
             raise ValidationError("No Tiene Información para Mostrar ")
 
@@ -114,7 +146,7 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def get_details(self):
-        res, sum = self.consult_credit_details()
+        res, sum, last_period_total = self.consult_credit_details()
 
         time_zone = self._context.get('tz')
         if not time_zone:
@@ -133,6 +165,7 @@ class ReportPosWizard(models.TransientModel):
             'cut_date': datetime.strftime(end_date, '%d-%b-%Y'),
             'client': self.partner_id,
             'days': diff.days + (1 if diff.seconds else 0),
+            'last_period_total': last_period_total
         }
         return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data, config=False)
 
