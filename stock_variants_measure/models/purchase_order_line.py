@@ -123,3 +123,10 @@ class purchase_order_line(models.Model):
         uom =  self.env['uom.uom'].search([('id','=',any_uom_id)],limit=1)
         uom_reference =  self.env['uom.uom'].search([('active','=',True),('category_id','=',uom.category_id.id), ('uom_type','=','reference')],limit=1)
         return uom_reference
+
+    @api.multi
+    def _prepare_stock_moves(self, picking):
+        res = super(purchase_order_line, self)._prepare_stock_moves(picking)
+        if res:
+            res[0]['product_uom_qty_purchase'] = self.qty_custom
+        return res
