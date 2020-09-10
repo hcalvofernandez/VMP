@@ -28,7 +28,7 @@ class purchase_order_line(models.Model):
     rendimiento = fields.Float('Rendimiento', digits = (12,3), store=True)
     qty_custom = fields.Float('Cantidad x Unidad', store=True, default=1.0)
     product_qty = fields.Float(string='Rendimiento', digits=dp.get_precision('Product Unit of Measure'), required=True, invisible=True)
-    cost_price = fields.Float('Precio Costo', default=0.0, digits=(16, 3), help="Costo por compra.")
+    cost_price = fields.Float('Precio Costo', default=0.0, digits=(16, 4), help="Costo por compra.")
 
     _columns = {
                     'rendimiento': fields.Float('Rendimiento'),
@@ -43,6 +43,18 @@ class purchase_order_line(models.Model):
         'product_qty': 1.0,
         'cost_price': 0.0
     }
+
+    @api.onchange('product_id')
+    def onchange_product_id(self):
+        result = super(purchase_order_line, self).onchange_product_id()
+        att_values = self.product_id.attribute_value_ids.mapped('id')
+        template_attributes = self.env['product.template.attribute.value'].search([
+            ('product_attribute_value_id', 'in', att_values)])
+        if template_attributes:
+            self.cost_price = template_attributes[0].cost_price
+        else:
+            self.cost_price = 0.0
+        return result
 
 
     @api.onchange('cost_price','product_id', 'price_unit', 'product_uom', 'product_qty', 'tax_id', 'qty_custom')
@@ -111,3 +123,10 @@ class purchase_order_line(models.Model):
         uom =  self.env['uom.uom'].search([('id','=',any_uom_id)],limit=1)
         uom_reference =  self.env['uom.uom'].search([('active','=',True),('category_id','=',uom.category_id.id), ('uom_type','=','reference')],limit=1)
         return uom_reference
+
+    @api.multi
+    def _prepare_stock_moves(self, picking):
+        res = super(purchase_order_line, self)._prepare_stock_moves(picking)
+        if res:
+            res[0]['product_uom_qty_purchase'] = self.qty_custom
+        return res
