@@ -18,6 +18,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/stock_inventory.xml',
+        # 'data/cron_inventory.xml'
     ],
     #'qweb': ['static/src/xml/*.xml'],
     'installable': True,

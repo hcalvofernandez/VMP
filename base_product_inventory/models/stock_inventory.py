@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, fields, api
+
+import pytz
 
 
 class StockInventory(models.Model):
@@ -9,6 +11,7 @@ class StockInventory(models.Model):
     base_product_ids = fields.One2many('base_product_inventory.base_product_line', 'stock_inventory_id',
                                        string='Base Product Lines')
     product_tmpl_id = fields.Many2one('product.template', string='Inventoried Product')
+    application_date = fields.Datetime(string='Application Date', required=True)
 
     def action_reset_product_qty(self):
         res = super(StockInventory, self).action_reset_product_qty()
@@ -103,6 +106,15 @@ class StockInventory(models.Model):
                     }))
 
         self.write({'line_ids': data})
+
+    @api.model
+    def cron_apply_validation(self):
+        _now = fields.Datetime.now().astimezone(pytz.utc)
+
+        domain = [('state', 'in', ['confirm']), ('application_date', '<=', _now)]
+        inventories_to_validate = self.search(domain)
+        for inv in inventories_to_validate:
+            inv.action_validate()
 
 
 class StockInventoryLine(models.Model):
