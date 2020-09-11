@@ -74,7 +74,7 @@ class Home(Website):
                 occupied = False
                 user = ''
                 pos_session = request.env['pos.session'].sudo().search(
-                    [('config_id', '=', pos.id), ('state', '=', 'opened')])
+                    [('config_id', '=', pos.id), ('state', '!=', 'closed')], limit=1, order='id desc')
                 if pos_session:
                     occupied = True
                     user = pos_session.user_id.name
