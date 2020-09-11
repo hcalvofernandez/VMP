@@ -12,13 +12,14 @@
                     <t t-foreach="pos_list" t-as="pos_dict">
                         <t t-set="pos" t-value="pos_dict['pos']"/>
                         <t t-set="occupied" t-value="pos_dict['occupied']"/>
+                        <t t-set="user" t-value="pos_dict['user']"/>
                         <div class="col-md-4">
                             <a t-if="not occupied" class="pos-card-content mt-3 d-flex" t-att-href="'/pos/select?cash_register=%s' % pos.id">
                                 <div class="w-25" t-if="pos.imagen">
                                     <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
                                 </div>
-                                <div class="w-75">
-                                    <h5>
+                                <div class="w-75 text-left">
+                                    <h5 class="ml-2 mb-0">
                                         <span t-field="pos.name"></span>
                                     </h5>
                                 </div>
@@ -28,10 +29,11 @@
                                 <div class="w-25" t-if="pos.imagen">
                                     <img class="img img-responsive w-100" t-att-src="image_data_uri(pos.imagen)"/>
                                 </div>
-                                <div class="w-75">
-                                    <h5>
+                                <div class="w-75 text-left">
+                                    <h5 class="ml-2 mb-0">
                                         <span t-field="pos.name"></span>
                                     </h5>
+                                    <p class="ml-2" t-esc="user"></p>
                                     <strong t-if="occupied" class="badge-pill badge-danger">Ocupada</strong>
                                 </div>
                                 <div class="clearfix"/>

@@ -25,10 +25,11 @@ class purchase_order(models.Model):
 class purchase_order_line(models.Model):
     _inherit = 'purchase.order.line'
     
-    rendimiento = fields.Float('Rendimiento', digits = (12,3), store=True)
+    rendimiento = fields.Float('Rendimiento', digits=(12, 3), store=True)
     qty_custom = fields.Float('Cantidad x Unidad', store=True, default=1.0)
     product_qty = fields.Float(string='Rendimiento', digits=dp.get_precision('Product Unit of Measure'), required=True, invisible=True)
     cost_price = fields.Float('Precio Costo', default=0.0, digits=(16, 4), help="Costo por compra.")
+    price_unit = fields.Float(digits=(16, 4))
 
     _columns = {
                     'rendimiento': fields.Float('Rendimiento'),

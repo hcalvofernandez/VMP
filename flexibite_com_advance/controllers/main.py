@@ -72,11 +72,13 @@ class Home(Website):
             pos_ids = request.env['pos.config'].search([('company_id', '=', request.env.user.company_id.id)])
             for pos in pos_ids:
                 occupied = False
+                user = ''
                 pos_session = request.env['pos.session'].sudo().search(
                     [('config_id', '=', pos.id), ('state', '=', 'opened')])
                 if pos_session:
                     occupied = True
-                pos_list.append({'occupied': occupied, 'pos': pos})
+                    user = pos_session.user_id.name
+                pos_list.append({'occupied': occupied, 'pos': pos, 'user': user})
 
             response = request.render('flexibite_com_advance.pos_selector', {'pos_list': pos_list})
             response.headers['X-Frame-Options'] = 'DENY'
