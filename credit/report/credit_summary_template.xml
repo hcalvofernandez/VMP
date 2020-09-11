@@ -121,7 +121,7 @@
                           </tr>
                           <tr>
                             <td>crédito disponible</td>
-                            <td class="text-right"><t t-esc="partner.remaining_credit_limit"
+                            <td class="text-right"><t t-esc="partner.credit_limit - float(total) * 1.16"
                                    t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
