@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-08 18:42+0000\n"
-"PO-Revision-Date: 2020-09-08 14:44-0400\n"
+"POT-Creation-Date: 2020-09-12 13:24+0000\n"
+"PO-Revision-Date: 2020-09-12 09:26-0400\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,11 @@ msgstr ""
 "Plural-Forms: \n"
 "Language: es_MX\n"
 "X-Generator: Poedit 2.3.1\n"
+
+#. module: base_product_inventory
+#: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__application_date
+msgid "Application Date"
+msgstr "Fecha de Aplicación"
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory_line__base_product_id
@@ -63,7 +68,6 @@ msgid "Include the base product in inventory adjustment"
 msgstr "Incluye el producto base en el ajuste de inventario"
 
 #. module: base_product_inventory
-#: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__product_id
 #: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__product_tmpl_id
 msgid "Inventoried Product"
 msgstr "Producto inventariado"
@@ -97,12 +101,12 @@ msgstr "Última modificación en"
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__write_uid
 msgid "Last Updated by"
-msgstr "Última actualización por"
+msgstr "Ultima actualización por"
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Ultima actualización en"
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__product_tmpl_id
@@ -115,11 +119,6 @@ msgid "Real Quantity"
 msgstr "Cantidad real"
 
 #. module: base_product_inventory
-#: model:ir.model.fields,help:base_product_inventory.field_stock_inventory__product_id
-msgid "Specify Product to focus your inventory on a particular Product."
-msgstr "Especifique producto para centrar su inventario en un producto en particular."
-
-#. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__base_theoretical_qty
 msgid "Theoretical Quantity"
 msgstr "Cantidad teórica"
@@ -128,6 +127,13 @@ msgstr "Cantidad teórica"
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__base_uom
 msgid "UoM"
 msgstr ""
+
+#. module: base_product_inventory
+#: model:ir.actions.server,name:base_product_inventory.cron_validate_inventory_ir_actions_server
+#: model:ir.cron,cron_name:base_product_inventory.cron_validate_inventory
+#: model:ir.cron,name:base_product_inventory.cron_validate_inventory
+msgid "Validate the Inventories in Application Date"
+msgstr "Valida los Inventarios en Fecha la Fecha de Aplicación"
 
 #. module: base_product_inventory
 #: model_terms:ir.ui.view,arch_db:base_product_inventory.view_inventory_form
