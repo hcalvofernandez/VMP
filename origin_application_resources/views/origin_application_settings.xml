@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="origin_application_settings_form" model="ir.ui.view">
+            <field name="name">Origin Application Settings Form</field>
+            <field name="model">origin_application_resources.settings</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group string="Ajustes de Diarios">
+                        <group>
+                            <field name="name" invisible="1"/>
+                            <field name="origin_journal_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="application_journal_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
