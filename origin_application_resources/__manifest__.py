@@ -13,9 +13,11 @@
     'depends': ['base', 'account'],
     'data': [
         'security/ir.model.access.csv',
-        'views/menus.xml',
+        'views/account_move_kanban.xml',
         'views/origin_application_settings.xml',
+        'views/menus.xml',
         'data/origin_application_settings_data.xml',
+        'data/resources_flow_data.xml',
     ],
     'application': True,
     'installable': True,

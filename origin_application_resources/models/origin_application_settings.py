@@ -9,3 +9,4 @@ class OriginApplicationSettings(models.Model):
     name = fields.Char(string='Name')
     origin_journal_ids = fields.Many2many("account.journal", "origin_resources_account_journal", string='Origin Journals')
     application_journal_ids = fields.Many2many("account.journal", "application_resources_account_journal", string='Application Journals')
+    liquidation_journal_id = fields.Many2one("account.journal", string="Liquidation Journal")

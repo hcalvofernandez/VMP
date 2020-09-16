@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="origin_application_show_kanban_act_window" model="ir.actions.act_window">
+            <field name="name">Origin and Application Dashboard</field>
+            <field name="res_model">origin_application_resources.resources_flow</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="view_id" ref="origin_application_dashboard_kanban_view"/>
+        </record>
+
         <act_window id="resources_origin_account_move_act_window"
                     name="Resources Origin Account Move"
                     res_model="account.move"
@@ -11,23 +19,37 @@
                     res_model="account.move"
                     view_mode="tree,form"/>
 
+        <record model="ir.actions.server" id="origin_application_show_kanban_action">
+            <field name="name">Origin Application Show Kanban</field>
+            <field name="model_id" ref="account.model_account_journal"/>
+            <field name="state">code</field>
+            <field name="code">
+origin_journals = env.ref("origin_application_resources.general_settings_data").origin_journal_ids.ids
+application_journals = env.ref("origin_application_resources.general_settings_data").application_journal_ids.ids
+if not origin_journals or not application_journals:
+    raise Warning("Please, set the journals in the configuration")
+action = env.ref("origin_application_resources.origin_application_show_kanban_act_window").read()[0]
+action["domain"] = [('id', 'in', (origin_journals + application_journals))]
+action["context"] = {"default_journal_id": origin_journals[0],
+                        "origin_journals": origin_journals,
+                        "application_journals": application_journals}
+            </field>
+        </record>
+
         <record model="ir.actions.server" id="resources_origin_account_move_action">
             <field name="name">Resources Origin Account Move</field>
             <field name="model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code">
 origin_journals = env.ref("origin_application_resources.general_settings_data").origin_journal_ids.ids
+if not origin_journals:
+    raise Warning("Please, set the journals in the configuration")
 action = env.ref("origin_application_resources.resources_origin_account_move_act_window").read()[0]
 action["domain"] = [('journal_id', 'in', origin_journals)]
 if origin_journals:
     action["context"] = {"default_journal_id": origin_journals[0]}
             </field>
         </record>
-<!--        <act_window id="resources_origin_account_move_action"-->
-<!--                    name="Resources Origin Account Move"-->
-<!--                    res_model="account.move"-->
-<!--                    view_mode="tree,form"-->
-<!--                    />-->
 
         <record model="ir.actions.server" id="resources_application_account_move_action">
             <field name="name">Resources Application Account Move</field>
@@ -35,17 +57,14 @@ if origin_journals:
             <field name="state">code</field>
             <field name="code">
 application_journals = env.ref("origin_application_resources.general_settings_data").application_journal_ids.ids
+if not application_journals:
+    raise Warning("Please, set the journals in the configuration")
 action = env.ref("origin_application_resources.resources_application_account_move_act_window").read()[0]
 action["domain"] = [('journal_id', 'in', application_journals)]
 if application_journals:
     action["context"] = {"default_journal_id": application_journals[0]}
             </field>
         </record>
-
-<!--        <act_window id="resources_application_account_move_action"-->
-<!--                    name="Resources Application Account Move"-->
-<!--                    res_model="account.move"-->
-<!--                    view_mode="tree,form"/>-->
 
         <record id="origin_application_settings_action" model="ir.actions.act_window">
             <field name="name">Settings</field>
@@ -60,6 +79,7 @@ if application_journals:
                   groups="account.group_account_manager"/>
         <menuitem id="dashboard_origin_application_resources_menu"
                   name="Dashboard"
+                  action="origin_application_show_kanban_act_window"
                   parent="origin_application_resources_menu"
                   groups="account.group_account_manager"/>
         <menuitem id="resources_origin_menu"
