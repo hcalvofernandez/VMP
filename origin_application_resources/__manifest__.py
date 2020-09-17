@@ -13,6 +13,7 @@
     'depends': ['base', 'account'],
     'data': [
         'security/ir.model.access.csv',
+        'views/search_views_account_move.xml',
         'views/account_move_kanban.xml',
         'views/origin_application_settings.xml',
         'views/menus.xml',
