@@ -29,6 +29,8 @@ class ResourcesFlow(models.Model):
         for rec in self:
             if rec.type == "origin":
                 result = rec.get_origin_total()
+                if not result[0]['total'] or not result[0]['total_pending']:
+                    continue
                 rec.total_settled = result[0]['total']-result[0]['total_pending']
                 rec.total = result[0]['total']
                 rec.diff = result[0]['total_pending']
@@ -36,6 +38,8 @@ class ResourcesFlow(models.Model):
             elif rec.type == "application":
                 origin = rec.get_origin_total()[0]['total_pending']
                 result = rec.get_applications_total()
+                if not result[0]['total'] or not result[0]['total_pending']:
+                    continue
                 rec.total_settled = result[0]['total']-result[0]['total_pending']
                 rec.total = result[0]['total']
                 rec.diff = result[0]['total_pending']
@@ -46,6 +50,10 @@ class ResourcesFlow(models.Model):
             elif rec.type == "liquidation":
                 origin = rec.get_origin_total()
                 application = rec.get_applications_total()
+                if not origin[0]['total'] or not origin[0]['total_pending']:
+                    continue
+                if not application[0]['total'] or not application[0]['total_pending']:
+                    continue
                 rec.total_settled = (origin[0]["total"] - origin[0]["total_pending"]) - (application[0]["total"] - application[0]["total_pending"])
                 rec.total = origin[0]["total"] - application[0]["total"]
                 rec.diff = origin[0]["total_pending"] - application[0]["total_pending"]
