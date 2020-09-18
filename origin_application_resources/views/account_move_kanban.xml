@@ -9,6 +9,7 @@
                     <field name="type"/>
                     <field name="color"/>
                     <field name="percent_in_origin"/>
+                    <field name="total_settled"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="#{kanban_color(record.color.raw_value)}">
@@ -18,8 +19,10 @@
                                     <div class="row">
                                         <div class="col-5 oe_left o_kanban_primary_left">
                                             <div style="border:1px solid black;">
-                                                <div class="bg-primary"
-                                                     t-attf-style='#{"width:"+record.percent_in_origin.raw_value+"%;height:15px;margin-top:5px;"}'>
+                                                <div class="bg-400" style="width:100%;height:15px;margin-top:5px;">
+                                                    <div class="bg-primary"
+                                                         t-attf-style='#{"width:"+record.percent_in_origin.raw_value+"%;height:100%;"}'>
+                                                    </div>
                                                 </div>
                                                 <h1 style="width:100%;text-align:center;">
                                                     <field name="percent_in_origin"></field>
@@ -82,8 +85,8 @@
                                 </div>
                             </div>
                             <div class="o_kanban_card_manage_settings row">
-                                <button type="object" name="open_action"
-                                        class="btn btn-primary" t-if="type_flow == 'liquidation'">
+                                <button type="object" name="settle_pending"
+                                        class="btn btn-primary" t-if="type_flow == 'liquidation and record.total_settled.raw_value > 0'">
                                     <span>Liquidar</span>
                                 </button>
                             </div>
@@ -293,6 +296,14 @@
                     </templates>
                 </kanban>
             </field>
+        </record>
+
+        <record id="origin_application_show_kanban_act_window" model="ir.actions.act_window">
+            <field name="name">Origin and Application Dashboard</field>
+            <field name="res_model">origin_application_resources.resources_flow</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="view_id" ref="origin_application_dashboard_kanban_view"/>
         </record>
     </data>
 </odoo>

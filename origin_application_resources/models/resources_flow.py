@@ -29,38 +29,35 @@ class ResourcesFlow(models.Model):
         for rec in self:
             if rec.type == "origin":
                 result = rec.get_origin_total()
-                if not result[0]['total'] or not result[0]['total_pending']:
+                if not result[0]['total']:
                     continue
                 rec.total_settled = result[0]['total']-result[0]['total_pending']
                 rec.total = result[0]['total']
                 rec.diff = result[0]['total_pending']
-                rec.percent_in_origin = 100.0
+                if result[0]['total_pending'] > 0:
+                    rec.percent_in_origin = 100.0
             elif rec.type == "application":
                 origin = rec.get_origin_total()[0]['total_pending']
                 result = rec.get_applications_total()
-                if not result[0]['total'] or not result[0]['total_pending']:
+                if not result[0]['total']:
                     continue
                 rec.total_settled = result[0]['total']-result[0]['total_pending']
                 rec.total = result[0]['total']
                 rec.diff = result[0]['total_pending']
-                if origin > 0:
+                if origin and origin > 0:
                     rec.percent_in_origin = rec.diff/origin*100
-                else:
-                    rec.percent_in_origin = 0
             elif rec.type == "liquidation":
                 origin = rec.get_origin_total()
                 application = rec.get_applications_total()
-                if not origin[0]['total'] or not origin[0]['total_pending']:
+                if not origin[0]['total']:
                     continue
-                if not application[0]['total'] or not application[0]['total_pending']:
+                if not application[0]['total']:
                     continue
                 rec.total_settled = (origin[0]["total"] - origin[0]["total_pending"]) - (application[0]["total"] - application[0]["total_pending"])
                 rec.total = origin[0]["total"] - application[0]["total"]
                 rec.diff = origin[0]["total_pending"] - application[0]["total_pending"]
                 if origin[0]["total_pending"] > 0:
                     rec.percent_in_origin = rec.diff/origin[0]["total_pending"]*100
-                else:
-                    rec.percent_in_origin = 0
 
 
     @api.model
@@ -78,7 +75,10 @@ class ResourcesFlow(models.Model):
                                 AND am.company_id = %s
                                 AND am.is_settled IN (true,false)
                             """ % (str(origin_journals)[1:-1], str(self.env.user.company_id.id))
-
+        if "start_date" in self.env.context:
+            origin_total_sql += """AND am.date >= '%s'
+            AND am.date <= '%s'
+            """ % (self._context.get("start_date"), self._context.get("end_date"))
         self.env.cr.execute(origin_total_sql)
         return self.env.cr.dictfetchall()
 
@@ -97,17 +97,25 @@ class ResourcesFlow(models.Model):
                                 AND am.company_id = %s
                                 AND am.is_settled IN (true, false)
                             """ % (str(application_journals)[1:-1], str(self.env.user.company_id.id))
+        if "start_date" in self.env.context:
+            application_total_sql += """AND am.date >= '%s'
+            AND am.date <= '%s'
+            """ % (self._context.get("start_date"), self._context.get("end_date"))
         self.env.cr.execute(application_total_sql)
         return self.env.cr.dictfetchall()
+
+    @api.multi
+    def open_settings(self):
+        action = self.env.ref('origin_application_resources.origin_application_settings_action').read()[0]
+        action['name'] = _("Please, configure the journals.")
+        action['target'] = 'new'
+        return action
 
     @api.multi
     def settle_pending(self):
         settings = self.env.ref("origin_application_resources.general_settings_data")
         journals = settings.origin_journal_ids.ids + settings.application_journal_ids.ids + [
             settings.liquidation_journal_id.id]
-        # origin_pending = self.env.ref("origin_application_resources.origin_resource_flow_data")
-        # application_pending = self.env.ref("origin_application_resources.application_resource_flow_data")
-        # liquidation_pending = self.env.ref("origin_application_resources.liquidation_flow_data")
 
         account_move = self.env['account.move'].search([('is_settled', '=', False), ('journal_id', 'in', journals)])
         account_move.write({

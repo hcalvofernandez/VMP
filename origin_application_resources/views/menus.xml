@@ -1,87 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="origin_application_show_kanban_act_window" model="ir.actions.act_window">
-            <field name="name">Origin and Application Dashboard</field>
-            <field name="res_model">origin_application_resources.resources_flow</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">kanban,form</field>
-            <field name="view_id" ref="origin_application_dashboard_kanban_view"/>
-        </record>
-
-        <act_window id="resources_origin_account_move_act_window"
-                    name="Resources Origin Account Move"
-                    res_model="account.move"
-                    view_mode="tree,form"/>
-
-        <act_window id="resources_application_account_move_act_window"
-                    name="Resources Application Account Move"
-                    res_model="account.move"
-                    view_mode="tree,form"/>
-
-        <act_window id="liquidation_account_move_act_window"
-                    name="Liquidation Account Move"
-                    res_model="account.move"
-                    view_mode="tree,form"/>
-
-        <record model="ir.actions.server" id="resources_origin_account_move_action">
-            <field name="name">Resources Origin Account Move</field>
-            <field name="model_id" ref="account.model_account_move"/>
-            <field name="state">code</field>
-            <field name="code">
-origin_journals = env.ref("origin_application_resources.general_settings_data").origin_journal_ids.ids
-if not origin_journals:
-    raise Warning("Please, set the journals in the configuration")
-action = env.ref("origin_application_resources.resources_origin_account_move_act_window").read()[0]
-action["domain"] = [('journal_id', 'in', origin_journals)]
-action['context'] = env.context
-if origin_journals:
-    action["context"]["default_journal_id"] = origin_journals[0]
-            </field>
-        </record>
-
-        <record model="ir.actions.server" id="resources_application_account_move_action">
-            <field name="name">Resources Application Account Move</field>
-            <field name="model_id" ref="account.model_account_move"/>
-            <field name="state">code</field>
-            <field name="code">
-application_journals = env.ref("origin_application_resources.general_settings_data").application_journal_ids.ids
-if not application_journals:
-    raise Warning("Please, set the journals in the configuration")
-action = env.ref("origin_application_resources.resources_application_account_move_act_window").read()[0]
-action["domain"] = [('journal_id', 'in', application_journals)]
-action['context'] = env.context
-if application_journals:
-    action["context"]["default_journal_id"] = application_journals[0]
-            </field>
-        </record>
-
-        <record model="ir.actions.server" id="liquidation_account_move_action">
-            <field name="name">Resources Application Account Move</field>
-            <field name="model_id" ref="account.model_account_move"/>
-            <field name="state">code</field>
-            <field name="code">
-liquidation_journal = env.ref("origin_application_resources.general_settings_data").liquidation_journal_id.id
-if not liquidation_journal:
-    raise Warning("Please, set the journals in the configuration")
-action = env.ref("origin_application_resources.liquidation_account_move_act_window").read()[0]
-action["domain"] = [('journal_id', '=', liquidation_journal)]
-action['context'] = env.context
-action["context"]["default_journal_id"] = liquidation_journal
-            </field>
-        </record>
-
-        <record id="origin_application_settings_action" model="ir.actions.act_window">
-            <field name="name">Settings</field>
-            <field name="res_model">origin_application_resources.settings</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="res_id">1</field>
-        </record>
-
         <menuitem id="origin_application_resources_menu"
                   name="Origin and Application of Resources"
-                  groups="account.group_account_manager"/>
+                  groups="account.group_account_manager"
+                  web_icon="origin_application_resources,static/description/icon.png"/>
         <menuitem id="dashboard_origin_application_resources_menu"
                   name="Dashboard"
                   action="origin_application_show_kanban_act_window"
@@ -108,11 +31,21 @@ action["context"]["default_journal_id"] = liquidation_journal
                   action="liquidation_account_move_action"
                   parent="operation_resources_menu"
                   groups="account.group_account_manager"/>
+        <menuitem id="origin_application_report_menu"
+                  name="Reports"
+                  parent="origin_application_resources_menu"
+                  groups="account.group_account_manager"
+                  sequence="3"/>
+        <menuitem id="origin_application_resources_report_menu"
+                  name="Origin and Application of Resources Report"
+                  action="origin_application_wizard_action"
+                  parent="origin_application_report_menu"
+                  groups="account.group_account_manager"/>
         <menuitem id="origin_application_configuration_menu"
                   name="Configuration"
                   parent="origin_application_resources_menu"
                   groups="account.group_account_manager"
-                  sequence="3"/>
+                  sequence="4"/>
         <menuitem id="origin_application_settings_menu"
                   name="Settings"
                   action="origin_application_settings_action"
