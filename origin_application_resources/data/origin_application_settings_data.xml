@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="general_settings_data" model="origin_application_resources.settings">
+            <field name="name">Ajustes</field>
+        </record>
+    </data>
+</odoo>

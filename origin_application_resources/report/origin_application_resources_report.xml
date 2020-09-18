@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="reports_assets_common" inherit_id="web.report_assets_common">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/css"
+                      href="/origin_application_resources/static/src/css/stylesheets.css"/>
+            </xpath>
+        </template>
+
+        <template id="report_document">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <t t-if="user" t-set="lang" t-value="user.lang"/>
+                    <div class="page" t-lang="lang">
+                        <h1>Source and Application of Resources State</h1>
+                        <p><span>De </span>
+                            <t t-esc="start_date" t-options='{"widget": "date"}'/>
+                            <span> a </span>
+                            <t t-esc="end_date" t-options='{"widget": "date"}'/>
+                        </p>
+                        <table class="main_table">
+                            <thead>
+                                <tr>
+                                    <th class="width-desc">Description</th>
+                                    <th class="text-right">Parcial</th>
+                                    <th class="text-right">Value</th>
+                                    <th class="text-right">Percent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Origen</td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        $ <t t-esc="origin['value']" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="origin['percent']" t-options='{"widget": "float", "precision": 1}'/>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Aplicaciones</td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        $ <t t-esc="application['value']" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-if="origin['value']>0"
+                                           t-esc="application['value']/origin['value']*100"
+                                           t-options='{"widget": "float", "precision": 1}'/>%
+                                    </td>
+                                </tr>
+                                <t t-value="application['value']" t-set="result"/>
+                                <tr t-foreach="application_details" t-as="ad">
+                                    <td>
+                                        <span class="identation" t-esc="ad['name']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        $ <span t-esc="ad['vals']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <t t-set="result" t-value="result - ad['vals']"/>
+                                    <td></td>
+                                    <td class="text-right">
+                                        <span t-if="origin['value']>0"
+                                              t-esc="ad['vals']/origin['value']*100" t-options='{"widget": "float", "precision": 1}'/>%
+                                    </td>
+                                </tr>
+                                <tr t-if="result > 0">
+                                    <td><span class="identation">Aplicaciones sin detallar</span></td>
+                                    <td class="text-right">
+                                        $ <span t-esc="result"  t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        <span t-if="origin['value']>0"
+                                              t-esc="result/origin['value']*100" t-options='{"widget": "float", "precision": 1}'/>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Liquidado</td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        $ <t t-esc="liquidation['settled']"
+                                             t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-if="origin['value']>0"
+                                           t-esc="liquidation['settled']/origin['value']*100"
+                                           t-options='{"widget": "float", "precision": 1}'/>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Por Liquidar</td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        $ <t t-esc="liquidation['to_settle']" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="liquidation['percent']" t-options='{"widget": "float", "precision": 1}'/>%
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </t>
+            </t>
+        </template>
+
+        <report id="origin_application_resources_report"
+            model="origin_application_resources.resources_flow"
+            string="Origin and Applications of Resources"
+            report_type="qweb-pdf"
+            name="origin_application_resources.report_document"
+            file="report.origin_application_resources.report_document"
+            print_report_name="'Origin and Application Report'"/>
+    </data>
+</odoo>

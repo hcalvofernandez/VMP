@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="search_views_account_move" model="ir.ui.view">
+            <field name="name">search views account move</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_move_filter"/>
+            <field name="arch" type="xml">
+                <filter name="misc_filter" position="after">
+                    <separator/>
+                    <filter string="Settled" name="settled" domain="[('is_settled', '=', True)]"/>
+                    <filter string="To Settle" name="to_settle" domain="[('is_settled', '=', False)]"/>
+                </filter>
+            </field>
+        </record>
+    </data>
+</odoo>

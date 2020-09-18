@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {
     'name': 'Base Product Inventory',
     'description': "Modify the inventory document to include the base product",

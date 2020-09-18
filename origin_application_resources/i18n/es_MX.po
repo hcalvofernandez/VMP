@@ -1,0 +1,387 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* origin_application_resources
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-18 01:10+0000\n"
+"PO-Revision-Date: 2020-09-17 21:15-0400\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: es_MX\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "<i class=\"fa fa-ellipsis-v\" aria-label=\"Selection\" role=\"img\" title=\"Selection\"/>"
+msgstr "<i class=\"fa fa-ellipsis-v\" aria-label=\"Selección\" role=\"img\" title=\"Selección\"/>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "<span role=\"separator\">Nuevo</span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Application Settled\">\n"
+"                                                Aplicación Liquidada\n"
+"                                            </span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Application to Settle\">\n"
+"                                                Aplicación a Liquidar\n"
+"                                            </span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Origin Settled\">\n"
+"                                                Origen Liquidado\n"
+"                                            </span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Origin to Settle\">\n"
+"                                                Origen a Liquidar\n"
+"                                            </span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Settled\">\n"
+"                                                Liquidado\n"
+"                                            </span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"To Settle\">\n"
+"                                                A Liquidar\n"
+"                                            </span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "<span>Liquidar</span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "Ajustes"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_settings_form
+msgid "Ajustes de Diarios"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "Aplicación"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__application_journal_ids
+msgid "Application Journals"
+msgstr "Diarios de Aplicaciones"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.resources_application_menu
+msgid "Applications"
+msgstr "Aplicaciones"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__color
+msgid "Color Index"
+msgstr "Índice de Colores"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_configuration_menu
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_report_wizard
+msgid "Configuration of the report dates"
+msgstr "Configuración de las fechas del reporte"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
+msgid "Configure report date ranges"
+msgstr "Configura los rangos de fecha del reporte"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__create_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__create_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__create_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__create_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.dashboard_origin_application_resources_menu
+msgid "Dashboard"
+msgstr "Tablero"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__diff
+msgid "Difference"
+msgstr "Diferencia"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_report_origin_application_resources_report_document__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__end_date
+msgid "Fecha Final"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__start_date
+msgid "Fecha inicial"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Hola Mundo"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_report_origin_application_resources_report_document__id
+msgid "ID"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move__is_settled
+msgid "Is Settled"
+msgstr "Esta Liquidada"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_account_move
+msgid "Journal Entries"
+msgstr "Asientos contables"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_report_origin_application_resources_report_document____last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__write_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__write_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__write_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__write_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "Liquidación"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.resources_liquidation_menu
+#: selection:origin_application_resources.resources_flow,type:0
+msgid "Liquidation"
+msgstr "Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.liquidation_account_move_act_window
+msgid "Liquidation Account Move"
+msgstr "Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__liquidation_journal_id
+msgid "Liquidation Journal"
+msgstr "Diario de Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.operation_resources_menu
+msgid "Operations"
+msgstr "Operaciones"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "Origen"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__origin_journal_ids
+msgid "Origin Journals"
+msgstr "Diarios de Origen"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.origin_application_show_kanban_act_window
+msgid "Origin and Application Dashboard"
+msgstr "Tablero de Origen y Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_resources_menu
+msgid "Origin and Application of Resources"
+msgstr "Origen y Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_resources_report_menu
+msgid "Origin and Application of Resources Report"
+msgstr "Reporte Origen y Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.actions.report,name:origin_application_resources.origin_application_resources_report
+msgid "Origin and Applications of Resources"
+msgstr "Origen y Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.resources_origin_menu
+msgid "Origins"
+msgstr "Orígenes"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/resources_flow.py:110
+#, python-format
+msgid "Please, configure the journals."
+msgstr "Por favor, configure los diarios."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/resources_flow.py:68
+#: code:addons/origin_application_resources/models/resources_flow.py:90
+#: code:addons/origin_application_resources/report/report_document.py:42
+#, python-format
+msgid "Please, set the journals in the configuration"
+msgstr "Por favor, establezca los diarios en configuración"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
+msgid "Print"
+msgstr "Imprimir"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.origin_application_wizard_action
+msgid "Report Configuration"
+msgstr "Configuración del Reporte"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_report_menu
+msgid "Reports"
+msgstr "Informes"
+
+#. module: origin_application_resources
+#: selection:origin_application_resources.resources_flow,type:0
+msgid "Resources Application"
+msgstr "Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.resources_application_account_move_act_window
+#: model:ir.actions.server,name:origin_application_resources.liquidation_account_move_action
+#: model:ir.actions.server,name:origin_application_resources.resources_application_account_move_action
+msgid "Resources Application Account Move"
+msgstr "Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: selection:origin_application_resources.resources_flow,type:0
+msgid "Resources Origin"
+msgstr "Origen de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.resources_origin_account_move_act_window
+#: model:ir.actions.server,name:origin_application_resources.resources_origin_account_move_action
+msgid "Resources Origin Account Move"
+msgstr "Origen de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.origin_application_settings_action
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_settings_menu
+msgid "Settings"
+msgstr "Ajustes"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "Settled"
+msgstr "Liquidado"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "To Settle"
+msgstr "A Liquidar"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total
+msgid "Total"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total_settled
+msgid "Total Settled"
+msgstr "Total Liquidado"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_resources_flow
+msgid "manage the origin and application of resources"
+msgstr "gestiona el origen y la aplicación de recursos"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_settings
+msgid "origin_application_resources.settings"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__percent_in_origin
+msgid "percent"
+msgstr "porciento"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_report_origin_application_resources_report_document
+msgid "report.origin_application_resources.report_document"
+msgstr ""

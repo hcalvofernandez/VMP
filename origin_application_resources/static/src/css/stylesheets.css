@@ -1,0 +1,31 @@
+.page{
+    padding-top: 50px;
+}
+
+.page .main_table{
+    width: 100%;
+    border-collapse: initial !important;
+    border: 1px solid black;
+    border-radius:10px;
+    padding:10px;
+}
+
+td .identation{
+    margin-left: 30px;
+}
+
+.main_table tr{
+    border-bottom: 1px solid black;
+}
+
+table th.width-desc{
+    width: 60%;
+}
+
+table td .text-center{
+    text-align: center;
+}
+
+table td .text-right{
+    text-align: right;
+}

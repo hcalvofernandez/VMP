@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="origin_application_resources_menu"
+                  name="Origin and Application of Resources"
+                  groups="account.group_account_manager"
+                  web_icon="origin_application_resources,static/description/icon.png"/>
+        <menuitem id="dashboard_origin_application_resources_menu"
+                  name="Dashboard"
+                  action="origin_application_show_kanban_act_window"
+                  parent="origin_application_resources_menu"
+                  groups="account.group_account_manager"
+                  sequence="1"/>
+        <menuitem id="operation_resources_menu"
+                  name="Operations"
+                  parent="origin_application_resources_menu"
+                  groups="account.group_account_manager"
+                  sequence="2"/>
+        <menuitem id="resources_origin_menu"
+                  name="Origins"
+                  action="resources_origin_account_move_action"
+                  parent="operation_resources_menu"
+                  groups="account.group_account_manager"/>
+        <menuitem id="resources_application_menu"
+                  name="Applications"
+                  action="resources_application_account_move_action"
+                  parent="operation_resources_menu"
+                  groups="account.group_account_manager"/>
+        <menuitem id="resources_liquidation_menu"
+                  name="Liquidation"
+                  action="liquidation_account_move_action"
+                  parent="operation_resources_menu"
+                  groups="account.group_account_manager"/>
+        <menuitem id="origin_application_report_menu"
+                  name="Reports"
+                  parent="origin_application_resources_menu"
+                  groups="account.group_account_manager"
+                  sequence="3"/>
+        <menuitem id="origin_application_resources_report_menu"
+                  name="Origin and Application of Resources Report"
+                  action="origin_application_wizard_action"
+                  parent="origin_application_report_menu"
+                  groups="account.group_account_manager"/>
+        <menuitem id="origin_application_configuration_menu"
+                  name="Configuration"
+                  parent="origin_application_resources_menu"
+                  groups="account.group_account_manager"
+                  sequence="4"/>
+        <menuitem id="origin_application_settings_menu"
+                  name="Settings"
+                  action="origin_application_settings_action"
+                  parent="origin_application_configuration_menu"
+                  groups="account.group_account_manager"/>
+    </data>
+</odoo>

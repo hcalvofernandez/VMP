@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="origin_resource_flow_data" model="origin_application_resources.resources_flow">
+            <field name="type">origin</field>
+        </record>
+        <record id="application_resource_flow_data" model="origin_application_resources.resources_flow">
+            <field name="type">application</field>
+        </record>
+        <record id="liquidation_flow_data" model="origin_application_resources.resources_flow">
+            <field name="type">liquidation</field>
+        </record>
+    </data>
+</odoo>
