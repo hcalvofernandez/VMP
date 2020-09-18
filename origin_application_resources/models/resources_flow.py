@@ -65,7 +65,7 @@ class ResourcesFlow(models.Model):
         origin_journals = self.env.ref(
             "origin_application_resources.general_settings_data").origin_journal_ids.ids
         if not origin_journals:
-            raise ValidationError(_("Please, set the journals in the configuration"))
+            return [{"total": 0, "total_pending": 0}]
         origin_total_sql = """SELECT
                                 SUM(aml.debit) AS total,
                                 SUM(CASE WHEN am.is_settled = false THEN aml.debit ELSE 0 END) AS total_pending
@@ -87,7 +87,7 @@ class ResourcesFlow(models.Model):
         application_journals = self.env.ref(
             "origin_application_resources.general_settings_data").application_journal_ids.ids
         if not application_journals:
-            raise ValidationError(_("Please, set the journals in the configuration"))
+            return [{"total": 0, "total_pending": 0}]
         application_total_sql = """SELECT
                                 SUM(aml.credit) AS total,
                                 SUM(CASE WHEN am.is_settled = false THEN aml.credit ELSE 0 END) AS total_pending
