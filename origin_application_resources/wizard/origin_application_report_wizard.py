@@ -6,8 +6,8 @@ class ReportWizard(models.TransientModel):
     _name = 'origin_application_resources.report_wizard'
     _description = 'Configuration of the report dates'
 
-    start_date = fields.Date(string='Fecha inicial', required=True)
-    end_date = fields.Date(string='Fecha Final', required=True)
+    start_date = fields.Date(string='Fecha inicial', required=True, default=fields.Date.context_today)
+    end_date = fields.Date(string='Fecha Final', required=True, default=fields.Date.context_today)
 
     @api.multi
     def print_report(self):
