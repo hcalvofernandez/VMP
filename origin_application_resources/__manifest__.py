@@ -17,6 +17,7 @@
         'views/actions.xml',
         'views/account_move_kanban.xml',
         'views/origin_application_settings.xml',
+        'views/account_move.xml',
         'data/origin_application_settings_data.xml',
         'data/resources_flow_data.xml',
         'report/origin_application_resources_report.xml',

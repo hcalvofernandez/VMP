@@ -60,6 +60,7 @@ action = env.ref("origin_application_resources.liquidation_account_move_act_wind
 action["domain"] = [('journal_id', '=', liquidation_journal),('is_settled', '!=', None)]
 action['context'] = env.context
 action["context"]["default_journal_id"] = liquidation_journal
+action['context']["default_liquidation_id"] = env.ref("origin_application_resources.liquidation_flow_data").id
             </field>
         </record>
 

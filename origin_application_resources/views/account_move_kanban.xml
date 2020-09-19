@@ -53,14 +53,11 @@
                                            t-if="type_flow == 'application'">
                                             <field name="type"/>
                                         </a>
-                                        <t type="action" name="%(liquidation_account_move_action)d"
+                                        <a type="action" name="%(liquidation_account_move_action)d"
                                            t-if="type_flow == 'liquidation'">
                                             <field name="type"/>
-                                        </t>
+                                        </a>
                                     </div>
-<!--                                    <div class="o_secondary" t-att-title="dashboard.title">-->
-<!--                                        <field name="type"/>-->
-<!--                                    </div>-->
                                 </div>
                                 <div class="o_kanban_manage_button_section">
                                     <a class="o_kanban_manage_toggle_button" href="#">
@@ -86,7 +83,7 @@
                             </div>
                             <div class="o_kanban_card_manage_settings row">
                                 <button type="object" name="settle_pending"
-                                        class="btn btn-primary" t-if="type_flow == 'liquidation and record.total_settled.raw_value > 0'">
+                                        class="btn btn-primary" t-if="type_flow == 'liquidation' and record.diff.raw_value > 0">
                                     <span>Liquidar</span>
                                 </button>
                             </div>

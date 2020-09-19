@@ -42,7 +42,7 @@ class ReportDocument(models.AbstractModel):
             raise ValidationError(_("Please, set the journals in the configuration"))
         application_details_sql = """SELECT
                                     aaa.name AS name,
-                                    SUM(aml.debit - aml.credit) AS vals
+                                    SUM(aml.credit - aml.debit) AS vals
                                     FROM account_move_line AS aml
                                     INNER JOIN account_move AS am ON am.id = aml.move_id
                                     INNER JOIN account_analytic_account AS aaa ON aaa.id = aml.analytic_account_id
@@ -52,6 +52,7 @@ class ReportDocument(models.AbstractModel):
                                     AND am.is_settled IN (true, false)
                                     AND am.date >= '%s'
                                     AND am.date <= '%s'
+                                    AND am.state = 'posted'
                                     GROUP BY aaa.name
                                     """ % (str(application_journals.ids)[1:-1], str(account_ids)[1:-1],
                                            str(self.env.user.company_id.id),
