@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 import pytz
 
@@ -8,11 +8,23 @@ import pytz
 class StockInventory(models.Model):
     _inherit = 'stock.inventory'
 
+    category_ids = fields.Many2many('product.category', string="Product Categories",
+                                    readonly=True, states={'draft': [('readonly', False)]},
+                                    help="Specify Product Categories to focus your inventory on particular categories.")
     base_product_ids = fields.One2many('base_product_inventory.base_product_line', 'stock_inventory_id',
                                        string='Base Product Lines')
     product_tmpl_id = fields.Many2one('product.template', string='Inventoried Product')
     application_date = fields.Datetime(string='Application Date', required=True)
 
+    @api.model
+    def _selection_filter(self):
+        """ Get the list of filter allowed according to the options checked
+        in 'Settings\Warehouse'. """
+        res = super(StockInventory, self)._selection_filter()
+        res.insert(2, ('categories', _('Multiple product categories')))
+        return res
+
+    
     def action_reset_product_qty(self):
         res = super(StockInventory, self).action_reset_product_qty()
         self.mapped('base_product_ids').write({'base_product_qty': 0})
@@ -51,18 +63,20 @@ class StockInventory(models.Model):
         # if self.lot_id:
         #     domain.append(('lot_id', '=', self.lot_id.id))
         # case 3: Filter on One product
-        if self.product_tmpl_id:
+        if self.filter == 'product':
             domain.append(('id', '=', self.product_tmpl_id.id))
         # #case 4: Filter on A Pack
         # if self.package_id:
         #     domain.append(('package_id', '=', self.package_id.id))
         # case 5: Filter on One product category + Exahausted Products
-        if self.category_id:
+        if self.filter == 'category':
             domain.append(('categ_id', 'child_of', self.category_id.id))
+        if self.filter == 'categories':
+            domain.append(('categ_id', 'child_of', self.category_ids.ids))
         if not self.exhausted:
             domain.append(('qty_available', '>', 0))
 
-        products = product_ids.search(domain).read(['id', 'qty_available'])
+        products = product_ids.search(domain, order='name asc').read(['id', 'qty_available'])
         return products
 
     def action_validate(self):

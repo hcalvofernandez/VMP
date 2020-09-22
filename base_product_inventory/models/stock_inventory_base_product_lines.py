@@ -11,6 +11,7 @@ class StockInventoryBaseProductLines(models.Model):
     stock_inventory_lines = fields.One2many('stock.inventory.line', 'base_product_id', string='Inventory Lines',
                                             ondelete='cascade')
     product_tmpl_id = fields.Many2one('product.template', string='Product')
+    location_id = fields.Many2one(related="product_tmpl_id.location_id")
     base_uom = fields.Many2one('uom.uom', related='product_tmpl_id.uom_id', string='UoM')
     base_theoretical_qty = fields.Float(string='Theoretical Quantity', readonly=True)
     base_product_qty = fields.Float(string='Real Quantity')
