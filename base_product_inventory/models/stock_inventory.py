@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 import pytz
 
@@ -8,10 +8,47 @@ import pytz
 class StockInventory(models.Model):
     _inherit = 'stock.inventory'
 
+    category_ids = fields.Many2many('product.category', string="Product Categories",
+                                    readonly=True, states={'draft': [('readonly', False)]},
+                                    help="Specify Product Categories to focus your inventory on particular categories.")
     base_product_ids = fields.One2many('base_product_inventory.base_product_line', 'stock_inventory_id',
                                        string='Base Product Lines')
     product_tmpl_id = fields.Many2one('product.template', string='Inventoried Product')
     application_date = fields.Datetime(string='Application Date', required=True)
+    theoretical_cost_amount = fields.Float(string='Theoretical Cost Amount', compute="compute_cost_amount")
+    real_cost_amount = fields.Float(string='Real Cost Amount', compute="compute_cost_amount")
+    cost_difference = fields.Float(string="Cost Difference", compute="compute_cost_amount")
+
+    @api.depends('base_product_ids.base_standard_price', 'base_product_ids.base_theoretical_qty',
+                 'base_product_ids.base_product_qty')
+    def compute_cost_amount(self):
+        for inv in self:
+            result = False
+            if inv.base_product_ids:
+                cost_sql = """SELECT 
+                SUM(bpl.base_standard_price * bpl.base_theoretical_qty) AS theoretical_cost,
+                SUM(bpl.base_standard_price * bpl.base_product_qty) AS real_cost
+                FROM base_product_inventory_base_product_line AS bpl
+                WHERE bpl.id in (%s)""" % str(inv.base_product_ids.mapped('id'))[1:-1]
+                self.env.cr.execute(cost_sql)
+                result = self.env.cr.dictfetchall()
+            if result:
+                inv.theoretical_cost_amount = result[0]['theoretical_cost']
+                inv.real_cost_amount = result[0]['real_cost']
+                inv.cost_difference = abs(result[0]['theoretical_cost'] - result[0]['real_cost'])
+            else:
+                inv.theoretical_cost_amount = 0
+                inv.real_cost_amount = 0
+                inv.cost_difference = 0
+
+
+    @api.model
+    def _selection_filter(self):
+        """ Get the list of filter allowed according to the options checked
+        in 'Settings\Warehouse'. """
+        res = super(StockInventory, self)._selection_filter()
+        res.insert(2, ('categories', _('Multiple product categories')))
+        return res
 
     def action_reset_product_qty(self):
         res = super(StockInventory, self).action_reset_product_qty()
@@ -51,18 +88,20 @@ class StockInventory(models.Model):
         # if self.lot_id:
         #     domain.append(('lot_id', '=', self.lot_id.id))
         # case 3: Filter on One product
-        if self.product_tmpl_id:
+        if self.filter == 'product':
             domain.append(('id', '=', self.product_tmpl_id.id))
         # #case 4: Filter on A Pack
         # if self.package_id:
         #     domain.append(('package_id', '=', self.package_id.id))
         # case 5: Filter on One product category + Exahausted Products
-        if self.category_id:
+        if self.filter == 'category':
             domain.append(('categ_id', 'child_of', self.category_id.id))
+        if self.filter == 'categories':
+            domain.append(('categ_id', 'child_of', self.category_ids.ids))
         if not self.exhausted:
             domain.append(('qty_available', '>', 0))
 
-        products = product_ids.search(domain).read(['id', 'qty_available'])
+        products = product_ids.search(domain, order='name asc').read(['id', 'qty_available'])
         return products
 
     def action_validate(self):
