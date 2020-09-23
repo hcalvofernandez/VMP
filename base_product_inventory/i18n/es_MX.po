@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 17:56+0000\n"
-"PO-Revision-Date: 2020-09-22 13:58-0400\n"
+"POT-Creation-Date: 2020-09-23 15:07+0000\n"
+"PO-Revision-Date: 2020-09-23 11:09-0400\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,21 @@ msgstr "Producto Base"
 #: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__base_product_ids
 msgid "Base Product Lines"
 msgstr "Líneas de Producto Base"
+
+#. module: base_product_inventory
+#: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__base_standard_price
+msgid "Cost"
+msgstr "Coste"
+
+#. module: base_product_inventory
+#: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__cost_difference
+msgid "Cost Difference"
+msgstr "Diferencia"
+
+#. module: base_product_inventory
+#: model:ir.model.fields,help:base_product_inventory.field_base_product_inventory_base_product_line__base_standard_price
+msgid "Cost used for stock valuation in standard price and as a first price to set in average/FIFO."
+msgstr "Costo usado para la valuación de inventario en precio estándar y como primer precio a establecer en promedio/FIFO."
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__create_uid
@@ -60,7 +75,7 @@ msgstr "Nombre mostrado"
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: base_product_inventory
 #: model:ir.model,name:base_product_inventory.model_base_product_inventory_base_product_line
@@ -109,7 +124,12 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: base_product_inventory
-#: code:addons/base_product_inventory/models/stock_inventory.py:24
+#: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__location_id
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: base_product_inventory
+#: code:addons/base_product_inventory/models/stock_inventory.py:50
 #, python-format
 msgid "Multiple product categories"
 msgstr "Varias categorías de producto"
@@ -125,6 +145,11 @@ msgid "Product Categories"
 msgstr "Categorías de productos"
 
 #. module: base_product_inventory
+#: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__real_cost_amount
+msgid "Real Cost Amount"
+msgstr "Inventario Físico"
+
+#. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__base_product_qty
 msgid "Real Quantity"
 msgstr "Cantidad real"
@@ -135,9 +160,19 @@ msgid "Specify Product Categories to focus your inventory on particular categori
 msgstr "Especifique las categorías de producto para enfocar su inventario en categorías particulares."
 
 #. module: base_product_inventory
+#: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__theoretical_cost_amount
+msgid "Theoretical Cost Amount"
+msgstr "Inventario Teórico"
+
+#. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__base_theoretical_qty
 msgid "Theoretical Quantity"
 msgstr "Cantidad teórica"
+
+#. module: base_product_inventory
+#: model_terms:ir.ui.view,arch_db:base_product_inventory.view_inventory_form
+msgid "Unit Cost"
+msgstr "Costo Unitario"
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__base_uom
@@ -150,6 +185,11 @@ msgstr "UoM"
 #: model:ir.cron,name:base_product_inventory.cron_validate_inventory
 msgid "Validate the Inventories in Application Date"
 msgstr "Valida los Inventarios en Fecha la Fecha de Aplicación"
+
+#. module: base_product_inventory
+#: model_terms:ir.ui.view,arch_db:base_product_inventory.view_inventory_form
+msgid "Warehouse Costs"
+msgstr "Costos Almacén"
 
 #. module: base_product_inventory
 #: model_terms:ir.ui.view,arch_db:base_product_inventory.view_inventory_form

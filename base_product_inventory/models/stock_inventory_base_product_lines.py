@@ -10,11 +10,12 @@ class StockInventoryBaseProductLines(models.Model):
     stock_inventory_id = fields.Many2one('stock.inventory', string='Inventory')
     stock_inventory_lines = fields.One2many('stock.inventory.line', 'base_product_id', string='Inventory Lines',
                                             ondelete='cascade')
-    product_tmpl_id = fields.Many2one('product.template', string='Product')
+    product_tmpl_id = fields.Many2one('product.template', string='Product', required=True, readonly=True)
     location_id = fields.Many2one(related="product_tmpl_id.location_id")
-    base_uom = fields.Many2one('uom.uom', related='product_tmpl_id.uom_id', string='UoM')
+    base_uom = fields.Many2one('uom.uom', related='product_tmpl_id.uom_id', store=True, string='UoM')
+    base_standard_price = fields.Float(related="product_tmpl_id.standard_price", store=True)
     base_theoretical_qty = fields.Float(string='Theoretical Quantity', readonly=True)
-    base_product_qty = fields.Float(string='Real Quantity')
+    base_product_qty = fields.Float(string='Real Quantity', digits=(16, 3))
     base_difference_qty = fields.Float(string='Difference', compute='_compute_difference')
 
     @api.depends('base_theoretical_qty', 'base_product_qty')

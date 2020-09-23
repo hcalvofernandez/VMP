@@ -15,6 +15,32 @@ class StockInventory(models.Model):
                                        string='Base Product Lines')
     product_tmpl_id = fields.Many2one('product.template', string='Inventoried Product')
     application_date = fields.Datetime(string='Application Date', required=True)
+    theoretical_cost_amount = fields.Float(string='Theoretical Cost Amount', compute="compute_cost_amount")
+    real_cost_amount = fields.Float(string='Real Cost Amount', compute="compute_cost_amount")
+    cost_difference = fields.Float(string="Cost Difference", compute="compute_cost_amount")
+
+    @api.depends('base_product_ids.base_standard_price', 'base_product_ids.base_theoretical_qty',
+                 'base_product_ids.base_product_qty')
+    def compute_cost_amount(self):
+        for inv in self:
+            result = False
+            if inv.base_product_ids:
+                cost_sql = """SELECT 
+                SUM(bpl.base_standard_price * bpl.base_theoretical_qty) AS theoretical_cost,
+                SUM(bpl.base_standard_price * bpl.base_product_qty) AS real_cost
+                FROM base_product_inventory_base_product_line AS bpl
+                WHERE bpl.id in (%s)""" % str(inv.base_product_ids.mapped('id'))[1:-1]
+                self.env.cr.execute(cost_sql)
+                result = self.env.cr.dictfetchall()
+            if result:
+                inv.theoretical_cost_amount = result[0]['theoretical_cost']
+                inv.real_cost_amount = result[0]['real_cost']
+                inv.cost_difference = abs(result[0]['theoretical_cost'] - result[0]['real_cost'])
+            else:
+                inv.theoretical_cost_amount = 0
+                inv.real_cost_amount = 0
+                inv.cost_difference = 0
+
 
     @api.model
     def _selection_filter(self):
@@ -24,7 +50,6 @@ class StockInventory(models.Model):
         res.insert(2, ('categories', _('Multiple product categories')))
         return res
 
-    
     def action_reset_product_qty(self):
         res = super(StockInventory, self).action_reset_product_qty()
         self.mapped('base_product_ids').write({'base_product_qty': 0})
