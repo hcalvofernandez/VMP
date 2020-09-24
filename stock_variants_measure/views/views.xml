@@ -31,6 +31,9 @@
     <field name="model">purchase.order.line</field>
     <field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
     <field name="arch" type="xml">
+        <field name="product_id" position="attributes">
+            <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+        </field>
       <field name="product_qty" position="before">
         <field name="qty_custom"/>
         <field name="rendimiento"/>    
@@ -72,6 +75,9 @@
     <field name="model">purchase.order.line</field>
     <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
     <field name="arch" type="xml">
+        <field name="product_id" position="attributes">
+            <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+        </field>
       <field name="product_qty" position="before">
         <field name="qty_custom"/>
         <field name="rendimiento"/> 
@@ -96,7 +102,9 @@
     <field name="model">purchase.order</field>
     <field name="inherit_id" ref="purchase.purchase_order_form"/>
     <field name="arch" type="xml">
-
+        <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
+            <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+        </xpath>
       <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="before">
         <field name="qty_custom"/>
         <field name="rendimiento"  invisible="1"/>
