@@ -166,8 +166,8 @@ class ReportPosIndividualWizard(models.TransientModel):
             'start_date': datetime.strftime(start_date, '%Y-%m-%d %H:%M:%S'),
             'end_date': datetime.strftime(end_date, '%Y-%m-%d %H:%M:%S'),
             'cut_date': datetime.strftime(end_date, '%d-%b-%Y'),
-            'total': total,
-            'last_period_total': last_period_total,
+            'total': total or 0.00,
+            'last_period_total': last_period_total or 0.00,
             'days': days,
         }
         return self.env.ref('credit.action_report_credit_summary_individual').report_action(self, data=data,
@@ -183,6 +183,7 @@ class ReportPosIndividualWizard(models.TransientModel):
             'end_date': action['data']['end_date'],
             'cut_date': action['data']['cut_date'],
             'days': action['data']['days'],
+            'last_period_total': action['data']['last_period_total'] if 'last_period_total' in action['data'] else 0.00
         }
         email_send = self.with_context(data_context)
         template = email_send.env.ref('credit.email_template_reporte_credito_individual')

@@ -50,7 +50,8 @@ class ReportCreditSummaryIndividual(models.AbstractModel):
             'days': data['days'],
             "company_currency": self.env.user.company_id.currency_id,
             "partner": partner,
-            "max_pay_date": max_pay_date
+            'max_pay_date': max_pay_date,
+            'last_period_total': data['last_period_total'] if 'last_period_total' in data else 0.00
         }
 
 
@@ -92,5 +93,6 @@ class ReportCreditSummary(models.AbstractModel):
             'days': data['days'],
             'company_currency': self.env.user.company_id.currency_id,
             'partner': partner,
-            "max_pay_date": max_pay_date
+            'max_pay_date': max_pay_date,
+            'last_period_total': data['last_period_total'] if 'last_period_total' in data else 0.00,
         }

@@ -8,8 +8,9 @@ import pytz
 class StockInventory(models.Model):
     _inherit = 'stock.inventory'
 
-    category_ids = fields.Many2many('product.category', string="Product Categories",
-                                    readonly=True, states={'draft': [('readonly', False)]},
+    category_ids = fields.Many2many('product.category', string="Supplies Categories",
+                                    states={'draft': [('readonly', False)]},
+                                    readonly=True, domain=[('parent_id.name', 'like', 'Insumos')],
                                     help="Specify Product Categories to focus your inventory on particular categories.")
     base_product_ids = fields.One2many('base_product_inventory.base_product_line', 'stock_inventory_id',
                                        string='Base Product Lines')
@@ -47,7 +48,7 @@ class StockInventory(models.Model):
         """ Get the list of filter allowed according to the options checked
         in 'Settings\Warehouse'. """
         res = super(StockInventory, self)._selection_filter()
-        res.insert(2, ('categories', _('Multiple product categories')))
+        res.insert(2, ('categories', _('Supplies categories')))
         return res
 
     def action_reset_product_qty(self):

@@ -239,7 +239,7 @@ class Home(http.Controller):
                 "partner": partner_id,
                 "partner_id": partner_id.id,
                 'cut_date': datetime.strftime(datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S'), '%d-%b-%Y'),
-                'last_period_total': last_period_amount
+                'last_period_total': last_period_amount or 0.00
             }
         else:
             return {

@@ -159,13 +159,13 @@ class ReportPosWizard(models.TransientModel):
         diff = end_date - start_date
         data = {
             'orders': res,
-            'total': sum,
+            'total': sum or 0.00,
             'start_date': start_date,
             'end_date': end_date,
             'cut_date': datetime.strftime(end_date, '%d-%b-%Y'),
             'client': self.partner_id,
             'days': diff.days + (1 if diff.seconds else 0),
-            'last_period_total': last_period_total
+            'last_period_total': last_period_total or 0.00
         }
         return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data, config=False)
 
@@ -198,6 +198,7 @@ class ReportPosWizard(models.TransientModel):
             'end_date': datetime.strftime(action['data']['end_date'], '%Y-%m-%d %H:%M:%S'),
             'cut_date': action['data']['cut_date'],
             'days': action['data']['days'],
+            'last_period_total': action['data']['last_period_total'] if 'last_period_total' in action['data'] else 0.00
         }
         email_send = self.with_context(data_context)
         template = email_send.env.ref('credit.email_template_reporte_credito')
