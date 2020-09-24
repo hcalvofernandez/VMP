@@ -27,7 +27,7 @@ class product_template_attribute_value(models.Model):
         if 'cost_price' in values:
             new_cost = values['cost_price']
             group_user_ids = self.env.user.groups_id.mapped('id')
-            margin = float(self.env['ir.config_parameter'].get_param('stock_variants_measure.inflation_cost'))
+            margin = float(self.sudo().env['ir.config_parameter'].get_param('stock_variants_measure.inflation_cost'))
             group_user = self.env.ref('stock_variants_measure.group_inventory_cost_employee').id
             group_manager = self.env.ref('stock_variants_measure.group_inventory_cost_manager').id
             for attr in self:
