@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-23 15:07+0000\n"
-"PO-Revision-Date: 2020-09-23 11:09-0400\n"
+"POT-Creation-Date: 2020-09-24 14:50+0000\n"
+"PO-Revision-Date: 2020-09-24 10:54-0400\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"Language: es\n"
+"Language: es_MX\n"
 "X-Generator: Poedit 2.3.1\n"
 
 #. module: base_product_inventory
@@ -60,7 +60,7 @@ msgstr "Creado el"
 #. module: base_product_inventory
 #: model:ir.model.fields,help:base_product_inventory.field_base_product_inventory_base_product_line__base_uom
 msgid "Default unit of measure used for all stock operations."
-msgstr "Unidad de medida por defecto utilizada para todas las operaciones de stock"
+msgstr "Unidad de medida por defecto utilizada para todas las operaciones de stock."
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__base_difference_qty
@@ -129,20 +129,9 @@ msgid "Location"
 msgstr "Ubicación"
 
 #. module: base_product_inventory
-#: code:addons/base_product_inventory/models/stock_inventory.py:50
-#, python-format
-msgid "Multiple product categories"
-msgstr "Varias categorías de producto"
-
-#. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_base_product_inventory_base_product_line__product_tmpl_id
 msgid "Product"
 msgstr "Producto"
-
-#. module: base_product_inventory
-#: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__category_ids
-msgid "Product Categories"
-msgstr "Categorías de productos"
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__real_cost_amount
@@ -158,6 +147,17 @@ msgstr "Cantidad real"
 #: model:ir.model.fields,help:base_product_inventory.field_stock_inventory__category_ids
 msgid "Specify Product Categories to focus your inventory on particular categories."
 msgstr "Especifique las categorías de producto para enfocar su inventario en categorías particulares."
+
+#. module: base_product_inventory
+#: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__category_ids
+msgid "Supplies Categories"
+msgstr "Categorías de Insumos"
+
+#. module: base_product_inventory
+#: code:addons/base_product_inventory/models/stock_inventory.py:51
+#, python-format
+msgid "Supplies categories"
+msgstr "Categorías de insumos"
 
 #. module: base_product_inventory
 #: model:ir.model.fields,field_description:base_product_inventory.field_stock_inventory__theoretical_cost_amount
