@@ -3,17 +3,18 @@
     <data>
         <record id="search_views_account_move" model="ir.ui.view">
             <field name="name">search views account move</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_account_move_filter"/>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
             <field name="arch" type="xml">
-                <filter name="misc_filter" position="after">
+                <field name="tax_ids" position="after">
                     <separator/>
                     <filter string="Settled" name="settled" domain="[('is_settled', '=', True)]"/>
                     <filter string="To Settle" name="to_settle" domain="[('is_settled', '=', False)]"/>
                     <group>
                         <filter string="Session" name="session_filter" domain="[]" context="{'group_by':'ref'}"/>
+                        <filter string="Analytic Account" name="analytic_filter" domain="[]" context="{'group_by':'analytic_account_id'}"/>
                     </group>
-                </filter>
+                </field>
             </field>
         </record>
     </data>

@@ -1,6 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+        <!-- Account Move Lines Actions -->
+        <act_window id="resources_origin_account_move_line_act_window"
+                    name="Resources Origin Account Move"
+                    res_model="account.move.line"
+                    view_mode="tree"
+                    view_id="origin_application_move_tree_view"/>
+
+        <act_window id="resources_application_account_move_line_act_window"
+                    name="Resources Application Account Move"
+                    res_model="account.move.line"
+                    view_mode="tree"
+                    view_id="origin_application_move_tree_view"/>
+
+        <act_window id="liquidation_account_move_line_act_window"
+                    name="Liquidation Account Move"
+                    res_model="account.move.line"
+                    view_mode="tree"
+                    view_id="origin_application_move_tree_view"/>
+
+        <record model="ir.actions.server" id="resources_origin_account_move_line_action">
+            <field name="name">Resources Origin Account Move</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="state">code</field>
+            <field name="code">
+origin_journals = env.ref("origin_application_resources.general_settings_data").origin_journal_ids
+if not origin_journals:
+    raise Warning("Please, set the journals in the configuration")
+account_ids = origin_journals.mapped('default_debit_account_id.id')
+action = env.ref("origin_application_resources.resources_origin_account_move_line_act_window").read()[0]
+action["domain"] = [('journal_id', 'in', origin_journals.ids),('is_settled', '!=', None),
+                    ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
+action['context'] = env.context
+action['context']['search_default_session_filter'] = 1
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="resources_application_account_move_line_action">
+            <field name="name">Resources Application Account Move</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="state">code</field>
+            <field name="code">
+application_journals = env.ref("origin_application_resources.general_settings_data").application_journal_ids
+if not application_journals:
+    raise Warning("Please, set the journals in the configuration")
+account_ids = application_journals.mapped('default_credit_account_id.id')
+action = env.ref("origin_application_resources.resources_application_account_move_line_act_window").read()[0]
+action["domain"] = [('journal_id', 'in', application_journals.ids),('is_settled', '!=', None),
+                    ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
+action['context'] = env.context
+action['context']['search_default_analytic_filter'] = 1
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="liquidation_account_move_line_action">
+            <field name="name">Resources Application Account Move</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="state">code</field>
+            <field name="code">
+liquidation_journal = env.ref("origin_application_resources.general_settings_data").liquidation_journal_id
+if not liquidation_journal:
+    raise Warning("Please, set the journals in the configuration")
+account_ids = [liquidation_journal.default_credit_account_id.id,]
+action = env.ref("origin_application_resources.liquidation_account_move_line_act_window").read()[0]
+action["domain"] = [('journal_id', '=', liquidation_journal.id),('is_settled', '!=', None),
+                    ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
+action['context'] = env.context
+action["context"]["default_journal_id"] = liquidation_journal
+            </field>
+        </record>
+
+        <!-- Account Move Actions-->
         <act_window id="resources_origin_account_move_act_window"
                     name="Resources Origin Account Move"
                     res_model="account.move"
@@ -64,6 +136,8 @@ action["context"]["default_journal_id"] = liquidation_journal
 action['context']["default_liquidation_id"] = env.ref("origin_application_resources.liquidation_flow_data").id
             </field>
         </record>
+
+        <!-- Other Actions-->
 
         <record id="origin_application_settings_action" model="ir.actions.act_window">
             <field name="name">Settings</field>
