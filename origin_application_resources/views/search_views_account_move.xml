@@ -10,6 +10,9 @@
                     <separator/>
                     <filter string="Settled" name="settled" domain="[('is_settled', '=', True)]"/>
                     <filter string="To Settle" name="to_settle" domain="[('is_settled', '=', False)]"/>
+                    <group>
+                        <filter string="Session" name="session_filter" domain="[]" context="{'group_by':'ref'}"/>
+                    </group>
                 </filter>
             </field>
         </record>

@@ -27,6 +27,7 @@ if not origin_journals:
 action = env.ref("origin_application_resources.resources_origin_account_move_act_window").read()[0]
 action["domain"] = [('journal_id', 'in', origin_journals),('is_settled', '!=', None)]
 action['context'] = env.context
+action['context']['search_default_session_filter'] = 1
 if origin_journals:
     action["context"]["default_journal_id"] = origin_journals[0]
             </field>
