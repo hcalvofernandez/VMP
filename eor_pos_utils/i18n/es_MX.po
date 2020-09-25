@@ -1,0 +1,915 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* eor_pos_utils
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-25 21:12+0000\n"
+"PO-Revision-Date: 2020-09-25 17:23-0400\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: es\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,help:eor_pos_utils.field_res_partner__credit_limit_computed
+#: model:ir.model.fields,help:eor_pos_utils.field_res_users__credit_limit_computed
+msgid " campo para mostrar el limite de credito "
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,help:eor_pos_utils.field_res_partner__type_contract_hide
+#: model:ir.model.fields,help:eor_pos_utils.field_res_users__type_contract_hide
+msgid " tipos de  contrato - , credito, prepago, mealplan, subsidio"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "% discount"
+msgstr "% descuento"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/util_widgets.xml:23
+#, python-format
+msgid "(+) Ingresos en Efectivo"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/util_widgets.xml:15
+#, python-format
+msgid "(+) Ventas en Efectivo"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/util_widgets.xml:31
+#, python-format
+msgid "(-) Retiros de Efectivo"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/util_widgets.xml:39
+#, python-format
+msgid "(=) Transacciones"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "+ Transactions"
+msgstr "+ Transacciones"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid ""
+", PRECISAMENTE\n"
+"                            EN SU DOMICILIO O EN\n"
+"                            CUALQUIER PLAZA\n"
+"                            EN QUE SE ME REQUIERA EL PAGO, LA CANTIDAD ARRIBA SEÑALADA EN EL TOTAL, EN MONEDA\n"
+"                            NACIONAL,\n"
+"                            RECONOCIENDO COMO MÍA LA FIRMA AL CALCEO O MI FIRMA ELECTRÓNICA IDENTIFICADA COMO\n"
+"                            PIN."
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_pos_session__cash_register_tip
+msgid "- Propinas pagadas"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "<span class=\"o_stat_text\">Reporte X</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "<span class=\"o_stat_text\">Reporte Z</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span class=\"pull-left\">Dirección: </span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid ""
+"<span>\n"
+"                                <b class=\"fa fa-check\"/>\n"
+"                                <b>Firma Electrónica</b>\n"
+"                            </span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid ""
+"<span>\n"
+"                        <i class=\"fa fa-check\" aria-hidden=\"true\"/>\n"
+"                        <i>Firma Electrónica</i>\n"
+"                    </span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>C.P.</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>Cantidad</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>Cliente:</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>Lugar de Expedición</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>Pagaré</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>R.F.C.</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>Régimen Fiscal:</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "<span>Transacciones</span>"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "= Theoretical Closing Balance"
+msgstr "= Saldo teórico de cierre"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_pos_session__abono_total_debito
+msgid "Abono"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "Abono a débitos"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_pos_session__payment_debit_widget
+msgid "Abonos a débito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: selection:contract.scheme.contract,type_sub:0
+msgid "Ajuste"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__credit_blocked
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__credit_blocked
+msgid "Bloquear Saldo"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/popup.xml:7
+#, python-format
+msgid "CLIENTE:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Cajero :"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/popup.xml:17
+#, python-format
+msgid "Cambiar"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/popup.xml:6
+#, python-format
+msgid "Cambiar PIN"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Cambio:"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/popup.xml:20
+#, python-format
+msgid "Cancelar"
+msgstr ""
+
+#. module: eor_pos_utils
+#: selection:report.eor_pos_utils.pos.order.pay,state:0
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__qty
+msgid "Cantidad"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_account_cashbox_line
+msgid "CashBox Line"
+msgstr "Línea de caja"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Cliente:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__company_id
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Company"
+msgstr "Compañía"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_res_config_settings
+msgid "Config Settings"
+msgstr "Opciones de Configuración"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_contract_contract
+msgid "Contract"
+msgstr "Contrato"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/payment.xml:35
+#, python-format
+msgid "Crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__remaining_credit_limit
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__remaining_credit_limit
+msgid "Crédito Disponible"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Crédito Disponible:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__partner_id
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__delay_validation
+msgid "Delay Validation"
+msgstr "Retraso validación"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Detalles de Credito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__display_name
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Drive Through"
+msgstr "Servicio al Auto"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Email:"
+msgstr "Correo electrónico:"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/js/eor_screens.js:56
+#, python-format
+msgid "Es necesario ingresar un PIN"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__credit_s_id
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__credit_s_id
+msgid "Esquema de Crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.actions.act_window,name:eor_pos_utils.contract_scheme_contract_action
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__schemes_sub_id
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__schemes_sub_id
+#: model:ir.ui.menu,name:eor_pos_utils.contract_scheme_contract_menu
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_scheme_contract_view_form
+msgid "Esquema de Subsidio"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+msgid "Esquema de Subsidios"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_contract__esquema_subsidio_ids
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.eor_res_partner_view_form
+msgid "Esquema de subsidio"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_contract__credit_schemes_line_ids
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__ids_schemes_contracts
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__ids_schemes_contracts
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_form_view_inherit
+msgid "Esquemas de Crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__ids_schemes_sub
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__ids_schemes_sub
+msgid "Esquemas de Subsidio"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__esquema_subsidio_ids
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__esquema_subsidio_ids
+msgid "Esquemas de subsidio"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__id
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__id
+msgid "ID"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_pos_order__credit_amount
+msgid "Importe Créditos"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__invoiced
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+#: selection:report.eor_pos_utils.pos.order.pay,state:0
+msgid "Invoiced"
+msgstr "Facturado"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_account_cashbox_line__is_coin
+msgid "Is coin?"
+msgstr "Es moneda?"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_account_journal
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__journal_id
+msgid "Journal"
+msgstr "Diario"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract____last_update
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay____last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+msgid "Limite Crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+msgid "Limite Meal Plan"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+msgid "Limite de Crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+msgid "Limite de Meal Plan"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__location_id
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__credit_limit_computed
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__credit_limit_computed
+msgid "Límite de Crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/payment.xml:40
+#, python-format
+msgid "Meal Plan"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Mesa:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_contract_scheme_contract
+msgid "Modelo Esquema de Subsidio"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/payment.xml:57
+#, python-format
+msgid "Monto:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "My Sales"
+msgstr "Mis ventas"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/popup.xml:11
+#, python-format
+msgid "NUEVO PIN"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Net Total:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: selection:report.eor_pos_utils.pos.order.pay,state:0
+msgid "New"
+msgstr "Nuevo"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__name
+msgid "Nombre"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Nombre del Cliente:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Not Invoiced"
+msgstr "No facturado"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__client_number
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__client_number
+msgid "Número de Cliente"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__numero_tarjeta
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__numero_tarjeta
+msgid "Número de tarjeta"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_account_journal__hide_journal
+msgid "Ocultar diario"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.account_journal_pos_inherit
+msgid "Ocultar método de pago en el POS"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "Opening Balance"
+msgstr "Saldo de apertura"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__order_postpago_count
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__order_postpago_count
+msgid "Ordenes postpago"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__order_id
+msgid "Order"
+msgstr "Pedido"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__date
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Order Date"
+msgstr "Fecha de pedido"
+
+#. module: eor_pos_utils
+#: model:ir.actions.act_window,name:eor_pos_utils.action_report_pos_order_all
+msgid "Orders Analysis"
+msgstr "Análisis de pedidos"
+
+#. module: eor_pos_utils
+#: model:ir.ui.menu,name:eor_pos_utils.menu_report_pos_order_all
+msgid "Orders Pay Method"
+msgstr "Órdenes por Método de Pago"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/popup.xml:14
+#, python-format
+msgid "PIN"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid ""
+"POR ESTE PAGARÉ RECONOZCO DEBER Y\n"
+"                            ME\n"
+"                            COMPROMETO A PAGAR INCONDICIONALMENTE\n"
+"                            A LA ORDEN DE"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_account_payment__pos_session_id
+msgid "POS Sesion"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_pos_session__payment_lines
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "Pagos"
+msgstr ""
+
+#. module: eor_pos_utils
+#: selection:report.eor_pos_utils.pos.order.pay,state:0
+msgid "Paid"
+msgstr "Pagado"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Payment Method"
+msgstr "Método de pago"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_account_payment
+msgid "Payments"
+msgstr "Pagos"
+
+#. module: eor_pos_utils
+#: model:ir.filters,name:eor_pos_utils.filter_orders_per_session
+msgid "Per session"
+msgstr "Por sesión"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/js/eor_screens.js:38
+#, python-format
+msgid "Pin Incorrecto, Intente de nuevo!"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__client_pin
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__client_pin
+msgid "Pin de seguridad"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__config_id
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Point of Sale"
+msgstr "Punto de Venta"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_graph
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Point of Sale Analysis"
+msgstr "Análisis punto de venta"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "Pedidos del TPV"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_report_eor_pos_utils_pos_order_pay
+msgid "Point of Sale Orders Pay Report"
+msgstr "Reporte Pagos en Órdenes del Punto de Venta"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_pivot
+msgid "Point of Sale Pay Analysis"
+msgstr "Análisis de Pagos en Punto de Venta"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_pos_session
+msgid "Point of Sale Session"
+msgstr "Sesión TPV"
+
+#. module: eor_pos_utils
+#: selection:contract.scheme.contract,type_sub:0
+msgid "Porcentaje"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__pos_order_ids
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__pos_order_ids
+msgid "Pos Orders"
+msgstr ""
+
+#. module: eor_pos_utils
+#: selection:report.eor_pos_utils.pos.order.pay,state:0
+msgid "Posted"
+msgstr "Publicado"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/payment.xml:30
+#, python-format
+msgid "Prepago - Débito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_product_product
+msgid "Product"
+msgstr "Producto"
+
+#. module: eor_pos_utils
+#: model:ir.model,name:eor_pos_utils.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__product_id
+msgid "Producto"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_contract__product_ids
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__product_ids
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__product_ids
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.contract_contract_inherit_view_form
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.eor_res_partner_view_form
+msgid "Productos"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "Real Closing Balance"
+msgstr "Saldo de cierre real"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__remaining_credit_amount
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__remaining_credit_amount
+msgid "Remaining Credit Amount"
+msgstr "Crédito Dísponible"
+
+#. module: eor_pos_utils
+#: code:addons/eor_pos_utils/models/pos_session.py:112
+#, python-format
+msgid "Report X"
+msgstr "Reporte X"
+
+#. module: eor_pos_utils
+#: code:addons/eor_pos_utils/models/pos_session.py:130
+#, python-format
+msgid "Report Z"
+msgstr "Reporte Z"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.eor_res_partner_view_form
+msgid "Reporte POS"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_pos_session__cash_control_widget
+msgid "Resumen Diario de Efectivo"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "Resumen Diarios Efectivo"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Rounding:"
+msgstr "Redondeo"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/util_widgets.xml:7
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+#, python-format
+msgid "Saldo de apertura"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__nbr_lines
+msgid "Sale Line Count"
+msgstr "Conteo de Líneas de Venta"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__user_id
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.view_report_pos_order_search
+msgid "Salesperson"
+msgstr "Comercial"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__session_id
+msgid "Session"
+msgstr "Sesión"
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/payment.xml:56
+#, python-format
+msgid "Subsidio:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Take Away..."
+msgstr "Para llevar"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Telefono:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.actions.report,name:eor_pos_utils.pos_ticket_receipts_report
+msgid "Ticket de Venta"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Tienda:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__has_credit_contract
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__has_credit_contract
+msgid "Tiene contrato de crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_partner__type_contract_hide
+#: model:ir.model.fields,field_description:eor_pos_utils.field_res_users__type_contract_hide
+msgid "Tipo de contrato"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_contract_scheme_contract__type_sub
+msgid "Tipo subsidio"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "To Be Deliver..."
+msgstr "A entregar"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Token No:"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "Total"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "Total Abonos a débito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,field_description:eor_pos_utils.field_report_eor_pos_utils_pos_order_pay__price_total
+msgid "Total Price"
+msgstr "Precio total"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Total de Crédito"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model:ir.model.fields,help:eor_pos_utils.field_pos_session__cash_register_tip
+msgid "Total de propinas pagadas"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "Total:"
+msgstr ""
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/payment.xml:47
+#, python-format
+msgid "Vales"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_ticket_receipt
+msgid "With a"
+msgstr "Con un"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid ""
+"You can define another list of available currencies on the\n"
+"                                    <i>Cash Registers</i> tab of the"
+msgstr ""
+"Puede definir otra lista de monedas disponibles en las\n"
+"<i>Cajas Registradoras </i> ficha"
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid ""
+"You can define another list of available currencies on the\n"
+"                            <i>Cash Registers</i> tab of the"
+msgstr ""
+"Puede definir otra lista de monedas disponibles en la\n"
+"                            <i>Caja Registradora</i> tab del"
+
+#. module: eor_pos_utils
+#. openerp-web
+#: code:addons/eor_pos_utils/static/src/xml/payment.xml:5
+#, python-format
+msgid "control-button js_tip disabled"
+msgstr ""
+
+#. module: eor_pos_utils
+#: model_terms:ir.ui.view,arch_db:eor_pos_utils.pos_session_inherit_view_form
+msgid "payment method."
+msgstr "método de pago."
