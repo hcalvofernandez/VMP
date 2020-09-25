@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-19 01:45+0000\n"
-"PO-Revision-Date: 2020-09-18 21:49-0400\n"
+"POT-Creation-Date: 2020-09-25 17:42+0000\n"
+"PO-Revision-Date: 2020-09-25 13:44-0400\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -101,6 +101,16 @@ msgid "Ajustes de Diarios"
 msgstr ""
 
 #. module: origin_application_resources
+#: model:ir.model.fields,help:origin_application_resources.field_account_move_line__move_state
+msgid "All manually created new journal entries are usually in the status 'Unposted', but you can set the option to skip that status on the related journal. In that case, they will behave as journal entries automatically created by the system on document validation (invoices, bank statements...) and will be created in 'Posted' status."
+msgstr "Todos los asientos creados manualmente suelen estar en el estado 'Sin asentar', salvo cuando se establece la opción de saltar ese estado en el diario relacionado. En ese caso, se comportarán como los asientos creados automáticamente por el sistema en la validación de documentos (facturas, extractos bancarios...) y serán creados en el estado 'Asentado'."
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "Analytic Account"
+msgstr "Cuenta Analítica"
+
+#. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
 msgid "Aplicaciones"
 msgstr ""
@@ -142,8 +152,8 @@ msgstr "Configuración de las fechas del reporte"
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
-msgid "Configure report date ranges"
-msgstr "Configura los rangos de fecha del reporte"
+msgid "Configure los rangos de fecha del reporte"
+msgstr ""
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__create_uid
@@ -212,6 +222,7 @@ msgstr ""
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_account_move__is_settled
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__is_settled
 msgid "Is Settled"
 msgstr "Esta Liquidada"
 
@@ -219,6 +230,11 @@ msgstr "Esta Liquidada"
 #: model:ir.model,name:origin_application_resources.model_account_move
 msgid "Journal Entries"
 msgstr "Asientos contables"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard____last_update
@@ -261,6 +277,7 @@ msgstr "Liquidación"
 
 #. module: origin_application_resources
 #: model:ir.actions.act_window,name:origin_application_resources.liquidation_account_move_act_window
+#: model:ir.actions.act_window,name:origin_application_resources.liquidation_account_move_line_act_window
 msgid "Liquidation Account Move"
 msgstr "Liquidación"
 
@@ -270,8 +287,8 @@ msgid "Liquidation Journal"
 msgstr "Diario de Liquidación"
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/models/resources_flow.py:231
 #: code:addons/origin_application_resources/models/resources_flow.py:238
+#: code:addons/origin_application_resources/models/resources_flow.py:245
 #, python-format
 msgid "Liquidation of Source and Application"
 msgstr "Liquidación de Origen y Aplicación"
@@ -328,13 +345,13 @@ msgid "Parcial"
 msgstr ""
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/models/resources_flow.py:228
+#: code:addons/origin_application_resources/models/resources_flow.py:235
 #, python-format
 msgid "Please, configure a liquidation journal."
 msgstr "Por favor, configure un diario de liquidación."
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/models/resources_flow.py:218
+#: code:addons/origin_application_resources/models/resources_flow.py:225
 #, python-format
 msgid "Please, configure the journals."
 msgstr "Por favor, configure los diarios."
@@ -383,8 +400,11 @@ msgstr "Aplicación de Recursos"
 
 #. module: origin_application_resources
 #: model:ir.actions.act_window,name:origin_application_resources.resources_application_account_move_act_window
+#: model:ir.actions.act_window,name:origin_application_resources.resources_application_account_move_line_act_window
 #: model:ir.actions.server,name:origin_application_resources.liquidation_account_move_action
+#: model:ir.actions.server,name:origin_application_resources.liquidation_account_move_line_action
 #: model:ir.actions.server,name:origin_application_resources.resources_application_account_move_action
+#: model:ir.actions.server,name:origin_application_resources.resources_application_account_move_line_action
 msgid "Resources Application Account Move"
 msgstr "Aplicación de Recursos"
 
@@ -395,9 +415,16 @@ msgstr "Origen de Recursos"
 
 #. module: origin_application_resources
 #: model:ir.actions.act_window,name:origin_application_resources.resources_origin_account_move_act_window
+#: model:ir.actions.act_window,name:origin_application_resources.resources_origin_account_move_line_act_window
 #: model:ir.actions.server,name:origin_application_resources.resources_origin_account_move_action
+#: model:ir.actions.server,name:origin_application_resources.resources_origin_account_move_line_action
 msgid "Resources Origin Account Move"
 msgstr "Origen de Recursos"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "Session"
+msgstr "Sesión"
 
 #. module: origin_application_resources
 #: model:ir.actions.act_window,name:origin_application_resources.origin_application_settings_action
@@ -409,6 +436,16 @@ msgstr "Ajustes"
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
 msgid "Settled"
 msgstr "Liquidado"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_move_tree_view
+msgid "Source Amount"
+msgstr "Importe"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__move_state
+msgid "Status"
+msgstr "Estado"
 
 #. module: origin_application_resources
 #: code:addons/origin_application_resources/models/resources_flow.py:51
@@ -423,6 +460,7 @@ msgstr "A Liquidar"
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_move_tree_view
 msgid "Total"
 msgstr ""
 
@@ -437,7 +475,7 @@ msgid "Type"
 msgstr "Tipo"
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/models/resources_flow.py:225
+#: code:addons/origin_application_resources/models/resources_flow.py:232
 #, python-format
 msgid "You can not to settle a negative value"
 msgstr "No puede liquidar un valor negativo"

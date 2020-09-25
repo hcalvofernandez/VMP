@@ -104,21 +104,21 @@
                             <div class="col-7 o_kanban_primary_right">
                                 <div class="row">
                                     <div class="col-7">
-                                        <a type="action" name="%(resources_origin_account_move_action)d"
+                                        <a type="action" name="%(resources_origin_account_move_line_action)d"
                                            context="{'search_default_settled':1}"
                                            t-if="type_flow == 'origin'">
                                             <span title="Origin Settled">
                                                 Origen Liquidado
                                             </span>
                                         </a>
-                                        <a type="action" name="%(resources_application_account_move_action)d"
+                                        <a type="action" name="%(resources_application_account_move_line_action)d"
                                            context="{'search_default_settled':1}"
                                            t-if="type_flow == 'application'">
                                             <span title="Application Settled">
                                                 Aplicación Liquidada
                                             </span>
                                         </a>
-                                        <a type="action" name="%(liquidation_account_move_action)d"
+                                        <a type="action" name="%(liquidation_account_move_line_action)d"
                                            context="{'search_default_settled':1}"
                                            t-if="type_flow == 'liquidation'">
                                             <span title="Settled">
@@ -134,13 +134,13 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-7">
-                                        <a type="action" name="%(resources_origin_account_move_action)d"
+                                        <a type="action" name="%(resources_origin_account_move_line_action)d"
                                            context="{'search_default_to_settle':1}" t-if="type_flow == 'origin'">
                                            <span title="Origin to Settle">
                                                 Origen a Liquidar
                                             </span>
                                         </a>
-                                        <a type="action" name="%(resources_application_account_move_action)d"
+                                        <a type="action" name="%(resources_application_account_move_line_action)d"
                                            context="{'search_default_to_settle':1}" t-if="type_flow == 'application'">
                                             <span title="Application to Settle">
                                                 Aplicación a Liquidar

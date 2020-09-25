@@ -11,5 +11,23 @@
                 </field>
             </field>
         </record>
+        <record id="origin_application_move_tree_view" model="ir.ui.view">
+            <field name="name">Origin and Application Move</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="ref"/>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="journal_id" invisible="True"/>
+                    <field name="company_id"/>
+                    <field name="account_id"/>
+                    <field name="analytic_account_id"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance" sum="Total" string="Source Amount"/>
+                </tree>
+            </field>
+        </record>
     </data>
 </odoo>
