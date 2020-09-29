@@ -29,7 +29,7 @@ class ReportDocument(models.AbstractModel):
                 "to_settle": rec.diff,
                 'percent': rec.percent_in_origin,
             }
-            data.update(self.get_details_applications(start_date, end_date))
+            data.update(self.get_vendor_applications(start_date, end_date))
         return data
 
     @api.model
@@ -42,21 +42,54 @@ class ReportDocument(models.AbstractModel):
             raise ValidationError(_("Please, set the journals in the configuration"))
         application_details_sql = """SELECT
                                     aaa.name AS name,
-                                    SUM(aml.credit - aml.debit) AS vals
+                                    rp.name AS vendor,
+                                    SUM(aml.debit - aml.credit) AS vals
                                     FROM account_move_line AS aml
                                     INNER JOIN account_move AS am ON am.id = aml.move_id
                                     INNER JOIN account_analytic_account AS aaa ON aaa.id = aml.analytic_account_id
+                                    INNER JOIN res_partner AS rp ON rp.id = aaa.partner_id
                                     WHERE am.journal_id IN (%s)
                                     AND aml.account_id IN (%s)
                                     AND am.company_id = %s
-                                    AND am.is_settled IN (true, false)
                                     AND am.date >= '%s'
                                     AND am.date <= '%s'
                                     AND am.state = 'posted'
-                                    GROUP BY aaa.name
+                                    GROUP BY aaa.name, rp.name
                                     """ % (str(application_journals.ids)[1:-1], str(account_ids)[1:-1],
                                            str(self.env.user.company_id.id),
                                            start_date, end_date)
+        self.env.cr.execute(application_details_sql)
+        vals = self.env.cr.dictfetchall()
+        return {"application_details": vals}
+
+    @api.model
+    def get_vendor_applications(self, start_date, end_date):
+        application_journals = self.env.ref(
+            "origin_application_resources.general_settings_data").application_journal_ids
+        account_ids = application_journals.mapped("default_debit_account_id.id")
+        account_ids += application_journals.mapped("default_credit_account_id.id")
+        if not application_journals:
+            raise ValidationError(_("Please, set the journals in the configuration"))
+        application_details_sql = """SELECT
+                                        aml.date AS move_date,
+                                        rp.name AS vendor,
+                                        ai.number AS invoice,
+                                        ABS(SUM(aml.balance)) AS vals
+                                        FROM account_move_line AS aml
+                                        LEFT JOIN account_move AS am ON am.id = aml.move_id
+                                        LEFT JOIN res_partner AS rp ON rp.id = aml.partner_id
+                                        LEFT JOIN account_invoice AS ai ON ai.id = aml.invoice_id
+                                        WHERE am.journal_id IN (%s)
+                                        AND aml.account_id IN (%s)
+                                        AND am.company_id = %s
+                                        AND am.date >= '%s'
+                                        AND am.date <= '%s'
+                                        AND am.oar_type = 'application'
+                                        AND am.state = 'posted'
+                                        GROUP BY ai.number, rp.name, aml.date
+                                        """ % (str(application_journals.ids)[1:-1], str(account_ids)[1:-1],
+                                               str(self.env.user.company_id.id),
+                                               start_date, end_date)
         self.env.cr.execute(application_details_sql)
         vals = self.env.cr.dictfetchall()
         return {"application_details": vals}

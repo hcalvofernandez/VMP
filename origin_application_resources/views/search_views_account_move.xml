@@ -12,7 +12,7 @@
                     <filter string="To Settle" name="to_settle" domain="[('is_settled', '=', False)]"/>
                     <group>
                         <filter string="Session" name="session_filter" domain="[]" context="{'group_by':'ref'}"/>
-                        <filter string="Analytic Account" name="analytic_filter" domain="[]" context="{'group_by':'analytic_account_id'}"/>
+                        <filter string="Analytic Account" name="analytic_filter" domain="[]" context="{'group_by':'partner_id'}"/>
                     </group>
                 </field>
             </field>

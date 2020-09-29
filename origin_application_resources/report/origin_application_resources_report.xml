@@ -37,7 +37,7 @@
                                     </td>
                                     <td class="text-right">
                                         <t t-if="origin['value']>0" t-esc="100" t-options='{"widget": "float", "precision": 1}'/>
-                                        <t t-else="" t-esc="0" t-options='{"widget": "float", "precision": 1}'/>%
+                                        <t t-else="" t-esc="float(0)" t-options='{"widget": "float", "precision": 1}'/>%
                                     </td>
                                 </tr>
                                 <tr>
@@ -50,31 +50,6 @@
                                         <t t-if="origin['value']>0"
                                            t-esc="application['value']/origin['value']*100"
                                            t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                                <t t-value="application['value']" t-set="result"/>
-                                <tr t-foreach="application_details" t-as="ad">
-                                    <td>
-                                        <span class="identation" t-esc="ad['name']"/>
-                                    </td>
-                                    <td class="text-right">
-                                        $ <span t-esc="ad['vals']" t-options='{"widget": "float", "precision": 2}'/></td>
-                                        <t t-set="result" t-value="result - ad['vals']"/>
-                                    <td></td>
-                                    <td class="text-right">
-                                        <span t-if="origin['value']>0"
-                                              t-esc="ad['vals']/origin['value']*100" t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                                <tr t-if="result > 0">
-                                    <td><span class="identation">Aplicaciones sin detallar</span></td>
-                                    <td class="text-right">
-                                        $ <span t-esc="result"  t-options='{"widget": "float", "precision": 2}'/>
-                                    </td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        <span t-if="origin['value']>0"
-                                              t-esc="result/origin['value']*100" t-options='{"widget": "float", "precision": 1}'/>%
                                     </td>
                                 </tr>
                                 <tr>
@@ -98,6 +73,45 @@
                                     </td>
                                     <td class="text-right">
                                         <t t-esc="liquidation['percent']" t-options='{"widget": "float", "precision": 1}'/>%
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table>
+                            <thead>
+                                <caption>
+                                    Relación de Pagos
+                                </caption>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Proveedor/Clientes</th>
+                                    <th>Factura</th>
+                                    <th>Importe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-value="application['value']" t-set="result"/>
+                                <tr t-foreach="application_details" t-as="ad">
+                                    <td>
+                                        <span t-esc="ad['move_date']"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="ad['vendor']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        $ <span t-esc="ad['vals']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <t t-set="result" t-value="result - ad['vals']"/>
+                                    <td></td>
+                                </tr>
+                                <tr t-if="result > 0">
+                                    <td><span class="identation">Otros Proveedor no detallados</span></td>
+                                    <td class="text-right">
+                                        $ <span t-esc="result"  t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        <span t-if="origin['value']>0"
+                                              t-esc="result/origin['value']*100" t-options='{"widget": "float", "precision": 1}'/>%
                                     </td>
                                 </tr>
                             </tbody>
