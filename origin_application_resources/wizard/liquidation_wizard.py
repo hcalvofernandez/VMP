@@ -65,14 +65,11 @@ class LiquidationWizard(models.TransientModel):
         settings = self.env.ref("origin_application_resources.general_settings_data")
         if not settings.liquidation_journal_id:
             raise ValidationError(_("Please, configure a liquidation journal."))
-        domain = [('oar_type', '=', 'liquidation'), ('is_settled', '=', False), ('state', 'not in', ['posted'])]
-        move = self.env['account.move'].search(domain)
-        if not move:
-            move = self.get_account_move_to_settle(settings)
+        move = self.get_account_move_to_settle(settings)
         move.post()
         move_ids = self.origin_to_settle.filtered(lambda s: s.mark_to_settle is True).mapped('move_id')
         move_ids += self.application_to_settle.filtered(lambda s: s.mark_to_settle is True).mapped('move_id')
-        move_ids.write({'is_settled': True})
+        move_ids.write({'is_settled': True, 'liquidation_id': move.id})
         self.origin_to_settle.filtered(lambda s: s.mark_to_settle is False).write({'mark_to_settle': True})
         self.application_to_settle.filtered(lambda s: s.mark_to_settle is False).write({'mark_to_settle': True})
         return {

@@ -9,6 +9,7 @@ class AccountMove(models.Model):
 
     is_settled = fields.Boolean(string="Is Settled", default=False)
     oar_type = fields.Selection([('origin', "Origin"), ('application', "Application"), ('liquidation', 'Liquidation')])
+    liquidation_id = fields.Integer(string='Liquidation')
 
     @api.multi
     def post(self, invoice=False):
@@ -86,7 +87,5 @@ class AccountMoveLine(models.Model):
     is_settled = fields.Boolean(related='move_id.is_settled')
     move_state = fields.Selection(related='move_id.state')
     oar_type = fields.Selection(related="move_id.oar_type")
+    liquidation_id = fields.Integer(related="move_id.liquidation_id")
     mark_to_settle = fields.Boolean(string="Mark to Settle", default=True)
-    
-
-

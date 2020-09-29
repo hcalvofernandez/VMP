@@ -5,9 +5,9 @@
         <field name="model">origin_application_resources.report_wizard</field>
         <field name="arch" type="xml">
             <form>
-                <group string='Configure los rangos de fecha del reporte'>
-                    <field col="2" name="start_date"/>
-                    <field col="2" name="end_date"/>
+                <group string='Select the liquidation period to report'>
+                    <field col="2" name="liquidation_ids" widget="many2many_tags"
+                           options="{'no_open': True, 'no_create': True}"/>
                 </group>
                 <footer>
                     <button name="print_report" type="object" string="Print" class="btn btn-success"/>

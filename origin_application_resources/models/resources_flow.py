@@ -60,10 +60,9 @@ class ResourcesFlow(models.Model):
                                 AND am.state = 'posted'
                             """ % (str(origin_journals.ids)[1:-1], str(account_ids)[1:-1],
                                    str(self.env.user.company_id.id))
-        if "start_date" in self.env.context:
-            origin_total_sql += """AND am.date >= '%s'
-            AND am.date <= '%s'
-            """ % (self._context.get("start_date"), self._context.get("end_date"))
+        if "periods" in self.env.context:
+            origin_total_sql += """AND am.liquidation_id IN (%s)
+            """ % str(self._context.get("periods"))[1:-1]
         if "to_settle" in self.env.context:
             origin_total_sql += "AND aml.mark_to_settle = true"
         self.env.cr.execute(origin_total_sql)
@@ -95,10 +94,9 @@ class ResourcesFlow(models.Model):
                                     AND am.state = 'posted'
                                 """ % (str(application_journals.ids)[1:-1], str(account_ids)[1:-1],
                                         str(self.env.user.company_id.id))
-        if "start_date" in self.env.context:
-            application_total_sql += """AND am.date >= '%s'
-            AND am.date <= '%s'
-            """ % (self._context.get("start_date"), self._context.get("end_date"))
+        if "periods" in self.env.context:
+            application_total_sql += """AND am.liquidation_id IN (%s)
+            """ % str(self._context.get("periods"))[1:-1]
         if "to_settle" in self.env.context:
             application_total_sql += "AND aml.mark_to_settle = true"
         self.env.cr.execute(application_total_sql)
@@ -130,10 +128,9 @@ class ResourcesFlow(models.Model):
                                     AND am.state = 'posted'
                                 """ % (str(liquidation_journal.id), str(account_ids)[1:-1],
                                        str(self.env.user.company_id.id))
-        if "start_date" in self.env.context:
-            liquidation_total_sql += """AND am.date >= '%s'
-                AND am.date <= '%s'
-                """ % (self._context.get("start_date"), self._context.get("end_date"))
+        if "periods" in self.env.context:
+            liquidation_total_sql += """AND am.id IN (%s)
+            """ % str(self._context.get("periods"))[1:-1]
         if "to_settle" in self.env.context:
             liquidation_total_sql += "AND aml.mark_to_settle = true"
         self.env.cr.execute(liquidation_total_sql)
