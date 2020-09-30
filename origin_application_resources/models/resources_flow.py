@@ -15,6 +15,7 @@ class ResourcesFlow(models.Model):
     total = fields.Float(compute="_compute_total", string="Total")
     diff = fields.Float(compute="_compute_total", string="Difference")
     percent_in_origin = fields.Float(compute="_compute_total", string="percent")
+    in_guard = fields.Float(compute="_compute_total", string="In Guard")
 
     @api.model
     def _compute_total(self):
@@ -30,12 +31,14 @@ class ResourcesFlow(models.Model):
                 rec.total = application[0]['total']
                 rec.diff = application[0]['total_pending']
             elif rec.type == "liquidation":
+                last = self.env['origin_application_resources.liquidation_log'].search([], limit=1, order='id desc')
+                rec.in_guard = last.in_guard if last else 0.0
                 application = rec.get_applications_total()
                 liquidation = rec.get_liquidation_total()
                 rec.total_settled = application[0]['total'] - application[0]['total_pending']
                 rec.total_settled = liquidation[0]['total']
                 rec.total = liquidation[0]["total"]
-                rec.diff = origin[0]["total_pending"] - application[0]['total_pending']
+                rec.diff = rec.in_guard + origin[0]["total_pending"] - application[0]['total_pending']
             if origin[0]['total_pending'] > 0:
                 rec.percent_in_origin = rec.diff / origin[0]['total_pending'] * 100
 

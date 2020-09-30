@@ -17,8 +17,13 @@ class LiquidationWizard(models.TransientModel):
     in_guard = fields.Float(string="In Guard", compute="compute_to_settle")
 
     @api.model
-    def _get_default_last_guard_line(self):
-        return self.env['origin_application_resources.liquidation_log'].search([], limit=1, order='id desc')
+    def default_get(self, fields_list):
+        result = super(LiquidationWizard, self).default_get(fields_list)
+        res = self.env['origin_application_resources.liquidation_log'].search([], limit=1, order='id desc')
+        if res:
+            result['last_guard'] = res.id
+            result['previous_guard'] = res.in_guard
+        return result
 
     @api.model
     def _get_default_origins_to_settle(self):
@@ -43,7 +48,7 @@ class LiquidationWizard(models.TransientModel):
         _ids = self.env['account.move.line'].search(domain).ids
         return [(6, 0, _ids)]
 
-    last_guard = fields.Many2one("account.move.line", deafault=_get_default_last_guard_line)
+    last_guard = fields.Many2one("origin_application_resources.liquidation_log")
     origin_to_settle = fields.Many2many("account.move.line", "origin_account_move_liquidation_wizard",
                                         default=_get_default_origins_to_settle)
     application_to_settle = fields.Many2many("account.move.line", "application_account_move_liquidation_wizard",
@@ -78,8 +83,8 @@ class LiquidationWizard(models.TransientModel):
     def create_liquidation_move(self):
         if self.to_settle < 0:
             raise ValidationError(_("You can not to settle a negative value"))
-        if self.to_deposit < 0:
-            raise ValidationError(_("You dont deposit a negative amount"))
+        if self.to_deposit <= 0:
+            raise ValidationError(_("You can not deposit a negative or zero amount"))
         if self.in_guard < 0:
             raise ValidationError(_("A negative amount is not allowed in guard"))
         settings = self.env.ref("origin_application_resources.general_settings_data")

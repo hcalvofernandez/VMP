@@ -102,6 +102,21 @@
 
                         <t t-name="body_card">
                             <div class="col-7 o_kanban_primary_right">
+                                <div class="row" t-if="type_flow == 'liquidation'">
+                                    <div class="col-7">
+                                        <a type="action" name="%(liquidation_account_move_line_action)d"
+                                           context="{'search_default_settled':1}">
+                                            <span title="Settled">
+                                                Efectivo en Resguardo
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <span>
+                                            <field name="in_guard"/>
+                                        </span>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-7">
                                         <a type="action" name="%(resources_origin_account_move_line_action)d"
