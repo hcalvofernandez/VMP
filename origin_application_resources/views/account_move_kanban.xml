@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                             <div class="o_kanban_card_manage_settings row">
-                                <button type="object" name="settle_pending"
+                                <button type="action" name="%(liquidation_wizard_action)d"
                                         class="btn btn-primary" t-if="type_flow == 'liquidation' and record.diff.raw_value > 0">
                                     <span>Liquidar</span>
                                 </button>

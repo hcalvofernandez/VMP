@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_origin_application_resources_settings,origin_application_resources_settings,model_origin_application_resources_settings,account.group_account_manager,1,1,0,0
 access_resources_flow,Resources Flow,model_origin_application_resources_resources_flow,account.group_account_manager,1,1,0,0
+access_liquidation_log,Liquidation Log,model_origin_application_resources_liquidation_log,account.group_account_manager,1,1,1,0

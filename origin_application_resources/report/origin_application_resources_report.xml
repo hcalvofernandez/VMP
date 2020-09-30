@@ -13,97 +13,155 @@
                 <t t-call="web.external_layout">
                     <t t-if="user" t-set="lang" t-value="user.lang"/>
                     <div class="page" t-lang="lang">
-                        <h1>Estado de Origen y Aplicación de Recursos</h1>
-                        <p><span>De </span>
-                            <t t-esc="start_date" t-options='{"widget": "date"}'/>
-                            <span> a </span>
-                            <t t-esc="end_date" t-options='{"widget": "date"}'/>
+                        <h1 class="upper-case">Origin and Application of Resources</h1>
+                        <p><span>Date: </span>
+                            <span t-esc="last_date"  t-options='{"widget": "date"}'/>
                         </p>
-                        <table class="main_table">
-                            <thead>
-                                <tr>
-                                    <th class="width-desc">Descripción</th>
-                                    <th class="text-right">Parcial</th>
-                                    <th class="text-right">Importe</th>
-                                    <th class="text-right">Porciento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Origen</td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        $ <t t-esc="origin['value']" t-options='{"widget": "float", "precision": 2}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <t t-if="origin['value']>0" t-esc="100" t-options='{"widget": "float", "precision": 1}'/>
-                                        <t t-else="" t-esc="0" t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Aplicaciones</td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        $ <t t-esc="application['value']" t-options='{"widget": "float", "precision": 2}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <t t-if="origin['value']>0"
-                                           t-esc="application['value']/origin['value']*100"
-                                           t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                                <t t-value="application['value']" t-set="result"/>
-                                <tr t-foreach="application_details" t-as="ad">
-                                    <td>
-                                        <span class="identation" t-esc="ad['name']"/>
-                                    </td>
-                                    <td class="text-right">
-                                        $ <span t-esc="ad['vals']" t-options='{"widget": "float", "precision": 2}'/></td>
-                                        <t t-set="result" t-value="result - ad['vals']"/>
-                                    <td></td>
-                                    <td class="text-right">
-                                        <span t-if="origin['value']>0"
-                                              t-esc="ad['vals']/origin['value']*100" t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                                <tr t-if="result > 0">
-                                    <td><span class="identation">Aplicaciones sin detallar</span></td>
-                                    <td class="text-right">
-                                        $ <span t-esc="result"  t-options='{"widget": "float", "precision": 2}'/>
-                                    </td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        <span t-if="origin['value']>0"
-                                              t-esc="result/origin['value']*100" t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Liquidado</td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        $ <t t-esc="liquidation['settled']"
-                                             t-options='{"widget": "float", "precision": 2}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <t t-if="origin['value']>0"
-                                           t-esc="liquidation['settled']/origin['value']*100"
-                                           t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Por Liquidar</td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        $ <t t-esc="liquidation['to_settle']" t-options='{"widget": "float", "precision": 2}'/>
-                                    </td>
-                                    <td class="text-right">
-                                        <t t-esc="liquidation['percent']" t-options='{"widget": "float", "precision": 1}'/>%
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="div-table">
+                            <table class="main_table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" colspan="3">
+                                            Income / Cash cutoff
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Turn</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td class="upper-case">Previous Guard</td>
+                                        <td class="text-right">
+                                            $ <span t-esc="liquidation.previous_guard"
+                                                    t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <t t-foreach="origins" t-as="orig">
+                                        <tr t-if="orig['balance']">
+                                            <td>
+                                                <span t-esc="orig['date']" t-options='{"widget": "date"}'/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="orig['ref']"/>
+                                            </td>
+                                            <td class="text-right">
+                                                $ <span t-esc="orig['balance']"
+                                                        t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td colspan="2" class="text-center upper-case text-bold">
+                                            Cutoff Sum
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="liquidation.origin_amount"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="div-table" t-if="pays">
+                            <table class="main_table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" colspan="2">
+                                            Application
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="upper-case">
+                                            Pay/Suppliers
+                                        </td>
+                                        <td class="text-right upper-case">
+                                            $ <span t-esc="-liquidation.application_amount"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="upper-case">
+                                            Banorte deposit
+                                        </td>
+                                        <td class="text-right upper-case">
+                                            $ <span t-esc="liquidation.to_deposit"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="upper-case text-bold">
+                                            Application Sum
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="liquidation.application_amount + liquidation.to_deposit"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="upper-case text-bold">
+                                            Cash in Guard
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="liquidation.in_guard"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="div-table" t-if="pays">
+                            <table class="main_table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" colspan="4">
+                                            Pay Relations
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Vendor/Customer</th>
+                                        <th class="text-center">Invoice</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="pays" t-as="ad">
+                                        <td>
+                                            <span t-esc="ad.date" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td>
+                                            <span t-if="ad.partner_id" t-esc="ad.partner_id.name"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="ad.ref"/>
+                                        </td>
+                                        <td class="text-right">
+                                            $ <span t-esc="-ad.balance" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-center upper-case text-bold">
+                                            Documents Total
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="-liquidation.application_amount"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
+                    <div class="text-center sign_separate">Seal and Sign Manager of the Branch</div>
                 </t>
             </t>
         </template>

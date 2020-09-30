@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="oar_liquidation_wizard_view" model="ir.ui.view">
+            <field name="name">Liquidation Wizard</field>
+            <field name="model">origin_application_resources.liquidation_wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="company_currency" invisible="True"/>
+                            <field name="previous_guard" class="oe_right" widget="monetary"
+                                   options="{'currency_field': 'company_currency'}"/>
+                            <field name="origin_amount" class="oe_right" widget="monetary"
+                                   options="{'currency_field': 'company_currency'}"/>
+                            <field name="application_amount" class="oe_right" widget="monetary"
+                                   options="{'currency_field': 'company_currency'}"/>
+                        </group>
+                        <group>
+                            <field name="to_settle" string="Available to Deposit" class="oe_right" widget="monetary"
+                                   options="{'currency_field': 'company_currency'}"/>
+                            <field name="to_deposit" class="text-right" widget="monetary"
+                                   options="{'currency_field': 'company_currency'}"/>
+                            <field name="in_guard" class="oe_right" widget="monetary"
+                                   options="{'currency_field': 'company_currency'}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Origins">
+                            <field name="origin_to_settle">
+                                <tree editable="bottom" create="false" delete="false">
+                                    <field name="mark_to_settle"/>
+                                    <field name="ref" readonly="1"/>
+                                    <field name="name" readonly="1"/>
+                                    <field name="date" readonly="1"/>
+                                    <field name="journal_id" invisible="True" readonly="1"/>
+                                    <field name="balance" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Applications">
+                            <field name="application_to_settle">
+                                <tree editable="bottom" create="false" delete="false">
+                                    <field name="mark_to_settle"/>
+                                    <field name="ref" readonly="1"/>
+                                    <field name="name" readonly="1"/>
+                                    <field name="date" readonly="1"/>
+                                    <field name="partner_id" readonly="1"/>
+                                    <field name="journal_id" invisible="True"/>
+                                    <field name="balance" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="create_liquidation_move" type="object" string="Settle" class="oe_highlight"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="liquidation_wizard_action"
+                    name="Liquidation Wizard"
+                    res_model="origin_application_resources.liquidation_wizard"
+                    view_mode="form"
+                    view_id="oar_liquidation_wizard_view"
+                    target="new"/>
+    </data>
+</odoo>

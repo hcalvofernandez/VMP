@@ -2,20 +2,23 @@
     padding-top: 50px;
 }
 
+.div-table{
+    border: 3px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
 .page .main_table{
     width: 100%;
-    border-collapse: initial !important;
-    border: 1px solid black;
-    border-radius:10px;
-    padding:10px;
+}
+
+th{
+   text-transform: uppercase;
 }
 
 td .identation{
     margin-left: 30px;
-}
-
-.main_table tr{
-    border-bottom: 1px solid black;
 }
 
 table th.width-desc{
@@ -28,4 +31,16 @@ table td .text-center{
 
 table td .text-right{
     text-align: right;
+}
+
+.upper-case{
+    text-transform: uppercase;
+}
+
+.text-bold{
+    font-weight: bold;
+}
+
+.sign_separate{
+    margin-top: 100px;
 }

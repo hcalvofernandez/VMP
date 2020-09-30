@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <!-- Account Move Lines Actions -->
         <act_window id="resources_origin_account_move_line_act_window"
                     name="Resources Origin Account Move"
@@ -31,7 +30,7 @@ if not origin_journals:
     raise Warning("Please, set the journals in the configuration")
 account_ids = origin_journals.mapped('default_debit_account_id.id')
 action = env.ref("origin_application_resources.resources_origin_account_move_line_act_window").read()[0]
-action["domain"] = [('journal_id', 'in', origin_journals.ids),('is_settled', '!=', None),
+action["domain"] = [('journal_id', 'in', origin_journals.ids),('oar_type', '=', 'origin'),
                     ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
 action['context'] = env.context
 action['context']['search_default_session_filter'] = 1
@@ -48,7 +47,7 @@ if not application_journals:
     raise Warning("Please, set the journals in the configuration")
 account_ids = application_journals.mapped('default_credit_account_id.id')
 action = env.ref("origin_application_resources.resources_application_account_move_line_act_window").read()[0]
-action["domain"] = [('journal_id', 'in', application_journals.ids),('is_settled', '!=', None),
+action["domain"] = [('journal_id', 'in', application_journals.ids),('oar_type', '=', 'application'),
                     ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
 action['context'] = env.context
 action['context']['search_default_analytic_filter'] = 1
@@ -65,7 +64,7 @@ if not liquidation_journal:
     raise Warning("Please, set the journals in the configuration")
 account_ids = [liquidation_journal.default_credit_account_id.id,]
 action = env.ref("origin_application_resources.liquidation_account_move_line_act_window").read()[0]
-action["domain"] = [('journal_id', '=', liquidation_journal.id),('is_settled', '!=', None),
+action["domain"] = [('journal_id', '=', liquidation_journal.id),('oar_type', '=', 'liquidation'),
                     ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
 action['context'] = env.context
 action["context"]["default_journal_id"] = liquidation_journal
@@ -97,7 +96,7 @@ origin_journals = env.ref("origin_application_resources.general_settings_data").
 if not origin_journals:
     raise Warning("Please, set the journals in the configuration")
 action = env.ref("origin_application_resources.resources_origin_account_move_act_window").read()[0]
-action["domain"] = [('journal_id', 'in', origin_journals),('is_settled', '!=', None)]
+action["domain"] = [('journal_id', 'in', origin_journals),('oar_type', '=', 'origin')]
 action['context'] = env.context
 action['context']['search_default_session_filter'] = 1
 if origin_journals:
@@ -114,7 +113,7 @@ application_journals = env.ref("origin_application_resources.general_settings_da
 if not application_journals:
     raise Warning("Please, set the journals in the configuration")
 action = env.ref("origin_application_resources.resources_application_account_move_act_window").read()[0]
-action["domain"] = [('journal_id', 'in', application_journals),('is_settled', '!=', None)]
+action["domain"] = [('journal_id', 'in', application_journals),('oar_type', '=', 'application')]
 action['context'] = env.context
 if application_journals:
     action["context"]["default_journal_id"] = application_journals[0]
@@ -130,7 +129,7 @@ liquidation_journal = env.ref("origin_application_resources.general_settings_dat
 if not liquidation_journal:
     raise Warning("Please, set the journals in the configuration")
 action = env.ref("origin_application_resources.liquidation_account_move_act_window").read()[0]
-action["domain"] = [('journal_id', '=', liquidation_journal),('is_settled', '!=', None)]
+action["domain"] = [('journal_id', '=', liquidation_journal),('oar_type', '=', 'liquidation')]
 action['context'] = env.context
 action["context"]["default_journal_id"] = liquidation_journal
 action['context']["default_liquidation_id"] = env.ref("origin_application_resources.liquidation_flow_data").id
