@@ -131,6 +131,7 @@ class LiquidationWizard(models.TransientModel):
             "journal_id": settings.liquidation_journal_id.id,
             "oar_type": "liquidation",
             "line_ids": lines,
+            "is_settled": True,
         }
 
     @api.multi
