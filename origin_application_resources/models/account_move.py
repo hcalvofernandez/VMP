@@ -9,49 +9,6 @@ class AccountMove(models.Model):
 
     is_settled = fields.Boolean(string="Is Settled", default=False)
     oar_type = fields.Selection([('origin', "Origin"), ('application', "Application"), ('liquidation', 'Liquidation')])
-    liquidation_id = fields.Integer(string='Liquidation')
-
-    @api.multi
-    def post(self, invoice=False):
-        res = super(AccountMove, self).post(invoice)
-        if self.oar_type == 'liquidation':
-            settings = self.with_context({'force_company': self.env.user.company_id.id}).env.ref(
-                "origin_application_resources.general_settings_data")
-            liquidation_journal = settings.liquidation_journal_id
-            if liquidation_journal and self.journal_id.id == liquidation_journal.id:
-                self.validate_liquidation(settings)
-        return res
-
-    @api.multi
-    def validate_liquidation(self, settings):
-        if not settings.application_journal_ids or not settings.origin_journal_ids:
-            raise ValidationError(_("Please, set the journals in configuration"))
-        account_ids = settings.liquidation_journal_id.mapped("default_credit_account_id.id")
-        liquidation = self.with_context({'force_company': self.env.user.company_id.id, 'to_settle': True}).env.ref(
-            "origin_application_resources.liquidation_flow_data")
-        lines = self.line_ids.filtered(lambda s: s.account_id.id in account_ids)
-        sum = 0
-        for line in lines:
-            sum += line.debit - line.credit
-        if sum != liquidation.diff:
-            raise ValidationError(_("The value to settle must be equal to the sum of the accounting entries."))
-        else:
-            self.write({'is_settled': True})
-
-
-    @api.multi
-    def get_move_ids(self, journals):
-        sql = """SELECT
-                am.id AS id
-                FROM account_move AS am
-                WHERE am.journal_id IN (%s)
-                AND am.company_id = %s
-                AND am.state = 'posted'
-            """ % (str(journals)[1:-1], str(self.env.user.company_id.id))
-        self.env.cr.execute(sql)
-        values = self.env.cr.dictfetchall()
-        ids = [i['id'] for i in values]
-        return ids
 
     @api.multi
     def mark_as_origin(self):
@@ -87,5 +44,7 @@ class AccountMoveLine(models.Model):
     is_settled = fields.Boolean(related='move_id.is_settled')
     move_state = fields.Selection(related='move_id.state')
     oar_type = fields.Selection(related="move_id.oar_type")
-    liquidation_id = fields.Integer(related="move_id.liquidation_id")
+    liquidation_id = fields.Many2one("origin_application_resources.liquidation_log")
+    liquidation_origin_id = fields.Many2one("origin_application_resources.liquidation_log")
     mark_to_settle = fields.Boolean(string="Mark to Settle", default=True)
+    guard_value = fields.Boolean(string="Guard Cash", default=False)

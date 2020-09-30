@@ -6,3 +6,4 @@ from . import resources_flow
 from . import pos_order
 from . import account_bank_statement
 from . import account_payment
+from . import liquidation_log

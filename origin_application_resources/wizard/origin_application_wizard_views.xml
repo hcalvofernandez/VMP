@@ -6,8 +6,7 @@
         <field name="arch" type="xml">
             <form>
                 <group string='Select the liquidation period to report'>
-                    <field col="2" name="liquidation_ids" widget="many2many_tags"
-                           options="{'no_open': True, 'no_create': True}"/>
+                    <field col="2" name="liquidation_id" options="{'no_open': True, 'no_create': True}"/>
                 </group>
                 <footer>
                     <button name="print_report" type="object" string="Print" class="btn btn-success"/>
