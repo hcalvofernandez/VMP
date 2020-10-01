@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @version 2.0.1-3
+ * @version 2.0.12;
  * @overview QZ Tray Connector
  * <p/>
  * Connects a web client to the QZ Tray software.
@@ -28,6 +28,7 @@ var qz = (function() {
 ///// PRIVATE METHODS /////
 
     var _qz = {
+        VERSION: "2.0.12",                              //must match @version above
         DEBUG: false,
 
         log: {
@@ -74,6 +75,20 @@ var qz = (function() {
             setup: {
                 /** Loop through possible ports to open connection, sets web socket calls that will settle the promise. */
                 findConnection: function(config, resolve, reject) {
+                    //force flag if missing ports
+                    if (!config.port.secure.length) {
+                        if (!config.port.insecure.length) {
+                            reject(new Error("No ports have been specified to connect over"));
+                            return;
+                        } else if (config.usingSecure) {
+                            _qz.log.error("No secure ports specified - forcing insecure connection");
+                            config.usingSecure = false;
+                        }
+                    } else if (!config.port.insecure.length && !config.usingSecure) {
+                        _qz.log.trace("No insecure ports specified - forcing secure connection");
+                        config.usingSecure = true;
+                    }
+
                     var deeper = function() {
                         config.port.portIndex++;
 
@@ -115,27 +130,29 @@ var qz = (function() {
 
                         //called on successful connection to qz, begins setup of websocket calls and resolves connect promise after certificate is sent
                         _qz.websocket.connection.onopen = function(evt) {
-                            _qz.log.trace(evt);
-                            _qz.log.info("Established connection with QZ Tray on " + address);
+                            if (!_qz.websocket.connection.established) {
+                                _qz.log.trace(evt);
+                                _qz.log.info("Established connection with QZ Tray on " + address);
 
-                            _qz.websocket.setup.openConnection({ resolve: resolve, reject: reject });
+                                _qz.websocket.setup.openConnection({ resolve: resolve, reject: reject });
 
-                            if (config.keepAlive > 0) {
-                                var interval = setInterval(function() {
-                                    if (!qz.websocket.isActive()) {
-                                        clearInterval(interval);
-                                        return;
-                                    }
+                                if (config.keepAlive > 0) {
+                                    var interval = setInterval(function() {
+                                        if (!qz.websocket.isActive()) {
+                                            clearInterval(interval);
+                                            return;
+                                        }
 
-                                    _qz.websocket.connection.send("ping");
-                                }, config.keepAlive * 1000);
+                                        _qz.websocket.connection.send("ping");
+                                    }, config.keepAlive * 1000);
+                                }
                             }
                         };
 
                         //called during websocket close during setup
                         _qz.websocket.connection.onclose = function() {
                             // Safari compatibility fix to raise error event
-                            if (typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+                            if (_qz.websocket.connection && typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
                                 _qz.websocket.connection.onerror();
                             }
                         };
@@ -143,6 +160,9 @@ var qz = (function() {
                         //called for errors during setup (such as invalid ports), reject connect promise only if all ports have been tried
                         _qz.websocket.connection.onerror = function(evt) {
                             _qz.log.trace(evt);
+
+                            _qz.websocket.connection = null;
+
                             deeper();
                         };
                     } else {
@@ -185,11 +205,20 @@ var qz = (function() {
 
                         if (obj.timestamp == undefined) {
                             obj.timestamp = Date.now();
+                            if (typeof obj.timestamp !== 'number') {
+                                obj.timestamp = new Date().getTime();
+                            }
                         }
                         if (obj.promise != undefined) {
                             obj.uid = _qz.websocket.setup.newUID();
                             _qz.websocket.pendingCalls[obj.uid] = obj.promise;
                         }
+
+                        // track requesting monitor
+                        obj.position = {
+                            x: typeof screen !== 'undefined' ? ((screen.availWidth || screen.width) / 2) + (screen.left || screen.availLeft) : 0,
+                            y: typeof screen !== 'undefined' ? ((screen.availHeight || screen.height) / 2) + (screen.top || screen.availTop) : 0
+                        };
 
                         try {
                             if (obj.call != undefined && obj.signature == undefined) {
@@ -199,11 +228,20 @@ var qz = (function() {
                                     timestamp: obj.timestamp
                                 };
 
-                                _qz.security.callSign(_qz.tools.hash(_qz.tools.stringify(signObj))).then(function(signature) {
+                                //make a hashing promise if not already one
+                                var hashing = _qz.tools.hash(_qz.tools.stringify(signObj));
+                                if (!hashing.then) {
+                                    hashing = _qz.tools.promise(function(resolve) {
+                                        resolve(hashing);
+                                    });
+                                }
+
+                                hashing.then(function(hashed) {
+                                    return _qz.security.callSign(hashed);
+                                }).then(function(signature) {
                                     _qz.log.trace("Signature for call", signature);
                                     obj.signature = signature;
                                     _qz.signContent = undefined;
-
                                     _qz.websocket.connection.send(_qz.tools.stringify(obj));
                                 });
                             } else {
@@ -349,9 +387,10 @@ var qz = (function() {
                 copies: 1,
                 density: 0,
                 duplex: false,
-                fallbackDensity: 600,
+                fallbackDensity: null,
                 interpolation: 'bicubic',
                 jobName: null,
+                legacy: false,
                 margins: 0,
                 orientation: null,
                 paperThickness: null,
@@ -455,11 +494,14 @@ var qz = (function() {
                 return result;
             },
 
-            hash: typeof Sha256 !== 'undefined' ? Sha256.hash : null,
+            hash: function(data) {
+                return Sha256.hash(data);
+            },
+
             ws: typeof WebSocket !== 'undefined' ? WebSocket : null,
 
             absolute: function(loc) {
-                if (document && typeof document.createElement === 'function') {
+                if (typeof window !== 'undefined' && typeof document.createElement === 'function') {
                     var a = document.createElement("a");
                     a.href = loc;
                     return a.href;
@@ -598,6 +640,9 @@ var qz = (function() {
              *
              * @param {Object} [options] Configuration options for the web socket connection.
              *  @param {string|Array<string>} [options.host=['localhost', 'localhost.qz.io']] Host running the QZ Tray software.
+             *  @param {Object} [options.port] Config options for ports to cycle.
+             *   @param {Array<number>} [options.port.secure=[8181, 8282, 8383, 8484]] Array of secure (WSS) ports to try
+             *   @param {Array<number>} [options.port.insecure=[8182, 8283, 8384, 8485]] Array of insecure (WS) ports to try
              *  @param {boolean} [options.usingSecure=true] If the web socket should try to use secure ports for connecting.
              *  @param {number} [options.keepAlive=60] Seconds between keep-alive pings to keep connection open. Set to 0 to disable.
              *  @param {number} [options.retries=0] Number of times to reconnect before failing.
@@ -643,12 +688,16 @@ var qz = (function() {
                     }
 
                     var attempt = function(count) {
+                        var tried = false;
                         var nextAttempt = function() {
-                            if (options && count < options.retries) {
-                                attempt(count + 1);
-                            } else {
-                                _qz.websocket.connection = null;
-                                reject.apply(null, arguments);
+                            if (!tried) {
+                                tried = true;
+
+                                if (options && count < options.retries) {
+                                    attempt(count + 1);
+                                } else {
+                                    reject.apply(null, arguments);
+                                }
                             }
                         };
 
@@ -710,12 +759,34 @@ var qz = (function() {
             },
 
             /**
+             * @param {string} [hostname] Hostname to try to connect to when determining network interfaces, defaults to "google.com"
+             * @param {number} [port] Port to use with custom hostname, defaults to 443
+             * @param {string} [signature] Pre-signed signature of hashed JSON string containing <code>call='websocket.getNetworkInfo'</code>, <code>params</code> object, and <code>timestamp</code>.
+             * @param {number} [signingTimestamp] Required with <code>signature</code>. Timestamp used with pre-signed content.
+             *
              * @returns {Promise<Object<{ipAddress: String, macAddress: String}>|Error>} Connected system's network information.
              *
              * @memberof qz.websocket
              */
-            getNetworkInfo: function() {
-                return _qz.websocket.dataPromise('websocket.getNetworkInfo');
+            getNetworkInfo: function(hostname, port, signature, signingTimestamp) {
+                return _qz.websocket.dataPromise('websocket.getNetworkInfo', {
+                    hostname: hostname,
+                    port: port
+                }, signature, signingTimestamp);
+            },
+
+            /**
+             * @returns {Object<{socket: String, host: String, port: Number}>} Details of active websocket connection
+             *
+             * @memberof qz.websocket
+             */
+            getConnectionInfo: function() {
+                if (_qz.websocket.connection) {
+                    var url = _qz.websocket.connection.url.split(/[:\/]+/g);
+                    return { socket: url[0], host: url[1], port: +url[2] };
+                } else {
+                    throw new Error("A connection to QZ has not been established yet");
+                }
             }
 
         },
@@ -727,24 +798,29 @@ var qz = (function() {
          */
         printers: {
             /**
+             * @param {string} [signature] Pre-signed signature of hashed JSON string containing <code>call='printers.getDefault</code>, <code>params</code>, and <code>timestamp</code>.
+             * @param {number} [signingTimestamp] Required with <code>signature</code>. Timestamp used with pre-signed content.
+             *
              * @returns {Promise<string|Error>} Name of the connected system's default printer.
              *
              * @memberof qz.printers
              */
-            getDefault: function() {
-                return _qz.websocket.dataPromise('printers.getDefault');
+            getDefault: function(signature, signingTimestamp) {
+                return _qz.websocket.dataPromise('printers.getDefault', null, signature, signingTimestamp);
             },
 
             /**
              * @param {string} [query] Search for a specific printer. All printers are returned if not provided.
+             * @param {string} [signature] Pre-signed signature of hashed JSON string containing <code>call='printers.find'</code>, <code>params</code>, and <code>timestamp</code>.
+             * @param {number} [signingTimestamp] Required with <code>signature</code>. Timestamp used with pre-signed content.
              *
              * @returns {Promise<Array<string>|string|Error>} The matched printer name if <code>query</code> is provided.
              *                                                Otherwise an array of printer names found on the connected system.
              *
              * @memberof qz.printers
              */
-            find: function(query) {
-                return _qz.websocket.dataPromise('printers.find', { query: query });
+            find: function(query, signature, signingTimestamp) {
+                return _qz.websocket.dataPromise('printers.find', { query: query }, signature, signingTimestamp);
             }
         },
 
@@ -762,12 +838,13 @@ var qz = (function() {
              *
              *  @param {string} [options.colorType='color'] Valid values <code>[color | grayscale | blackwhite]</code>
              *  @param {number} [options.copies=1] Number of copies to be printed.
-             *  @param {number|Array<number>} [options.density=72] Pixel density (DPI, DPMM, or DPCM depending on <code>[options.units]</code>).
+             *  @param {number|Array<number>} [options.density=0] Pixel density (DPI, DPMM, or DPCM depending on <code>[options.units]</code>).
              *      If provided as an array, uses the first supported density found (or the first entry if none found).
              *  @param {boolean} [options.duplex=false] Double sided printing
-             *  @param {number} [options.fallbackDensity=600] Value used when default density value cannot be read, or in cases where reported as "Normal" by the driver.
+             *  @param {number} [options.fallbackDensity=null] Value used when default density value cannot be read, or in cases where reported as "Normal" by the driver, (in DPI, DPMM, or DPCM depending on <code>[options.units]</code>).
              *  @param {string} [options.interpolation='bicubic'] Valid values <code>[bicubic | bilinear | nearest-neighbor]</code>. Controls how images are handled when resized.
              *  @param {string} [options.jobName=null] Name to display in print queue.
+             *  @param {boolean} [options.legacy=false] If legacy style printing should be used.
              *  @param {Object|number} [options.margins=0] If just a number is provided, it is used as the margin for all sides.
              *   @param {number} [options.margins.top=0]
              *   @param {number} [options.margins.right=0]
@@ -841,10 +918,13 @@ var qz = (function() {
          *   @param {number} [data.options.x] Optional with <code>[raw]</code> type <code>[image]</code> format. The X position of the image.
          *   @param {number} [data.options.y] Optional with <code>[raw]</code> type <code>[image]</code> format. The Y position of the image.
          *   @param {string|number} [data.options.dotDensity] Optional with <code>[raw]</code> type <code>[image]</code> format.
+         *   @param {number} [data.precision=128] Optional with <code>[raw]</code> type <code>[image]</code> format. Bit precision of the ribbons.
+         *   @param {boolean|string|Array<Array<number>>} [data.options.overlay=false] Optional with <code>[raw]</code> type <code>[image]</code> format.
+         *      Boolean sets entire layer, string sets mask image, Array sets array of rectangles in format <code>[x1,y1,x2,y2]</code>.
          *   @param {string} [data.options.xmlTag] Required with <code>[xml]</code> format. Tag name containing base64 formatted data.
          *   @param {number} [data.options.pageWidth] Optional with <code>[html]</code> type printing. Width of the web page to render. Defaults to paper width.
          *   @param {number} [data.options.pageHeight] Optional with <code>[html]</code> type printing. Height of the web page to render. Defaults to adjusted web page height.
-         * @param {boolean} [signature] Pre-signed signature of JSON string containing <code>call</code>, <code>params</code>, and <code>timestamp</code>.
+         * @param {string} [signature] Pre-signed signature of hashed JSON string containing <code>call='print'</code>, <code>params</code>, and <code>timestamp</code>.
          * @param {number} [signingTimestamp] Required with <code>signature</code>. Timestamp used with pre-signed content.
          *
          * @returns {Promise<null|Error>}
@@ -857,11 +937,14 @@ var qz = (function() {
             //change relative links to absolute
             for(var i = 0; i < data.length; i++) {
                 if (data[i].constructor === Object) {
-                    if ((!data[i].format && data[i].type && data[i].type.toUpperCase() !== 'RAW') //unspecified format and not raw -> assume file
+                    if ((!data[i].format && data[i].type && (data[i].type.toUpperCase() !== 'RAW' && data[i].type.toUpperCase() !== 'DIRECT')) //unspecified format and not raw -> assume file
                         || (data[i].format && (data[i].format.toUpperCase() === 'FILE'
-                        || data[i].format.toUpperCase() === 'IMAGE'
-                        || data[i].format.toUpperCase() === 'XML'))) {
+                            || (data[i].format.toUpperCase() === 'IMAGE' && !(data[i].data.indexOf("data:image/") === 0 && data[i].data.indexOf(";base64,") !== 0))
+                            || data[i].format.toUpperCase() === 'XML'))) {
                         data[i].data = _qz.tools.absolute(data[i].data);
+                    }
+                    if (data[i].options && typeof data[i].options.overlay === 'string') {
+                        data[i].options.overlay = _qz.tools.absolute(data[i].options.overlay);
                     }
                 }
             }
@@ -905,19 +988,24 @@ var qz = (function() {
 
             /**
              * @param {string} port Name of port to open.
-             * @param {Object} bounds Boundaries of serial port output.
-             *  @param {string} [bounds.begin=0x0002] Character denoting start of serial response. Not used if <code>width</code is provided.
-             *  @param {string} [bounds.end=0x000D] Character denoting end of serial response. Not used if <code>width</code> is provided.
-             *  @param {number} [bounds.width] Used for fixed-width response serial communication.
+             * @param {Object} [options] Boundaries of serial port output.
+             *  @param {string} [options.start=0x0002] Character denoting start of serial response. Not used if <code>width</code is provided.
+             *  @param {string} [options.end=0x000D] Character denoting end of serial response. Not used if <code>width</code> is provided.
+             *  @param {number} [options.width] Used for fixed-width response serial communication.
+             *  @param {string} [options.baudRate=9600]
+             *  @param {string} [options.dataBits=8]
+             *  @param {string} [options.stopBits=1]
+             *  @param {string} [options.parity='NONE'] Valid values <code>[NONE| EVEN | ODD | MARK | SPACE]</code>
+             *  @param {string} [options.flowControl='NONE'] Valid values <code>[NONE | XONXOFF | XONXOFF_OUT | XONXOFF_IN | RTSCTS | RTSCTS_OUT | RTSCTS_IN]</code>
              *
              * @returns {Promise<null|Error>}
              *
              * @memberof qz.serial
              */
-            openPort: function(port, bounds) {
+            openPort: function(port, options) {
                 var params = {
                     port: port,
-                    bounds: bounds
+                    options: options
                 };
                 return _qz.websocket.dataPromise('serial.openPort', params);
             },
@@ -928,12 +1016,12 @@ var qz = (function() {
              *
              * @param {string} port An open port to send data over.
              * @param {string} data The data to send to the serial device.
-             * @param {Object} [properties] Properties of data being sent over the serial port.
+             * @param {Object} [properties] DEPRECATED: Properties of data being sent over the serial port.
              *  @param {string} [properties.baudRate=9600]
              *  @param {string} [properties.dataBits=8]
              *  @param {string} [properties.stopBits=1]
-             *  @param {string} [properties.parity='NONE']
-             *  @param {string} [properties.flowControl='NONE']
+             *  @param {string} [properties.parity='NONE'] Valid values <code>[NONE| EVEN | ODD | MARK | SPACE]</code>
+             *  @param {string} [properties.flowControl='NONE'] Valid values <code>[NONE | XONXOFF | XONXOFF_OUT | XONXOFF_IN | RTSCTS | RTSCTS_OUT | RTSCTS_IN]</code>
              *
              * @returns {Promise<null|Error>}
              *
@@ -942,6 +1030,10 @@ var qz = (function() {
              * @memberof qz.serial
              */
             sendData: function(port, data, properties) {
+                if (properties != null) {
+                    _qz.log.warn("Properties object is deprecated on sendData calls, use openPort instead.");
+                }
+
                 var params = {
                     port: port,
                     data: data,
@@ -982,35 +1074,39 @@ var qz = (function() {
             },
 
             /**
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
              * @returns {Promise<Array<string>|Error>} List of available (hexadecimal) interfaces on a USB device.
              *
              * @memberof qz.usb
              */
-            listInterfaces: function(vendorId, productId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId
-                };
-                return _qz.websocket.dataPromise('usb.listInterfaces', params);
+            listInterfaces: function(deviceInfo) {
+                if (typeof deviceInfo !== 'object') { deviceInfo = { vendorId: arguments[0], productId: arguments[1] }; } //backwards compatibility
+
+                return _qz.websocket.dataPromise('usb.listInterfaces', deviceInfo);
             },
 
             /**
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
-             * @param iface Hex string of interface on the USB device to search.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
+             *  @param deviceInfo.iface Hex string of interface on the USB device to search.
              * @returns {Promise<Array<string>|Error>} List of available (hexadecimal) endpoints on a USB device's interface.
              *
              * @memberof qz.usb
              */
-            listEndpoints: function(vendorId, productId, iface) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    interface: iface
-                };
-                return _qz.websocket.dataPromise('usb.listEndpoints', params);
+            listEndpoints: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        interface: arguments[2]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('usb.listEndpoints', deviceInfo);
             },
 
             /**
@@ -1030,141 +1126,164 @@ var qz = (function() {
             /**
              * Claim a USB device's interface to enable sending/reading data across an endpoint.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
-             * @param iface Hex string of interface on the USB device to claim.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
+             *  @param deviceInfo.interface Hex string of interface on the USB device to claim.
              * @returns {Promise<null|Error>}
              *
              * @memberof qz.usb
              */
-            claimDevice: function(vendorId, productId, iface) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    interface: iface
-                };
-                return _qz.websocket.dataPromise('usb.claimDevice', params);
+            claimDevice: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        interface: arguments[2]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('usb.claimDevice', deviceInfo);
             },
 
             /**
              * Check the current claim state of a USB device.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
              * @returns {Promise<boolean|Error>}
              *
              * @since 2.0.2
              * @memberOf qz.usb
              */
-            isClaimed: function(vendorId, productId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId
-                };
-                return _qz.websocket.dataPromise('usb.isClaimed', params);
+            isClaimed: function(deviceInfo) {
+                if (typeof deviceInfo !== 'object') { deviceInfo = { vendorId: arguments[0], productId: arguments[1] }; } //backwards compatibility
+
+                return _qz.websocket.dataPromise('usb.isClaimed', deviceInfo);
             },
 
             /**
              * Send data to a claimed USB device.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
-             * @param endpoint Hex string of endpoint on the claimed interface for the USB device.
-             * @param data Bytes to send over specified endpoint.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
+             *  @param deviceInfo.endpoint Hex string of endpoint on the claimed interface for the USB device.
+             *  @param deviceInfo.data Bytes to send over specified endpoint.
              * @returns {Promise<null|Error>}
              *
              * @memberof qz.usb
              */
-            sendData: function(vendorId, productId, endpoint, data) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    endpoint: endpoint,
-                    data: data
-                };
-                return _qz.websocket.dataPromise('usb.sendData', params);
+            sendData: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        endpoint: arguments[2],
+                        data: arguments[3]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('usb.sendData', deviceInfo);
             },
 
             /**
              * Read data from a claimed USB device.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
-             * @param endpoint Hex string of endpoint on the claimed interface for the USB device.
-             * @param responseSize Size of the byte array to receive a response in.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
+             *  @param deviceInfo.endpoint Hex string of endpoint on the claimed interface for the USB device.
+             *  @param deviceInfo.responseSize Size of the byte array to receive a response in.
              * @returns {Promise<Array<string>|Error>} List of (hexadecimal) bytes received from the USB device.
              *
              * @memberof qz.usb
              */
-            readData: function(vendorId, productId, endpoint, responseSize) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    endpoint: endpoint,
-                    responseSize: responseSize
-                };
-                return _qz.websocket.dataPromise('usb.readData', params);
+            readData: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        endpoint: arguments[2],
+                        responseSize: arguments[3]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('usb.readData', deviceInfo);
             },
 
             /**
              * Provides a continuous stream of read data from a claimed USB device.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
-             * @param endpoint Hex string of endpoint on the claimed interface for the USB device.
-             * @param responseSize Size of the byte array to receive a response in.
-             * @param [interval=100] Frequency to send read data back, in milliseconds.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
+             *  @param deviceInfo.endpoint Hex string of endpoint on the claimed interface for the USB device.
+             *  @param deviceInfo.responseSize Size of the byte array to receive a response in.
+             *  @param deviceInfo.interval=100 Frequency to send read data back, in milliseconds.
              * @returns {Promise<null|Error>}
              *
              * @see qz.usb.setUsbCallbacks
              *
              * @memberof qz.usb
              */
-            openStream: function(vendorId, productId, endpoint, responseSize, interval) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    endpoint: endpoint,
-                    responseSize: responseSize,
-                    interval: interval
-                };
-                return _qz.websocket.dataPromise('usb.openStream', params);
+            openStream: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        endpoint: arguments[2],
+                        responseSize: arguments[3],
+                        interval: arguments[4]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('usb.openStream', deviceInfo);
             },
 
             /**
              * Stops the stream of read data from a claimed USB device.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
-             * @param endpoint Hex string of endpoint on the claimed interface for the USB device.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
+             *  @param deviceInfo.endpoint Hex string of endpoint on the claimed interface for the USB device.
              * @returns {Promise<null|Error>}
              *
              * @memberof qz.usb
              */
-            closeStream: function(vendorId, productId, endpoint) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    endpoint: endpoint
-                };
-                return _qz.websocket.dataPromise('usb.closeStream', params);
+            closeStream: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        endpoint: arguments[2]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('usb.closeStream', deviceInfo);
             },
 
             /**
              * Release a claimed USB device to free resources after sending/reading data.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of USB device's vendor ID.
+             *  @param deviceInfo.productId Hex string of USB device's product ID.
              * @returns {Promise<null|Error>}
              *
              * @memberof qz.usb
              */
-            releaseDevice: function(vendorId, productId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId
-                };
-                return _qz.websocket.dataPromise('usb.releaseDevice', params);
+            releaseDevice: function(deviceInfo) {
+                if (typeof deviceInfo !== 'object') { deviceInfo = { vendorId: arguments[0], productId: arguments[1] }; } //backwards compatibility
+
+                return _qz.websocket.dataPromise('usb.releaseDevice', deviceInfo);
             }
         },
 
@@ -1238,89 +1357,109 @@ var qz = (function() {
             /**
              * Claim a HID device to enable sending/reading data across.
              *
-             * @param vendorId Hex string of HID device's vendor ID.
-             * @param productId Hex string of HID device's product ID.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of HID device's vendor ID.
+             *  @param deviceInfo.productId Hex string of HID device's product ID.
+             *  @param deviceInfo.usagePage Hex string of HID device's usage page when multiple are present.
+             *  @param deviceInfo.serial Serial ID of HID device.
              * @returns {Promise<null|Error>}
              * @since 2.0.1
              *
              * @memberof qz.hid
              */
-            claimDevice: function(vendorId, productId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId
-                };
-                return _qz.websocket.dataPromise('hid.claimDevice', params);
+            claimDevice: function(deviceInfo) {
+                if (typeof deviceInfo !== 'object') { deviceInfo = { vendorId: arguments[0], productId: arguments[1] }; } //backwards compatibility
+
+                return _qz.websocket.dataPromise('hid.claimDevice', deviceInfo);
             },
 
             /**
              * Check the current claim state of a HID device.
              *
-             * @param vendorId Hex string of HID device's vendor ID.
-             * @param productId Hex string of HID device's product ID.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of HID device's vendor ID.
+             *  @param deviceInfo.productId Hex string of HID device's product ID.
+             *  @param deviceInfo.usagePage Hex string of HID device's usage page when multiple are present.
+             *  @param deviceInfo.serial Serial ID of HID device.
              * @returns {Promise<boolean|Error>}
              *
              * @since 2.0.2
              * @memberOf qz.hid
              */
-            isClaimed: function(vendorId, productId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId
-                };
-                return _qz.websocket.dataPromise('hid.isClaimed', params);
+            isClaimed: function(deviceInfo) {
+                if (typeof deviceInfo !== 'object') { deviceInfo = { vendorId: arguments[0], productId: arguments[1] }; } //backwards compatibility
+
+                return _qz.websocket.dataPromise('hid.isClaimed', deviceInfo);
             },
 
             /**
              * Send data to a claimed HID device.
              *
-             * @param vendorId Hex string of USB device's vendor ID.
-             * @param productId Hex string of USB device's product ID.
-             * @param data Bytes to send over specified endpoint.
-             * @param [reportId=0x00] First byte of the data packet signifying the HID report ID.
-             *                        Must be 0x00 for devices only supporting a single report.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of HID device's vendor ID.
+             *  @param deviceInfo.productId Hex string of HID device's product ID.
+             *  @param deviceInfo.usagePage Hex string of HID device's usage page when multiple are present.
+             *  @param deviceInfo.serial Serial ID of HID device.
+             *  @param deviceInfo.data Bytes to send over specified endpoint.
+             *  @param deviceInfo.endpoint=0x00 First byte of the data packet signifying the HID report ID.
+             *                             Must be 0x00 for devices only supporting a single report.
+             *  @param deviceInfo.reportId=0x00 Alias for <code>deviceInfo.endpoint</code>. Not used if endpoint is provided.
              * @returns {Promise<null|Error>}
              * @since 2.0.1
              *
              * @memberof qz.hid
              */
-            sendData: function(vendorId, productId, data, reportId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    endpoint: reportId,
-                    data: data
-                };
-                return _qz.websocket.dataPromise('hid.sendData', params);
+            sendData: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        data: arguments[2],
+                        endpoint: arguments[3]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('hid.sendData', deviceInfo);
             },
 
             /**
              * Read data from a claimed HID device.
              *
-             * @param vendorId Hex string of HID device's vendor ID.
-             * @param productId Hex string of HID device's product ID.
-             * @param responseSize Size of the byte array to receive a response in.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of HID device's vendor ID.
+             *  @param deviceInfo.productId Hex string of HID device's product ID.
+             *  @param deviceInfo.usagePage Hex string of HID device's usage page when multiple are present.
+             *  @param deviceInfo.serial Serial ID of HID device.
+             *  @param deviceInfo.responseSize Size of the byte array to receive a response in.
              * @returns {Promise<Array<string>|Error>} List of (hexadecimal) bytes received from the HID device.
              * @since 2.0.1
              *
              * @memberof qz.hid
              */
-            readData: function(vendorId, productId, responseSize) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    responseSize: responseSize
-                };
-                return _qz.websocket.dataPromise('hid.readData', params);
+            readData: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        responseSize: arguments[2]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('hid.readData', deviceInfo);
             },
 
             /**
              * Provides a continuous stream of read data from a claimed HID device.
              *
-             * @param vendorId Hex string of UHIDSB device's vendor ID.
-             * @param productId Hex string of HID device's product ID.
-             * @param responseSize Size of the byte array to receive a response in.
-             * @param [interval=100] Frequency to send read data back, in milliseconds.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of HID device's vendor ID.
+             *  @param deviceInfo.productId Hex string of HID device's product ID.
+             *  @param deviceInfo.usagePage Hex string of HID device's usage page when multiple are present.
+             *  @param deviceInfo.serial Serial ID of HID device.
+             *  @param deviceInfo.responseSize Size of the byte array to receive a response in.
+             *  @param deviceInfo.interval=100 Frequency to send read data back, in milliseconds.
              * @returns {Promise<null|Error>}
              * @since 2.0.1
              *
@@ -1328,50 +1467,56 @@ var qz = (function() {
              *
              * @memberof qz.hid
              */
-            openStream: function(vendorId, productId, responseSize, interval) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId,
-                    responseSize: responseSize,
-                    interval: interval
-                };
-                return _qz.websocket.dataPromise('hid.openStream', params);
+            openStream: function(deviceInfo) {
+                //backwards compatibility
+                if (typeof deviceInfo !== 'object') {
+                    deviceInfo = {
+                        vendorId: arguments[0],
+                        productId: arguments[1],
+                        responseSize: arguments[2],
+                        interval: arguments[3]
+                    };
+                }
+
+                return _qz.websocket.dataPromise('hid.openStream', deviceInfo);
             },
 
             /**
              * Stops the stream of read data from a claimed HID device.
              *
-             * @param vendorId Hex string of HID device's vendor ID.
-             * @param productId Hex string of HID device's product ID.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of HID device's vendor ID.
+             *  @param deviceInfo.productId Hex string of HID device's product ID.
+             *  @param deviceInfo.usagePage Hex string of HID device's usage page when multiple are present.
+             *  @param deviceInfo.serial Serial ID of HID device.
              * @returns {Promise<null|Error>}
              * @since 2.0.1
              *
              * @memberof qz.hid
              */
-            closeStream: function(vendorId, productId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId
-                };
-                return _qz.websocket.dataPromise('hid.closeStream', params);
+            closeStream: function(deviceInfo) {
+                if (typeof deviceInfo !== 'object') { deviceInfo = { vendorId: arguments[0], productId: arguments[1] }; } //backwards compatibility
+
+                return _qz.websocket.dataPromise('hid.closeStream', deviceInfo);
             },
 
             /**
              * Release a claimed HID device to free resources after sending/reading data.
              *
-             * @param vendorId Hex string of HID device's vendor ID.
-             * @param productId Hex string of HID device's product ID.
+             * @param {object} deviceInfo Config details of the HID device.
+             *  @param deviceInfo.vendorId Hex string of HID device's vendor ID.
+             *  @param deviceInfo.productId Hex string of HID device's product ID.
+             *  @param deviceInfo.usagePage Hex string of HID device's usage page when multiple are present.
+             *  @param deviceInfo.serial Serial ID of HID device.
              * @returns {Promise<null|Error>}
              * @since 2.0.1
              *
              * @memberof qz.hid
              */
-            releaseDevice: function(vendorId, productId) {
-                var params = {
-                    vendorId: vendorId,
-                    productId: productId
-                };
-                return _qz.websocket.dataPromise('hid.releaseDevice', params);
+            releaseDevice: function(deviceInfo) {
+                if (typeof deviceInfo !== 'object') { deviceInfo = { vendorId: arguments[0], productId: arguments[1] }; } //backwards compatibility
+
+                return _qz.websocket.dataPromise('hid.releaseDevice', deviceInfo);
             }
         },
 
@@ -1385,7 +1530,7 @@ var qz = (function() {
              * Set promise resolver for calls to acquire the site's certificate.
              *
              * @param {Function} promiseCall <code>Function({function} resolve)</code> called as promise for getting the public certificate.
-             *        Should call <code>resolve</code> parameter with the result.
+             *     Should call <code>resolve</code> parameter with the result.
              *
              * @memberof qz.security
              */
@@ -1397,7 +1542,7 @@ var qz = (function() {
              * Set promise creator for calls to sign API calls.
              *
              * @param {Function} promiseGen <code>Function({function} toSign)</code> Should return a function, <code>Function({function} resolve)</code>, that
-             *                              will sign the content and resolve the created promise.
+             *     will sign the content and resolve the created promise.
              * @memberof qz.security
              */
             setSignaturePromise: function(promiseGen) {
@@ -1445,7 +1590,7 @@ var qz = (function() {
             },
 
             /**
-             * Change the SHA-256 hashing library used by QZ API.
+             * Change the SHA-256 hashing function used by QZ API.
              * Should be called before any initialization to avoid possible errors.
              *
              * @param {Function} hasher <code>Function({function} message)</code> called to create hash of passed string.
@@ -1467,8 +1612,16 @@ var qz = (function() {
             setWebSocketType: function(ws) {
                 _qz.tools.ws = ws;
             }
-        }
+        },
 
+        /**
+         * Version of this JavaScript library
+         *
+         * @constant {string}
+         *
+         * @memberof qz
+         */
+        version: _qz.VERSION
     };
 
 })();
@@ -1484,7 +1637,8 @@ var qz = (function() {
             qz.api.setSha256Type(function(data) {
                 return crypto.createHash('sha256').update(data).digest('hex');
             });
-        } catch(ignore) {}
+        }
+        catch(ignore) {}
     } else {
         window.qz = qz;
     }
