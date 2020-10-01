@@ -9,6 +9,7 @@ class LiquidationLog (models.Model):
     _parent_name = 'last_guard'
     _parent_store = False
 
+    company_id = fields.Many2one('res.company')
     name = fields.Char(related="liquidation_move.name")
     previous_guard = fields.Float(string="Previous Guard")
     origin_amount = fields.Float(string="Origin Amount")

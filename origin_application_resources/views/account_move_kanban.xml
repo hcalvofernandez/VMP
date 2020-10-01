@@ -20,8 +20,18 @@
                                         <div class="col-5 oe_left o_kanban_primary_left">
                                             <div style="border:1px solid black;">
                                                 <div class="bg-400" style="width:100%;height:15px;margin-top:5px;">
-                                                    <div class="bg-primary"
-                                                         t-attf-style='#{"width:"+record.percent_in_origin.raw_value+"%;height:100%;"}'>
+                                                    <t t-if="record.percent_in_origin.raw_value &gt; 100"
+                                                       t-set="percent2" t-value="100.0"/>
+                                                    <div t-if="record.percent_in_origin.raw_value &lt; 0"
+                                                         class="bg-primary"
+                                                         t-attf-style="width:#{0}%;height:100%;}">
+                                                    </div>
+                                                    <div t-elif="record.percent_in_origin.raw_value &gt; 100"
+                                                         class="bg-primary"
+                                                         t-attf-style="width:#{100}%;height:100%;}">
+                                                    </div>
+                                                    <div t-else="" class="bg-primary"
+                                                         t-attf-style="width:#{record.percent_in_origin.raw_value}%;height:100%;}">
                                                     </div>
                                                 </div>
                                                 <h1 style="width:100%;text-align:center;">
@@ -32,8 +42,6 @@
                                         </div>
                                         <t t-call="body_card"/>
                                     </div>
-<!--                                    <t t-if="journal_type == 'bank' || journal_type == 'cash' || journal_type == 'sale' || journal_type == 'purchase'"-->
-<!--                                       t-call="JournalBodyGraph"/>-->
                                 </div>
                                 <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
                                     <t t-call="JournalManage"/>
@@ -67,7 +75,6 @@
                                 </div>
                             </div>
                         </t>
-
                         <t t-name="JournalManage">
                             <div class="row">
                                 <div class="col-4 o_kanban_card_manage_section o_kanban_manage_new">
@@ -102,9 +109,39 @@
 
                         <t t-name="body_card">
                             <div class="col-7 o_kanban_primary_right">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <a type="action" name="%(resources_origin_account_move_line_action)d"
+                                           context="{'search_default_settled':1}"
+                                           t-if="type_flow == 'origin'">
+                                            <span title="Origin Settled">
+                                                Histórico de Cortes
+                                            </span>
+                                        </a>
+                                        <a type="action" name="%(resources_application_account_move_line_action)d"
+                                           context="{'search_default_settled':1}"
+                                           t-if="type_flow == 'application'">
+                                            <span title="Application Settled">
+                                                Histórico de Pagos
+                                            </span>
+                                        </a>
+                                        <a type="action" name="%(liquidation_account_move_line_action)d"
+                                           context="{'search_default_settled':1}"
+                                           t-if="type_flow == 'liquidation'">
+                                            <span title="Settled">
+                                                Histórico de Depósitos
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <span>
+                                            <field name="total_settled"/>
+                                        </span>
+                                    </div>
+                                </div>
                                 <div class="row" t-if="type_flow == 'liquidation'">
                                     <div class="col-7">
-                                        <a type="action" name="%(liquidation_account_move_line_action)d"
+                                        <a type="action" name=""
                                            context="{'search_default_settled':1}">
                                             <span title="Settled">
                                                 Efectivo en Resguardo
@@ -120,51 +157,21 @@
                                 <div class="row">
                                     <div class="col-7">
                                         <a type="action" name="%(resources_origin_account_move_line_action)d"
-                                           context="{'search_default_settled':1}"
-                                           t-if="type_flow == 'origin'">
-                                            <span title="Origin Settled">
-                                                Origen Liquidado
-                                            </span>
-                                        </a>
-                                        <a type="action" name="%(resources_application_account_move_line_action)d"
-                                           context="{'search_default_settled':1}"
-                                           t-if="type_flow == 'application'">
-                                            <span title="Application Settled">
-                                                Aplicación Liquidada
-                                            </span>
-                                        </a>
-                                        <a type="action" name="%(liquidation_account_move_line_action)d"
-                                           context="{'search_default_settled':1}"
-                                           t-if="type_flow == 'liquidation'">
-                                            <span title="Settled">
-                                                Liquidado
-                                            </span>
-                                        </a>
-                                    </div>
-                                    <div class="col-5 text-right">
-                                        <span>
-                                            <field name="total_settled"/>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-7">
-                                        <a type="action" name="%(resources_origin_account_move_line_action)d"
                                            context="{'search_default_to_settle':1}" t-if="type_flow == 'origin'">
                                            <span title="Origin to Settle">
-                                                Origen a Liquidar
+                                                Cortes de Caja
                                             </span>
                                         </a>
                                         <a type="action" name="%(resources_application_account_move_line_action)d"
                                            context="{'search_default_to_settle':1}" t-if="type_flow == 'application'">
                                             <span title="Application to Settle">
-                                                Aplicación a Liquidar
+                                                Pagos Realizados
                                             </span>
                                         </a>
                                         <a type="action" name="" context="{'search_default_to_settle':1}"
                                            t-if="type_flow == 'liquidation'">
                                             <span title="To Settle">
-                                                A Liquidar
+                                                Efectivo a Depositar
                                             </span>
                                         </a>
                                     </div>
@@ -174,137 +181,23 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div class="row" t-if="type_flow == 'origin'">
+                                    <div class="col-7">
+                                        <a type="action" name=""
+                                           context="{'search_default_settled':1}">
+                                            <span title="Settled">
+                                                Cortes de Caja + Resguardo
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <span>
+                                            <field name="total_guard"/>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </t>
-
-<!--                        <t t-name="JournalBodyBankCash">-->
-<!--                            &lt;!&ndash; On the left, display :-->
-<!--                                - A button corresponding to the bank_statements_source, if it wasn't configured, a button for each of them-->
-<!--                                - If there are statements to reconcile, a link to reconcile them &ndash;&gt;-->
-<!--                            <div class="col-5 o_kanban_primary_left">-->
-<!--                                <t t-if="dashboard.number_to_reconcile > 0">-->
-<!--                                    <button type="object" name="action_open_reconcile" class="btn btn-primary">Reconcile-->
-<!--                                        <t t-esc="dashboard.number_to_reconcile"/>-->
-<!--                                        Items-->
-<!--                                    </button>-->
-<!--                                </t>-->
-<!--                                <t t-if="journal_type == 'bank'">-->
-<!--                                    <div name="bank_journal_cta">-->
-<!--                                        <button t-if="dashboard.bank_statements_source == 'undefined'"-->
-<!--                                                name="action_configure_bank_journal" type="object"-->
-<!--                                                class="btn btn-primary">Configure-->
-<!--                                        </button>-->
-<!--                                        <div name="bank_statement_create_button"-->
-<!--                                             t-if="dashboard.bank_statements_source != 'online_sync'">-->
-<!--                                            <a type="object" name="create_bank_statement" class="oe_inline">Create</a>-->
-<!--                                            <span name="button_import_placeholder"/>-->
-<!--                                            Statements-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </t>-->
-<!--                                <t t-if="dashboard.number_to_reconcile > 0">-->
-<!--                                    <a t-if="journal_type == 'cash'" type="object" name="create_cash_statement"-->
-<!--                                       class="oe_inline">New Transactions-->
-<!--                                    </a>-->
-<!--                                </t>-->
-<!--                                <t t-if="dashboard.number_to_reconcile == 0">-->
-<!--                                    <button t-if="journal_type == 'cash'" type="object" name="create_cash_statement"-->
-<!--                                            class="btn btn-primary">New Transactions-->
-<!--                                    </button>-->
-<!--                                </t>-->
-<!--                            </div>-->
-<!--                            &lt;!&ndash; On the right, show other common informations/actions &ndash;&gt;-->
-<!--                            <div class="col-7 o_kanban_primary_right">-->
-<!--                                <div class="row">-->
-<!--                                    <div class="col-7">-->
-<!--                                        <span title="Balance in Odoo">Balance in General Ledger</span>-->
-<!--                                    </div>-->
-<!--                                    <div class="col-5 text-right">-->
-<!--                                        <span>-->
-<!--                                            <t t-esc="dashboard.account_balance"/>-->
-<!--                                        </span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                                <t t-if="dashboard.last_balance != dashboard.account_balance">-->
-<!--                                    <div class="row" name="latest_statement">-->
-<!--                                        <div class="col-7">-->
-<!--                                            <span title="Latest Statement">Latest Statement</span>-->
-<!--                                        </div>-->
-<!--                                        <div class="col-5 text-right">-->
-<!--                                            <span>-->
-<!--                                                <t t-esc="dashboard.last_balance"/>-->
-<!--                                            </span>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </t>-->
-<!--                            </div>-->
-<!--                        </t>-->
-<!--                        <t t-name="JournalBodySalePurchase" id="account.JournalBodySalePurchase">-->
-<!--                            <div class="col-5 o_kanban_primary_left">-->
-<!--                                <t t-if="journal_type == 'sale'">-->
-<!--                                    <button type="object" name="action_create_new"-->
-<!--                                            class="btn btn-primary o_invoice_new">-->
-<!--                                        <span>New Invoice</span>-->
-<!--                                    </button>-->
-<!--                                </t>-->
-<!--                                <t t-if="journal_type == 'purchase'">-->
-<!--                                    <button type="object" name="action_create_new" class="btn btn-primary">-->
-<!--                                        <span>New Bill</span>-->
-<!--                                    </button>-->
-<!--                                    <button type="action" name="%(account.account_invoice_import_wizard_action)d"-->
-<!--                                            class="btn btn-primary">-->
-<!--                                        <span>Import Bills</span>-->
-<!--                                    </button>-->
-<!--                                </t>-->
-<!--                            </div>-->
-<!--                            <div class="col-7 o_kanban_primary_right">-->
-<!--                                <div class="row">-->
-<!--                                    <div class="col-7">-->
-<!--                                        <a type="object" name="open_action" context="{'search_default_draft': '1'}">-->
-<!--                                            <span t-if="journal_type == 'sale'" title="Invoices to Validate">-->
-<!--                                                <t t-esc="dashboard.number_draft"/>-->
-<!--                                                Invoices to Validate-->
-<!--                                            </span>-->
-<!--                                            <span t-if="journal_type == 'purchase'" title="Bills to Validate">-->
-<!--                                                <t t-esc="dashboard.number_draft"/>-->
-<!--                                                Bills to Validate-->
-<!--                                            </span>-->
-<!--                                        </a>-->
-<!--                                    </div>-->
-<!--                                    <div class="col-5 text-right">-->
-<!--                                        <span>-->
-<!--                                            <t t-esc="dashboard.sum_draft"/>-->
-<!--                                        </span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                                <div class="row">-->
-<!--                                    <div class="col-7">-->
-<!--                                        <a type="object" t-if="journal_type == 'sale'" name="open_action"-->
-<!--                                           context="{'search_default_unpaid':1}" id="account_dashboard_sale_pay_link">-->
-<!--                                            <t t-esc="dashboard.number_waiting"/>-->
-<!--                                            Unpaid Invoices-->
-<!--                                        </a>-->
-
-<!--                                        <a type="object" t-if="journal_type == 'purchase'" name="open_action"-->
-<!--                                           context="{'search_default_unpaid':1}"-->
-<!--                                           id="account_dashboard_purchase_pay_link">-->
-<!--                                            <t t-esc="dashboard.number_waiting"/>-->
-<!--                                            Bills to Pay-->
-<!--                                        </a>-->
-<!--                                    </div>-->
-<!--                                    <div class="col-5 text-right">-->
-<!--                                        <span>-->
-<!--                                            <t t-esc="dashboard.sum_waiting"/>-->
-<!--                                        </span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </t>-->
-<!--                        <t t-name="JournalBodyGraph">-->
-<!--                            <field name="kanban_dashboard_graph"-->
-<!--                                   t-att-graph_type="_.contains(['cash','bank'],journal_type) ? 'line' : 'bar'"-->
-<!--                                   widget="dashboard_graph"/>-->
-<!--                        </t>-->
                     </templates>
                 </kanban>
             </field>

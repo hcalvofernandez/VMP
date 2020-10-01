@@ -16,31 +16,38 @@ class ResourcesFlow(models.Model):
     diff = fields.Float(compute="_compute_total", string="Difference")
     percent_in_origin = fields.Float(compute="_compute_total", string="percent")
     in_guard = fields.Float(compute="_compute_total", string="In Guard")
+    total_guard = fields.Float(compute="_compute_total", string="Total Guard")
 
     @api.model
     def _compute_total(self):
+        origin = self.get_origin_total()
+        application = self.get_applications_total()
+        liquidation = self.get_liquidation_total()
+        domain = [('company_id', '=', self.env.user.company_id.id)]
+        last = self.env['origin_application_resources.liquidation_log'].search(domain, limit=1, order='id desc')
+        last_guard = last.in_guard if last else 0.0
         for rec in self:
-            origin = rec.get_origin_total()
+            rec.in_guard = last_guard
             if rec.type == "origin":
                 rec.total_settled = origin[0]['total'] - origin[0]['total_pending']
                 rec.total = origin[0]['total']
                 rec.diff = origin[0]['total_pending']
+                if origin[0]['total_pending'] + rec.in_guard > 0:
+                    rec.percent_in_origin = (rec.diff + rec.in_guard)/(origin[0]['total_pending'] + rec.in_guard) * 100
             elif rec.type == "application":
-                application = rec.get_applications_total()
                 rec.total_settled = application[0]['total'] - application[0]['total_pending']
                 rec.total = application[0]['total']
                 rec.diff = application[0]['total_pending']
+                if origin[0]['total_pending'] + last_guard > 0:
+                    rec.percent_in_origin = rec.diff / (last_guard + origin[0]['total_pending']) * 100
             elif rec.type == "liquidation":
-                last = self.env['origin_application_resources.liquidation_log'].search([], limit=1, order='id desc')
-                rec.in_guard = last.in_guard if last else 0.0
-                application = rec.get_applications_total()
-                liquidation = rec.get_liquidation_total()
                 rec.total_settled = application[0]['total'] - application[0]['total_pending']
                 rec.total_settled = liquidation[0]['total']
                 rec.total = liquidation[0]["total"]
                 rec.diff = rec.in_guard + origin[0]["total_pending"] - application[0]['total_pending']
-            if origin[0]['total_pending'] > 0:
-                rec.percent_in_origin = rec.diff / origin[0]['total_pending'] * 100
+                if origin[0]['total_pending'] + last_guard > 0:
+                    rec.percent_in_origin = rec.diff / (last_guard + origin[0]['total_pending']) * 100
+            rec.total_guard = rec.diff + rec.in_guard
 
     @api.model
     def get_origin_total(self):
