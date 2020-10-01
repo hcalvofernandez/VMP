@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import res_company
 from . import origin_application_settings
 from . import account_move
 from . import resources_flow

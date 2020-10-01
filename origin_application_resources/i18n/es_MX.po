@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-30 00:42+0000\n"
-"PO-Revision-Date: 2020-09-29 20:48-0400\n"
+"POT-Creation-Date: 2020-10-01 02:04+0000\n"
+"PO-Revision-Date: 2020-09-30 22:12-0400\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,68 +25,69 @@ msgstr "<i class=\"fa fa-ellipsis-v\" aria-label=\"Selección\" role=\"img\" tit
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid "<span role=\"separator\">Nuevo</span>"
-msgstr "<span role=\"separator\">Nuevo</span>"
+msgstr ""
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid ""
 "<span title=\"Application Settled\">\n"
-"                                                Aplicación Liquidada\n"
+"                                                Histórico de Pagos\n"
 "                                            </span>"
 msgstr ""
-"<span title=\"Application Settled\">\n"
-"                                                Aplicación Liquidada\n"
-"                                            </span>"
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid ""
 "<span title=\"Application to Settle\">\n"
-"                                                Aplicación a Liquidar\n"
+"                                                Pagos Realizados\n"
 "                                            </span>"
 msgstr ""
-"<span title=\"Application to Settle\">\n"
-"                                                Aplicación a Liquidar\n"
-"                                            </span>"
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid ""
 "<span title=\"Origin Settled\">\n"
-"                                                Origen Liquidado\n"
+"                                                Histórico de Cortes\n"
 "                                            </span>"
 msgstr ""
-"<span title=\"Origin Settled\">\n"
-"                                                Origen Liquidado\n"
-"                                            </span>"
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid ""
 "<span title=\"Origin to Settle\">\n"
-"                                                Origen a Liquidar\n"
+"                                                Cortes de Caja\n"
 "                                            </span>"
 msgstr ""
-"<span title=\"Origin to Settle\">\n"
-"                                                Origen a Liquidar\n"
-"                                            </span>"
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid ""
 "<span title=\"Settled\">\n"
-"                                                Liquidado\n"
+"                                                Cortes de Caja + Resguardo\n"
 "                                            </span>"
 msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
 "<span title=\"Settled\">\n"
-"                                                Liquidado\n"
+"                                                Efectivo en Resguardo\n"
 "                                            </span>"
+msgstr ""
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Settled\">\n"
+"                                                Histórico de Depósitos\n"
+"                                            </span>"
+msgstr ""
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid ""
 "<span title=\"To Settle\">\n"
-"                                                A Liquidar\n"
+"                                                Efectivo a Depositar\n"
 "                                            </span>"
 msgstr ""
 
@@ -98,10 +99,10 @@ msgstr "<span>Fecha: </span>"
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid "<span>Liquidar</span>"
-msgstr "<span>Liquidar</span>"
+msgstr ""
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:84
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:90
 #, python-format
 msgid "A negative amount is not allowed in guard"
 msgstr "No se permite un monto de resguardo negativo"
@@ -109,12 +110,12 @@ msgstr "No se permite un monto de resguardo negativo"
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid "Ajustes"
-msgstr "Ajustes"
+msgstr ""
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_settings_form
 msgid "Ajustes de Diarios"
-msgstr "Ajustes de Diarios"
+msgstr ""
 
 #. module: origin_application_resources
 #: model:ir.model.fields,help:origin_application_resources.field_account_move_line__move_state
@@ -134,7 +135,7 @@ msgstr "Cuenta Analítica"
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid "Aplicación"
-msgstr "Aplicación"
+msgstr ""
 
 #. module: origin_application_resources
 #: selection:account.bank.statement.line,oar_type:0
@@ -198,6 +199,17 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:173
+#, python-format
+msgid "Cash Deposit: %s"
+msgstr "Deposito de Efectivo: %s"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_res_company__cash_journal_id
+msgid "Cash Receipt Journal"
+msgstr "Diario de Recibo de Efectivo"
+
+#. module: origin_application_resources
 #: code:addons/origin_application_resources/models/account_bank_statement.py:33
 #, python-format
 msgid "Cash difference observed during the counting (%s)"
@@ -212,6 +224,16 @@ msgstr "Efectivo en Resguardo"
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__color
 msgid "Color Index"
 msgstr "Índice de Colores"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__company_id
+msgid "Company"
+msgstr "Compañía"
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__company_currency
@@ -299,11 +321,12 @@ msgstr "Efectivo en Resguardo"
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__id
 #: model:ir.model.fields,field_description:origin_application_resources.field_report_origin_application_resources_report_document__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__in_guard
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__in_guard
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__in_guard
 msgid "In Guard"
 msgstr "En Resguardo"
 
@@ -370,7 +393,7 @@ msgstr "Última actualización el"
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid "Liquidación"
-msgstr "Liquidación"
+msgstr ""
 
 #. module: origin_application_resources
 #: selection:account.bank.statement.line,oar_type:0
@@ -409,8 +432,8 @@ msgid "Liquidation Wizard"
 msgstr "Asistente de Liquidación"
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:97
-#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:130
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:105
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:140
 #, python-format
 msgid "Liquidation of Origin and Application"
 msgstr "Liquidación de Origen y Aplicación"
@@ -461,7 +484,7 @@ msgstr "Operaciones"
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
 msgid "Origen"
-msgstr "Origen"
+msgstr ""
 
 #. module: origin_application_resources
 #: selection:account.bank.statement.line,oar_type:0
@@ -485,6 +508,11 @@ msgstr "Diarios de Origen"
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__origin_to_settle
 msgid "Origin To Settle"
 msgstr "Origen a Liquidar"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.view_company_form
+msgid "Origin and Application"
+msgstr "Origen y Aplicación"
 
 #. module: origin_application_resources
 #: model:ir.actions.act_window,name:origin_application_resources.origin_application_show_kanban_act_window
@@ -539,10 +567,17 @@ msgid "Payments"
 msgstr "Pagos"
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:87
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:94
 #, python-format
 msgid "Please, configure a liquidation journal."
 msgstr "Por favor, configure un diario de liquidación."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:124
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:157
+#, python-format
+msgid "Please, configure the liquidation journal."
+msgstr "Por favor, configure el diario de liquidación."
 
 #. module: origin_application_resources
 #: model:ir.model,name:origin_application_resources.model_pos_order
@@ -565,7 +600,7 @@ msgstr "Imprimir"
 #: code:addons/origin_application_resources/models/account_bank_statement.py:23
 #, python-format
 msgid "Profit"
-msgstr "Profit"
+msgstr ""
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.view_move_form
@@ -614,6 +649,12 @@ msgstr "Origen de Recursos"
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
 msgid "Seal and Sign Manager of the Branch"
 msgstr "Sello y Firma Responsable de la Sucursal"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/res_company.py:15
+#, python-format
+msgid "Select a current company journal"
+msgstr "Seleccione un diario de la compañía actual"
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
@@ -674,10 +715,28 @@ msgid "The journal %s is not a origin journal"
 msgstr "El diario %s no es un diario de origen"
 
 #. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:154
+#, python-format
+msgid "The transfer account for the company %s cannot be found."
+msgstr "No se encuentra la cuenta de transferencia de la compañía %s."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:121
+#, python-format
+msgid "The transfer account for this company cannot be found."
+msgstr "No se encuentra la cuenta de transferencia de la compañía actual."
+
+#. module: origin_application_resources
 #: code:addons/origin_application_resources/models/account_bank_statement.py:26
 #, python-format
 msgid "There is no account defined on the journal %s for %s involved in a cash difference."
-msgstr "No hay cuenta definida en el diario %s para %s involucrada en una diferencia de efectivo"
+msgstr "No hay cuenta definida en el diario %s para %s involucrada en una diferencia de efectivo."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:151
+#, python-format
+msgid "This company is not a secondary company"
+msgstr "Esta compañía no es una sucursal"
 
 #. module: origin_application_resources
 #: code:addons/origin_application_resources/models/account_move.py:16
@@ -704,7 +763,12 @@ msgstr "A Liquidar"
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_move_tree_view
 msgid "Total"
-msgstr "Total"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total_guard
+msgid "Total Guard"
+msgstr ""
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total_settled
@@ -727,16 +791,16 @@ msgid "Vendor/Customer"
 msgstr "Proveedor/Clientes"
 
 #. module: origin_application_resources
-#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:80
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:88
+#, python-format
+msgid "You can not deposit a negative or zero amount"
+msgstr "No puede depositar un monto menor o igual que cero"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:86
 #, python-format
 msgid "You can not to settle a negative value"
 msgstr "No puede liquidar un valor negativo"
-
-#. module: origin_application_resources
-#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:82
-#, python-format
-msgid "You dont deposit a negative amount"
-msgstr "No puede depositar un monto negativo"
 
 #. module: origin_application_resources
 #: model:ir.model,name:origin_application_resources.model_origin_application_resources_resources_flow
@@ -746,7 +810,7 @@ msgstr "gestiona el origen y la aplicación de recursos"
 #. module: origin_application_resources
 #: model:ir.model,name:origin_application_resources.model_origin_application_resources_settings
 msgid "origin_application_resources.settings"
-msgstr "origin_application_resources.settings"
+msgstr ""
 
 #. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__percent_in_origin
@@ -756,4 +820,4 @@ msgstr "porciento"
 #. module: origin_application_resources
 #: model:ir.model,name:origin_application_resources.model_report_origin_application_resources_report_document
 msgid "report.origin_application_resources.report_document"
-msgstr "report.origin_application_resources.report_document"
+msgstr ""

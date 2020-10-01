@@ -17,25 +17,13 @@ class ReportDocument(models.AbstractModel):
         liquidation_id = self.env['origin_application_resources.liquidation_log'].browse(liquidation)
         data = {
             'liquidation': liquidation_id,
-            'origins': self.get_origins(liquidation),
+            'origins': self.get_origins(liquidation, liquidation_id.company_id.id),
             'pays': liquidation_id.application_to_settle
         }
         return data
 
-    # @api.model
-    # def get_applications(self, periods):
-    #     application_journals = self.with_context({'force_company': self.env.user.company_id.id}).env.ref(
-    #         "origin_application_resources.general_settings_data").application_journal_ids
-    #     if not application_journals:
-    #         raise Warning("Please, set the journals in the configuration")
-    #     account_ids = application_journals.mapped('default_credit_account_id.id')
-    #     domain = [('journal_id', 'in', application_journals.ids), ('oar_type', '=', 'application'),
-    #               ('account_id', 'in', account_ids), ('move_state', '=', 'posted'),
-    #               ('liquidation_id', 'in', periods), ]
-    #     return self.env['account.move.line'].search(domain)
-
     @api.model
-    def get_origins(self, liquidation):
+    def get_origins(self, liquidation, company_id):
         origin_journals = self.with_context({'force_company': self.env.user.company_id.id}).env.ref(
             "origin_application_resources.general_settings_data").origin_journal_ids
         if not origin_journals:
@@ -56,7 +44,7 @@ class ReportDocument(models.AbstractModel):
                                 AND aml.liquidation_origin_id = %s
                                 GROUP BY am.ref, am.date
                                 """ % (str(origin_journals.ids)[1:-1], str(account_ids)[1:-1],
-                                       str(self.env.user.company_id.id), str(liquidation))
+                                       str(company_id), str(liquidation))
         self.env.cr.execute(origin_total_sql)
         result = self.env.cr.dictfetchall()
         return result

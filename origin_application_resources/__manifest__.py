@@ -13,6 +13,7 @@
     'depends': ['base', 'account', 'point_of_sale'],
     'data': [
         'security/ir.model.access.csv',
+        'views/res_company.xml',
         'views/search_views_account_move.xml',
         'views/account_move.xml',
         'views/actions.xml',

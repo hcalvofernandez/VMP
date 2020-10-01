@@ -59,14 +59,14 @@
                                             Cutoff Sum
                                         </td>
                                         <td class="text-right upper-case text-bold">
-                                            $ <span t-esc="liquidation.origin_amount"
+                                            $ <span t-esc="liquidation.origin_amount + liquidation.previous_guard"
                                                   t-options='{"widget": "float", "precision": 2}'/>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="div-table" t-if="pays">
+                        <div class="div-table">
                             <table class="main_table">
                                 <thead>
                                     <tr>

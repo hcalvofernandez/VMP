@@ -19,6 +19,8 @@ class purchase_order(models.Model):
                     template_attributes = self.env['product.template.attribute.value'].search([
                         ('product_attribute_value_id', 'in', att_values)])
                     template_attributes.write({'cost_price': line.cost_price})
+                    template_id = line.product_id.product_tmpl_id
+                    template_id.write({"standard_price": line.price_unit})
         return res
   
     

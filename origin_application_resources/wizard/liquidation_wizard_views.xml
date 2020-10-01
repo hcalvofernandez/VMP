@@ -29,7 +29,6 @@
                         <page string="Origins">
                             <field name="origin_to_settle">
                                 <tree editable="bottom" create="false" delete="false">
-                                    <field name="mark_to_settle"/>
                                     <field name="ref" readonly="1"/>
                                     <field name="name" readonly="1"/>
                                     <field name="date" readonly="1"/>
@@ -41,7 +40,6 @@
                         <page string="Applications">
                             <field name="application_to_settle">
                                 <tree editable="bottom" create="false" delete="false">
-                                    <field name="mark_to_settle"/>
                                     <field name="ref" readonly="1"/>
                                     <field name="name" readonly="1"/>
                                     <field name="date" readonly="1"/>
