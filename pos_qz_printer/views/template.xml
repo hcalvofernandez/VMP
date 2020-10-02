@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/pos_qz_printer/static/src/lib/jsrsasign-latest-all-min.js"></script>
+            <script type="text/javascript" src="/pos_qz_printer/static/src/lib/rsvp-3.1.0.min.js"></script>
+            <script type="text/javascript" src="/pos_qz_printer/static/src/lib/sha-256.min.js"></script>
+            <script type="text/javascript" src="/pos_qz_printer/static/src/lib/qz-tray.js"></script>
+            <script type="text/javascript" src="/pos_qz_printer/static/src/js/pos_receipt_print.js"></script>
+        </xpath>
+    </template>
+</odoo>
