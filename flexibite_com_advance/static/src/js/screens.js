@@ -5,149 +5,44 @@
 odoo.define('flexibite_com_advance.screens', function (require) {
     "use strict";
 
-    let screens = require('point_of_sale.screens');
-    let gui = require('point_of_sale.gui');
-    let models = require('point_of_sale.models');
-    let rpc = require('web.rpc');
-    let core = require('web.core');
-    let PosBaseWidget = require('point_of_sale.BaseWidget');
-    let field_utils = require('web.field_utils');
-    let framework = require('web.framework');
-    let utils = require('web.utils');
+    var screens = require('point_of_sale.screens');
+    var gui = require('point_of_sale.gui');
+    var models = require('point_of_sale.models');
+    var rpc = require('web.rpc');
+    var core = require('web.core');
+    var PosBaseWidget = require('point_of_sale.BaseWidget');
+    var field_utils = require('web.field_utils');
+    var framework = require('web.framework');
+    var utils = require('web.utils');
 
-    let round_di = utils.round_decimals;
-    let splitbill = require('pos_restaurant.splitbill').SplitbillButton;
-    let QWeb = core.qweb;
-    let _t = core._t;
-    let session = require('web.session');
-
-    function handleCertificate(){
-        qz.security.setCertificatePromise(function(resolve, reject) {
-            $.ajax("/flexibite_com_advance/static/src/lib/digital-certificate.txt").then(resolve, reject);
-        });
-        let privateKey = "-----BEGIN RSA PRIVATE KEY-----\n" +
-            "MIIEpQIBAAKCAQEAwRc05UhbsKtU/SupjO8HHrVKKwglsfJeBoUMQoHo41a440Do\n" +
-            "r6dbVI/HJITAQ1swIJjwmD9QqSVesnHnc7e6zlkj1ff1fDsOomIzX2SnB2CA9eiw\n" +
-            "5cfsXth6grZ6NIr7fc9NzyDpl3XcCEE+2ijbZCB0hWIVRkFBYh+RJPnoEFtb8njM\n" +
-            "J9V/YgXQf969jIFjAS8QVsDBvnnSsTeoE/2AXs1tRO4bzPEF65UouVeKJfBcICK4\n" +
-            "T7ZMObJEKAHc/PMLd9pLBG9Gg4/59AoeWuM92qti1i3307WFGKKGNNZ5Tt/EeX+2\n" +
-            "5LPu8yilRK+F3hlpvvTNzwK7KAvoNWBCQll2rQIDAQABAoIBACyBrt2Smh/UvhhE\n" +
-            "8iXcCqYXX2sfy6CCnw2dqT/DNe0A1kj7cybZyoFpSpuuRarA4A0Dc6GEJpF2Xad/\n" +
-            "/bt8hACAJ3RwXRMvgaYIQJMiXiWjJtaHtg6g0GjkOQjcCrsFtgY/vE2b5nvU3MzC\n" +
-            "TTx34mnn2TPNcd3puKpnYEtHlyf9oBEKOE85gyOv1fMUZeQw/kPSNEr+gWQnj/u6\n" +
-            "rchlzPhHZjmMuB5At6/yWURnjbFuYwgb2djjDNY52KEcCGJvDsrrFqs5EKE40u96\n" +
-            "CNNtQNAye5mT89Jl2JwPJobpsycDEqZEayc6kJX/77e/2Y3JIuY9gm+Q17opHkYg\n" +
-            "7IbQP7kCgYEA8ZC48g01YaCTk2DoRIXF0hRb8MbjeVs5ej20l7GbicWuF3u4LNld\n" +
-            "vQgFhC2xiIFl39HwoRGHdN/NYo5TZcGsnScsItM4gIlZCruIpaj9wWiKbDwWf2p7\n" +
-            "V8+H8KrSsqaX1Jy2mieG/kgdXI4bqPCh74sEjw1g6XTboYBFsrH1s18CgYEAzKD0\n" +
-            "33f42BVie/p8ta+tqXNOsr4U/2czZU8ZSievheZcMyoQLmsJcIiOO4eZ55h5MR7d\n" +
-            "bL6XaIfXrpuaLANkx2wi5PEOtp5fIT4u+AJb6DQdcRfYZ3VMkG00b2hSCSUbrWho\n" +
-            "9x9wQaGC1RKj+XBAUgydXQFdXZi8sOApmTpr/XMCgYEAhfJt2yof04aqzioKIRTc\n" +
-            "YGURpi1irUQ8VuAoZ4UAbiDDLBpaQeQ16j+sb2K28q5twvIyr918cv42cNPiwqXm\n" +
-            "BS5XdugQiJWgXicm2lUegERrnSCkiPqOcl6NTpIqSw29WxOa3VfVruJmBZB3HfJw\n" +
-            "mNdJK9mLR2iY8LCj9TZgu5kCgYEApwBdmNui3UdmnuQpT2ZXBsoyWjJDlMW27mGF\n" +
-            "tD17RH5ilOcpWZjFlW/9FJxwgNCxZ+NWtt89VnQ3FCutwWnrn82jFNGfPm82GD1V\n" +
-            "u9bBB1sxBBF/7b+Pgvd9Kccr3IbKddWWhMjFpuqXiimyZWq1M8FT1Im+lxqGNJxd\n" +
-            "ls5VP/0CgYEA5S/gZ1gPGgUE18R4cMNDstTA90QFC15yzkRpLtth9DPoKoX/r2G0\n" +
-            "8eKN9tIBY+VBEf00g6stSN02ncq5LKE/tS1OO4OmM+u6G/qjPAoW2AlPMqnptyFo\n" +
-            "kFEGUC6AlTfS2E5WfF38SdwsBi6c2QIFBP2GKAjo5pC9WglhnVvVPBE=\n" +
-            "-----END RSA PRIVATE KEY-----\n";
-
-        qz.security.setSignaturePromise(function(toSign) {
-            return function(resolve, reject) {
-                try {
-                    let pk = new RSAKey();
-                    pk.readPrivateKeyFromPEMString(strip(privateKey));
-                    let hex = pk.signString(toSign, 'sha1');
-                    console.log("DEBUG: \n\n" + stob64(hextorstr(hex)));
-                    resolve(stob64(hextorstr(hex)));
-                } catch (err) {
-                    console.error(err);
-                    reject(err);
-                }
-            };
-        });
-
-        function strip(key) {
-            if (key.indexOf('-----') !== -1) {
-                return key.split('-----')[2].replace(/\r?\n|\r/g, '');
-            }
-        }
-    }
-
-    function qz_connect(company_id, html){
-        let qz_connected = qz.websocket.isActive();
-
-            if(!qz_connected){
-                handleCertificate();
-                qz.websocket.connect({retries: 5, delay: 1}).then(function() {
-                    qz_get_version(company_id, html);
-                });
-            }else {
-                qz_get_company_printer(company_id, html);
-            }
-    }
-
-    function qz_get_version(company_id, html){
-        qz.api.getVersion().then(function(data) {
-            qz_get_company_printer(company_id, html)
-        });
-    }
-
-    function qz_get_company_printer(company_id, html){
-        rpc.query({
-                model: 'res.company',
-                method: 'read',
-                args: [[company_id], []],
-            }, {async: false}
-        ).done(function(company) {
-            let company_printer = company[0].product_printer;
-            qz.printers.find(company_printer).then(function(printer_name) {
-                qz_print(printer_name, html)
-            }).catch(function(err) {
-                console.log("Found Printer Error:", err);
-            });
-        });
-    }
-
-    function qz_print(printer_name, html){
-        let config = qz.configs.create(printer_name);
-
-        let data = [{
-            type: 'html',
-            // 'plain' if the data is raw HTML
-            // 'file' if the data is to be get from a file
-            format: 'plain',
-            data: html,
-        }];
-        qz.print(config, data).catch(function(e) { console.error(e); });
-    }
+    var round_di = utils.round_decimals;
+    var splitbill = require('pos_restaurant.splitbill').SplitbillButton;
+    var QWeb = core.qweb;
+    var _t = core._t;
+    var session = require('web.session');
 
     function start_lock_timer(time_interval,self){
-        let $area = $(document),
-            idleActions = [{
-                milliseconds: time_interval * 100000,
-                action: function () {
-                    let params = {
-                        model: 'pos.session',
-                        method: 'write',
-                        args: [self.pos.pos_session.id, {'is_lock_screen': true}],
-                    }
-                    rpc.query(params, {async: false}).fail(function () {
-                        self.pos.db.notification('danger', "Connection lost");
-                    });
-                    // $('.lock_button').css('background-color', 'rgb(233, 88, 95)');
-                    $('.freeze_screen').addClass("active_state");
-
-                    let unlock_button = $('.unlock_button');
-                    unlock_button.fadeIn(2000);
-                    unlock_button.show();
-                    unlock_button.css('z-index', 10000);
+        var $area = $(document),
+        idleActions = [{
+            milliseconds: time_interval * 100000,
+            action: function () {
+                var params = {
+                    model: 'pos.session',
+                    method: 'write',
+                    args: [self.pos.pos_session.id,{'is_lock_screen' : true}],
                 }
-            }];
-
+                rpc.query(params, {async: false}).fail(function(){
+                    self.pos.db.notification('danger',"Connection lost");
+                });
+                // $('.lock_button').css('background-color', 'rgb(233, 88, 95)');
+                $('.freeze_screen').addClass("active_state");
+                $(".unlock_button").fadeIn(2000);
+                $('.unlock_button').show();
+                $('.unlock_button').css('z-index',10000);
+            }
+        }];
         function lock (event, times, undefined) {
-            let idleTimer = $area.data('idleTimer');
+            var idleTimer = $area.data('idleTimer');
             if (times === undefined) times = 0;
             if (idleTimer) {
                 clearTimeout($area.data('idleTimer'));
@@ -160,14 +55,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             } else {
                 $area.off('mousemove click', lock);
             }
-        }
+        };
         $area
             .data('idle', null)
             .on('mousemove click', lock);
         lock();
     }
 
-    let table_reservation_button = screens.ActionButtonWidget.extend({
+    var table_reservation_button = screens.ActionButtonWidget.extend({
         template: 'AddTableReservationButton',
         button_click: function(){
             this.gui.show_screen('table_reservation_screen');
@@ -185,14 +80,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         'name': 'tablereservationbutton',
         'widget': table_reservation_button,
         'condition': function(){
-            return this.pos.config.table_reservation && (this.pos.get_cashier().user_role === 'cashier' || !this.pos.get_cashier().user_role);
+            return this.pos.config.table_reservation && (this.pos.get_cashier().user_role == 'cashier' || !this.pos.get_cashier().user_role);
         },
     });
 
-    let LineNoteButton = screens.ActionButtonWidget.extend({
+    var LineNoteButton = screens.ActionButtonWidget.extend({
         template: 'LineNoteButton',
         button_click: function(){
-            let line = this.pos.get_order().get_selected_orderline();
+            var line = this.pos.get_order().get_selected_orderline();
             if (line) {
                 this.gui.show_popup('line_note_popup', {'line':line});
             }
@@ -209,35 +104,35 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     screens.ActionpadWidget.include({
         renderElement: function() {
-            let self = this;
+            var self = this;
             this._super();
-            let order_count = self.pos.order_quick_draft_count;
+            var order_count = self.pos.order_quick_draft_count;
             $('.notification-count').show();
             $('.draft_order_count').text(order_count);
             this.$('.pay').unbind('click').click(function(){
-                let order = self.pos.get_order();
-                let partner = self.pos.get_order().get_client();
-                let has_valid_product_lot = _.every(order.orderlines.models, function(line){
+                var order = self.pos.get_order();
+                var partner = self.pos.get_order().get_client();
+                var has_valid_product_lot = _.every(order.orderlines.models, function(line){
                     return line.has_valid_product_lot();
                 });
                 if(partner){
-                    let params = {
-                        model: 'account.invoice',
-                        method: 'get_outstanding_info',
-                        args: [partner.id]
+                    var params = {
+                    model: 'account.invoice',
+                    method: 'get_outstanding_info',
+                    args: [partner.id]
                     }
                     rpc.query(params, {async: false}).then(function(res){
                         if(res){
                             partner['deposite_info'] = res;
                             _.each(res['content'], function(value){
-                                self.pos.amount = value['amount'];
+                                  self.pos.amount = value['amount'];
                             });
                         }
                     });
                 }
-                if(self.pos.get_cashier().user_role === "ass_cashier"){
-                    order = self.pos.get_order();
-                    let lines = order.get_orderlines();
+                if(self.pos.get_cashier().user_role == "ass_cashier"){
+                    var order = self.pos.get_order();
+                    var lines = order.get_orderlines();
                     if(lines.length > 0){
                         return self.gui.show_popup('confirm',{
                             'title': _t('Send Order?'),
@@ -252,7 +147,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                         },
                                     });
                                 }else{
-                                    let is_delivery_order = order.get_is_delivery();
+                                    var is_delivery_order = order.get_is_delivery();
                                     if(is_delivery_order){
                                         return self.gui.show_popup('delivery_info');
                                     }
@@ -281,8 +176,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             this.$('.empty-cart').click(function(){
-                let order = self.pos.get_order();
-                let lines = order.get_orderlines();
+                var order = self.pos.get_order();
+                var lines = order.get_orderlines();
                 if(lines.length > 0){
                     self.gui.show_popup('confirm',{
                         'title': _t('Empty Cart ?'),
@@ -294,9 +189,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     });
                 } else {
                     $('div.order-empty').animate({
-                        color: '#FFCCCC',
+                       color: '#FFCCCC',
                     }, 1000, 'linear', function() {
-                        $(this).css('color','#DDD');
+                         $(this).css('color','#DDD');
                     });
                 }
             });
@@ -308,7 +203,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     screens.ProductListWidget.include({
         init: function(parent, options) {
-            let self = this;
+            var self = this;
             this._super(parent,options);
             this.model = options.model;
             this.productwidgets = [];
@@ -316,7 +211,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.show_scale = options.show_scale || false;
             this.next_screen = options.next_screen || false;
             this.click_product_handler = function(e){
-                let product = self.pos.db.get_product_by_id(this.dataset.productId);
+                var product = self.pos.db.get_product_by_id(this.dataset.productId);
                 if(product){
                     if(self.pos.config.auto_close){
                         $('#slidemenubtn1').css({'right':'0px'});
@@ -324,35 +219,35 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         $('#wrapper1').addClass('toggled');
                     }
                     if($(e.target).attr('class') === "product-qty-low" || $(e.target).attr('class') === "product-qty"){
-                        let prod = product;
-                        let prod_info = [];
-                        let total_qty = 0;
+                        var prod = product;
+                        var prod_info = [];
+                        var total_qty = 0;
                         rpc.query({
                             model: 'stock.warehouse',
                             method: 'disp_prod_stock',
                             args: [
-                                prod.id,self.pos.shop.id
+                                 prod.id,self.pos.shop.id
                             ]
                         }).then(function(result){
-                            if(result){
-                                prod_info = [];
-                                total_qty = 0;
-                                _.each(result[0],function(item){
-                                    if(item[2] !== self.pos.config.stock_location_id[0] && item[1] > 0){
-                                        prod_info.push(item)
-                                        total_qty += item[1]
-                                    }
-                                });
-                                if(total_qty > 0){
-                                    $("[data-product-id='"+product.id+"']").find('.total_qty').html(product.qty_available)
-                                    self.gui.show_popup('product_qty_advance_popup',{prod_info_data:prod_info,total_qty: total_qty,product: product});
+                        if(result){
+                            prod_info = [];
+                            total_qty = 0;
+                            _.each(result[0],function(item){
+                                if(item[2] != self.pos.config.stock_location_id[0] && item[1] > 0){
+                                    prod_info.push(item)
+                                    total_qty += item[1]
                                 }
+                            });
+                            if(total_qty > 0){
+                                 $("[data-product-id='"+product.id+"']").find('.total_qty').html(product.qty_available)
+                                 self.gui.show_popup('product_qty_advance_popup',{prod_info_data:prod_info,total_qty: total_qty,product: product});
                             }
+                        }
                         }).fail(function (error, event){
                             if(error.code === -32098) {
                                 self.pos.db.notification('danger',_t("Server Down..."));
                                 event.preventDefault();
-                            }
+                           }
                         });
                     }else{
                         // options.click_product_action(product);
@@ -363,7 +258,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         else{
                             // Display for selection all the variants of a template
                             options.click_product_action(product);
-                            //                     self.pos.pos_widget.screen_selector.show_popup('select-variant-popup', product.product_tmpl_id);
+        //                     self.pos.pos_widget.screen_selector.show_popup('select-variant-popup', product.product_tmpl_id);
                         }
                     }
                 }
@@ -379,9 +274,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }, this);
         },
 //        renderElement: function() {
-//			let self = this;
-//			let order = self.pos.get_order();
-//			let product_list = [];
+//			var self = this;
+//			var order = self.pos.get_order();
+//			var product_list = [];
 //			_.each(this.product_list,function(prd){
 //				if(order && order.is_sale_product(prd)){
 //					product_list.push(prd)
@@ -391,32 +286,32 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //			this._super();
 //		},
         renderElement: function() {
-            let self = this;
+            var self = this;
             this._super();
-            let order = self.pos.get_order();
+            var order = self.pos.get_order();
             if(order && order.get_is_categ_sideber_open()){
                 $('.product-list-container').css('right','150px');
             }
-            let product_list = $('.product-list');
+            var product_list = $('.product-list');
             if(self.pos.chrome.screens && self.pos.chrome.screens.products){
-                let list_view = self.pos.chrome.screens.products.product_categories_widget.list_view;
+                var list_view = self.pos.chrome.screens.products.product_categories_widget.list_view;
                 if(list_view){
                     product_list.addClass('list');
                 }else{
                     product_list.removeClass('list');
                 }
             }
-
+            
         },
         set_product_list: function(product_list){
-            let self = this;
-            let new_product_list = [];
-            let ignore_product_list = [];
-            // let order = self.pos.get_order();
-            let dummy_product_ids = self.pos.db.get_dummy_product_ids();
+            var self = this;
+            var new_product_list = [];
+            var ignore_product_list = [];
+            var order = self.pos.get_order();
+            var dummy_product_ids = self.pos.db.get_dummy_product_ids();
             if(product_list.length > 0){
                 product_list.map(function(product){
-                    if(($.inArray(product.id, dummy_product_ids) === -1) && (!product.is_dummy_product)
+                    if(($.inArray(product.id, dummy_product_ids) == -1) && (!product.is_dummy_product)
                         && (product.is_primary_variant)){
                         new_product_list.push(product);
                     }
@@ -427,19 +322,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         render_product: function(product){
             self = this;
-            if (product.product_variant_count === 1){
+            if (product.product_variant_count == 1){
                 // Normal Display
                 return this._super(product);
             }else{
-                let cached = this.product_cache.get_node(product.id);
+                var cached = this.product_cache.get_node(product.id);
                 if(!cached){
-                    // let image_url = this.get_product_image_url(product);
-                    let product_html = QWeb.render('Product',{
-                        widget:  this,
-                        product: product,
-                        image_url: this.get_product_image_url(product),
-                    });
-                    let product_node = document.createElement('div');
+                    var image_url = this.get_product_image_url(product);
+                    var product_html = QWeb.render('Product',{
+                            widget:  this,
+                            product: product,
+                            image_url: this.get_product_image_url(product),
+                        });
+                    var product_node = document.createElement('div');
                     product_node.innerHTML = product_html;
                     product_node = product_node.childNodes[1];
                     this.product_cache.cache_node(product.id,product_node);
@@ -452,16 +347,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //  Load Background
     screens.ProductCategoriesWidget.include({
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent,options);
             if(self.start_categ_id){
                 setTimeout(function(){
-                    let categ = self.pos.db.get_category_by_id(self.start_categ_id);
+                    var categ = self.pos.db.get_category_by_id(self.start_categ_id);
                     if(categ.parent_id.length > 0){
 //            			self.pos.chrome.screens.products.render_product_category([categ]);
                         self.chrome.screens.products.set_back_to_parent_categ(categ.parent_id[0]);
                     }else{
-                        let sub_categories = self.pos.db.get_category_by_id(self.pos.db.get_category_childs_ids(0));
+                        var sub_categories = self.pos.db.get_category_by_id(self.pos.db.get_category_childs_ids(0));
                         self.pos.chrome.screens.products.render_product_category(sub_categories);
                     }
                     self.chrome.$el.find(".v-category[data-category-id='"+self.start_categ_id+"']").trigger('click');
@@ -470,127 +365,217 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.clear_category_search_handler = function(event){
                 self.clear_cat_search();
             };
-            let data = {
-                'config_id': self.pos.config.id,
-                'product_domain': self.pos.product_domain,
-                'product_fields': self.pos.product_fields,
-                'compute_user_id': self.pos.user.id
-            }
-            let records = rpc.query({
-                model: 'product.product',
-                method: 'calculate_product',
-                args: [self.pos.config.id],
-            }).fail(function () {
-                self.pos.db.notification('danger', "Connection lost");
-            });
-            records.then(function (result) {
-                $('div.product_progress_bar').css('display', '');
-                let product_sync = $('#product_sync')
-                product_sync.hide();
-                if (result && result[0]) {
-                    let product_ids = _.uniq(result);
-                    let total_products = product_ids.length;
-                    let remaining_time;
-                    if (total_products) {
-                        let product_limit = 1000;
-                        let count_loop = product_ids.length;
-                        let last_ids = product_ids;
-                        let count_loaded_products = 0;
-                        let context = _.extend(self.pos.product_context, {
-                            'location': self.pos.config.stock_location_id[0],
-                        })
+            // if(!self.pos.load_background){
+            if(false){
+                var product_ids_list = [];
+                var product_fields = self.pos.product_fields.concat(['name', 'display_name', 'product_variant_ids', 'product_variant_count'])
+                $.ajax({
+                    type: "POST",
+                    url: '/web/dataset/load_cache_with_template',
+                    data: {
+                        model: 'product.product',
+                        config_id: self.pos.pos_session.config_id[0],
+                        fields: JSON.stringify(product_fields),
+                        domain: JSON.stringify(self.pos.product_domain),
+                    },
+                    success: function(res) {
+                        var cache_products = JSON.parse(res);
+                        if(cache_products && cache_products.length > 0){
+                            self.pos.product_list = cache_products;
+                            self.pos.db.add_products(_.map(cache_products, function (product) {
+                                product_ids_list.push(product.product_tmpl_id[0])
+                                product.categ = _.findWhere(self.product_categories, {'id': product.categ_id[0]});
+                                return new models.Product({}, product);
+                            }));
+                            if(product_ids_list && product_ids_list.length > 0){
+                                product_ids_list = _.uniq(product_ids_list)
+                                var total_products = product_ids_list.length;
+                                var remaining_time;
+                                if(total_products){
+                                    var product_limit = 1000;
+                                    var count_loop = product_ids_list.length;
+                                    var last_ids = product_ids_list;
+                                    var count_loaded_products = 0;
+                                    var context = _.extend(self.pos.product_context, {
+                                        'location': self.pos.config.stock_location_id[0],
+                                    })
+                                    function ajax_product_template_load(){
+                                        if(count_loop > 0){
+                                            $.ajax({
+                                                type: "POST",
+                                                url: '/web/dataset/load_products_template',
+                                                data: {
+                                                        model: 'product.template',
+                                                        fields: JSON.stringify(product_fields),
+                                                        context: JSON.stringify(context),
+                                                        product_limit:product_limit,
+                                                        product_ids:JSON.stringify(last_ids.splice(0, product_limit) || []),
+                                                        stock_location_id:JSON.stringify(self.pos.config.stock_location_id[0]),
+                                                    },
+                                                success: function(res) {
+                                                    var all_products = JSON.parse(res);
+                                                    count_loop -= product_limit;
+                                                    remaining_time = ((total_products - count_loop) / total_products) * 100;
+                                                    self.pos.db.add_templates(_.map(all_products, function (product) {
+                                                        product.categ = _.findWhere(self.product_categories, {'id': product.categ_id[0]});
+                                                        if(product.product_variant_ids && product.product_variant_ids[1]){
+                                                            _.each(product.product_variant_ids, function(prod_id){
+                                                                var product_pro = self.pos.db.get_product_by_id(prod_id);
+                                                                if(product_pro){
+                                                                    var prod_obj = self.pos.chrome.screens.products.product_list_widget;
+                                                                    var current_pricelist = prod_obj._get_active_pricelist();
+                                                                    prod_obj.product_cache.clear_node(product_pro.id+','+current_pricelist.id);
+                                                                    prod_obj.render_product(product_pro);
+                                                                }
+                                                            });
+                                                        }
+                                                        return new models.Product({}, product);
+                                                    }));
+                                                    self.pos.gui.screen_instances.products.product_categories_widget.renderElement();
+                                                    if(remaining_time > 100)
+                                                        remaining_time = 100;
+                                                    $('.product_progress_bar').css('display','');
+                                                    $('.product_progress_bar').find('#bar').css('width', parseInt(remaining_time)+'%', 'important');
+                                                    $('.product_progress_bar').find('#progress_status').html(parseInt(remaining_time) + "% completed");
 
-                        function ajax_product_load() {
-                            if (count_loop > 0) {
-                                let product_fields = self.pos.product_fields.concat(['name', 'display_name', 'product_variant_ids', 'product_variant_count'])
-                                $.ajax({
-                                    type: "POST",
-                                    url: '/web/dataset/load_products',
-                                    data: {
-                                        model: 'product.product',
-                                        fields: JSON.stringify(product_fields),
-//    						                    domain: JSON.stringify(self.pos.product_domain),
-                                        context: JSON.stringify(context),
-                                        product_limit: product_limit,
-                                        product_ids: JSON.stringify(last_ids.splice(0, product_limit) || []),
-                                        stock_location_id: JSON.stringify(self.pos.config.stock_location_id[0]),
-                                    },
-                                    success: function (res) {
-                                        let response = JSON.parse(res);
-                                        let all_products = response.product;
-                                        self.all_templates = response.templates
-                                        count_loop -= all_products.length;
-                                        remaining_time = ((total_products - count_loop) / total_products) * 100;
-                                        // let filter_product_ids = [];
-                                        all_products.map(function (product) {
-                                            self.pos.product_list.push(product);
-                                        });
-                                        self.pos.db.add_products(_.map(all_products, function (product) {
-                                            product.categ = _.findWhere(self.pos.product_categories, {'id': product.categ_id[0]});
-                                            return new models.Product({}, product);
-                                        }));
-                                        self.pos.db.add_templates(_.map(self.all_templates, function (product) {
-                                            product.categ = _.findWhere(self.pos.product_categories, {'id': product.categ_id[0]});
-                                            return new models.Product({}, product);
-                                        }));
-                                        self.renderElement();
-                                        if (remaining_time > 100)
-                                            remaining_time = 100;
-
-                                        let product_progress_bar = $('.product_progress_bar');
-                                        product_progress_bar.css('display', '');
-                                        product_progress_bar.find('#bar').css('width', parseInt(remaining_time) + '%', 'important');
-                                        product_progress_bar.find('#progress_status').html(parseInt(remaining_time) + "% completed");
-
-                                        count_loaded_products += all_products.length;
-                                        // all_products = [];
-                                        if (count_loaded_products >= total_products) {
-                                            self.pos.load_background = true;
-                                            product_progress_bar.delay(3000).fadeOut('slow');
+                                                    count_loaded_products += all_products.length;
+                                                    if(count_loaded_products >= total_products){
+                                                        $('.product_progress_bar').delay(3000).fadeOut('slow');
+                                                    }
+                                                    all_products = [];
+                                                    ajax_product_template_load();
+                                                },
+                                            });
+                                        }else{
+                                            self.pos.load_new_products();
                                         }
-                                        ajax_product_load();
-                                    },
-                                    error: function () {
-                                        let product_progress_bar = $('.product_progress_bar');
-                                        product_progress_bar.find('#bar').css('width', '100%', 'important');
-                                        product_progress_bar.find('#progress_status').html("Products loading failed...");
-                                    },
-                                });
-                            } else {
-                                // self.pos.gui.screen_instances.products.product_categories_widget.renderElement();
-                                product_sync.show();
-                                self.pos.load_background = true;
-                                // let prod = self.pos.db.get_product_by_category(0);
-                                $.ajax({
-                                    type: 'POST',
-                                    url: '/web/dataset/store_data_to_cache',
-                                    data: {
-                                        cache_data: JSON.stringify([data]),
-                                    },
-                                    dataType: 'json',
-                                    success: function (res) {
-                                        self.pos.db.notification('success', _t('Cache data stored!'));
-                                    },
-                                    error: function (e) {
-                                        console.error("Error: ", e);
-                                        self.pos.db.notification('danger', _t('Cache data store error!'));
-                                    },
-                                });
+                                    }
+                                    ajax_product_template_load();
+                                }
                             }
                         }
-
-                        ajax_product_load();
+                    },
+                    error: function(e) {
+                        console.error("Error: ",e);
+                    },
+                });
+                return true;
+            }else{
+                var data = {
+                    'config_id': self.pos.config.id,
+                    'product_domain': self.pos.product_domain,
+                    'product_fields': self.pos.product_fields,
+                    'compute_user_id': self.pos.user.id
                     }
-                }
-            });
+                var records = rpc.query({
+                    model: 'product.product',
+                    method: 'calculate_product',
+                    args: [self.pos.config.id],
+                }).fail(function(){
+                    self.pos.db.notification('danger',"Connection lost");
+                });
+                records.then(function(result){
+                    $('div.product_progress_bar').css('display','');
+                    $('#product_sync').hide();
+                    if(result && result[0]){
+                        var product_ids = _.uniq(result);
+                        var total_products = product_ids.length;
+                        var remaining_time;
+                        if(total_products){
+                            var product_limit = 1000;
+                            var count_loop = product_ids.length;
+                            var last_ids = product_ids;
+                            var count_loaded_products = 0;
+                            var context = _.extend(self.pos.product_context, {
+                                'location': self.pos.config.stock_location_id[0],
+                            })
+                            function ajax_product_load(){
+                                if(count_loop > 0){
+                                    var product_fields = self.pos.product_fields.concat(['name', 'display_name', 'product_variant_ids', 'product_variant_count'])
+                                    $.ajax({
+                                        type: "POST",
+                                        url: '/web/dataset/load_products',
+                                        data: {
+                                            model: 'product.product',
+                                            fields: JSON.stringify(product_fields),
+//    						                    domain: JSON.stringify(self.pos.product_domain),
+                                            context: JSON.stringify(context),
+                                            product_limit:product_limit,
+                                            product_ids:JSON.stringify(last_ids.splice(0, product_limit) || []),
+                                            stock_location_id:JSON.stringify(self.pos.config.stock_location_id[0]),
+                                        },
+                                        success: function(res) {
+                                            var response = JSON.parse(res);
+                                            var all_products = response.product;
+                                            self.all_templates = response.templates
+                                            count_loop -= all_products.length;
+                                            remaining_time = ((total_products - count_loop) / total_products) * 100;
+                                            var filter_product_ids = [];
+                                            all_products.map(function(product){
+                                                self.pos.product_list.push(product);
+                                            });
+                                            self.pos.db.add_products(_.map(all_products, function (product) {
+                                                product.categ = _.findWhere(self.pos.product_categories, {'id': product.categ_id[0]});
+                                                return new models.Product({}, product);
+                                            }));
+                                            self.pos.db.add_templates(_.map(self.all_templates, function (product) {
+                                                product.categ = _.findWhere(self.pos.product_categories, {'id': product.categ_id[0]});
+                                                return new models.Product({}, product);
+                                            }));
+                                            self.renderElement();
+                                            if(remaining_time > 100)
+                                                remaining_time = 100;
+                                            $('.product_progress_bar').css('display','');
+                                            $('.product_progress_bar').find('#bar').css('width', parseInt(remaining_time)+'%', 'important');
+                                            $('.product_progress_bar').find('#progress_status').html(parseInt(remaining_time) + "% completed");
+                                            count_loaded_products += all_products.length;
+                                            all_products = [];
+                                            if(count_loaded_products >= total_products){
+                                                self.pos.load_background = true;
+                                                $('.product_progress_bar').delay(3000).fadeOut('slow');
+                                            }
+                                            ajax_product_load();
+                                        },
+                                        error: function() {
+                                            $('.product_progress_bar').find('#bar').css('width', '100%', 'important');
+                                            $('.product_progress_bar').find('#progress_status').html("Products loading failed...");
+                                        },
+                                    });
+                                } else {
+//    			    				self.pos.gui.screen_instances.products.product_categories_widget.renderElement();
+                                    $('#product_sync').show();
+                                    self.pos.load_background = true;
+                                    var prod = self.pos.db.get_product_by_category(0);
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/web/dataset/store_data_to_cache',
+                                        data: {
+                                            cache_data : JSON.stringify([data]),
+                                        },
+                                        dataType:'json',
+                                        success: function(res) {
+                                            self.pos.db.notification('success',_t('Cache data stored!'));
+                                        },
+                                        error: function(e) {
+                                            console.error("Error: ",e);
+                                            self.pos.db.notification('danger',_t('Cache data store error!'));
+                                        },
+                                    });
+                                }
+                            }
+                            ajax_product_load();
+                        }
+                    }
+                });
+            }
         },
         render_category: function (category, with_image, is_back, color) {
             if (is_back) {
-                let category_html = QWeb.render('CategoryButtonBack', {
+                var category_html = QWeb.render('CategoryButtonBack', {
                     widget: this,
                     category: category,
                 });
-                let category_node = document.createElement('div');
+                var category_node = document.createElement('div');
                 category_node.innerHTML = category_html.trim();
                 category_node = category_node.childNodes[0];
                 category_node.setAttribute('style', 'background-color: #'+color);
@@ -599,19 +584,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return this._super(category, with_image)
         },
         getRangeOfDisplayedCategories: function(listContainer){
-            let container = $(listContainer)[0];
-            let start = -1;
-            let i = 1;
+            var container = $(listContainer)[0];
+            var start = -1;
+            var i = 1;
             while (i < container.children.length - 1 && start < 0) {
-                let children = $(container.children[i]);
+                var children = $(container.children[i]);
                 if (!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')) {
                     start = i;
                 }
                 i++;
             }
             if (i < container.children.length - 1){
-                let end = 0;
-                let children;
+                var end = 0;
+                var children;
                 do {
                     children = $(container.children[i]);
                     end = i;
@@ -623,19 +608,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         addListenerSubCategoryBtnBack: function(button, list_container){
             button.addEventListener('click', function (event) {
-                let container = $(list_container)[0];
-                let start = -1;
-                let i = 1;
+                var container = $(list_container)[0];
+                var start = -1;
+                var i = 1;
                 while (i < container.children.length - 1 && start < 0) {
-                    let children = $(container.children[i]);
+                    var children = $(container.children[i]);
                     if (!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')) {
                         start = i;
                     }
                     i++;
                 }
                 if (start > 1) {
-                    let move = Math.min(4, start - 1);
-                    i = 1;
+                    var move = Math.min(4, start - 1);
+                    var i = 1;
                     while (i <= move) {
                         $(container.children[start - i]).removeClass('d-none');
                         i++;
@@ -654,24 +639,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         addListenerSubCategoryBtnForward: function(button, list_container){
             button.addEventListener('click', function (event) {
-                let container = $(list_container)[0];
-                let start = -1;
-                let i = 1;
+                var container = $(list_container)[0];
+                var start = -1;
+                var i = 1;
                 while (i < container.children.length - 1 && start < 0) {
-                    let children = $(container.children[i]);
+                    var children = $(container.children[i]);
                     if (!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')) {
                         start = i;
                     }
                     i++;
                 }
                 if (start > -1 && start + 18 < container.children.length - 1) {
-                    let move = Math.min(4, container.children.length - 2 - (start + 17));
-                    i = 0;
+                    var move = Math.min(4, container.children.length - 2 - (start + 17));
+                    var i = 0;
                     while (i < move) {
                         $(container.children[start + i]).addClass('d-none');
                         i++;
                     }
-                    i = 1;
+                    var i = 1;
                     while (i <= move) {
                         $(container.children[start + 17 + i]).removeClass('d-none');
                         i++;
@@ -681,9 +666,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return button;
         },
         renderElement: function () {
-            let el_str = QWeb.render(this.template, {widget: this});
-            let el_node = document.createElement('div');
-            let self = this;
+            var el_str = QWeb.render(this.template, {widget: this});
+            var el_node = document.createElement('div');
+            self = this;
 
             el_node.innerHTML = el_str;
             el_node = el_node.childNodes[1];
@@ -694,9 +679,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             this.el = el_node;
 
-            let withpics = this.pos.config.iface_display_categ_images;
+            var withpics = this.pos.config.iface_display_categ_images;
 
-            let list_container = el_node.querySelector('.category-list');
+            var list_container = el_node.querySelector('.category-list');
             if (list_container) {
                 if (!withpics) {
                     list_container.classList.add('simple');
@@ -704,20 +689,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     list_container.classList.remove('simple');
                 }
                 // =====================Add the parent categories===========================
-                let parent = this.category.parent_id
-                let c = 999999;
-                let last_child = this.category;
-                let node_category_parent = false;
-                let start_range = -1;
-                let end_range = -1;
+                var parent = this.category.parent_id
+                var c = 999999;
+                var last_child = this.category;
+                var node_category_parent = false;
+                var start_range = -1;
+                var end_range = -1;
                 while(parent){
                     node_category_parent = list_container.cloneNode();
-                    let parent_category = this.pos.db.get_category_by_id(parent[0]);
-                    if(start_range === -1 && parent_category.child_id.length > 18){
-                        let position = -1;
-                        let i = 0;
-                        while(position === -1 && i < parent_category.child_id.length){
-                            if(parent_category.child_id[i] === this.category.id){
+                    var parent_category = this.pos.db.get_category_by_id(parent[0]);
+                    if(start_range == -1 && parent_category.child_id.length > 18){
+                        var position = -1;
+                        var i = 0;
+                        while(position == -1 && i < parent_category.child_id.length){
+                            if(parent_category.child_id[i] == this.category.id){
                                 position = i;
                             }
                             i++;
@@ -730,24 +715,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             start_range = position - ( 17 - (end_range - position));
                         }
                     }
-                    let super_parent = false;
+                    var super_parent = false;
                     if (parent_category.child_id.length > 18){
-                        let back_button_html = QWeb.render('SubCategoryButtonBack', {});
+                        var back_button_html = QWeb.render('SubCategoryButtonBack', {});
                         back_button_html = _.str.trim(back_button_html);
-                        let back_button_node = document.createElement('div');
+                        var back_button_node = document.createElement('div');
                         back_button_node.innerHTML = back_button_html;
                         back_button_node = back_button_node.childNodes[0];
                         node_category_parent.appendChild(this.addListenerSubCategoryBtnBack(back_button_node, node_category_parent));
                     }
-                    for(let i = 0; i < parent_category.child_id.length; i++) {
-                        let super_child = parent_category.child_id[i];
-                        let child_obj = self.pos.db.get_category_by_id(super_child);
-                        let real_color = c+"";
-                        if(last_child.id === super_child){
+                    for(var i = 0; i < parent_category.child_id.length; i++) {
+                        var super_child = parent_category.child_id[i];
+                        var child_obj = self.pos.db.get_category_by_id(super_child);
+                        var real_color = c+"";
+                        if(last_child.id == super_child){
                             real_color = "6ec89b";
                             last_child = parent_category;
                         }
-                        let category_node = self.render_category(child_obj, withpics, true, real_color);
+                        var category_node = self.render_category(child_obj, withpics, true, real_color);
                         if ((i < start_range || i > end_range)  && parent_category.child_id.length > 18){
                             $(category_node).addClass('d-none');
                         }else if(parent_category.child_id.length > 18){
@@ -759,9 +744,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }
                     }
                     if (parent_category.child_id.length > 18){
-                        let forward_button_html = QWeb.render('SubCategoryButtonForward', {});
+                        var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
                         forward_button_html = _.str.trim(forward_button_html);
-                        let forward_button_node = document.createElement('div');
+                        var forward_button_node = document.createElement('div');
                         forward_button_node.innerHTML = forward_button_html;
                         forward_button_node = forward_button_node.childNodes[0];
                         node_category_parent.appendChild(this.addListenerSubCategoryBtnForward(forward_button_node, node_category_parent));
@@ -770,27 +755,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     parent = super_parent;
                     c -= 333333;
                 }
-                if (this.category.id !== 0) {
-                    let all_categories = this.pos.db.category_by_id;
-                    let list_home = [];
+                if (this.category.id != 0) {
+                    var all_categories = this.pos.db.category_by_id;
+                    var list_home = [];
                     _.each(all_categories, function(category_item){
-                        if (category_item.parent_id === false) {
+                        if (category_item.parent_id == false) {
                             list_home.push(category_item);
                         }
                     });
                     list_home = list_home.sort(function(a, b){
                         if(a.name > b.name){
-                            return 1;
-                        }
-                        if(a.name < b.name){
-                            return -1;
-                        }
+                                return 1;
+                            }
+                            if(a.name < b.name){
+                                return -1;
+                            }
                         return 0;
                     });
-                    let div_list_home = list_container.cloneNode();
+                    var div_list_home = list_container.cloneNode();
                     _.each(list_home, function (item_home) {
-                        let real_color = c+"";
-                        if(last_child.id === item_home.id){
+                        var real_color = c+"";
+                        if(last_child.id == item_home.id){
                             real_color = "6ec89b";
                         }
                         div_list_home.appendChild(self.render_category(item_home, withpics, true, real_color));
@@ -800,20 +785,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
                 // =========Ending the addition of parent categories================================
                 if (this.subcategories.length > 18){
-                    let range = this.getRangeOfDisplayedCategories(list_container);
+                    var range = this.getRangeOfDisplayedCategories(list_container);
                     start_range = range['start'];
                     end_range = range['end'];
-                    let back_button_html = QWeb.render('SubCategoryButtonBack', {});
+                    var back_button_html = QWeb.render('SubCategoryButtonBack', {});
                     back_button_html = _.str.trim(back_button_html);
-                    let back_button_node = document.createElement('div');
+                    var back_button_node = document.createElement('div');
                     back_button_node.innerHTML = back_button_html;
                     back_button_node = back_button_node.childNodes[0];
-
                     list_container.appendChild(this.addListenerSubCategoryBtnBack(back_button_node, list_container));
                 }
 
-                for (let i = 0, len = this.subcategories.length; i < len; i++) {
-                    let category_node = this.render_category(this.subcategories[i], withpics, false);
+                for (var i = 0, len = this.subcategories.length; i < len; i++) {
+                    var category_node = this.render_category(this.subcategories[i], withpics, false);
                     if (i >= start_range && i <= end_range && this.subcategories.length > 18){
                         $(category_node).removeClass('d-none');
                     }else if(this.subcategories.length > 18){
@@ -823,20 +807,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
 
                 if (this.subcategories.length > 18){
-                    let forward_button_html = QWeb.render('SubCategoryButtonForward', {});
+                    var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
                     forward_button_html = _.str.trim(forward_button_html);
-                    let forward_button_node = document.createElement('div');
+                    var forward_button_node = document.createElement('div');
                     forward_button_node.innerHTML = forward_button_html;
                     forward_button_node = forward_button_node.childNodes[0];
                     list_container.appendChild(this.addListenerSubCategoryBtnForward(forward_button_node, list_container));
                 }
             }
-            let buttons = el_node.querySelectorAll('.js-category-switch');
-            for(let i = 0; i < buttons.length; i++){
+            var buttons = el_node.querySelectorAll('.js-category-switch');
+            for(var i = 0; i < buttons.length; i++){
                 buttons[i].addEventListener('click',this.switch_category_handler);
             }
 
-            let products = this.pos.db.get_product_by_category(this.category.id);
+            var products = this.pos.db.get_product_by_category(this.category.id);
             this.product_list_widget.set_product_list(products); // FIXME: this should be moved elsewhere ...
 
             this.el.querySelector('.searchbox input').addEventListener('keypress',this.search_handler);
@@ -848,25 +832,41 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(this.pos.config.iface_vkeyboard && this.chrome.widget.keyboard){
                 this.chrome.widget.keyboard.connect($(this.el.querySelector('.searchbox input')));
             }
-            self = this;
+            var self = this;
+            //Category search
+//            $('.category_home').click(function(){
+//                alert();
+//            });
+//            self.el.querySelector('.category_home').addEventListener('click',function(){
+//                var cat = self.pos.db.get_category_by_id(self.pos.db.root_category_id);
+//                self.set_category(cat);
+//			    var sub_categories = self.subcategories;
+//			    var products = self.gui.screen_instances.products;
+//			    if(products){
+//			        products.parent_categ_id = self.pos.db.root_category_id;
+//                    products.render_product_category(sub_categories);
+//                    products.product_categories_widget.renderElement();
+//			    }
+//                self.renderElement();
+//            });
             $('.category_searchbox input', this.el).keyup(function(e){
-                if($(this).val() === ""){
-                    let cat = self.pos.db.get_category_by_id(self.pos.db.root_category_id);
+                if($(this).val() == ""){
+                    var cat = self.pos.db.get_category_by_id(self.pos.db.root_category_id);
                     self.set_category(cat);
                     self.clear_cat_search();
                 }
                 $('.category_searchbox input').autocomplete({
-                    source:self.pos.db.get_category_search_list(),
-                    select: function(event, select_category){
-                        if(select_category.item && select_category.item.id){
-                            let cat = self.pos.db.get_category_by_id(select_category.item.id);
-                            self.set_category(cat);
-                            self.renderElement();
-                            let input = $('.category_searchbox input');
-                            input.val(select_category.item.label);
-                            input.focus();
-                        }
-                    },
+                     source:self.pos.db.get_category_search_list(),
+                     select: function(event, select_category){
+                         if(select_category.item && select_category.item.id){
+                            var cat = self.pos.db.get_category_by_id(select_category.item.id);
+                             self.set_category(cat);
+                             self.renderElement();
+                             var input = $('.category_searchbox input');
+                             input.val(select_category.item.label);
+                             input.focus();
+                         }
+                     },
                 });
                 e.stopPropagation();
             });
@@ -875,11 +875,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     source:self.pos.db.get_category_search_list(),
                     select: function(event, select_category){
                         if(select_category.item && select_category.item.id){
-                            let cat = self.pos.db.get_category_by_id(select_category.item.id);
+                            var cat = self.pos.db.get_category_by_id(select_category.item.id);
                             self.set_category(cat);
                             self.renderElement();
                             input.val(select_category.item.label);
-                            let input = $('.category_searchbox input');
+                            var input = $('.category_searchbox input');
                             input.focus();
                         }
                     },
@@ -888,7 +888,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
             this.el.querySelector('.category-clear').addEventListener('click',this.clear_category_search_handler);
             this.el.querySelector('.listview').addEventListener('click',function(){
-                let product_list = $(self.pos.chrome.screens.products.product_list_widget.el).find('.product-list');
+                var product_list = $(self.pos.chrome.screens.products.product_list_widget.el).find('.product-list');
                 if(self.list_view){
                     self.list_view = false;
                     product_list.removeClass('list');
@@ -907,39 +907,37 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         clear_cat_search: function(){
-            let self = this;
+            var self = this;
             this.set_category(this.pos.db.get_category_by_id(this.start_categ_id));
             self.renderElement();
-            let input = $('.category_searchbox input');
+            var input = $('.category_searchbox input');
             input.val('');
             input.focus();
         },
     });
 
-    let LoginScreenWidget = screens.ScreenWidget.extend({
+    var LoginScreenWidget = screens.ScreenWidget.extend({
         template: 'LoginScreenWidget',
         init: function(parent, options){
+            var self = this;
             this._super(parent, options);
         },
         start: function(){
-            let self = this;
+            var self = this;
             this._super();
             $("input#username").focus();
-            let selected_input;
-            let login = $("#login");
-            let password = $("#password")
-
-            if (login.is(":focus")) {
-                selected_input = login;
+            var selected_input;
+            if ($("#login").is(":focus")) {
+                selected_input = $("#login");
             }
-            if (password.is(":focus")) {
-                selected_input = password;
+            if ($("#password").is(":focus")) {
+                selected_input = $("#password");
             }
             $("input").focus(function() {
                 selected_input = $(this);
             });
             $('.number_pad_button').click(function() {
-                let pres_char = $(this).html();
+                var pres_char = $(this).html();
                 if ($(this).hasClass("ac-clear-data")) {
                     selected_input.val("");
                 } else if ($(this).hasClass("back-button")) {
@@ -973,21 +971,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $(".change_char").removeClass("display_none");
             });
             $(".change_smallChar").click(function() {
-                let is_smallcharpad =  $(".is_smallcharpad");
-                if (is_smallcharpad.hasClass("display_none")) {
+                if ($(".is_smallcharpad").hasClass("display_none")) {
                     $(".is_numpad").addClass("display_none");
                     $(".is_charpad").addClass("display_none");
-                    is_smallcharpad.removeClass("display_none");
+                    $(".is_smallcharpad").removeClass("display_none");
                     $(".change_smallChar").removeClass("display_none");
                 } else {
                     $(".is_charpad").removeClass("display_none");
-                    is_smallcharpad.addClass("display_none");
+                    $(".is_smallcharpad").addClass("display_none");
                 }
             });
             $('input#password, input#username').keypress(function(e){
-                if(e.keyCode === 13){
-                    let username = $("input#username").val();
-                    let password = $("input#password").val();
+                if(e.keyCode == 13){
+                    var username = $("input#username").val();
+                    var password = $("input#password").val();
                     if(username && password){
                         self.login_user(username, password);
                     }else{
@@ -996,8 +993,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             $('#login').click(function(){
-                let username = $("input#username").val();
-                let password = $("input#password").val();
+                var username = $("input#username").val();
+                var password = $("input#password").val();
                 if(username && password){
                     self.login_user(username, password);
                 }else{
@@ -1005,8 +1002,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             $('.pos-login-rightheader').click(function(){
-                let user = self.pos.user;
-                if(user && user.user_role === 'cook'){
+                var user = self.pos.user;
+                if(user && user.user_role == 'cook'){
                     framework.redirect('/web/session/logout');
                 }else{
                     self.pos.gui.close();
@@ -1014,9 +1011,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         login_user: function(username, password){
-            let self = this;
-            let user = _.find(self.pos.users, function(obj) { return obj.login === username && obj.pos_security_pin === password });
-            let view_initial = 'products';
+            var self = this;
+            var user = _.find(self.pos.users, function(obj) { return obj.login == username && obj.pos_security_pin == password });
+            var view_initial = 'products';
             if(user){
                 $('.pos-topheader').show();
                 self.pos.set_cashier(user);
@@ -1024,7 +1021,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $('.pos-login-topheader').hide();
                 self.chrome.widget.username.renderElement();
                 if(self.pos.pos_session.opening_balance){
-                    let params = {
+                    var params = {
                         model: 'pos.session',
                         method: 'open_balance',
                         args:[self.pos.pos_session.id, 0.00]
@@ -1033,17 +1030,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         if(res){
                         }
                         else {
-                            self.gui.show_popup('error-traceback',{
+                        	self.gui.show_popup('error-traceback',{
                                 'title': "No se pudo entrar a la caja",
                                 'body':  "Por favor intentelo mas tarde",
-                            });
-                        }
+                           });
+						}
                     }).fail(function (type, error){
                         if(error.code === 200 ){    // Business Logic Error, not a connection problem
-                            self.gui.show_popup('error-traceback',{
+                           self.gui.show_popup('error-traceback',{
                                 'title': error.data.message,
                                 'body':  error.data.debug
-                            });
+                           });
                         }
                     });
                     // return self.gui.show_screen('openingbalancescreen');
@@ -1075,19 +1072,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 self.pos.set_locked_screen(false);
                 self.pos.set_locked_user(false);
-                let show_left_cart = $('.show-left-cart')
-                if(show_left_cart.css('display') === 'block'){
-                    show_left_cart.hide();
+                if($('.show-left-cart').css('display') == 'block'){
+                    $('.show-left-cart').hide();
                 }
                 self.pos.chrome.screens.products.order_widget.update_summary();
-                let params = {
+                var params = {
                     model: 'pos.session',
                     method: 'write',
                     args: [self.pos.pos_session.id,{'is_lock_screen' : false}],
                 }
                 rpc.query(params, {async: false}).then(function(result){
                     if(result){
-                        $('.lock_button').css('background-color', '#eee');
+                         $('.lock_button').css('background-color', '#eee');
                     }
                 }).fail(function(){
                     self.pos.db.notification('danger',"Connection lost");
@@ -1111,7 +1107,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         get_company_image_url: function(){
-            let company_id = this.pos.company.id;
+            var company_id = this.pos.company.id;
             if(company_id){
                 return window.location.origin + '/web/binary/company_logo?&company=' + company_id;
             }
@@ -1122,7 +1118,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             $('#slidemenubtn').hide();
             $("input#password").val('');
@@ -1137,20 +1133,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         close: function(){
+            var self = this;
             this._super();
         },
     });
     gui.define_screen({name:'login', widget: LoginScreenWidget});
 
-    let OpeningBalanceScreenWidget = screens.ScreenWidget.extend({
+    var OpeningBalanceScreenWidget = screens.ScreenWidget.extend({
         template: 'OpeningBalanceScreenWidget',
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
         },
         show: function() {
             this._super();
-            let self = this;
+            var self = this;
             this.renderElement();
             $('#skip').click(function(){
                 if(self.pos.config.module_pos_restaurant){
@@ -1160,32 +1157,32 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.gui.show_screen('products');
                 }
-                let params = {
-                    model: 'pos.session',
-                    method: 'close_open_balance',
-                    args:[self.pos.pos_session.id]
-                }
+                var params = {
+                                model: 'pos.session',
+                                method: 'close_open_balance',
+                                args:[self.pos.pos_session.id]
+                              }
                 rpc.query(params, {async: false})
             });
             $('#value, #no_of_values').keypress(function(e){
-                if (e.which !== 8 && e.which !== 46 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
-                    return false;
-                }
+               if (e.which != 8 && e.which != 46 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+                   return false;
+               }
             });
         },
         renderElement:function(){
             this._super();
-            let self = this;
+            var self = this;
             self.open_form();
         },
         open_form: function() {
-            let self = this;
-            let open_table_row = "<tr id='open_balance_row'>" +
-                "<td><input type='text'  class='openbalance_td' id='value' value='0.00' /></td>" +
-                "<td><input type='text' class='openbalance_td' id='no_of_values' value='0.00' /></td>" +
-                "<td><input type='text' class='openbalance_td' id='subtotal' disabled='true' value='0.00' /></td>" +
-                "<td id='delete_row'><span class='fa fa-trash-o' style='font-size: 20px;'></span></td>" +
-                "</tr>";
+            var self = this;
+            var open_table_row = "<tr id='open_balance_row'>" +
+                            "<td><input type='text'  class='openbalance_td' id='value' value='0.00' /></td>" +
+                            "<td><input type='text' class='openbalance_td' id='no_of_values' value='0.00' /></td>" +
+                            "<td><input type='text' class='openbalance_td' id='subtotal' disabled='true' value='0.00' /></td>" +
+                            "<td id='delete_row'><span class='fa fa-trash-o' style='font-size: 20px;'></span></td>" +
+                            "</tr>";
             $('#opening_cash_table tbody').append(open_table_row);
             $('#add_open_balance').click(function(){
                 $('#opening_cash_table tbody').append(open_table_row);
@@ -1195,7 +1192,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.compute_subtotal();
             });
             $('#opening_cash_table tbody').on('change focusout', 'tr#open_balance_row td',function(){
-                let no_of_value, value;
+                var no_of_value, value;
                 if($(this).children().attr('id') === "value"){
                     value = Number($(this).find('#value').val());
                     no_of_value = Number($(this).parent().find('td #no_of_values').val());
@@ -1207,7 +1204,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.compute_subtotal();
             });
             this.compute_subtotal = function(event){
-                let subtotal = 0;
+                var subtotal = 0;
                 _.each($('#open_balance_row td #subtotal'), function(input){
                     if(Number(input.value) && Number(input.value) > 0){
                         subtotal += Number(input.value);
@@ -1216,20 +1213,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $('.open_subtotal').text(self.format_currency(subtotal));
             }
             $('#validate_open_balance').click(function(){
-                let items = [];
-                let open_balance = [];
-                let total_open_balance = 0.00;
+                var items = [];
+                var open_balance = [];
+                var total_open_balance = 0.00;
                 $(".openbalance_td").each(function(){
                     items.push($(this).val());
                 });
                 while (items.length > 0) {
-                    open_balance.push(items.splice(0,3))
+                  open_balance.push(items.splice(0,3))
                 }
                 _.each(open_balance, function(balance){
                     total_open_balance += Number(balance[2])
                 });
                 if(total_open_balance > 0){
-                    let params = {
+                    var params = {
                         model: 'pos.session',
                         method: 'open_balance',
                         args:[self.pos.pos_session.id,total_open_balance]
@@ -1249,14 +1246,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }
                     }).fail(function (type, error){
                         if(error.code === 200 ){    // Business Logic Error, not a connection problem
-                            self.gui.show_popup('error-traceback',{
+                           self.gui.show_popup('error-traceback',{
                                 'title': error.data.message,
                                 'body':  error.data.debug
-                            });
+                           });
                         }
                     });
                 } else{
-
+                    return;
                 }
             });
         },
@@ -1265,39 +1262,40 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     screens.ClientListScreenWidget.include({
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
         },
         willStart: function() {
-            let self = this;
-            let def1 = this._super.apply(this, arguments);
+            var self = this;
+            var def1 = this._super.apply(this, arguments);
 
-            let def2 =  rpc.query({
-                model: 'res.partner',
-                method: 'calculate_partner',
-                args: [JSON.stringify(self.pos.partner_fields)],
-            }).then(function(result){
-                if(result && result[0]) {
-                    let total_partners = result.length;
-                    if(total_partners) {
-                        self.pos.partners = result;
-                        self.pos.partners_load = true;
-                        self.pos.db.add_partners(result);
+            var def2 =  rpc.query({
+                    model: 'res.partner',
+                    method: 'calculate_partner',
+                    args: [JSON.stringify(self.pos.partner_fields)],
+                }).then(function(result){
+                    if(result && result[0]) {
+                        var partner_ids = result;
+                        var total_partners = partner_ids.length;
+                        if(total_partners) {
+                            self.pos.partners = result;
+                            self.pos.partners_load = true;
+                            self.pos.db.add_partners(result);
+                        }
                     }
-                }
-            }).fail(function(){
-                self.pos.db.notification('danger', _t("Connection lost"));
-            });
+                }).fail(function(){
+                    self.pos.db.notification('danger', _t("Connection lost"));
+                });
 
             return $.when(def1, def2);
         },
         show: function(){
-            let self = this;
+            var self = this;
             self._super();
             this.selected_partner = false;
-            let partner = self.pos.partners;
-            let order = self.pos.get_order();
-            let options = order.get_screen_data('params');
+            var partner = self.pos.partners;
+            var order = self.pos.get_order();
+            var options = order.get_screen_data('params');
             self.render_list(self.pos.db.get_partners_sorted(5000));
             this.change_pin = false;
             if (options && options.change_pin){
@@ -1320,29 +1318,29 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
             this.$('.credit').click(function(){
                 self.pos.get('customer_credit_list');
-                let selected_line = Number($('.client-line.highlight').attr('data-id')) || self.new_client.id || self.old_client.id;
+                var selected_line = Number($('.client-line.highlight').attr('data-id')) || self.new_client.id || self.old_client.id;
                 self.gui.show_screen('customercreditlistscreen', {cust_id: selected_line});
-                let records = self.pos.get('customer_credit_list');
+                var records = self.pos.get('customer_credit_list');
                 self.render_list(records)
             });
             this.$('.add-money-button').click(function() {
                 self.save_changes();
-                let selected_line = Number($('.client-line.highlight').attr('data-id')) || self.new_client.id || self.old_client.id;
+                var selected_line = Number($('.client-line.highlight').attr('data-id')) || self.new_client.id || self.old_client.id;
                 if(selected_line){
-                    let customer = self.pos.db.get_partner_by_id(selected_line)
+                    var customer = self.pos.db.get_partner_by_id(selected_line)
                     if(customer){
                         self.gui.show_popup('AddMoneyToCreditPopup', {new_client: customer});
                     }
                 }
             });
             this.$('.print-ledger').click(function(){
-                let pos_session_id = self.pos.pos_session.id;
-                let order = self.pos.get_order();
+                var pos_session_id = self.pos.pos_session.id;
+                var order = self.pos.get_order();
                 order.set_ledger_click(true);
                 self.gui.show_popup('cash_inout_statement_popup');
             });
-            let $show_customers = $('#show_customers');
-            let $show_client_history = $('#show_client_history');
+            var $show_customers = $('#show_customers');
+            var $show_client_history = $('#show_client_history');
             if (this.pos.get_order().get_client() || this.new_client) {
                 $show_client_history.removeClass('oe_hidden');
             }
@@ -1363,31 +1361,31 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.gui.back();
             });
             this.$('.next').click(function(e){
-                let options = order.get_screen_data('params');
+                var options = order.get_screen_data('params');
                 if (options){
-                    let valid_credit = options.valid_credit;
-                    // let valid_debit = options.valid_debit;
-                    // let valid_meal_plan = options.valid_meal_plan;
-                    let client = order.get_client();
-                    let payment = options.payment;
+                    var valid_credit = options.valid_credit;
+                    var valid_debit = options.valid_debit;
+                    var valid_meal_plan = options.valid_meal_plan;
+                    var client = order.get_client();
+                    var payment = options.payment;
                     if (self.change_pin){
                         self.pos.gui.show_popup('update_pip_popup');
                         return;
                     }
 
                     if (client){
-                        let credit_amount = client.remaining_credit_limit;
-                        let amount = order.getNetTotalTaxIncluded();
+                        var credit_amount = client.remaining_credit_limit;
+                        var amount = order.getNetTotalTaxIncluded();
                         if (amount > credit_amount && credit_amount > 0){
-                            let cashregister = false;
-                            for(let i in self.pos.cashregisters){
-                                let reg = self.pos.cashregisters[i];
+                            var cashregister = false;
+                            for(var i in self.pos.cashregisters){
+                                var reg = self.pos.cashregisters[i];
                                 if(reg.journal_id[1] === "POS-Crédito (MXN)"){
                                     cashregister = reg;
                                 }
                             }
                             if (cashregister){
-                                //let order = self.pos.get_order();
+                                //var order = self.pos.get_order();
                                 order.add_paymentline(cashregister);
                                 order.selected_paymentline.set_amount(credit_amount,0 );
                                 payment.reset_input();
@@ -1395,12 +1393,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 payment.order_changes();
 
                                 /*
-                                let journal_id = cashregister.journal_id[0];
-                                let pos_session_id = cashregister.pos_session_id[0];
+                                var journal_id = cashregister.journal_id[0];
+                                var pos_session_id = cashregister.pos_session_id[0];
 
-                                let cashier_id = self.pos.get_cashier().id;
+                                var cashier_id = self.pos.get_cashier().id;
 
-                                let params = {
+                                var params = {
                                     model: 'account.payment',
                                     method: "payment_credit",
                                     args: [journal_id, credit_amount, pos_session_id, client.id, cashier_id, true,order.name],
@@ -1465,11 +1463,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }
                     }
                      */
-                    let skip_payd = options.skip_pay_debit;
+                    var skip_payd = options.skip_pay_debit;
 
                     if (skip_payd){
                         self.gui.show_popup('pay_debit_popup');
-
+                        return;
                     }
                 }
             });
@@ -1478,31 +1476,31 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }) //.attr('-id')
         },
         order_is_valid: function(force_validation) {
-            let self = this;
-            let order = this.pos.get_order();
+            var self = this;
+            var order = this.pos.get_order();
             // Validación para el método de pago por tarjeta bancaria
-            let amount_card_payment = 0;
-            let order_lines = order.get_paymentlines();
-            let amount = order.getNetTotalTaxIncluded();
+            var amount_card_payment = 0;
+            var order_lines = order.get_paymentlines();
+            var amount = order.getNetTotalTaxIncluded();
             _.map(order_lines, function(lines){
-                if(lines.name === "Tarjeta Bancaria (MXN)"){
-                    amount_card_payment += lines.amount;
-                }
-            });
+                    if(lines.name == "Tarjeta Bancaria (MXN)"){
+                        amount_card_payment += lines.amount;
+                    }
+                });
             if(amount_card_payment > amount){
                 self.pos.db.notification('danger', 'El total de pagos por tarjeta bancaria no puede ser mayor al monto de la orden');
                 return false;
             }
             // --------------------------------------------------------
 
-            let client = order.get_client();
+            var client = order.get_client();
             if (client){
-                let params = {
+                var params = {
                     model: 'contract.contract',
                     method: 'is_valid_order_date',
-                    args: [client.id]
-                };
-                let valid = false;
+                    args:[client.id]
+                }
+                var valid = false;
                 rpc.query(params,{async:false}).then(function(result){
                     valid = result.result
                 });
@@ -1510,22 +1508,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.db.notification('danger', 'No tiene contrato vigente');
                     return false;
                 }
-                params = {
+                var params = {
                     model: 'res.partner',
                     method: 'search_read',
                     domain: [['id', '=', client.id]],
-                    fields: ['remaining_credit_limit', 'contract_ids', 'parent_id']
+                    fields:['remaining_credit_limit','contract_ids','parent_id']
                 };
                 rpc.query(params,{async:false}).then(function(result){
-                    if (client.remaining_credit_limit !== result[0].remaining_credit_limit){
+                    if (client.remaining_credit_limit != result[0].remaining_credit_limit){
                         client.remaining_credit_limit = result[0].remaining_credit_limit;
                     }
                 });
-                let credit_limit = client.remaining_credit_limit;
-                let credit_lines_amount = 0;
-                let order_lines = order.get_paymentlines();
+                var credit_limit = client.remaining_credit_limit;
+                var credit_lines_amount = 0;
+                var order_lines = order.get_paymentlines();
                 _.map(order_lines, function(lines){
-                    if(lines.name === "POS-Crédito (MXN)"){
+                    if(lines.name == "POS-Crédito (MXN)"){
                         credit_lines_amount += lines.amount;
                     }
                 });
@@ -1537,12 +1535,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         default_customer: function(){
-            let order = this.pos.get_order();
-            let self = this;
+            var order = this.pos.get_order();
+            var self = this;
             if( this.has_client_changed() ){
                 if (this.new_client) {
                     order.set_client(this.new_client);
-                    let param_config = {
+                    var param_config = {
                         model: 'pos.config',
                         method: 'write',
                         args: [self.pos.config.id,{'default_partner_id':this.new_client.id}],
@@ -1552,20 +1550,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             self.pos.config.default_partner_id = [self.new_client.id, self.new_client.name];
                         }
                     }).fail(function(type,error){
-                        if(error.data.message){
-                            self.pos.db.notification('error',error.data.message);
-                        }
+                            if(error.data.message){
+                                self.pos.db.notification('error',error.data.message);
+                            }
                     });
                 }
             }
         },
         toggle_save_button: function(){
-            let self = this;
+            var self = this;
             this._super();
-            let $show_customers = this.$('#show_customers');
-            let $show_client_history = this.$('#show_client_history');
-            let $customer_history = this.$('#customer_history');
-            let client = this.new_client || this.pos.get_order().get_client();
+            var $show_customers = this.$('#show_customers');
+            var $show_client_history = this.$('#show_client_history');
+            var $customer_history = this.$('#customer_history');
+            var client = this.new_client || this.pos.get_order().get_client();
             if (this.editing_client) {
                 $show_customers.addClass('oe_hidden');
                 $show_client_history.addClass('oe_hidden');
@@ -1584,7 +1582,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     $show_client_history.off();
                 }
             }
-            let $credit_button = this.$('.button.credit');
+            var $credit_button = this.$('.button.credit');
             if (this.editing_client) {
                 $credit_button.addClass('oe_hidden');
                 return;
@@ -1600,7 +1598,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $credit_button.toggleClass('oe_hidden',!this.has_client_changed());
 
 
-            let $add_money_button = this.$('.button.add-money-button');
+            var $add_money_button = this.$('.button.add-money-button');
             if (this.editing_client) {
                 $add_money_button.addClass('oe_hidden');
                 return;
@@ -1616,71 +1614,71 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $add_money_button.toggleClass('oe_hidden',!this.has_client_changed());
         },
         line_select: function(event,$line,id){
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'res.partner',
                 method: 'search_read',
                 domain: [['id', '=', id]],
                 fields:['remaining_credit_limit']
             };
             rpc.query(params).then(function(result){
-                let partner = self.pos.db.get_partner_by_id(id);
-                if (partner.remaining_credit_limit !== result[0].remaining_credit_limit)
+                var partner = self.pos.db.get_partner_by_id(id);
+                if (partner.remaining_credit_limit != result[0].remaining_credit_limit)
                 {
                     partner.remaining_credit_limit = result[0].remaining_credit_limit;
                 }
                 self.$('.client-list .lowlight').removeClass('lowlight');
-                if ( $line.hasClass('highlight') ){
-                    $line.removeClass('highlight');
-                    $line.addClass('lowlight');
-                    self.display_client_details('hide',partner);
-                    self.new_client = null;
-                    self.toggle_save_button();
-                }else{
-                    self.$('.client-list .highlight').removeClass('highlight');
-                    $line.addClass('highlight');
-                    let y = event.pageY - $line.parent().offset().top;
-                    self.display_client_details('show',partner,y);
-                    self.new_client = partner;
-                    self.toggle_save_button();
-                }
-            });
+                    if ( $line.hasClass('highlight') ){
+                        $line.removeClass('highlight');
+                        $line.addClass('lowlight');
+                        self.display_client_details('hide',partner);
+                        self.new_client = null;
+                        self.toggle_save_button();
+                    }else{
+                        self.$('.client-list .highlight').removeClass('highlight');
+                        $line.addClass('highlight');
+                        var y = event.pageY - $line.parent().offset().top;
+                        self.display_client_details('show',partner,y);
+                        self.new_client = partner;
+                        self.toggle_save_button();
+                    }
+                });
         },
         _get_customer_history: function(partner){
-            let params = {
+            var params = {
                 model: 'pos.order',
                 method: 'search_read',
                 domain: [['partner_id', '=', partner.id]],
             };
             rpc.query(params, {async: false})
-                //            new Model('pos.order').call('search_read', [[['partner_id', '=', partner.id]]], {}, {async: false})
-                .then(function(orders){
-                    if(orders){
-                        let filtered_orders = orders.filter(function(o){return (o.amount_total - o.amount_paid) > 0});
-                        partner['history'] = filtered_orders;
-                    }
-                });
+//            new Model('pos.order').call('search_read', [[['partner_id', '=', partner.id]]], {}, {async: false})
+            .then(function(orders){
+                if(orders){
+                     var filtered_orders = orders.filter(function(o){return (o.amount_total - o.amount_paid) > 0});
+                     partner['history'] = filtered_orders;
+                }
+            });
         },
         render_client_history: function(partner){
-            let self = this;
-            let contents = this.$el[0].querySelector('#client_history_contents');
+            var self = this;
+            var contents = this.$el[0].querySelector('#client_history_contents');
             contents.innerHTML = "";
             self._get_customer_history(partner);
             if(partner.history){
-                for (let i=0; i < partner.history.length; i++){
-                    let history = partner.history[i];
-                    let history_line_html = QWeb.render('ClientHistoryLine', {
+                for (var i=0; i < partner.history.length; i++){
+                    var history = partner.history[i];
+                    var history_line_html = QWeb.render('ClientHistoryLine', {
                         partner: partner,
                         order: history,
                         widget: self,
                     });
-                    let history_line = document.createElement('tbody');
+                    var history_line = document.createElement('tbody');
                     history_line.innerHTML = history_line_html;
                     history_line = history_line.childNodes[1];
                     history_line.addEventListener('click', function(e){
-                        let order_id = $(this).data('id');
+                        var order_id = $(this).data('id');
                         if(order_id){
-                            let previous = self.pos.get_order().get_screen_data('previous-screen');
+                            var previous = self.pos.get_order().get_screen_data('previous-screen');
                             self.gui.show_screen('orderdetail', {
                                 order_id: order_id,
                                 previous: previous,
@@ -1693,8 +1691,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         saved_client_details: function(partner_id){
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'res.partner',
                 method: 'search_read',
                 domain: [['id', '=', partner_id]],
@@ -1702,7 +1700,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             rpc.query(params, {async: false}).then(function(partner){
                 self.render_list(self.pos.db.get_partners_sorted(1000));
                 // update the currently assigned client if it has been changed in db.
-                let curr_client = self.pos.get_order().get_client();
+                var curr_client = self.pos.get_order().get_client();
                 if (curr_client) {
                     self.pos.get_order().set_client(self.pos.db.get_partner_by_id(curr_client.id));
                 }
@@ -1719,13 +1717,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         render_payment_history: function(){
-            let self = this;
-            let $client_details_box = $('.client-details-box');
+            var self = this;
+            var $client_details_box = $('.client-details-box');
             $client_details_box.addClass('oe_hidden');
         },
         display_client_details: function(visibility,partner,clickpos){
-            let self = this;
-            if(visibility === 'hide'){
+            var self = this;
+            if(visibility == 'hide'){
                 return;
             }
             self._super(visibility,partner,clickpos);
@@ -1750,11 +1748,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     geolocate();
                 }
             });
-            if(visibility === "edit"){
-                let system_parameters = self.pos.system_parameters;
+            if(visibility == "edit"){
+                var system_parameters = self.pos.system_parameters;
                 if(system_parameters && system_parameters[0]){
                     system_parameters.map(function(system_parameter){
-                        if(system_parameter.key === 'google_api_key' && system_parameter.value){
+                        if(system_parameter.key == 'google_api_key' && system_parameter.value){
                             $("input.detail.client-name").focus(function() {
                                 if(navigator.onLine){
                                     geolocate();
@@ -1782,9 +1780,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         save_changes: function(){
             this._super();
-            if (this.pos.config.enable_ereceipt && this.pos.get_cashier().access_ereceipt && this.has_client_changed()) {
-                let prefer_ereceipt = this.new_client ? this.new_client.prefer_ereceipt : false;
-                let customer_email = this.new_client ? this.new_client.email : false;
+             if (this.pos.config.enable_ereceipt && this.pos.get_cashier().access_ereceipt && this.has_client_changed()) {
+                var prefer_ereceipt = this.new_client ? this.new_client.prefer_ereceipt : false;
+                var customer_email = this.new_client ? this.new_client.email : false;
                 if (prefer_ereceipt) {
                     $('#is_ereciept')[0].checked = true;
                     $('#email_id').show();
@@ -1802,16 +1800,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
 
-    let ProductsScreenWidget = screens.ScreenWidget.extend({
+    var ProductsScreenWidget = screens.ScreenWidget.extend({
         template: 'ProductsScreenWidget',
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.category = 0;
             self.product_click = function(){
-                let prodict_id = $(this).data('product-id');
+                var prodict_id = $(this).data('product-id');
                 if(prodict_id){
-                    let product = self.pos.db.get_product_by_id(prodict_id);
+                    var product = self.pos.db.get_product_by_id(prodict_id);
                     if(product){
                         self.gui.show_popup('show_product_popup',{'product':product});
                     }
@@ -1819,11 +1817,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             };
             this.clear_search_handler = function(event){
                 self.clear_search();
-                let input = $('.searchbox input');
+                var input = $('.searchbox input');
                 input.val('');
                 input.focus();
             };
-            let search_timeout  = null;
+            var search_timeout  = null;
             self.namelist = [];
             _.each(self.pos.db.get_product_namelist(),function(list){
                 if(list[0] !== self.pos.config.delivery_product_id[0]){
@@ -1835,8 +1833,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     source:self.namelist,
                 });
 
-                let searchbox = this;
-                if(event.type === "keypress" || event.keyCode === 46 || event.keyCode === 8){
+                var searchbox = this;
+                if(event.type == "keypress" || event.keyCode === 46 || event.keyCode === 8){
                     clearTimeout(search_timeout);
                     search_timeout = setTimeout(function(){
                         self.perform_search(self.category, searchbox.value, event.which === 13);
@@ -1856,16 +1854,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.gui.show_screen('products');
         },
         start: function(){
-            let self = this;
+            var self = this;
             self._super();
             this.$('.ac_product_list_manage').delegate('.main-product','click',self.product_click);
         },
         render_products: function(products){
-            let new_product_list = [];
-            let dummy_product_ids = this.pos.db.get_dummy_product_ids();
+            var new_product_list = [];
+            var dummy_product_ids = this.pos.db.get_dummy_product_ids();
             if(products.length > 0){
                 products.map(function(product){
-                    if(($.inArray(product.id, dummy_product_ids) === -1) && (!product.is_dummy_product)){
+                    if(($.inArray(product.id, dummy_product_ids) == -1) && (!product.is_dummy_product)){
                         new_product_list.push(product);
                     }
                 });
@@ -1875,15 +1873,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 products: new_product_list}));
         },
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
-            let all_products = this.pos.db.get_product_by_category(0)
+            var all_products = this.pos.db.get_product_by_category(0)
             $('.category_searchbox input').val('');
             $('.searchbox input').val('');
             $('.searchbox input').focus();
             $('span.category-clear_manage').click(function(e){
                 self.clear_search();
-                let input = $('.category_searchbox input');
+                var input = $('.category_searchbox input');
                 input.val('');
                 input.focus();
 
@@ -1891,7 +1889,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.render_products(all_products);
         },
         renderElement: function(){
-            let self = this;
+            var self = this;
             self._super();
             this.el.querySelector('.searchbox input').addEventListener('keypress',this.search_handler);
             this.el.querySelector('.searchbox input').addEventListener('keydown',this.search_handler);
@@ -1900,22 +1898,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 this.chrome.widget.keyboard.connect($(this.el.querySelector('.searchbox input')));
             }
             $('.category_searchbox input', this.el).keyup(function(e){
-                if($(this).val() === ""){
-                    let cat = self.pos.db.get_product_by_category(self.pos.db.root_category_id);
+                if($(this).val() == ""){
+                    var cat = self.pos.db.get_product_by_category(self.pos.db.root_category_id);
                     self.render_products(cat);
                 }
-                $('.category_searchbox input').autocomplete({
-                    source:self.pos.db.get_category_search_list(),
-                    select: function(event, select_category){
-                        if(select_category.item && select_category.item.id){
-                            let cat = self.pos.db.get_product_by_category(select_category.item.id);
-                            self.render_products(cat);
-                            let input = $('.category_searchbox input');
-                            input.val(select_category.item.label);
-                            input.focus();
-                        }
-                    },
-                });
+                 $('.category_searchbox input').autocomplete({
+                     source:self.pos.db.get_category_search_list(),
+                     select: function(event, select_category){
+                         if(select_category.item && select_category.item.id){
+                            var cat = self.pos.db.get_product_by_category(select_category.item.id);
+                             self.render_products(cat);
+                             var input = $('.category_searchbox input');
+                             input.val(select_category.item.label);
+                             input.focus();
+                         }
+                     },
+                 });
                 e.stopPropagation();
             });
             $('.category_searchbox input', this.el).keypress(function(e){
@@ -1923,9 +1921,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     source:self.pos.db.get_category_search_list(),
                     select: function(event, select_category){
                         if(select_category.item && select_category.item.id){
-                            let cat = self.pos.db.get_product_by_category(select_category.item.id);
+                            var cat = self.pos.db.get_product_by_category(select_category.item.id);
                             self.render_products(cat);
-                            let input = $('.category_searchbox input');
+                            var input = $('.category_searchbox input');
                             input.val(select_category.item.label);
                             input.focus();
                         }
@@ -1934,13 +1932,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 e.stopPropagation();
             });
         },
-        // empties the content of the search box
+     // empties the content of the search box
         clear_search: function(){
-            let products = this.pos.db.get_product_by_category(0);
+            var products = this.pos.db.get_product_by_category(0);
             this.render_products(products);
         },
         perform_search: function(category, query, buy_result){
-            let products = this.pos.db.get_product_by_category(category);
+            var products = this.pos.db.get_product_by_category(category);
             if(query){
                 products = this.pos.db.search_product(query);
             }
@@ -1957,7 +1955,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $('.btn_kanban').removeClass('highlight');
         },
         create_product: function(){
-            let self = this;
+            var self = this;
             self.gui.show_popup('create_product_popup');
         },
     });
@@ -1975,12 +1973,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             'click .unpaid_draft_order':'unpaid_draft_order',
         }),
         click_tip: function(){
-            let self   = this;
-            let order  = this.pos.get_order();
-            let tip    = order.get_tip();
-            let change = order.get_change();
-            let value  = tip;
-            let total = order.getNetTotalTaxIncluded();
+            var self   = this;
+            var order  = this.pos.get_order();
+            var tip    = order.get_tip();
+            var change = order.get_change();
+            var value  = tip;
+            var total = order.getNetTotalTaxIncluded();
 
             if (tip === 0 && change > 0  ) {
                 value = change;
@@ -1997,36 +1995,36 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         unpaid_draft_order: function(){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             if(self.pos.config.enable_delivery_charges){
-                let time = order.get_delivery_time();
+                var time = order.get_delivery_time();
                 if(!time){
                     time = $("#txt_del_time").val();
                     if(time){
                         order.set_delivery_time(time);
                     }
                 }
-                let address = order.get_delivery_address();
+                var address = order.get_delivery_address();
                 if(!address){
                     address = $('#txt_del_add').val();
                     if(address){
                         order.set_delivery_address(address);
                     }
                 }
-                let date = order.get_delivery_date();
-                let is_deliver = order.get_is_delivery();
+                var date = order.get_delivery_date();
+                var is_deliver = order.get_is_delivery();
                 if(is_deliver && !order.get_client()){
                     return self.pos.db.notification('danger',_t('Customer is required to validate delivery order!'));
                 }
                 if(is_deliver && (!date || !time || !address)){
                     return self.pos.db.notification('danger',_t('Delivery information required to validate order!'));
                 }
-                let delivery_user_id = $('.delivery_user').val();
+                var delivery_user_id = $('.delivery_user').val();
                 if(order.get_delivery_user_id()){
                     delivery_user_id = order.get_delivery_user_id();
                 }
-                if(is_deliver && delivery_user_id === 0){
+                if(is_deliver && delivery_user_id == 0){
                     return self.pos.db.notification('danger',_t('Please select delivery user to validate order!'));
                 }else{
                     order.set_delivery_user_id(delivery_user_id);
@@ -2034,7 +2032,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 if(is_deliver && date && time && address){
                     order.set_delivery_type('pending');
                 }
-                let paymentlines = order.get_paymentlines();
+                var paymentlines = order.get_paymentlines();
                 if(paymentlines && paymentlines.length > 0){
                     return self.pos.gui.show_popup('flexi_alert',{
                         'title':_t('Warning'),
@@ -2045,7 +2043,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 order.set_delivery_type('none');
             }
             if(order){
-                let env = {
+                var env = {
                     widget:self,
                     pos: self.pos,
                     order: order,
@@ -2053,20 +2051,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     orderlines: order.get_orderlines(),
                     paymentlines: order.get_paymentlines(),
                 };
-                let receipt_html = QWeb.render('PosTicket',env);
+                var receipt_html = QWeb.render('PosTicket',env);
                 order.set_pos_normal_receipt_html(receipt_html.replace(/<img[^>]*>/g,"").replace(/<object[^>]*>/g,""));
-                let receipt = QWeb.render('XmlReceipt',env);
+                var receipt = QWeb.render('XmlReceipt',env);
                 order.set_pos_xml_receipt_html(receipt.replace(/<img[^>]*>/g,"").replace(/<object[^>]*>/g,""));
                 self.pos.push_order(order);
                 self.pos.gui.show_screen('receipt');
             }
         },
         do_order: function(order, type){
-            let self = this;
-            order = order || this.pos.get_order();
-            let tdebit = type === 'debit';
-            let tcredit = type === 'credit';
-            let tmealplan = type === 'mealplan';
+            var self = this;
+            var order = order || this.pos.get_order();
+            var tdebit = type === 'debit';
+            var tcredit = type === 'credit';
+            var tmealplan = type === 'mealplan';
             if (tdebit){
                 order.set_order_on_debit(tdebit);
                 order.set_is_debit(tdebit);
@@ -2079,37 +2077,40 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
 
             order.set_delivery(true);
-            let currentOrderLines = order.get_orderlines();
-            let orderLines = [];
+            var currentOrderLines = order.get_orderlines();
+            var orderLines = [];
             _.each(currentOrderLines,function(item) {
                 return orderLines.push(item.export_as_JSON());
             });
 
-            let client = order.get_client();
+            var client = order.get_client();
 
             if (tdebit){
-                let debit = order.get_total_with_tax() - order.get_total_paid();
+                var debit = order.get_total_with_tax() - order.get_total_paid();
                 if (debit > client.remaining_debit_amount){
                     return self.gui.show_popup('max_limit',{
                         remaining_debit_limit: client.remaining_debit_amount,
                         draft_order: true,
                     });
+                    return
                 }
             }else if(tcredit){
-                let credit = order.get_total_with_tax() - order.get_total_paid();
+                var credit = order.get_total_with_tax() - order.get_total_paid();
                 if (credit > client.remaining_credit_limit){
                     return self.gui.show_popup('max_limit',{
                         remaining_debit_limit: client.remaining_credit_limit,
                         draft_order: true,
                     });
+                    return
                 }
             }else if (tmealplan){
-                let meal_plan = order.get_total_with_tax() - order.get_total_paid();
+                var meal_plan = order.get_total_with_tax() - order.get_total_paid();
                 if (meal_plan > client.remaining_meal_plan_limit){
                     return self.gui.show_popup('max_limit',{
                         remaining_debit_limit: client.remaining_meal_plan_limit,
                         draft_order: true,
                     });
+                    return
                 }
             }
             self.pos.push_order(order);
@@ -2149,15 +2150,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         // pos debit click
         pos_credit: function(e){
-            let self = this;
+            var self = this;
             this.to_invoice = true;
-            let order = self.pos.get_order();
-            let order_lines = order.get_paymentlines();
+            var order = self.pos.get_order();
+            var order_lines = order.get_paymentlines();
             if(order_lines.length && order.get_due() <= 0){
                 this.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
                 return false;
             }
-            let client = order.get_client() || false;
+            var client = order.get_client() || false;
             if (client && client.remaining_credit_limit <= 0) {
                 this.pos.db.notification('danger', 'No es posible pagar utilizando crédito ya que el cliente seleccionado no tiene crédito disponible.');
                 return false;
@@ -2174,13 +2175,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             if (client){
                 if (client.client_pin){
-                    let credit_amount = client.remaining_credit_limit;
-                    let amount = order.getNetTotalTaxIncluded();
+                    var credit_amount = client.remaining_credit_limit;
+                    var amount = order.getNetTotalTaxIncluded();
                     if (amount > credit_amount){
                         if (order.get_paymentlines().length > 0){
-                            let total_amount = 0
+                            var total_amount = 0
                             _.map(order.get_paymentlines(), function(plines){
-                                let pamount = plines.get_amount();
+                                var pamount = plines.get_amount();
                                 total_amount += pamount;
                             });
                             if (total_amount > 0){
@@ -2192,15 +2193,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 }
                             }
                         }else{
-                            let cashregister = false;
-                            for(let i in self.pos.cashregisters){
-                                let reg = self.pos.cashregisters[i];
+                            var cashregister = false;
+                            for(var i in self.pos.cashregisters){
+                                var reg = self.pos.cashregisters[i];
                                 if(reg.journal_id[1] === "POS-Crédito (MXN)"){
                                     cashregister = reg;
                                 }
                             }
                             if (cashregister){
-                                //let order = self.pos.get_order();
+                                //var order = self.pos.get_order();
                                 order.add_paymentline(cashregister);
                                 order.selected_paymentline.set_amount(credit_amount,0 );
                                 self.reset_input();
@@ -2221,19 +2222,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             if(order.get_ret_o_id()){
                 self.pos.db.notification('danger',_t('Sorry, This operation not allow to create draft order!'));
-
+                return
             }
             /*
             order.set_order_on_credit(true)
             order.set_is_credit(true);
             order.set_delivery(true)
-            let currentOrderLines = order.get_orderlines();
-            let orderLines = [];
+            var currentOrderLines = order.get_orderlines();
+            var orderLines = [];
             _.each(currentOrderLines,function(item) {
                 return orderLines.push(item.export_as_JSON());
             });
-            let credit = order.get_total_with_tax() - order.get_total_paid();
-            let client = order.get_client();
+            var credit = order.get_total_with_tax() - order.get_total_paid();
+            var client = order.get_client();
             if (client && credit > client.remaining_credit_limit){
                 self.gui.show_popup('max_limit',{
                     remaining_debit_limit: client.remaining_credit_limit,
@@ -2249,7 +2250,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         // pos debit click
         pos_debit: function(e){
             this.to_invoice = true;
-            let order = self.pos.get_order();
+            var order = self.pos.get_order();
             if(order.is_empty()){
                 self.pos.db.notification('danger',_t('Add product(s) in cart!'));
                 return
@@ -2260,11 +2261,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 return
             }
 
-            let client = order.get_client() || false;
+            var client = order.get_client() || false;
 
             if (client){
                 if (client.client_pin){
-                    self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'debit'});
+                     self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'debit'});
                     return
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
@@ -2274,14 +2275,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             if(order.get_ret_o_id()){
                 self.pos.db.notification('danger',_t('Sorry, This operation not allow to create draft order!'));
-
+                return
             }
             //this.do_order(order);
         },
         // pos meal plan click
         pos_meal_plan: function(e){
             this.to_invoice = true;
-            let order = self.pos.get_order();
+            var order = self.pos.get_order();
             if(order.is_empty()){
                 self.pos.db.notification('danger',_t('Add product(s) in cart!'));
                 return
@@ -2292,11 +2293,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 return
             }
 
-            let client = order.get_client() || false;
+            var client = order.get_client() || false;
 
             if (client){
                 if (client.client_pin){
-                    self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'mealplan'});
+                     self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'mealplan'});
                     return
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
@@ -2310,19 +2311,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             if(order.get_ret_o_id()){
                 self.pos.db.notification('danger',_t('Sorry, This operation not allow to create draft order!'));
-
+                return
             }
             /*
             order.set_order_on_meal_plan(true)
             order.set_is_meal_plan(true);
             order.set_delivery(true)
-            let currentOrderLines = order.get_orderlines();
-            let orderLines = [];
+            var currentOrderLines = order.get_orderlines();
+            var orderLines = [];
             _.each(currentOrderLines,function(item) {
                 return orderLines.push(item.export_as_JSON());
             });
-            let debit = order.get_total_with_tax() - order.get_total_paid();
-            let client = order.get_client();
+            var debit = order.get_total_with_tax() - order.get_total_paid();
+            var client = order.get_client();
             if (client && debit > client.remaining_meal_plan_limit){
                 self.gui.show_popup('max_limit',{
                     remaining_debit_limit: client.remaining_meal_plan_limit,
@@ -2337,115 +2338,115 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         credit_assign: function(e){
             $(".account_payment_btn").html("");
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
 
-            let partner = order.get_client();
-            let add_class = false;
+            var partner = order.get_client();
+            var add_class = false;
             if($(e.currentTarget).hasClass('account_pay')){
                 add_class = false;
                 $(e.currentTarget).removeClass('account_pay');
-                let lines = self.pos.get_order().get_orderlines()
-                let new_amount = Number($(e.currentTarget).attr('use_amt'));
-                let order_amount = order.get_total_with_tax();
-                let to_be_remove = false
-                let credit_detail = order.get_credit_detail();
-                let journal_id = Number($(e.currentTarget).attr('journal_id'));
-                for (let i=0; i<lines.length; i++){
-                    if(lines[i].product.id === self.pos.config.prod_for_payment[0]){
-                        for (let j=0; j<credit_detail.length; j++){
-                            if(lines[i].price === (-credit_detail[j].amount)){
+                var lines = self.pos.get_order().get_orderlines()
+                var new_amount = Number($(e.currentTarget).attr('use_amt'));
+                var order_amount = order.get_total_with_tax();
+                var to_be_remove = false
+                var credit_detail = order.get_credit_detail();
+                var journal_id = Number($(e.currentTarget).attr('journal_id'));
+                for (var i=0;i<lines.length;i++){
+                    if(lines[i].product.id == self.pos.config.prod_for_payment[0]){
+                        for (var j=0;j<credit_detail.length;j++){
+                            if(lines[i].price == (-credit_detail[j].amount)){
                                 to_be_remove = lines[i].id
                                 break
                             }
                         }
                     }
                 }
-                for(let i=0; i<credit_detail.length; i++){
-                    if(credit_detail[i].journal_id === journal_id){
+                for(var i=0;i<credit_detail.length;i++){
+                    if(credit_detail[i].journal_id == journal_id){
                         credit_detail.splice(i, 1);
                     }
                 }
-                if(order.get_orderline(to_be_remove)){
-                    order.remove_orderline(order.get_orderline(to_be_remove));
-                }
-                let pos_total_amount = 0.00
-                let order_details =  order.get_credit_detail()
-                _.each(order_details,function(order_detail) {
+                 if(order.get_orderline(to_be_remove)){
+                     order.remove_orderline(order.get_orderline(to_be_remove));
+                 }
+                var pos_total_amount = 0.00
+                var order_details =  order.get_credit_detail()
+                 _.each(order_details,function(order_detail) {
                     pos_total_amount += order_detail.amount
                 });
-                self.pos.credit_amount = pos_total_amount;
-                let tabs = QWeb.render('FromCredit',{widget:self});
-                $('.foreign_infoline').html(tabs);
+                 self.pos.credit_amount = pos_total_amount;
+                 var tabs = QWeb.render('FromCredit',{widget:self});
+                 $('.foreign_infoline').html(tabs);
             }else{
                 $(e.currentTarget).addClass('account_pay');
-                let journal = $(e.currentTarget).attr('journal');
-                let journal_id = Number($(e.currentTarget).attr('journal_id'));
-                let amount = Number($(e.currentTarget).attr('amt'));
-                let order_amount = order.get_total_with_tax();
-                let prd = self.pos.db.get_product_by_id(self.pos.config.prod_for_payment[0]);
-                let lines = self.pos.get_order().get_orderlines()
+                var journal = $(e.currentTarget).attr('journal');
+                var journal_id = Number($(e.currentTarget).attr('journal_id'));
+                var amount = Number($(e.currentTarget).attr('amt'));
+                var order_amount = order.get_total_with_tax();
+                var prd = self.pos.db.get_product_by_id(self.pos.config.prod_for_payment[0]);
+                var lines = self.pos.get_order().get_orderlines()
                 self.pos.credit = true;
                 self.pos.cmp_journal_id = journal_id;
-                if(prd && order_amount !== 0.00){
-                    if(order_amount < amount){
-                        let paid_amt =  order_amount;
-                    } else{
-                        let paid_amt = amount;
-                    }
+                if(prd && order_amount != 0.00){
+                      if(order_amount < amount){
+                        var paid_amt =  order_amount;
+                      } else{
+                            var paid_amt = amount;
+                      }
 //                      if(lines.length > 0){
 //                    	  _.each(lines,function(line){
-//                    		  if(line.product.id === prd.id){
+//                    		  if(line.product.id == prd.id){
 //                    			  order.remove_orderline(line)
 //                    		  }
 //                    	  });
 //                      }
-                    order.add_product(prd,{'price':-paid_amt});
-                    $(e.currentTarget).attr('use-amt',-paid_amt);
-                    let select_line = order.get_selected_orderline();
-                    if(select_line){
-                        select_line.set_from_credit(true);
-                        let credit_info = {
-                            'partner_id':partner.id,
-                            'amount':paid_amt,
-                            'journal':journal,
-                            'journal_id':journal_id
-                        }
-                        order.set_credit_detail(credit_info);
-                    }
+                      order.add_product(prd,{'price':-paid_amt});
+                      $(e.currentTarget).attr('use-amt',-paid_amt);
+                       var select_line = order.get_selected_orderline();
+                       if(select_line){
+                            select_line.set_from_credit(true);
+                            var credit_info = {
+                                'partner_id':partner.id,
+                                'amount':paid_amt,
+                                'journal':journal,
+                                'journal_id':journal_id
+                            }
+                            order.set_credit_detail(credit_info);
+                       }
                 }
-                let pos_total_amount = 0.00
-                let order_details =  order.get_credit_detail()
+                var pos_total_amount = 0.00
+                var order_details =  order.get_credit_detail()
                 _.each(order_details,function(order_detail) {
                     pos_total_amount += order_detail.amount
                 });
                 self.pos.credit_amount = pos_total_amount;
-                let tabs = QWeb.render('FromCredit',{widget:self});
+                var tabs = QWeb.render('FromCredit',{widget:self});
                 this.$('.foreign_infoline').html(tabs);
             }
-            let p_line = order.get_paymentlines();
+            var p_line = order.get_paymentlines();
             if(p_line.length > 0){
                 self.pos.gui.screen_instances.payment.render_paymentlines()
             }
         },
         init: function(parent, options) {
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.div_btns = "";
-            let payment_buttons = this.pos.config.payment_buttons;
-            let payment_buttons_order = new Array(payment_buttons.length);
-            let index = 0;
-            for(let i in payment_buttons) {
-                let btn_info = this.pos.db.get_button_by_id(payment_buttons[i]);
+            var payment_buttons = this.pos.config.payment_buttons;
+            var payment_buttons_order = new Array(payment_buttons.length);
+            var index = 0;
+            for(var i in payment_buttons) {
+                var btn_info = this.pos.db.get_button_by_id(payment_buttons[i]);
                 if (!payment_buttons_order[0]) {
                     payment_buttons_order[index] = btn_info;
                 }
                 else {
                     payment_buttons_order[index] = btn_info;
-                    for (let j = 0; j < index; j++) {
+                    for (var j = 0; j < index; j++) {
                         try {
                             if (parseFloat(payment_buttons_order[j].display_name) > parseFloat(payment_buttons_order[index].display_name)) {
-                                let aux = payment_buttons_order[j];
+                                var aux = payment_buttons_order[j];
                                 payment_buttons_order[j] = payment_buttons_order[index];
                                 payment_buttons_order[index] = aux;
                             }
@@ -2457,65 +2458,65 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 index += 1;
             }
-            let columns = index % 4 > 0 ? Math.floor(index / 4) + 1 : Math.floor(index / 4);
-            let columns_html = [];
-            for (let i = 0; i < columns; i++) {
+            var columns = index % 4 > 0 ? Math.floor(index / 4) + 1 : Math.floor(index / 4);
+            var columns_html = [];
+            for (var i = 0; i < columns; i++) {
                 columns_html.push("<div>");
             }
 
-            for(let j = index - 1; j >= 0; j -= columns) {
-                for (let i = 1; i <= columns; i++){
+            for(var j = index - 1; j >= 0; j -= columns) {
+                for (var i = 1; i <= columns; i++){
                     if(j - (i - 1) >= 0) {
-                        let amount_data = round_di(payment_buttons_order[j - (i - 1)].display_name, 0).toFixed(0);
-                        let amount = field_utils.format.float(round_di(payment_buttons_order[j - (i - 1)].display_name, 0), {digits: [69, 0]});
-                        let symbol = (self.pos && self.pos.currency) ? self.pos.currency.symbol : '$';
+                        var amount_data = round_di(payment_buttons_order[j - (i - 1)].display_name, 0).toFixed(0);
+                        var amount = field_utils.format.float(round_di(payment_buttons_order[j - (i - 1)].display_name, 0), {digits: [69, 0]});
+                        var symbol = (self.pos && self.pos.currency) ? self.pos.currency.symbol : '$';
                         columns_html[i - 1] += "<div id=" + payment_buttons_order[j - (i - 1)].id + " class='control-button 1quickpay' data=" + amount_data + "><span>" + symbol + ' ' + amount + "</span></div>";
                     }
                 }
             }
-            for (let i = columns - 1; i >= 0; i--) {
+            for (var i = columns - 1; i >= 0; i--) {
                 this.div_btns += columns_html[i] + "</div>"
             }
 
             this.use_credit = function(event){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order.get_due() <= 0){
                     return;
                 }
                 order.set_use_credit(!order.get_use_credit());
                 if (order.get_use_credit()) {
                     if(order.get_client()){
-                        let params = {
+                        var params = {
                             model: "res.partner",
                             method: "search_read",
                             domain: [['id', '=', order.get_client().id]],
                             fields:['remaining_credit_amount']
                         }
                         rpc.query(params, {async: false})
-                            .then(function(results){
-                                if(results && results[0]){
-                                    if(results[0].remaining_credit_amount <= 0){
-                                        return
-                                    }
-                                    $('div.js_use_credit').addClass('highlight');
-                                    let result = results[0];
-                                    let price = 0;
-                                    if(order.get_total_with_tax() < result.remaining_credit_amount){
-                                        let rem = self.pos.get_order().get_due();
-                                        price = rem || order.get_total_with_tax() * -1;
-                                        order.set_type_for_credit('return');
-                                        self.click_paymentmethods_by_journal(self.pos.config.pos_journal_id[0]);
-                                    }else if(order.get_total_with_tax() >= result.remaining_credit_amount){
-                                        order.set_type_for_credit('change');
-                                        let rem_due = self.pos.get_order().get_due();
-                                        self.click_paymentmethods_by_journal(self.pos.config.pos_journal_id[0]);
-                                        price = Math.min(rem_due,Math.abs(result.remaining_credit_amount * -1));
-                                    }else{
-                                        order.set_type_for_credit('change');
-                                    }
-                                    self.renderElement();
+                        .then(function(results){
+                            if(results && results[0]){
+                                if(results[0].remaining_credit_amount <= 0){
+                                    return
                                 }
-                            });
+                                $('div.js_use_credit').addClass('highlight');
+                                var result = results[0];
+                                var price = 0;
+                                if(order.get_total_with_tax() < result.remaining_credit_amount){
+                                    var rem = self.pos.get_order().get_due();
+                                    price = rem || order.get_total_with_tax() * -1;
+                                    order.set_type_for_credit('return');
+                                    self.click_paymentmethods_by_journal(self.pos.config.pos_journal_id[0]);
+                                }else if(order.get_total_with_tax() >= result.remaining_credit_amount){
+                                    order.set_type_for_credit('change');
+                                    var rem_due = self.pos.get_order().get_due();
+                                    self.click_paymentmethods_by_journal(self.pos.config.pos_journal_id[0]);
+                                    price = Math.min(rem_due,Math.abs(result.remaining_credit_amount * -1));
+                                }else{
+                                    order.set_type_for_credit('change');
+                                }
+                                self.renderElement();
+                            }
+                        });
                     }else {
                         alert(_t('Please select a customer to use Credit !'));
                     }
@@ -2525,14 +2526,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             };
             this.keyboard_handler = function(event){
-                let key = '';
+                var key = '';
                 if (event.type === "keypress") {
-                    if (event.keyCode === 13 && self.pos.get_login_from() !== 'login') { // Enter
+                    if (event.keyCode === 13 && self.pos.get_login_from() != 'login') { // Enter
                         self.validate_order(false);
                     } else if ( event.keyCode === 190 || // Dot
-                        event.keyCode === 110 ||  // Decimal point (numpad)
-                        event.keyCode === 188 ||  // Comma
-                        event.keyCode === 46 ) {  // Numpad dot
+                                event.keyCode === 110 ||  // Decimal point (numpad)
+                                event.keyCode === 188 ||  // Comma
+                                event.keyCode === 46 ) {  // Numpad dot
                         key = self.decimal_point;
                     } else if (event.keyCode >= 48 && event.keyCode <= 57) { // Numbers
                         key = '' + (event.keyCode - 48);
@@ -2555,7 +2556,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 event.stopImmediatePropagation();
             };
             this.use_wallet = function(event){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order.getNetTotalTaxIncluded() <= 0){
                     return
                 }
@@ -2564,34 +2565,34 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     if(order.get_client()){
                         if(self.pos.config.wallet_product.length > 0){
                             $('div.js_use_wallet').addClass('highlight');
-                            let product = self.pos.db.get_product_by_id(self.pos.config.wallet_product[0]);
-                            let params = {
+                            var product = self.pos.db.get_product_by_id(self.pos.config.wallet_product[0]);
+                            var params = {
                                 model: "res.partner",
                                 method: "search_read",
                                 domain: [['id', '=', order.get_client().id]],
                                 fields:['remaining_wallet_amount']
                             }
                             rpc.query(params, {async: false})
-                                .then(function(results){
-                                    if(!product){
-                                        return self.pos.db.notification('warning',"Wallet product is not loaded into pos, Please remove product cache from pos configuration and try again.");
+                            .then(function(results){
+                                if(!product){
+                                    return self.pos.db.notification('warning',"Wallet product is not loaded into pos, Please remove product cache from pos configuration and try again.");
+                                }
+                                _.each(results, function(result){
+                                    var price = 0;
+                                    var line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
+                                    if(order.get_total_with_tax() <= result.remaining_wallet_amount){
+                                        price = order.get_total_with_tax() * -1;
+                                    }else if(order.get_total_with_tax() >= result.remaining_wallet_amount){
+                                        price = result.remaining_wallet_amount * -1;
                                     }
-                                    _.each(results, function(result){
-                                        let price = 0;
-                                        let line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
-                                        if(order.get_total_with_tax() <= result.remaining_wallet_amount){
-                                            price = order.get_total_with_tax() * -1;
-                                        }else if(order.get_total_with_tax() >= result.remaining_wallet_amount){
-                                            price = result.remaining_wallet_amount * -1;
-                                        }
-                                        order.set_used_amount_from_wallet(Math.abs(price));
-                                        order.set_type_for_wallet('change');
-                                        line.set_quantity(1);
-                                        line.set_unit_price(price);
-                                        order.add_orderline(line);
-                                        self.renderElement()
-                                    });
+                                    order.set_used_amount_from_wallet(Math.abs(price));
+                                    order.set_type_for_wallet('change');
+                                    line.set_quantity(1);
+                                    line.set_unit_price(price);
+                                    order.add_orderline(line);
+                                    self.renderElement()
                                 });
+                            });
                         }
                     }else{
                         self.pos.db.notification('danger',"Please select customer!");
@@ -2609,8 +2610,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             };
         },
         click_back: function(){
-            let self = this;
-            let order = this.pos.get_order();
+            var self = this;
+            var order = this.pos.get_order();
             if(!order.get_table_reservation_details()){
                 if((order.get_credit_detail() && order.get_credit_detail()[0])){
                     this.gui.show_popup('confirm',{
@@ -2624,10 +2625,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         },
                     });
                 } else {
-                    let paymentlines = order.get_paymentlines();
-                    let cid_paymentlines = [];
+                    var paymentlines = order.get_paymentlines();
+                    var cid_paymentlines = [];
                     _.each(paymentlines, function(paymentline){
-                        cid_paymentlines.push(paymentline.cid);
+                       cid_paymentlines.push(paymentline.cid);
                     });
                     _.each(cid_paymentlines, function (cid) {
                         self.chrome.screens.payment.click_delete_paymentline(cid);
@@ -2638,18 +2639,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         finalize_validation: function() {
-            let self = this;
-            let order = this.pos.get_order();
-            let partner = this.pos.get_client();
+            var self = this;
+            var order = this.pos.get_order();
+            var partner = this.pos.get_client();
 //            if(partner && partner.remaining_credit_amount && order.get_remaining_credit()){
             if(partner){
                 partner.remaining_credit_amount = order.get_remaining_credit();
             }
             if(self.pos.config.enable_gift_voucher){
-                let vouchers = order.get_voucher();
-                let counter = [];
+                var vouchers = order.get_voucher();
+                var counter = [];
                 if(vouchers && vouchers.length > 0){
-                    let voucher_use = _.countBy(vouchers, 'voucher_code');
+                    var voucher_use = _.countBy(vouchers, 'voucher_code');
                     _.each(vouchers, function(voucher){
                         if(_.where(counter, {voucher_code: voucher.voucher_code}).length < 1){
                             counter.push({
@@ -2679,7 +2680,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.increment_number = self.pos.zero_pad(self.pos.increment_number, self.pos.last_token_number.toString().length);
                 }
             }
-            let env = {
+            var env = {
                 widget:self,
                 pos: self.pos,
                 order: order,
@@ -2687,46 +2688,74 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 orderlines: order.get_orderlines(),
                 paymentlines: order.get_paymentlines(),
             };
-            let receipt_html = QWeb.render('PosTicket',env);
+            var receipt_html = QWeb.render('PosTicket',env);
             order.set_pos_normal_receipt_html(receipt_html.replace(/<img[^>]*>/g,"").replace(/<object[^>]*>/g,""));
-            let receipt = QWeb.render('XmlReceipt',env);
+            var receipt = QWeb.render('XmlReceipt',env);
             order.set_pos_xml_receipt_html(receipt.replace(/<img[^>]*>/g,"").replace(/<object[^>]*>/g,""));
             self._super();
         },
+//    	partial_payment: function() {
+//            var self = this;
+//            var currentOrder = this.pos.get_order();
+//            var client = currentOrder.get_client() || false;
+//            if(currentOrder.get_total_with_tax() > 0 && currentOrder.get_due() != 0){
+//				if(currentOrder.get_total_with_tax() > currentOrder.get_total_paid()
+//        			&& currentOrder.get_total_paid() != 0){
+//					var credit = currentOrder.get_total_with_tax() - currentOrder.get_total_paid();
+//					if (client && credit > client.remaining_credit_limit && !currentOrder.get_paying_due()){
+//						self.gui.show_popup('max_limit',{
+//							remaining_credit_limit: client.remaining_credit_limit,
+//							payment_obj: self,
+//						});
+//						return
+//					}
+//        	    }
+//				currentOrder.set_partial_pay(true);
+//				if(currentOrder.get_total_paid() != 0){
+//					if(self.pos.config.enable_delivery_charges){
+//						var delivery_info = self.check_delivery_info();
+//						if(delivery_info){
+//							return self.pos.db.notification('danger',_t('Delivery information required to validate order!'));
+//						}
+//					}
+//					this.finalize_validation();
+//				}
+//        	}
+//        },
         partial_payment: function() {
-            let self = this;
-            let currentOrder = this.pos.get_order();
-            let client = currentOrder.get_client() || false;
-            let partner = this.pos.get_client();
+            var self = this;
+            var currentOrder = this.pos.get_order();
+            var client = currentOrder.get_client() || false;
+            var partner = this.pos.get_client();
             if(partner && partner.remaining_credit_amount && currentOrder.get_remaining_credit()){
                 partner.remaining_credit_amount = currentOrder.get_remaining_credit();
             }
             if(currentOrder.get_total_with_tax() > currentOrder.get_total_paid() && currentOrder.get_total_paid() > 0){
-                let credit = currentOrder.get_total_with_tax() - currentOrder.get_total_paid();
+                var credit = currentOrder.get_total_with_tax() - currentOrder.get_total_paid();
                 this.finalize_validation();
             }
         },
         check_delivery_info: function(){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             // delivery charges
             if(self.pos.config.enable_delivery_charges){
-                let time = order.get_delivery_time();
+                var time = order.get_delivery_time();
                 if(!time){
                     time = $("#txt_del_time").val();
                     if(time){
                         order.set_delivery_time(time);
                     }
                 }
-                let address = order.get_delivery_address();
+                var address = order.get_delivery_address();
                 if(!address){
                     address = $('#txt_del_add').val();
                     if(address){
                         order.set_delivery_address(address);
                     }
                 }
-                let date = order.get_delivery_date();
-                let is_deliver = order.get_is_delivery();
+                var date = order.get_delivery_date();
+                var is_deliver = order.get_is_delivery();
 
                 if(is_deliver && (!date || !time || !address)){
                     return true;
@@ -2734,14 +2763,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         click_redeem_loyalty: function(){
-            let order = this.pos.get_order();
+            var order = this.pos.get_order();
             if(order.get_client()){
                 this.gui.show_popup("redeem_loyalty_points", {payment_self: this});
             }
         },
         payment_input: function(input) {
-            let self = this;
-            let order = this.pos.get_order();
+            var self = this;
+            var order = this.pos.get_order();
             if(order.selected_paymentline && order.selected_paymentline.get_freeze_line()){
                 return
             }
@@ -2749,10 +2778,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 return
             }
 
-            let customer_display = self.pos.config.customer_display;
+            var customer_display = self.pos.config.customer_display;
 
-            let old_inputbuffer = this.inputbuffer;
-            let newbuf = this.gui.numpad_input(this.inputbuffer, input, {'firstinput': this.firstinput});
+            var old_inputbuffer = this.inputbuffer;
+            var newbuf = this.gui.numpad_input(this.inputbuffer, input, {'firstinput': this.firstinput});
             this.firstinput = (newbuf.length === 0);
 
             // popup block inputs to prevent sneak editing.
@@ -2762,15 +2791,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             if (newbuf !== this.inputbuffer) {
                 this.inputbuffer = newbuf;
-                let order = this.pos.get_order();
+                var order = this.pos.get_order();
                 if (order.selected_paymentline) {
-                    let amount = this.inputbuffer;
+                    var amount = this.inputbuffer;
 
                     if (this.inputbuffer !== "-") {
                         amount = field_utils.parse.float(this.inputbuffer);
                     }
 
-                    if (order.selected_paymentline.name === "Tarjeta Bancaria (MXN)" && order.get_subtotal() < order.get_total_paid() - order.selected_paymentline.get_amount() + amount){
+                    if (order.selected_paymentline.name == "Tarjeta Bancaria (MXN)" && order.get_subtotal() < order.get_total_paid() - order.selected_paymentline.get_amount() + amount){
                         self.pos.db.notification('danger',"No puede pagar más del total a pagar usando Tarjeta Barcaria.");
                         this.inputbuffer = old_inputbuffer;
                         this.firstinput = (this.inputbuffer.length === 0);
@@ -2788,9 +2817,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         toggle_rounding_button: function(){
-            let self = this;
-            let order = this.pos.get_order();
-            let $rounding_elem = $('#pos-rounding');
+            var self = this;
+            var order = this.pos.get_order();
+            var $rounding_elem = $('#pos-rounding');
             if($rounding_elem.hasClass('fa-toggle-off')){
                 $rounding_elem.removeClass('fa-toggle-off');
                 $rounding_elem.addClass('fa-toggle-on');
@@ -2803,16 +2832,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.render_paymentlines();
         },
         show: function() {
-            let self = this;
+            var self = this;
             self._super();
 
-            let order = self.pos.get_order();
-            let total = order ? order.get_total_with_tax() : 0;
+            var order = self.pos.get_order();
+            var total = order ? order.get_total_with_tax() : 0;
 
-            let client = order.get_client();
+            var client = order.get_client();
 
             if (client){
-                let params = {
+                var params = {
                     model: 'res.partner',
                     method: 'search_read',
                     fields: ['esquema_subsidio_ids'],
@@ -2820,7 +2849,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 rpc.query(params).then(function(results){
                     if (results.length > 0){
-                        let p = {
+                        var p = {
                             model: 'contract.scheme.contract',
                             method: 'search_read',
                             domain: [['id', 'in', results[0].esquema_subsidio_ids]]
@@ -2829,20 +2858,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             if (data.length > 0){
                                 self.$el.find('.paymentlines-container').after(QWeb.render('Payment-Sub', {data: data[0]}));
                                 $('.button-add-sub').click(function(){
-                                    let amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
+                                    var amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
 
                                     if(amt){
-                                        let cashregister = false;
-                                        for(let i in self.pos.cashregisters){
-                                            let reg = self.pos.cashregisters[i];
-                                            if(reg.journal_id[0] === self.pos.config.cash_method[0] ){
+                                        var cashregister = false;
+                                        for(var i in self.pos.cashregisters){
+                                            var reg = self.pos.cashregisters[i];
+                                            if(reg.journal_id[0] == self.pos.config.cash_method[0] ){
                                                 cashregister = reg;
                                             }
                                         }
                                         if (cashregister){
                                             cashregister.journal_id[0] = 27;
                                             cashregister.journal_id[1] = 'POS - Debito (MXN)';
-                                            let order = self.pos.get_order();
+                                            var order = self.pos.get_order();
                                             order.add_paymentline(cashregister);
                                             order.selected_paymentline.set_amount( Math.max(amt),0 );
                                             self.reset_input();
@@ -2855,7 +2884,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                     }
                                     //self.click_paymentmethods($(this).data('id'));
                                 });
-                                let currentOrderline = order.get_orderlines();
+                                var currentOrderline = order.get_orderlines();
                                 _.each(currentOrderline, function(line){
                                 });
                             }
@@ -2888,7 +2917,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $("#payment_total").html(this.format_currency(order.getNetTotalTaxIncluded()));
             $("#payment_total").attr('amount',order.getNetTotalTaxIncluded());
 
-            let partner = self.pos.get_order().get_client();
+            var partner = self.pos.get_order().get_client();
             if(partner)
             {
                 this.$el.find("#remaining_debit_amount").text(self.format_currency(partner.remaining_debit_amount));
@@ -2949,11 +2978,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     'timeFormat': 'h:i A',
                 });
                 self.$("#txt_del_time").change(function(){
-                    let time = $("#txt_del_time").val();
+                    var time = $("#txt_del_time").val();
                     order.get_delivery_time(time);
                 })
                 self.$('#txt_del_add').change(function(){
-                    let address = $('#txt_del_add').val();
+                    var address = $('#txt_del_add').val();
                     order.set_delivery_address(address);
                 });
             }else{
@@ -3009,12 +3038,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         validate_order: function(force_validation) {
-            let self = this;
-            let order = this.pos.get_order();
-            // let self = this;
-            // let client = order.get_client();
+            var self = this;
+            var order = this.pos.get_order();
+            var self = this;
+            var client = order.get_client();
 
-            if((this.pos.get_order().get_total_with_tax() < 0) && this.pos.get_order().get_paymentlines().length === 0){
+            if((this.pos.get_order().get_total_with_tax() < 0) && this.pos.get_order().get_paymentlines().length == 0){
                 return alert(_t('Please select a journal.'));
             }
             if(self.pos.pos_session.locked){
@@ -3034,7 +3063,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     order.set_prefer_ereceipt(false);
                 }
                 if (order.get_client() && order.get_client().id && $('#update_email').is(':checked')) {
-                    let params = {
+                    var params = {
                         model: "res.partner",
                         method: "write",
                         args: [order.get_client().id, {'email': order.get_ereceipt_mail()}]
@@ -3045,33 +3074,33 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 // delivery charges
                 if(self.pos.config.enable_delivery_charges){
-                    let time = order.get_delivery_time();
+                    var time = order.get_delivery_time();
                     if(!time){
                         time = $("#txt_del_time").val();
                         if(time){
                             order.set_delivery_time(time);
                         }
                     }
-                    let address = order.get_delivery_address();
+                    var address = order.get_delivery_address();
                     if(!address){
                         address = $('#txt_del_add').val();
                         if(address){
                             order.set_delivery_address(address);
                         }
                     }
-                    let date = order.get_delivery_date();
-                    let is_deliver = order.get_is_delivery();
+                    var date = order.get_delivery_date();
+                    var is_deliver = order.get_is_delivery();
                     if(is_deliver && !order.get_client()){
                         return self.pos.db.notification('danger',_t('Customer is required to validate delivery order!'));
                     }
                     if(is_deliver && (!date || !time || !address)){
                         return self.pos.db.notification('danger',_t('Delivery information required to validate order!'));
                     }
-                    let delivery_user_id = $('.delivery_user').val();
+                    var delivery_user_id = $('.delivery_user').val();
                     if(order.get_delivery_user_id()){
                         delivery_user_id = order.get_delivery_user_id();
                     }
-                    if(is_deliver && delivery_user_id === 0){
+                    if(is_deliver && delivery_user_id == 0){
                         return self.pos.db.notification('danger',_t('Please select delivery user to validate order!'));
                     }else{
                         order.set_delivery_user_id(delivery_user_id);
@@ -3085,8 +3114,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 order.set_discount_history(true);
                 if(order.get_discount_product_id() && order.get_order_total_discount() > 0){
                     order.set_discount_price(order.get_order_total_discount());
-                    let product = self.pos.db.get_product_by_id(order.get_discount_product_id());
-                    let new_line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
+                    var product = self.pos.db.get_product_by_id(order.get_discount_product_id());
+                    var new_line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
                     new_line.set_quantity(-1);
                     new_line.state = 'done';
                     new_line.set_unit_price(order.get_order_total_discount());
@@ -3106,27 +3135,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this._super(force_validation);
         },
         add_charge_product: function(){
-            let self = this;
-            let order = self.pos.get_order();
-            let paylines = order.get_paymentlines();
-            let charge_exist = false;
-            let total_charges = 0;
+            var self = this;
+            var order = self.pos.get_order();
+            var paylines = order.get_paymentlines();
+            var charge_exist = false;
+            var total_charges = 0;
             if(paylines){
                 paylines.map(function(payline){
                     if(payline.cashregister.journal.apply_charges){
-                        let paycharge = Number(payline.get_payment_charge());
+                        var paycharge = Number(payline.get_payment_charge());
                         total_charges += paycharge;
                         payline.set_amount(payline.get_amount() + paycharge);
                     }
                 });
                 if(total_charges > 0){
-                    let product = self.pos.db.get_product_by_id(self.pos.config.payment_product_id[0]);
+                    var product = self.pos.db.get_product_by_id(self.pos.config.payment_product_id[0]);
                     if(product){
 //    					selectedOrder.add_product(product, {
 //    						quantity: 1,
 //    						price: Number(total_charges),
 //    					});
-                        let line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
+                        var line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
                         line.set_quantity(1);
                         line.state = 'done';
                         line.set_unit_price(total_charges);
@@ -3136,20 +3165,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         click_delete_paymentline: function(cid){
-            let self = this;
-            let lines = self.pos.get_order().get_paymentlines();
-            let order = self.pos.get_order();
-            let get_redeem = order.get_redeem_giftcard();
-            let vouchers = order.get_voucher();
-            for ( let i = 0; i < lines.length; i++ ) {
+            var self = this;
+            var lines = self.pos.get_order().get_paymentlines();
+            var order = self.pos.get_order();
+            var get_redeem = order.get_redeem_giftcard();
+            var vouchers = order.get_voucher();
+            for ( var i = 0; i < lines.length; i++ ) {
                 if (lines[i].cid === cid) {
                     _.each(get_redeem, function(redeem){
-                        if(lines[i].get_giftcard_line_code() === redeem.redeem_card ){
+                        if(lines[i].get_giftcard_line_code() == redeem.redeem_card ){
                             order.remove_card(lines[i].get_giftcard_line_code());
                         }
                     });
                     _.each(vouchers, function(j){
-                        if (lines[i].get_gift_voucher_line_code() === j.voucher_code && j.voucher_amount === lines[i].amount){
+                        if (lines[i].get_gift_voucher_line_code() == j.voucher_code && j.voucher_amount == lines[i].amount){
                             order.remove_voucher(lines[i].get_gift_voucher_line_code(), lines[i].pid);
                         }
                     });
@@ -3160,12 +3189,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             }
             self.order_changes();
-
+            return;
         },
         order_is_valid: function(force_validation) {
-            let self = this;
+            var self = this;
 
-            let order = this.pos.get_order();
+            var order = this.pos.get_order();
             if (order.get_voucher().length > 0 && !order.get_client()) {
                 this.gui.show_popup('error',{
                     'title': _t('Voucher Used'),
@@ -3174,27 +3203,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 return false;
             }
             // Validación para el método de pago por tarjeta bancaria
-            let amount_card_payment = 0;
-            let order_lines = order.get_paymentlines();
-            let amount = order.getNetTotalTaxIncluded();
+            var amount_card_payment = 0;
+            var order_lines = order.get_paymentlines();
+            var amount = order.getNetTotalTaxIncluded();
             _.map(order_lines, function(lines){
-                if(lines.name === "Tarjeta Bancaria (MXN)"){
-                    amount_card_payment += lines.amount;
-                }
-            });
+                    if(lines.name == "Tarjeta Bancaria (MXN)"){
+                        amount_card_payment += lines.amount;
+                    }
+                });
             if(amount_card_payment > amount){
                 self.pos.db.notification('danger', 'El total de pagos por tarjeta bancaria no puede ser mayor al monto de la orden');
                 return false;
             }
             // --------------------------------------------------------
-            let client = order.get_client();
+            var client = order.get_client();
             if(client){
-                let params = {
+                var params = {
                     model: 'contract.contract',
                     method: 'is_valid_order_date',
                     args:[client.id]
                 }
-                let valid = false;
+                var valid = false;
                 rpc.query(params,{async:false}).then(function(result){
                     valid = result.result
                 });
@@ -3202,22 +3231,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.db.notification('danger', 'No tiene contrato ha vigente');
                     return false;
                 }
-                params = {
+                var params = {
                     model: 'res.partner',
                     method: 'search_read',
                     domain: [['id', '=', client.id]],
                     fields:['remaining_credit_limit','contract_ids','parent_id']
                 };
                 rpc.query(params,{async:false}).then(function(result){
-                    if (client.remaining_credit_limit !== result[0].remaining_credit_limit){
+                    if (client.remaining_credit_limit != result[0].remaining_credit_limit){
                         client.remaining_credit_limit = result[0].remaining_credit_limit;
                     }
                 });
-                let credit_limit = client.remaining_credit_limit;
-                let credit_lines_amount = 0;
-                let order_lines = order.get_paymentlines();
+                var credit_limit = client.remaining_credit_limit;
+                var credit_lines_amount = 0;
+                var order_lines = order.get_paymentlines();
                 _.map(order_lines, function(lines){
-                    if(lines.name === "POS-Crédito (MXN)"){
+                    if(lines.name == "POS-Crédito (MXN)"){
                         credit_lines_amount += lines.amount;
                     }
                 });
@@ -3231,22 +3260,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return this._super(force_validation);
         },
         order_changes: function(){
-            let self = this;
+            var self = this;
             this.render_paymentlines();
             this._super();
-            let order = this.pos.get_order();
-            let total = order ? order.get_total_with_tax() : 0;
+            var order = this.pos.get_order();
+            var total = order ? order.get_total_with_tax() : 0;
             if(!order){
-
+                return;
             }
-            else if(order.get_due() === total || order.get_due() === 0) {
+            else if(order.get_due() == total || order.get_due() == 0) {
                 self.$('#partial_pay').removeClass('highlight');
             } else {
                 self.$('#partial_pay').addClass('highlight');
             }
         },
         click_gift_voucher: function(event){
-            let self = this;
+            var self = this;
             if(self.pos.get_order().getNetTotalTaxIncluded() <= 0){
                 return
             }
@@ -3263,25 +3292,25 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.toggle_rounding_button();
         },
         click_set_customer: function(){
-            let self = this;
-            let lines = self.pos.get_order().get_paymentlines();
-            let temp = _.find(lines, function(line){ return line.get_gift_voucher_line_code() })
+            var self = this;
+            var lines = self.pos.get_order().get_paymentlines();
+            var temp = _.find(lines, function(line){ return line.get_gift_voucher_line_code() })
             if(temp){
-                return
+               return
             }
             this._super();
         },
         click_back_hold: function(){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             if(order && order.get_giftcard() && order.get_giftcard()[0]){
                 self.gui.show_popup('confirm',{
-                    title: _t('Discard Gift Card'),
-                    body:  _t('Do you want to discard the payment of gift card ?'),
-                    confirm: function() {
-                        order.finalize();
-                    },
-                });
+                       title: _t('Discard Gift Card'),
+                       body:  _t('Do you want to discard the payment of gift card ?'),
+                       confirm: function() {
+                           order.finalize();
+                       },
+                   });
             }else if(order.get_paying_due()){
                 this.gui.show_popup('confirm',{
                     title: _t('Discard Sale Order'),
@@ -3295,31 +3324,31 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         click_invoice: function(){
-            let order = this.pos.get_order();
+            var order = this.pos.get_order();
             if(order.get_paying_due()){
                 return
             }
             this._super();
         },
-        // click_set_customer: function(){
-        //     let order = this.pos.get_order();
-        //     if(order.get_paying_due()){
-        //         return
-        //     }
-        //     this._super();
-        // },
+        click_set_customer: function(){
+            var order = this.pos.get_order();
+            if(order.get_paying_due()){
+                return
+            }
+            this._super();
+        },
         render_paymentlines: function() {
-            let self  = this;
-            let order = this.pos.get_order();
-            let customer_display = this.pos.config.customer_display;
+            var self  = this;
+            var order = this.pos.get_order();
+            var customer_display = this.pos.config.customer_display;
             if (!order) {
                 return;
             }
 
-            let lines = order.get_paymentlines();
-            let due   = order.get_due();
-            let extradue = 0;
-            let charge = 0;
+            var lines = order.get_paymentlines();
+            var due   = order.get_due();
+            var extradue = 0;
+            var charge = 0;
             if (due && lines.length  && due !== order.get_due(lines[lines.length-1])) {
                 extradue = due;
             }
@@ -3339,7 +3368,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
 
             this.$('.paymentlines-container').empty();
-            lines = $(QWeb.render('PaymentScreen-Paymentlines', {
+            var lines = $(QWeb.render('PaymentScreen-Paymentlines', {
                 widget: this,
                 order: order,
                 paymentlines: lines,
@@ -3383,22 +3412,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         click_paymentmethods: function(id) {
 //        	this._super(id);
-            let is_online_journal = false;
-            let cashregister = _.find(self.pos.cashregisters, function(cashregister){
+            var is_online_journal = false;
+            var cashregister = _.find(self.pos.cashregisters, function(cashregister){
                 return cashregister.journal_id[0] === id;
             });
-            let order = this.pos.get_order();
-            let repeat = false;
-            let order_lines = order.get_paymentlines();
+            var order = this.pos.get_order();
+            var repeat = false;
+            var order_lines = order.get_paymentlines();
             if(order_lines.length && order.get_due() <= 0){
                 self.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
                 return false;
             }
             _.map(order_lines, function(lines){
-                if(lines.name === cashregister.journal_id[1]){
-                    repeat = true;
-                }
-            });
+                    if(lines.name == cashregister.journal_id[1]){
+                        repeat = true;
+                    }
+                });
             if(repeat){
                 self.pos.db.notification('danger', 'No puede incluir dos métodos de pago del mismo tipo');
                 return false;
@@ -3415,14 +3444,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             } else{
                 this._super(id);
             }
-            order = this.pos.get_order();
-            let customer_display = this.pos.config.customer_display;
+            var order = this.pos.get_order();
+            var customer_display = this.pos.config.customer_display;
             if(customer_display){
                 order.mirror_image_data();
             }
         },
         pre_validate_order: function(){
-            let order = this.pos.get_order();
+            var order = this.pos.get_order();
 
             if (!order.get_client()){
                 this.validate_order(false);
@@ -3430,10 +3459,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         renderElement: function(){
             this._super();
-            let self =  this;
-            let order = self.pos.get_order();
+            var self =  this;
+            var order = self.pos.get_order();
             self.pos.credit = false;
-            let customer_display = this.pos.config.customer_display;
+            var customer_display = this.pos.config.customer_display;
             if(order){
                 $("#payment_total").html(self.format_currency(order.getNetTotalTaxIncluded()));
             }
@@ -3451,14 +3480,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             //     $('.delivery_check').find('i').toggleClass('fa fa-toggle-on fa fa-toggle-off');
             // })
             this.$('#partial_pay').click(function(){
-                let value = $('.delivery_check').find('i').hasClass('fa-toggle-on')
+                var value = $('.delivery_check').find('i').hasClass('fa-toggle-on')
                 if(value){
                     currentOrder.set_delivery(value)
                 }
                 self.partial_payment();
             });
             if(self.pos.config.enable_credit && self.pos.get_order() && self.pos.get_order().get_client()){
-                self.el.querySelector('.js_use_credit').addEventListener('click', this.use_credit);
+               self.el.querySelector('.js_use_credit').addEventListener('click', this.use_credit);
             }
             this.$('#partial_pay').click(function(){
                 if(self.pos.get_order().get_client()){
@@ -3468,8 +3497,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             this.$('#is_ereciept').click(function(){
-                let order = self.pos.get('selectedOrder');
-                let customer_email = order.get_client() ? order.get_client().email : false;
+                var order = self.pos.get('selectedOrder');
+                var customer_email = order.get_client() ? order.get_client().email : false;
                 if($('#is_ereciept').is(':checked')) {
                     $('#email_id').fadeTo('fast', 1).css({ visibility: "visible" });
                     $('#email_id').focus();
@@ -3487,18 +3516,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             this.$('div.1quickpay').click(function(){
-                let order = self.pos.get_order();
-                let order_lines = order.get_paymentlines();
+                var order = self.pos.get_order();
+                var order_lines = order.get_paymentlines();
                 if(order_lines.length && order.get_due() <= 0){
                     self.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
                     return false;
                 }
-                let amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
+                var amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
                 if(amt){
-                    let cashregister = false;
-                    for(let i in self.pos.cashregisters){
-                        let reg = self.pos.cashregisters[i];
-                        if(reg.journal_id[0] === self.pos.config.cash_method[0] ){
+                    var cashregister = false;
+                    for(var i in self.pos.cashregisters){
+                        var reg = self.pos.cashregisters[i];
+                        if(reg.journal_id[0] == self.pos.config.cash_method[0] ){
                             cashregister = reg;
                         }
                     }
@@ -3522,17 +3551,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             this.$('.emptybox_del_date').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 $('#txt_del_date').val('');
                 order.set_delivery_date(false);
             });
             this.$('.emptybox_del_time').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 $('#txt_del_time').val('');
                 order.set_delivery_time(false);
             });
             this.$('.js_redeem_loyalty').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order.getNetTotalTaxIncluded() <= 0){
                     return
                 }
@@ -3554,17 +3583,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             this.$('.js_gift_card').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order.getNetTotalTaxIncluded() <= 0){
                     return
                 }
-                let client = order.get_client();
+                var client = order.get_client();
                 if(!order.get_giftcard().length > 0 && !order.get_recharge_giftcard().length > 0 ){
                     self.gui.show_popup('redeem_card_popup', {'payment_self': self});
                 }
             });
             this.$('.next').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order){
                     if(customer_display){
                         self.pos.get_order().mirror_image_data(true);
@@ -3577,14 +3606,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     return self.pos.db.notification('danger', 'Agregue una línea de Venta!.');
                 }
 
-                let payment_amount = 0;
+                var payment_amount = 0;
                 if (order.get_paymentlines().length === 0){
                     return self.pos.db.notification('danger', 'Agregue un Método de Pago!.');
                 }
                 _.map(order.get_paymentlines(), function(lines){
                     payment_amount += lines.amount;
                 });
-                let total = order.getNetTotalTaxIncluded();
+                var total = order.getNetTotalTaxIncluded();
 
                 if (payment_amount < total){
                     self.$('.edit').addClass('error');
@@ -3610,16 +3639,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
 
                 /*
-                let cashregister = false;
-                for(let i in self.pos.cashregisters){
-                    let reg = self.pos.cashregisters[i];
+                var cashregister = false;
+                for(var i in self.pos.cashregisters){
+                    var reg = self.pos.cashregisters[i];
                     if(reg.journal_id[1] === "POS-Crédito (MXN)"){
                         cashregister = reg;
                     }
                 }
 
                 if (cashregister){
-                    //let order = self.pos.get_order();
+                    //var order = self.pos.get_order();
                     order.add_paymentline(cashregister);
                     order.selected_paymentline.set_amount(credit_amount,0 );
                     payment.reset_input();
@@ -3635,17 +3664,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         click_numpad: function(button) {
-            let self = this;
-            let cashregisters = self.pos.cashregisters;
-            let paymentlines = this.pos.get_order().get_paymentlines();
-            let open_paymentline = false;
-            for (let i = 0; i < paymentlines.length; i++) {
+            var self = this;
+            var cashregisters = self.pos.cashregisters;
+            var paymentlines = this.pos.get_order().get_paymentlines();
+            var open_paymentline = false;
+            for (var i = 0; i < paymentlines.length; i++) {
                 if (! paymentlines[i].paid) {
                     open_paymentline = true;
                 }
             }
             if (! open_paymentline) {
-                for(let i = 0; i < cashregisters.length; i++){
+                for(var i = 0; i < cashregisters.length; i++){
                     if(!cashregisters[i].journal.jr_use_for){
                         self.pos.get_order().add_paymentline( cashregisters[i]);
                         self.render_paymentlines();
@@ -3657,19 +3686,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
 
-    let OrderDetailScreenWidget = screens.ScreenWidget.extend({
+    var OrderDetailScreenWidget = screens.ScreenWidget.extend({
         template: 'OrderDetailScreenWidget',
-        init: function(parent, options){
-            let self = this;
+         init: function(parent, options){
+            var self = this;
             self._super(parent, options);
         },
         show: function(){
-            let self = this;
+            var self = this;
             self._super();
 
-            let order = self.pos.get_order();
-            let params = order.get_screen_data('params');
-            let order_id = false;
+            var order = self.pos.get_order();
+            var params = order.get_screen_data('params');
+            var order_id = false;
             if(params){
                 order_id = params.order_id;
             }
@@ -3692,31 +3721,31 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 this.$('.pay').click(function(){
                     self.pos.gui.screen_instances.orderlist.pay_order_due(false, order_id)
                 });
-                let contents = this.$('.order-details-contents');
+                var contents = this.$('.order-details-contents');
                 contents.append($(QWeb.render('OrderDetails',{widget:this, order:self.clicked_order})));
-                let params = {
+                var params = {
                     model: 'account.bank.statement.line',
                     method: 'search_read',
                     domain: [['pos_statement_id', '=', order_id]],
                 }
                 rpc.query(params, {async: false})
-                    //				new Model('account.bank.statement.line').call('search_read',
-                    //				[[['pos_statement_id', '=', order_id]]], {}, {'async': true})
-                    .then(function(statements){
-                        if(statements){
-                            self.render_list(statements);
-                        }
-                    });
+//				new Model('account.bank.statement.line').call('search_read',
+//				[[['pos_statement_id', '=', order_id]]], {}, {'async': true})
+                .then(function(statements){
+                    if(statements){
+                        self.render_list(statements);
+                    }
+                });
             }
 
         },
         render_list: function(statements){
-            let contents = $('.paymentline-list-contents');
+            var contents = $('.paymentline-list-contents');
             contents.html('');
-            for(let i = 0, len = Math.min(statements.length,1000); i < len; i++){
-                let statement = statements[i];
-                let paymentline_html = QWeb.render('PaymentLines',{widget: this, statement:statement});
-                let paymentline = document.createElement('tbody');
+            for(var i = 0, len = Math.min(statements.length,1000); i < len; i++){
+                var statement = statements[i];
+                var paymentline_html = QWeb.render('PaymentLines',{widget: this, statement:statement});
+                var paymentline = document.createElement('tbody');
                 paymentline.innerHTML = paymentline_html;
                 paymentline = paymentline.childNodes[1];
                 contents.append(paymentline);
@@ -3725,11 +3754,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
     gui.define_screen({name:'orderdetail', widget: OrderDetailScreenWidget});
 
-    let InitialBalanceTicket = screens.ReceiptScreenWidget.extend({
+    var InitialBalanceTicket = screens.ReceiptScreenWidget.extend({
         template: 'InitialBalanceTicket',
         willStart: function() {
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'pos.session',
                 method: 'search_read',
                 fields: ['id', 'user_id', 'cash_register_balance_start'],
@@ -3737,15 +3766,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             };
             return rpc.query(params, {async: false}).then(function(pos_session){
                 self.init_receipt_data = {
-                    balance_start: pos_session[0]['cash_register_balance_start'],
-                    user_name: pos_session[0]['user_id'][1],
-                    start_text: _t('Saldo inicial'),
+                        balance_start: pos_session[0]['cash_register_balance_start'],
+                        user_name: pos_session[0]['user_id'][1],
+                        start_text: _t('Saldo inicial'),
                 };
             });
         },
         show: function(){
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'pos.session',
                 method: 'get_datetime_now',
                 context: session.user_context,
@@ -3760,11 +3789,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     gui.define_screen({name:'initialBalanceTicket', widget: InitialBalanceTicket});
 
-    let WithdrawMoneyTicket = InitialBalanceTicket.extend({
+    var WithdrawMoneyTicket = InitialBalanceTicket.extend({
         template: 'withdrawMoney',
         willStart: function() {
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'pos.session',
                 method: 'search_read',
                 fields: ['id', 'user_id', 'cash_register_balance_start'],
@@ -3777,8 +3806,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         show: function(){
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'pos.session',
                 method: 'get_datetime_now',
                 context: session.user_context,
@@ -3790,7 +3819,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         handle_auto_print: function() {
-            let self = this;
+            var self = this;
             if (self.should_auto_print()) {
                 self.print();
             } else {
@@ -3801,11 +3830,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     gui.define_screen({name:'withdrawMoneyTicket', widget: WithdrawMoneyTicket});
 
-    let EndBalanceTicket = screens.ReceiptScreenWidget.extend({
+    var EndBalanceTicket = screens.ReceiptScreenWidget.extend({
         template: 'EndBalanceTicket',
         willStart: function() {
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'pos.session',
                 method: 'search_read',
                 fields: ['id', 'user_id'],
@@ -3819,7 +3848,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         show: function(){
             self = this;
-            let params = {
+            var params = {
                 model: 'pos.session',
                 method: 'get_datetime_now',
                 context: session.user_context,
@@ -3834,7 +3863,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return this.pos.config.iface_print_auto;
         },
         handle_auto_print: function() {
-            let self = this;
+            var self = this;
             if (self.should_auto_print()) {
                 self.print();
             } else {
@@ -3847,12 +3876,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     screens.OrderWidget.include({
         init: function(parent, options) {
-            let self = this;
+            var self = this;
             this._super(parent,options);
             this.parent = parent;
 //            this.line_dblclick_handler = function(event){
-//            	let order = self.pos.get_order();
-//                let selected_line = order.get_selected_orderline();
+//            	var order = self.pos.get_order();
+//                var selected_line = order.get_selected_orderline();
 //                if(selected_line && selected_line.is_bag){
 //                	return;
 //                }
@@ -3860,13 +3889,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //            };
         },
         update_summary: function(){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             if(!order){
                 return;
             }
-            let total = order ? order.get_total_with_tax() : 0;
-            let discount = 0;
+            var total = order ? order.get_total_with_tax() : 0;
+            var discount = 0;
             order.set_discount_product_id(false);
             order.set_order_total_discount(discount);
             if(self.pos.config.pos_promotion && self.pos.get_cashier().access_pos_promotion){
@@ -3881,10 +3910,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $('.cart-num').text(0);
                 return;
             }else{
-                let qty = 0;
+                var qty = 0;
                 order.get_orderlines().map(function(line){
                     // get_dummy_product_ids
-                    if(($.inArray(line.product.id, order.get_dummy_product_ids()) === -1)){
+                    if(($.inArray(line.product.id, order.get_dummy_product_ids()) == -1)){
                         qty += line.get_quantity();
                     }
                 });
@@ -3892,17 +3921,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $('.cart-num').text(qty);
             }
             if(order.get_client()){
-                if(this.pos.loyalty_config && this.pos.loyalty_config.points_based_on === 'product'){
-                    let total_points = this.get_points_from_product();
+                if(this.pos.loyalty_config && this.pos.loyalty_config.points_based_on == 'product'){
+                    var total_points = this.get_points_from_product();
                     if(this.el.querySelector('.loyalty_info_cart .value')){
                         this.el.querySelector('.loyalty_info_cart .value').textContent = this.format_currency(total_points);
                     }
                     order.set_loyalty_earned_point(total_points);
                     order.set_loyalty_earned_amount(order.get_loyalty_amount_by_point(total_points));
-                } else if(this.pos.loyalty_config && this.pos.loyalty_config.points_based_on === 'order') {
+                } else if(this.pos.loyalty_config && this.pos.loyalty_config.points_based_on == 'order') {
                     if(order.get_total_with_tax() >=  this.pos.loyalty_config.minimum_purchase
-                        && this.pos.loyalty_config.point_calculation > 0){
-                        let total_points = this._calculate_loyalty_by_order();
+                            && this.pos.loyalty_config.point_calculation > 0){
+                        var total_points = this._calculate_loyalty_by_order();
                         if(total_points > 0){
                             if(this.el.querySelector('.loyalty_info_cart .value')){
                                 this.el.querySelector('.loyalty_info_cart .value').textContent = this.format_currency(total_points);
@@ -3917,21 +3946,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         _calculate_loyalty_by_order: function(){
-            let order = this.pos.get_order();
+            var order = this.pos.get_order();
             return (order.get_total_with_tax() * this.pos.loyalty_config.point_calculation) / 100
         },
         get_points_from_product: function(){
-            let self = this;
-            let order = this.pos.get_order();
-            let currentOrderline = order.get_orderlines()
-            let total_points = 0.00
+            var self = this;
+            var order = this.pos.get_order();
+            var currentOrderline = order.get_orderlines()
+            var total_points = 0.00
             _.each(currentOrderline, function(line){
-                let line_points = 0.00;
+                var line_points = 0.00;
                 if(line.get_product().loyalty_point){
-                    line_points = line.get_product().loyalty_point * line.get_quantity();
+                    line_points = line.get_product().loyalty_point * line.get_quantity();;
                     total_points += line_points;
                 } else if(line.get_product().pos_categ_id){
-                    let cat_point = self._get_points_from_categ(line.get_product().pos_categ_id[0]);
+                    var cat_point = self._get_points_from_categ(line.get_product().pos_categ_id[0]);
                     if (cat_point){
                         line_points = cat_point * line.get_quantity();
                         total_points += line_points;
@@ -3943,7 +3972,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return total_points;
         },
         _get_points_from_categ: function(categ_id){
-            let category = this.pos.db.get_category_by_id(categ_id);
+            var category = this.pos.db.get_category_by_id(categ_id);
             if(category && category.loyalty_point){
                 return category.loyalty_point;
             } else if(category.parent_id){
@@ -3952,11 +3981,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return false;
         },
         render_orderline: function(orderline){
-            let self = this;
-            let el_node = self._super(orderline);
-            let el_btn_priority_low = el_node.querySelector('.btn_priority#low');
-            let el_btn_priority_medium = el_node.querySelector('.btn_priority#medium');
-            let el_btn_priority_high = el_node.querySelector('.btn_priority#high');
+            var self = this;
+            var el_node = self._super(orderline);
+            var el_btn_priority_low = el_node.querySelector('.btn_priority#low');
+            var el_btn_priority_medium = el_node.querySelector('.btn_priority#medium');
+            var el_btn_priority_high = el_node.querySelector('.btn_priority#high');
             if(el_btn_priority_low){
                 el_btn_priority_low.addEventListener('click', (function(event) {
                     orderline.set_kitchen_item_priority('low');
@@ -3981,11 +4010,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(orderline.product.modifier_line.length > 0){
                 $('tr.modifiers-row').show();
             }
-            let el_remove_icon = el_node.querySelector('.remove_line');
+            var el_remove_icon = el_node.querySelector('.remove_line');
             if(el_remove_icon){
                 el_remove_icon.addEventListener('click', (function() {
-                    let order = self.pos.get_order();
-                    let lines = order.get_orderlines();
+                    var order = self.pos.get_order();
+                    var lines = order.get_orderlines();
                     if(orderline && orderline.get_lock_orderline()){
                         self.pos.db.notification('danger',_t("You can't modify product, because it already started in kitchen."));
                         return true;
@@ -4006,20 +4035,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         $('.categories').show();
                     }, 100);
                     order.remove_promotion();
-                    let customer_display = self.pos.config.customer_display;
+                    var customer_display = self.pos.config.customer_display;
                     if(customer_display){
                         self.pos.get_order().mirror_image_data();
                     }
                 }.bind(this)));
             }
-            let el_combo_icon = el_node.querySelector('.combo-popup-icon');
+            var el_combo_icon = el_node.querySelector('.combo-popup-icon');
             if(el_combo_icon){
                 el_combo_icon.addEventListener('click',(function(){
                     if(orderline && orderline.get_lock_orderline()){
                         self.pos.db.notification('danger',_t("You can't modify product, because it already started in kitchen."));
                         return;
                     }
-                    let product = orderline.get_product();
+                    var product = orderline.get_product();
                     if(product.is_combo && product.product_combo_ids.length > 0 && self.pos.config.enable_combo){
                         self.pos.gui.show_popup('combo_product_popup',{
                             'product':product,
@@ -4035,7 +4064,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             self.pos.db.notification('danger',_t("You can't modify product, because it already started in kitchen."));
                             return;
                         }
-                        let product = orderline.get_product();
+                        var product = orderline.get_product();
                         if(product.is_combo && product.product_combo_ids.length > 0 && self.pos.config.enable_combo){
                             self.pos.gui.show_popup('combo_product_popup',{
                                 'product':product,
@@ -4049,23 +4078,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return el_node
         },
         set_value: function(val) {
-            let self = this;
-            let order = this.pos.get_order();
-            let lines = order.get_orderlines();
-            let mode = this.numpad_state.get('mode');
-            let selected_line = order.get_selected_orderline();
+            var self = this;
+            var order = this.pos.get_order();
+            var lines = order.get_orderlines();
+            this.numpad_state = this.numpad_state;
+            var mode = this.numpad_state.get('mode');
+            var selected_line = order.get_selected_orderline();
             if (selected_line && selected_line.get_quantity() < 0 && selected_line.attributes.backorder
-                && (val !== '' || val !== 'remove')) {
+                    && (val != '' || val != 'remove')) {
                 return //Disable numpad for return items except remove
             }
-            if(selected_line && mode !== "quantity" && selected_line.is_bag){
+            if(selected_line && mode != "quantity" && selected_line.is_bag){
                 return //Disable price and discount for bag product
             }
-            if(selected_line && (mode === "quantity" || mode === "discount") && selected_line.get_delivery_charges_flag()){
+            if(selected_line && (mode == "quantity" || mode == "discount") && selected_line.get_delivery_charges_flag()){
                 return
             }
             if(selected_line && self.pos.config.enable_modifiers && self.pos.get_cashier().access_modifiers){
-                if( mode === 'quantity' && val && val !== "remove" && order.get_selected_orderline().modifier_line.length > 0){
+                if( mode === 'quantity' && val && val != "remove" && order.get_selected_orderline().modifier_line.length > 0){
                     alert("Can not change quantity due to modifiers");
                     return
                 }
@@ -4076,9 +4106,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             if(selected_line){
                 if(selected_line.get_child_line_id()){
-                    let child_line = order.get_orderline(selected_line.get_child_line_id());
+                    var child_line = order.get_orderline(selected_line.get_child_line_id());
                     lines.map(function(line){
-                        if(line.get_child_line_id() === selected_line.get_child_line_id()){
+                        if(line.get_child_line_id() == selected_line.get_child_line_id()){
                             line.set_child_line_id(false);
                             line.set_is_rule_applied(false);
                         }
@@ -4118,10 +4148,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self._super(val);
                 }
                 else if(selected_line.get_multi_prods_line_id()){
-                    let multi_prod_id = selected_line.get_multi_prods_line_id() || false;
+                    var multi_prod_id = selected_line.get_multi_prods_line_id() || false;
                     if(multi_prod_id){
                         _.each(lines, function(_line){
-                            if(_line && _line.get_multi_prods_line_id() === multi_prod_id){
+                            if(_line && _line.get_multi_prods_line_id() == multi_prod_id){
                                 _line.set_discount(0);
                                 _line.set_is_rule_applied(false);
                                 _line.set_promotion_data(false);
@@ -4149,10 +4179,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         renderElement: function() {
             this._super();
-            let self = this;
+            var self = this;
 //    		$('#total_pay').click(function(){
-//    			let order = self.pos.get_order();
-//                let has_valid_product_lot = _.every(order.orderlines.models, function(line){
+//    			var order = self.pos.get_order();
+//                var has_valid_product_lot = _.every(order.orderlines.models, function(line){
 //                    return line.has_valid_product_lot();
 //                });
 //                if(!has_valid_product_lot){
@@ -4208,15 +4238,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
     screens.ProductScreenWidget.include({
         set_back_to_parent_categ: function(id){
-            let self = this;
-            let products = self.pos.chrome.screens.products;
+            var self = this;
+            var products = self.pos.chrome.screens.products;
             if(id){
-                let parent_categ = self.pos.db.get_category_by_id(id);
-                let parent_categ_id = false;
+                var parent_categ = self.pos.db.get_category_by_id(id);
+                var parent_categ_id = false;
                 if(parent_categ && parent_categ.parent_id[0]){
                     parent_categ_id = parent_categ.parent_id[0];
                 }else{
-                    if(self.old_categ_id === id){
+                    if(self.old_categ_id == id){
                         self.parent_categ_id = self.pos.db.root_category_id;
                         id = self.pos.db.root_category_id;
                         products.product_categories_widget.set_category(self.pos.db.get_category_by_id(id));
@@ -4227,26 +4257,26 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 }
                 self.old_categ_id = id;
-                let sub_categories = products.product_categories_widget.subcategories;
+                var sub_categories = products.product_categories_widget.subcategories;
                 self.render_product_category(sub_categories);
             }
         },
         start: function(){
-            let self = this;
+            var self = this;
             self._super();
             self.parent_categ_id = false;
             self.old_categ_id = 0;
             self.custom_switch_category_handler = function(event){
-                let id = $(event.target).attr('data-category-id') || 0;
-                let root_categ_id = self.pos.db.get_category_by_id(self.pos.db.root_category_id);
+                var id = $(event.target).attr('data-category-id') || 0;
+                var root_categ_id = self.pos.db.get_category_by_id(self.pos.db.root_category_id);
                 self.pos.chrome.screens.products.product_categories_widget.set_category(self.pos.db.get_category_by_id(id));
                 self.pos.chrome.screens.products.product_categories_widget.renderElement();
-                let products = self.pos.chrome.screens.products;
-                let sub_categories = products.product_categories_widget.subcategories;
-                if(id === 0){
+                var products = self.pos.chrome.screens.products;
+                var sub_categories = products.product_categories_widget.subcategories;
+                if(id == 0){
                     self.parent_categ_id = false;
 //			        self.pos.chrome.screens.products.product_categories_widget.renderElement();
-                    let products = self.pos.db.get_product_by_category(id);
+                    var products = self.pos.db.get_product_by_category(id);
                     self.pos.chrome.screens.products.product_list_widget.set_product_list(products);
                     self.render_product_category(sub_categories);
                     return true;
@@ -4286,29 +4316,29 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.gui.show_screen('clientlist');
             });
             $('div#sale_mode').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 order.change_mode("sale",this);
             });
             $('div#drive_through_mode').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
 //	        	order.set_resturant_mode("drive_through_mode",this);
                 if($(this).hasClass('selected-menu')) {
                     $(this).removeClass('selected-menu');
                 } else {
                     $(this).addClass('selected-menu');
                 }
-                let lines = order.get_orderlines();
-                let orderLines = [];
-                for(let i=0;i<lines.length;i++){
-                    orderLines.push(lines[i]);
+                var lines = order.get_orderlines();
+                var orderLines = [];
+                for(var i=0;i<lines.length;i++){
+                    orderLines.push(lines[i]);;
                 }
-                if (orderLines.length !== 0) {
-                    let selected_line = order.get_selected_orderline();
+                if (orderLines.length != 0) {
+                    var selected_line = order.get_selected_orderline();
                     if (selected_line) {
                         if(selected_line.get_drive_through_mode()){
                             selected_line.set_drive_through_mode(false);
                             if(selected_line.modifier_line && selected_line.modifier_line.length > 0){
-                                let modifier_list = selected_line.modifier_line;
+                                var modifier_list = selected_line.modifier_line;
                                 _.each(modifier_list, function(mod_line){
                                     mod_line['drive_through_mode'] = false;
                                 });
@@ -4316,7 +4346,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         } else {
                             selected_line.set_drive_through_mode(true);
                             if(selected_line.modifier_line && selected_line.modifier_line.length > 0){
-                                let modifier_list = selected_line.modifier_line;
+                                var modifier_list = selected_line.modifier_line;
                                 _.each(modifier_list, function(mod_line){
                                     mod_line['drive_through'] = true;
                                     mod_line['dine_in_mode'] = false;
@@ -4329,24 +4359,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             $('div#dine_in_mode').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if($(this).hasClass('selected-menu')) {
                     $(this).removeClass('selected-menu');
                 } else {
                     $(this).addClass('selected-menu');
                 }
-                let lines = order.get_orderlines();
-                let orderLines = [];
-                for(let i=0;i<lines.length;i++){
-                    orderLines.push(lines[i]);
+                var lines = order.get_orderlines();
+                var orderLines = [];
+                for(var i=0;i<lines.length;i++){
+                    orderLines.push(lines[i]);;
                 }
-                if (orderLines.length !== 0) {
-                    let selected_line = order.get_selected_orderline();
+                if (orderLines.length != 0) {
+                    var selected_line = order.get_selected_orderline();
                     if (selected_line) {
                         if(selected_line.get_dine_in_mode()){
                             selected_line.set_dine_in_mode(false);
                             if(selected_line.modifier_line && selected_line.modifier_line.length > 0){
-                                let modifier_list = selected_line.modifier_line;
+                                var modifier_list = selected_line.modifier_line;
                                 _.each(modifier_list, function(mod_line){
                                     mod_line['dine_in_mode'] = false;
                                 });
@@ -4354,7 +4384,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         } else {
                             selected_line.set_dine_in_mode(true);
                             if(selected_line.modifier_line && selected_line.modifier_line.length > 0){
-                                let modifier_list = selected_line.modifier_line;
+                                var modifier_list = selected_line.modifier_line;
                                 _.each(modifier_list, function(mod_line){
                                     mod_line['dine_in_mode'] = true;
                                     mod_line['drive_through'] = false;
@@ -4368,24 +4398,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //	        	order.set_resturant_mode("dine_in_mode",this);
             });
             $('div#online_mode').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if($(this).hasClass('selected-menu')) {
                     $(this).removeClass('selected-menu');
                 } else {
                     $(this).addClass('selected-menu');
                 }
-                let lines = order.get_orderlines();
-                let orderLines = [];
-                for(let i=0;i<lines.length;i++){
-                    orderLines.push(lines[i]);
+                var lines = order.get_orderlines();
+                var orderLines = [];
+                for(var i=0;i<lines.length;i++){
+                    orderLines.push(lines[i]);;
                 }
-                if (orderLines.length !== 0) {
-                    let selected_line = order.get_selected_orderline();
+                if (orderLines.length != 0) {
+                    var selected_line = order.get_selected_orderline();
                     if (selected_line) {
                         if(selected_line.get_online_mode()){
                             selected_line.set_online_mode(false);
                             if(selected_line.modifier_line && selected_line.modifier_line.length > 0){
-                                let modifier_list = selected_line.modifier_line;
+                                var modifier_list = selected_line.modifier_line;
                                 _.each(modifier_list, function(mod_line){
                                     mod_line['online_mode'] = false;
                                 });
@@ -4393,7 +4423,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         } else {
                             selected_line.set_online_mode(true);
                             if(selected_line.modifier_line && selected_line.modifier_line.length > 0){
-                                let modifier_list = selected_line.modifier_line;
+                                var modifier_list = selected_line.modifier_line;
                                 _.each(modifier_list, function(mod_line){
                                     mod_line['online_mode'] = true;
                                     mod_line['dine_in_mode'] = false;
@@ -4406,7 +4436,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             $('div#take_away').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order.get_is_takeaway_from_floor()){
                     return true;
                 }
@@ -4415,12 +4445,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 } else {
                     $(this).addClass('selected-menu');
                 }
-                let lines = order.get_orderlines();
-                let orderLines = [];
-                for(let i=0;i<lines.length;i++){
-                    orderLines.push(lines[i]);
+                var lines = order.get_orderlines();
+                var orderLines = [];
+                for(var i=0;i<lines.length;i++){
+                    orderLines.push(lines[i]);;
                 }
-                if (orderLines.length !== 0) {
+                if (orderLines.length != 0) {
                     if (order.get_selected_orderline()) {
                         if(order.get_selected_orderline().get_take_away()){
                             order.get_selected_orderline().set_take_away(false);
@@ -4431,7 +4461,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             $('div#merge_table').click(function(event){
-                let table = self.pos.table;
+                var table = self.pos.table;
                 if(table){
                     self.gui.show_popup('merge_table_popup');
                 }else{
@@ -4443,10 +4473,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
             $('div#order_return').click(function(){
                 if(self.pos.config.return_authentication_user_ids && self.pos.config.return_authentication_user_ids.length > 0){
-                    let users_pass = [];
+                    var users_pass = [];
                     _.each(self.pos.users, function(user){
                         self.pos.config.return_authentication_user_ids.map(function(user_id){
-                            if(user_id === user.id){
+                            if(user_id == user.id){
                                 if(user.pos_security_pin){
                                     users_pass.push(user.pos_security_pin);
                                 }
@@ -4466,12 +4496,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.gui.show_screen('orderlist');
             });
             $('div#bag_charges').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order && order.is_empty()){
                     $('div.order-empty').animate({
                         color: '#FFCCCC',
                     }, 1000, 'linear', function() {
-                        $(this).css('color','#DDD');
+                          $(this).css('color','#DDD');
                     });
                     return
                 }
@@ -4485,7 +4515,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.send_to_kitchen();
             });
 //	        $('div#draft_order').click(function(){
-//	        	let order = self.pos.get_order();
+//	        	var order = self.pos.get_order();
 //	        	if(order.is_empty()){
 //	        		$('div.order-empty').animate({
 //	            	    color: '#FFCCCC',
@@ -4499,14 +4529,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //	        		return
 //	        	}
 //	        	order.initialize_validation_date();
-//	            let currentOrderLines = order.get_orderlines();
-//	            let orderLines = [];
+//	            var currentOrderLines = order.get_orderlines();
+//	            var orderLines = [];
 //	            _.each(currentOrderLines,function(item) {
 //	                return orderLines.push(item.export_as_JSON());
 //	            });
 //	            if(self.pos.config.enable_order_reservation && self.pos.config.allow_reservation_with_no_amount){
-//	            	let credit = order.get_total_with_tax() - order.get_total_paid();
-//	         		let client = order.get_client();
+//	            	var credit = order.get_total_with_tax() - order.get_total_paid();
+//	         		var client = order.get_client();
 //	            	if (client && credit > client.remaining_credit_limit){
 //	         			self.gui.show_popup('max_limit',{
 //	         				remaining_credit_limit: client.remaining_credit_limit,
@@ -4529,22 +4559,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //	            }
 //	        });
             $('div#product_qty').click(function(){
-                let order = self.pos.get_order();
-                let lines = order.get_orderlines();
-                let orderLines = [];
-                let length = order.orderlines.length;
+                var order = self.pos.get_order();
+                var lines = order.get_orderlines();
+                var orderLines = [];
+                var length = order.orderlines.length;
                 if(lines.length <= 0){
                     $('div.order-empty').animate({
                         color: '#FFCCCC',
                     }, 1000, 'linear', function() {
-                        $(this).css('color','#DDD');
+                          $(this).css('color','#DDD');
                     });
                 }
                 if(order.get_selected_orderline()){
-                    let prod = order.get_selected_orderline().get_product();
-                    let prod_info = [];
-                    let total_qty = 0;
-                    let params = {
+                    var prod = order.get_selected_orderline().get_product();
+                    var prod_info = [];
+                    var total_qty = 0;
+                    var params = {
                         model: 'stock.warehouse',
                         method: 'disp_prod_stock',
                         args: [prod.id,self.pos.shop.id],
@@ -4553,12 +4583,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         if(result){
                             prod_info = result[0];
                             total_qty = result[1];
-                            let prod_info_data = "";
+                            var prod_info_data = "";
                             _.each(prod_info, function (i) {
                                 prod_info_data += "<tr>"+
-                                    "	<td style='color:gray;font-weight: initial !important;padding:5px;text-align: left;padding-left: 15px;'>"+i[0]+"</td>"+
-                                    "	<td style='color:gray;font-weight: initial !important;padding:5px;text-align: right;padding-right: 15px;'>"+i[1]+"</td>"+
-                                    "</tr>"
+                                "	<td style='color:gray;font-weight: initial !important;padding:5px;text-align: left;padding-left: 15px;'>"+i[0]+"</td>"+
+                                "	<td style='color:gray;font-weight: initial !important;padding:5px;text-align: right;padding-right: 15px;'>"+i[1]+"</td>"+
+                                "</tr>"
                             });
                             self.gui.show_popup('product_qty_popup',{prod_info_data:prod_info_data,total_qty: total_qty});
                         }
@@ -4568,8 +4598,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             $('.empty-cart').click(function(){
-                let order = self.pos.get_order();
-                let lines = order.get_orderlines();
+                var order = self.pos.get_order();
+                var lines = order.get_orderlines();
                 if(lines.length > 0){
                     self.gui.show_popup('confirm',{
                         'title': _t('Empty Cart ?'),
@@ -4583,12 +4613,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     $('div.order-empty').animate({
                         color: '#FFCCCC',
                     }, 1000, 'linear', function() {
-                        $(this).css('color','#DDD');
+                          $(this).css('color','#DDD');
                     });
                 }
             });
 //	    	$('#stock-location').click(function(){
-//	    		let locations = self.pos.location_ids;
+//	    		var locations = self.pos.location_ids;
 //	    		if(locations && locations.length > 1){
 //    				self.gui.show_popup('cashier_locations_popup',{'cashier_locations':locations});
 //    			} else {
@@ -4596,13 +4626,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //    			}
 //	    	});
             $('#delivery_mode').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order.get_is_delivery_from_floor()){
                     return true;
                 }
-                let lines = order.get_orderlines();
-                let line = order.get_selected_orderline();
-                let selected_orderline = (line && line.get_quantity() > 0 && order.is_sale_product(line.product)) ? line : false;
+                var lines = order.get_orderlines();
+                var line = order.get_selected_orderline();
+                var selected_orderline = (line && line.get_quantity() > 0 && order.is_sale_product(line.product)) ? line : false;
                 if(order.get_ret_o_id()){
                     self.pos.db.notification('danger',_t('Sorry, This operation not allow to use delivery operation!'));
                     return
@@ -4624,7 +4654,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 $('#delivery_mode').removeClass('deliver_on');
                             },
                         });
-//		    			let r = confirm("You want to remove delivery order?");
+//		    			var r = confirm("You want to remove delivery order?");
 //		    			if(r){
 //		    				order.clear_cart();
 //		    				$('#delivery_mode').removeClass('deliver_on');
@@ -4632,7 +4662,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 }else{
                     if(lines.length > 0){
-//		    			let r = confirm("You want to make delivery order?");
+//		    			var r = confirm("You want to make delivery order?");
                         self.gui.show_popup('confirm',{
                             'title': _t('Delivery Order?'),
                             'body':  _t('You want to make delivery order?'),
@@ -4642,11 +4672,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         });
 //		    			if(r){
 //		    				if(!order.get_is_delivery()){
-//		    					let deliver_product_id = self.pos.config.delivery_product_id[0];
-//					    		let deliver_amt = self.pos.config.delivery_amount;
-//					    		let product = self.pos.db.get_product_by_id(deliver_product_id);
+//		    					var deliver_product_id = self.pos.config.delivery_product_id[0];
+//					    		var deliver_amt = self.pos.config.delivery_amount;
+//					    		var product = self.pos.db.get_product_by_id(deliver_product_id);
 //				    			if(product){
-//				    				let line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
+//				    				var line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
 //					        		line_deliver_charges.set_quantity(1);
 //					        		line_deliver_charges.set_unit_price(deliver_amt || 0);
 //					        		line_deliver_charges.set_delivery_charges_color(true);
@@ -4671,12 +4701,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //			    		}else{
 //			    			$('#delivery_mode').removeClass('deliver_on');
 //			    		}
-//			    		let deliver_product_id = self.pos.config.delivery_product_id[0];
-//			    		let deliver_amt = self.pos.config.delivery_amount;
-//			    		let product = self.pos.db.get_product_by_id(deliver_product_id);
+//			    		var deliver_product_id = self.pos.config.delivery_product_id[0];
+//			    		var deliver_amt = self.pos.config.delivery_amount;
+//			    		var product = self.pos.db.get_product_by_id(deliver_product_id);
 //			    		if(!order.get_is_delivery()){
 //			    			if(product){
-//			    				let line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
+//			    				var line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
 //				        		line_deliver_charges.set_quantity(1);
 //				        		line_deliver_charges.set_unit_price(deliver_amt || 0);
 //				        		line_deliver_charges.set_delivery_charges_color(true);
@@ -4708,12 +4738,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //		    	}else{
 //		    		//enable mode
 //		    		$('#delivery_mode').addClass('deliver_on');
-//		    		let deliver_product_id = self.pos.config.delivery_product_id[0];
-//		    		let deliver_amt = self.pos.config.delivery_amount;
-//		    		let product = self.pos.db.get_product_by_id(deliver_product_id);
+//		    		var deliver_product_id = self.pos.config.delivery_product_id[0];
+//		    		var deliver_amt = self.pos.config.delivery_amount;
+//		    		var product = self.pos.db.get_product_by_id(deliver_product_id);
 //		    		if(!order.get_is_delivery()){
 //		    			if(product){
-//		    				let line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
+//		    				var line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
 //			        		line_deliver_charges.set_quantity(1);
 //			        		line_deliver_charges.set_unit_price(deliver_amt || 0);
 //			        		line_deliver_charges.set_delivery_charges_color(true);
@@ -4728,22 +4758,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
             $('#money_in').click(function(){
                 if(self.pos.config.cash_control){
-                    let is_cashdrawer = false;
-                    let msg_show_put_money_in = "";
+                    var is_cashdrawer = false;
+                    var msg_show_put_money_in = "";
                     msg_show_put_money_in += "<div class='container'>" +
-                        "<div class='sub-container'>" +
-                        "<table id='tbl_id'>" +
-                        "<tr>" +
-                        "<td>Razón</td>" +
-                        "<td id='td_id'><input id='txt_reason_in_id' type='text' name='txt_reason_in'></td>" +
-                        "</tr>" +
-                        "<tr>" +
-                        "<td>Importe</td>" +
-                        "<td id='td_id'><input id='txt_amount_in_id' type='text' name='txt_amount_in'></td>" +
-                        "<tr>" +
-                        "</table>" +
-                        "</div>" +
-                        "</div>";
+                                                "<div class='sub-container'>" +
+                                                    "<table id='tbl_id'>" +
+                                                        "<tr>" +
+                                                            "<td>Razón</td>" +
+                                                            "<td id='td_id'><input id='txt_reason_in_id' type='text' name='txt_reason_in'></td>" +
+                                                        "</tr>" +
+                                                        "<tr>" +
+                                                            "<td>Importe</td>" +
+                                                            "<td id='td_id'><input id='txt_amount_in_id' type='text' name='txt_amount_in'></td>" +
+                                                        "<tr>" +
+                                                    "</table>" +
+                                                "</div>" +
+                                            "</div>";
                     self.gui.show_popup('put_money_in',{msg_show_put_money_in:msg_show_put_money_in});
                 }else{
                     self.pos.db.notification('danger',_t('Please enable cash control from pos configuration.'));
@@ -4751,10 +4781,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
             $('#money_out').click(function(){
                 if(self.pos.config.authentication_user_ids && self.pos.config.authentication_user_ids.length > 0){
-                    let users_pass = [];
+                    var users_pass = [];
                     _.each(self.pos.users, function(user){
                         self.pos.config.authentication_user_ids.map(function(user_id){
-                            if(user.id === user_id){
+                            if(user.id == user_id){
                                 if(user.pos_security_pin){
                                     users_pass.push(user.pos_security_pin);
                                 }
@@ -4770,20 +4800,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 }
                                 setTimeout(function() {
                                     self.gui.show_screen('products');
-                                    let msg_show_take_money_out = "<div class='container'>" +
+                                    var msg_show_take_money_out = "<div class='container'>" +
                                         "<div class='sub-container'>" +
-                                        "<table id='tbl_id'>" +
-                                        "<tr>" +
-                                        "<td>Razón</td>" +
-                                        "<td id='td_id'><input id='txt_reason_out_id' type='text' name='txt_reason_in'></td>" +
-                                        "</tr>" +
-                                        "<tr>" +
-                                        "<td>Importe</td>" +
-                                        "<td id='td_id'><input id='txt_amount_out_id' type='text' name='txt_amount_in'></td>" +
-                                        "<tr>" +
-                                        "</table>" +
+                                            "<table id='tbl_id'>" +
+                                                "<tr>" +
+                                                    "<td>Razón</td>" +
+                                                    "<td id='td_id'><input id='txt_reason_out_id' type='text' name='txt_reason_in'></td>" +
+                                                "</tr>" +
+                                                "<tr>" +
+                                                    "<td>Importe</td>" +
+                                                    "<td id='td_id'><input id='txt_amount_out_id' type='text' name='txt_amount_in'></td>" +
+                                                "<tr>" +
+                                            "</table>" +
                                         "</div>" +
-                                        "</div>";
+                                    "</div>";
                                     self.gui.show_popup('take_money_out',{msg_show_take_money_out:msg_show_take_money_out});
                                 }, 1000);
                             }else{
@@ -4799,7 +4829,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
 
             $('#add_credit').click(function(){
-                let customer = self.pos.get_order().get_client()
+                var customer = self.pos.get_order().get_client()
                 if(customer){
                     self.gui.show_popup('AddMoneyToCreditPopup', {new_client: customer});
                 }else{
@@ -4808,7 +4838,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
 
             $('#pay_debit').click(function(){
-                let customer = self.pos.get_order().get_client()
+                var customer = self.pos.get_order().get_client()
                 if(customer){
                     self.gui.show_popup('pay_debit_popup');
                 }else{
@@ -4817,7 +4847,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
 
             $('#pay_meal_plan').click(function(){
-                let customer = self.pos.get_order().get_client()
+                var customer = self.pos.get_order().get_client()
                 if(customer){
                     self.gui.show_popup('pay_meal_plan_popup');
                 }else{
@@ -4825,7 +4855,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             $('#change_pin').click(function(){
-                let customer = self.pos.get_order().get_client();
+                var customer = self.pos.get_order().get_client();
                 if (customer){
                     self.gui.show_popup('update_pip_popup');
                 }else{
@@ -4834,15 +4864,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         confirm_delivery_order: function(){
-            let self = this;
-            let order = self.pos.get_order();
-            let lines = order.get_orderlines();
+            var self = this;
+            var order = self.pos.get_order();
+            var lines = order.get_orderlines();
             if(!order.get_is_delivery()){
-                let deliver_product_id = self.pos.config.delivery_product_id[0];
-                let deliver_amt = self.pos.config.delivery_amount;
-                let product = self.pos.db.get_product_by_id(deliver_product_id);
+                var deliver_product_id = self.pos.config.delivery_product_id[0];
+                var deliver_amt = self.pos.config.delivery_amount;
+                var product = self.pos.db.get_product_by_id(deliver_product_id);
                 if(product){
-                    let line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
+                    var line_deliver_charges = new models.Orderline({}, {pos: self.pos, order:order, product: product});
                     line_deliver_charges.set_quantity(1);
                     line_deliver_charges.set_unit_price(deliver_amt || 0);
                     line_deliver_charges.set_delivery_charges_color(true);
@@ -4860,19 +4890,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         send_to_kitchen: function(){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             if(order.is_empty()){
                 $('div.order-empty').animate({
                     color: '#FFCCCC',
                 }, 1000, 'linear', function() {
-                    $(this).css('color','#DDD');
+                      $(this).css('color','#DDD');
                 });
                 return;
             }
             order.initialize_validation_date();
-            let currentOrderLines = order.get_orderlines();
-            let orderLines = [];
+            var currentOrderLines = order.get_orderlines();
+            var orderLines = [];
             _.each(currentOrderLines,function(item) {
                 return orderLines.push(item.export_as_JSON());
             });
@@ -4883,7 +4913,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.pos.push_order(order).then(function(){
                 order.set_is_update_increnement_number(true);
                 order.set_temp_increment_number(self.pos.increment_number);
-                let params = {
+                var params = {
                     model: 'pos.order',
                     method: 'search_read',
                     fields: ['id'],
@@ -4898,15 +4928,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         ask_password: function(password) {
-            let self = this;
-            let ret = new $.Deferred();
+            var self = this;
+            var ret = new $.Deferred();
             if (password) {
                 this.gui.show_popup('password',{
                     'title': _t('Password ?'),
                     confirm: function(pw) {
-                        let flag = false;
-                        for (let i = 0; i < password.length; i++){
-                            if(password[i] === pw) {
+                        var flag = false;
+                        for (var i = 0; i < password.length; i++){
+                            if(password[i] == pw) {
                                 flag = true;
                             }
                         }
@@ -4927,7 +4957,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     },
                     cancel: function() {
                         if(self.gui.current_screen && self.gui.current_screen.order_widget &&
-                            self.gui.current_screen.order_widget.numpad_state){
+                        self.gui.current_screen.order_widget.numpad_state){
                             self.gui.current_screen.order_widget.numpad_state.reset();
                         }
                     }
@@ -4939,48 +4969,48 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         show: function(){
             this._super();
-            let self = this;
+            var self = this;
             $('#slidemenubtn').show();
             $('#slidemenubtn1').css({'right':'0px'});
             $('.product-list-container').css('width','100%');
             $('#wrapper1').addClass('toggled');
-            let order = this.pos.get_order();
-            let pos_type = self.pos.config.pos_type;
+            var order = this.pos.get_order();
+            var pos_type = self.pos.config.pos_type;
             if(pos_type){
-                if(pos_type === "drive_through_mode"){
+                if(pos_type == "drive_through_mode"){
 //       	 			$("div#drive_through_mode").trigger('click');
                     $("div#drive_through_mode").addClass('selected-menu');
                     $("div#dine_in_mode").removeClass('selected-menu');
                     $("div#online_mode").removeClass('selected-menu');
                     $("div#take_away").removeClass('selected-menu');
 //       	 			this.set_drive_through_mode(true);
-                } else if(pos_type === "dine_in_mode"){
+                } else if(pos_type == "dine_in_mode"){
 //       	 			$("div#dine_in_mode").trigger('click');
                     $("div#dine_in_mode").addClass('selected-menu');
                     $("div#drive_through_mode").removeClass('selected-menu');
                     $("div#online_mode").removeClass('selected-menu');
                     $("div#take_away").removeClass('selected-menu');
 //       	 			this.set_dine_in_mode(true);
-                } else if(pos_type === "online_mode"){
+                } else if(pos_type == "online_mode"){
 //   	 				$("div#online_mode").trigger('click');
                     $("div#online_mode").addClass('selected-menu');
                     $("div#dine_in_mode").removeClass('selected-menu');
                     $("div#drive_through_mode").removeClass('selected-menu');
                     $("div#take_away").removeClass('selected-menu');
 //       	 			this.set_online_mode(true);
-                } else if(pos_type === "take_away"){
+                } else if(pos_type == "take_away"){
                     $("div#take_away").addClass('selected-menu');
                     $("div#online_mode").removeClass('selected-menu');
                     $("div#dine_in_mode").removeClass('selected-menu');
                     $("div#drive_through_mode").removeClass('selected-menu');
                 }
             }
-            let partner = self.pos.config.default_partner_id;
-
+            var partner = self.pos.config.default_partner_id;
+            
 
             if(!order.get_client()){
                 if(partner){
-                    let set_partner = self.pos.db.get_partner_by_id(partner[0])
+                    var set_partner = self.pos.db.get_partner_by_id(partner[0])
                     if(set_partner){
                         order.set_client(set_partner);
                     }
@@ -4989,10 +5019,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             }
             if(order && order.get_merge_table_ids() && order.get_merge_table_ids()[0]){
-                let merged_tables = [];
+                var merged_tables = [];
                 order.get_merge_table_ids().map(function(id){
-                    if(self.pos.table.id !== id){
-                        let table_name = self.pos.tables_by_id[id];
+                    if(self.pos.table.id != id){
+                        var table_name = self.pos.tables_by_id[id];
                         if(table_name && table_name.name){
                             merged_tables.push(table_name);
                             table_name.parent_linked_table = self.pos.table;
@@ -5005,8 +5035,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
             }
             order.set_is_categ_sideber_open(false)
-            let img_src = "<i style='font-size: 50px;' class='fa fa-user' aria-hidden='true'></i>";
-            let user_nm = "Público General";
+            var img_src = "<i style='font-size: 50px;' class='fa fa-user' aria-hidden='true'></i>";
+            var user_nm = "Público General";
             if(order && order.get_client()){
                 img_src = "<img style='height:50px;width:50px' src='"+this.partner_icon_url(order.get_client().id)+"'/>";
                 user_nm = order.get_client().name;
@@ -5021,13 +5051,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }else{
                 order.set_rounding_status(false);
             }
-
-//    		let products = self.pos.chrome.screens.products;
-//            let sub_categories = products.product_categories_widget.subcategories;
-            let sub_categories = [];
-            let categ_list = self.pos.db.get_category_search_list() || [];
+           
+//    		var products = self.pos.chrome.screens.products;
+//            var sub_categories = products.product_categories_widget.subcategories;
+            var sub_categories = [];
+            var categ_list = self.pos.db.get_category_search_list() || [];
             categ_list.map(function(category){
-                let categ = self.pos.db.get_category_by_id(category.id);
+                var categ = self.pos.db.get_category_by_id(category.id);
                 if(categ && !categ.parent_id){
                     sub_categories.push(categ);
                 }
@@ -5035,12 +5065,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(self.pos.config.vertical_categories && !self.pos.config.iface_start_categ_id.length > 0) {
                 self.render_product_category(sub_categories);
 //                $('.searchbox input').keypress(function(event){
-//                    let search_value = $('.search').val();
-//                    let search_timeout = null;
-//                    if(event.type === "keypress" || event.keyCode === 46 || event.keyCode === 8){
+//                    var search_value = $('.search').val();
+//                    var search_timeout = null;
+//                    if(event.type == "keypress" || event.keyCode === 46 || event.keyCode === 8){
 //                        clearTimeout(search_timeout);
-//                        let categ = self.pos.chrome.screens.products.product_categories_widget.category;
-//                        let searchbox = this;
+//                        var categ = self.pos.chrome.screens.products.product_categories_widget.category;
+//                        var searchbox = this;
 //                        search_timeout = setTimeout(function(){
 //                            self.pos.chrome.screens.products.product_categories_widget.perform_search(categ, searchbox.value, event.which === 13);
 //                        },0);
@@ -5056,26 +5086,26 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $('.rightpane').width('auto');
             }
             if (order.get_client()){
-                let params = {
+                var params = {
                     model: 'res.partner',
                     fields: ['product_ids'],
                     method: 'search_read',
                     domain: [['id', '=', order.get_client().id]]
                 }
                 return rpc.query(params).then(function(results){
-                    if (results){
+                    if (results){       
                         //order.add_product(results[0].product_ids);
                         //self.product_list_widget.set_product_list(results[0].product_ids[0]);
                         //debugger;
-                        //let product_ids = self.pos.db.get_product_by_id();
+                        //var product_ids = self.pos.db.get_product_by_id();
                         //product_list_widget.set_product_list(product_ids);
                     }
                 });
             }
         },
         call_sidebar: function(){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             $('#wrapper1').removeClass('oe_hidden');
             $('#wrapper1').toggleClass("toggled");
             $('#wrapper1').find('#menu-toggle1 i').toggleClass('fa fa-chevron-left fa fa-chevron-right');
@@ -5104,18 +5134,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         render_product_category: function(categ){
-            let self = this;
+            var self = this;
             if(categ && categ[0]){
-                let sub_categories_html = QWeb.render('CategoriesView',{
+                var sub_categories_html = QWeb.render('CategoriesView',{
                     sub_categories: categ,
                     parent_categ_id:self.parent_categ_id,
                     widget:self,
                 });
                 $('.CustomCategories').html('');
                 $('.CustomCategories').html(sub_categories_html);
-                let $buttons = $('.js-category-switch');
-                let order = this.pos.get_order();
-                for(let i = 0; i < $buttons.length; i++){
+                var $buttons = $('.js-category-switch');
+                var order = this.pos.get_order();
+                for(var i = 0; i < $buttons.length; i++){
                     $buttons[i].addEventListener('click',self.custom_switch_category_handler);
                 }
             }
@@ -5134,40 +5164,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
 
     screens.ReceiptScreenWidget.include({
-        print: function() {
-            let html = document.documentElement.outerHTML;
-            if(this.qzTrayIsEnabled()){
-                let company_id = this.pos.company.id;
-                qz_connect(company_id, html);
-            } else {
-                this._super();
-            }
-        },
-        qzTrayIsEnabled: function (){
-            let can_use_qz = false;
-
-            rpc.query({
-                model: 'ir.config_parameter',
-                method: 'search_read',
-                domain: [['key', '=', 'print.use_zebra_printer']],
-            }, {async: false}).done(function(param) {
-                can_use_qz = param[0].value === 'True';
-            });
-
-            return can_use_qz;
-        },
         show: function(){
-            let self = this;
-            let order = this.pos.get_order();
-            let barcode_val = order.get_giftcard();
-            let vouchers = order.get_voucher();
-            let counter = [];
+            var self = this;
+            var order = this.pos.get_order();
+            var barcode_val = order.get_giftcard();
+            var vouchers = order.get_voucher();
+            var counter = [];
             if(self.pos.config.enable_print_valid_days && self.pos.get_cashier().access_print_valid_days){
-                let order_category_list = [];
-                let orderlines = order.get_orderlines();
+                var order_category_list = [];
+                var orderlines = order.get_orderlines();
                 _.each(orderlines, function(orderline){
                     if(orderline.get_product().pos_categ_id){
-                        let category = self.pos.db.get_category_by_id(orderline.get_product().pos_categ_id[0]);
+                        var category = self.pos.db.get_category_by_id(orderline.get_product().pos_categ_id[0]);
                         if (category && category.return_valid_days > 0){
                             order_category_list.push({
                                 "id": category.id,
@@ -5175,7 +5183,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 "return_valid_days": category.return_valid_days || self.pos.config.default_return_valid_days,
                             });
                         } else if(category && category.return_valid_days < 1){
-                            let temp = self.find_parent_category(category);
+                            var temp = self.find_parent_category(category);
                             order_category_list.push(temp);
                         }
                     } else {
@@ -5192,7 +5200,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
 //            if(self.pos.config.enable_gift_voucher){
 //                if(order.get_voucher()){
-//                    let voucher_use = _.countBy(vouchers, 'voucher_code');
+//                    var voucher_use = _.countBy(vouchers, 'voucher_code');
 //                    _.each(vouchers, function(voucher){
 //                        if(_.where(counter, {voucher_code: voucher.voucher_code}).length < 1){
 //                            counter.push({
@@ -5207,36 +5215,36 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //            }
             this._super();
             if( barcode_val && barcode_val[0]){
-                let barcode = barcode_val[0].giftcard_card_no;
+                var barcode = barcode_val[0].giftcard_card_no;
                 $("tr#barcode_giftcard").html($("<td style='padding:2px 2px 2px 38px; text-align:center;'><div class='" + barcode + "' width='150' height='50' /></td>"));
                 $("." + barcode.toString()).barcode(barcode.toString(), "code128");
                 $("td#barcode_val_giftcard").html(barcode);
             }
-            let barcode_recharge_val = order.get_recharge_giftcard();
+            var barcode_recharge_val = order.get_recharge_giftcard();
             if( barcode_recharge_val && barcode_recharge_val[0]){
-                let barcode = barcode_recharge_val[0].recharge_card_no;
+                var barcode = barcode_recharge_val[0].recharge_card_no;
                 $("tr#barcode_recharge").html($("<td style='padding:2px 2px 2px 38px; text-align:center;'><div class='" + barcode + "' width='150' height='50' /></td>"));
                 $("." + barcode.toString()).barcode(barcode.toString(), "code128");
                 $("td#barcode_val_recharge").html(barcode);
             }
-            let barcode_free_val = order.get_free_data();
+            var barcode_free_val = order.get_free_data();
             if( barcode_free_val){
-                let barcode = barcode_free_val.giftcard_card_no;
+                var barcode = barcode_free_val.giftcard_card_no;
                 $("tr#barcode_free").html($("<td style='padding:2px 2px 2px 38px; text-align:center;'><div class='" + barcode + "' width='150' height='50' /></td>"));
                 $("." + barcode.toString()).barcode(barcode.toString(), "code128");
                 $("td#barcode_val_free").html(barcode);
             }
 
-            let barcode_redeem_val = order.get_redeem_giftcard();
+            var barcode_redeem_val = order.get_redeem_giftcard();
             if( barcode_redeem_val && barcode_redeem_val[0]){
-                let barcode = barcode_redeem_val[0].redeem_card;
+                var barcode = barcode_redeem_val[0].redeem_card;
                 $("tr#barcode_redeem").html($("<td style='padding:2px 2px 2px 38px; text-align:center;'><div class='" + barcode + "' width='150' height='50' /></td>"));
                 $("." + barcode.toString()).barcode(barcode.toString(), "code128");
                 $("td#barcode_val_redeem").html(barcode);
             }
         },
         find_parent_category: function(category){
-            let self = this;
+            var self = this;
             if (category){
                 if(!category.parent_id){
                     return {
@@ -5258,36 +5266,36 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         render_receipt: function() {
-            let order = this.pos.get_order();
+            var order = this.pos.get_order();
             if (order.get_free_data()){
                 this.$('.pos-receipt-container').html(QWeb.render('FreeTicket',{
                     widget:this,
                     order: order,
                 }));
             }else if(order.get_receipt()){
-                let no = $('input#no_of_copies').val()
-                let category_data = '';
-                let order_data = '';
-                let payment_data = '';
-                if(order.get_order_list() && Object.keys(order.get_order_list().order_report).length === 0 ){
+                var no = $('input#no_of_copies').val()
+                var category_data = '';
+                var order_data = '';
+                var payment_data = '';
+                if(order.get_order_list() && Object.keys(order.get_order_list().order_report).length == 0 ){
                     order_data = false;
                 }else{
                     if(order.get_order_list()){
                         order_data = order.get_order_list()['order_report']
                     }
                 }
-                if(Object.keys(order.get_order_list().category_report).length === 0 ){
+                if(Object.keys(order.get_order_list().category_report).length == 0 ){
                     category_data = false;
                 }else{
                     category_data = order.get_order_list()['category_report']
                 }
-                if(Object.keys(order.get_order_list().payment_report).length === 0 ){
+                if(Object.keys(order.get_order_list().payment_report).length == 0 ){
                     payment_data = false;
                 }else{
                     payment_data = order.get_order_list()['payment_report']
                 }
-                let receipt = "";
-                for(let i=0;i < no;i++){
+                var receipt = "";
+                for(var i=0;i < no;i++){
                     receipt += QWeb.render('CustomTicket',{
                         widget:this,
                         order: order,
@@ -5299,37 +5307,36 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 this.$('.pos-receipt-container').html(receipt);
             } else if(order.get_order_summary_report_mode()){
-                let no = $('#no_of_summary').val();
+                var no = $('#no_of_summary').val();
                 if(!order.get_product_summary_report()){
                     return;
                 }
-                let product_summary_data, category_summary_data, payment_summary_data, location_summary_data;
-                let product_summary_key = Object.keys(order.get_product_summary_report()['product_summary'] ? order.get_product_summary_report()['product_summary'] :false );
+                var product_summary_key = Object.keys(order.get_product_summary_report()['product_summary'] ? order.get_product_summary_report()['product_summary'] :false );
                 if(product_summary_key.length > 0){
-                    product_summary_data = order.get_product_summary_report()['product_summary'];
+                    var product_summary_data = order.get_product_summary_report()['product_summary'];
                 } else {
-                    product_summary_data = false;
+                    var product_summary_data = false;
                 }
-                let category_summary_key = Object.keys(order.get_product_summary_report()['category_summary']);
-                if(category_summary_key.length > 0){
-                    category_summary_data = order.get_product_summary_report()['category_summary'];
+                var category_summary_key = Object.keys(order.get_product_summary_report()['category_summary']);
+                 if(category_summary_key.length > 0){
+                    var category_summary_data = order.get_product_summary_report()['category_summary'];
                 } else {
-                    category_summary_data = false;
+                    var category_summary_data = false;
                 }
-                let payment_summary_key = Object.keys(order.get_product_summary_report()['payment_summary']);
-                if(payment_summary_key.length > 0){
-                    payment_summary_data = order.get_product_summary_report()['payment_summary'];
+                 var payment_summary_key = Object.keys(order.get_product_summary_report()['payment_summary']);
+                 if(payment_summary_key.length > 0){
+                     var payment_summary_data = order.get_product_summary_report()['payment_summary'];
                 } else {
-                    payment_summary_data = false;
+                    var payment_summary_data = false;
                 }
-                let location_summary_key = Object.keys(order.get_product_summary_report()['location_summary']);
-                if(location_summary_key.length > 0){
-                    location_summary_data = order.get_product_summary_report()['location_summary'];
+                var location_summary_key = Object.keys(order.get_product_summary_report()['location_summary']);
+                 if(location_summary_key.length > 0){
+                     var location_summary_data = order.get_product_summary_report()['location_summary'];
                 } else {
-                    location_summary_data = false;
+                    var location_summary_data = false;
                 }
-                let receipt = "";
-                for (let step = 0; step < no; step++) {
+                var receipt = "";
+                for (var step = 0; step < no; step++) {
                     receipt += QWeb.render('ProductSummaryReport',{
                         widget:this,
                         order: order,
@@ -5342,25 +5349,25 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 this.$('.pos-receipt-container').html(receipt);
             } else if(order.get_sales_summary_mode() && order.get_sales_summary_vals()) {
-                let journal_key = Object.keys(order.get_sales_summary_vals()['journal_details']);
+                var journal_key = Object.keys(order.get_sales_summary_vals()['journal_details']);
                 if(journal_key.length > 0){
-                    let journal_summary_data = order.get_sales_summary_vals()['journal_details'];
+                    var journal_summary_data = order.get_sales_summary_vals()['journal_details'];
                 } else {
-                    let journal_summary_data = false;
+                    var journal_summary_data = false;
                 }
-                let sales_key = Object.keys(order.get_sales_summary_vals()['salesmen_details']);
+                var sales_key = Object.keys(order.get_sales_summary_vals()['salesmen_details']);
                 if(sales_key.length > 0){
-                    let sales_summary_data = order.get_sales_summary_vals()['salesmen_details'];
+                    var sales_summary_data = order.get_sales_summary_vals()['salesmen_details'];
                 } else {
-                    let sales_summary_data = false;
+                    var sales_summary_data = false;
                 }
-                let total = Object.keys(order.get_sales_summary_vals()['summary_data']);
+                var total = Object.keys(order.get_sales_summary_vals()['summary_data']);
                 if(total.length > 0){
-                    let total_summary_data = order.get_sales_summary_vals()['summary_data'];
+                    var total_summary_data = order.get_sales_summary_vals()['summary_data'];
                 } else {
-                    let total_summary_data = false;
+                    var total_summary_data = false;
                 }
-                let receipt = "";
+                var receipt = "";
                 receipt = QWeb.render('PaymentSummaryReport',{
                     widget:this,
                     order: order,
@@ -5371,8 +5378,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 })
                 this.$('.pos-receipt-container').html(receipt);
             } else if(order.get_receipt_mode()){
-                let data = order.get_product_vals();
-                let receipt = "";
+                var data = order.get_product_vals();
+                var receipt = "";
                 receipt = QWeb.render('OutStockPosReport',{
                     widget:this,
                     order: order,
@@ -5384,9 +5391,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             } else if(order.get_money_inout_details()){
                 if(order.get_money_inout_details()){
                     $('.pos-receipt-container', this.$el).html(QWeb.render('MoneyInOutTicket',{
-                        widget:this,
-                        order: order,
-                        money_data: order.get_money_inout_details(),
+                       widget:this,
+                       order: order,
+                       money_data: order.get_money_inout_details(),
                     }));
                 }
             } else if(order.get_delivery_payment_data()){
@@ -5394,7 +5401,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     widget:this,
                     order: order,
                     pos_order: order.get_delivery_payment_data(),
-                }));
+                 }));
             }else{
                 if(order && order.is_reprint){
                     this.$('.pos-receipt-container').html(order.print_receipt_html);
@@ -5405,27 +5412,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             widget:this,
                             order: order,
                             orderlines: order.get_orderlines(),
-                        }));
+                         }));
                     }
                 }
             }
-            let barcode_val = this.pos.get_order().get_name();
-            if (barcode_val.indexOf(_t("Order ")) !== -1) {
-                let vals = barcode_val.split(_t("Order "));
+            var barcode_val = this.pos.get_order().get_name();
+            if (barcode_val.indexOf(_t("Order ")) != -1) {
+                var vals = barcode_val.split(_t("Order "));
                 if (vals) {
-                    let barcode = vals[1];
+                    var barcode = vals[1];
                     $("tr#barcode1").html($("<td style='padding:2px 2px 2px 0px; text-align:center;'><div class='" + barcode + "' width='150' height='50'/></td>"));
                     $("." + barcode.toString()).barcode(barcode.toString(), "code128");
                 }
-            }
+            }                      
         },
         get_receipt_render_env: function() {
             this.pos.last_receipt_render_env = this._super();
-            let order = this.pos.get_order();
-            let client_data = this.get_client_data();
-            let info = false;
-            let company_id = this.pos.company.id;
-            let partner_id = order.get_client();
+            var order = this.pos.get_order();
+            var client_data = this.get_client_data();
+            var info = false;
+            var company_id = this.pos.company.id;
+            var partner_id = order.get_client();
             if(order.order_on_credit){
                 rpc.query({
                     model: 'res.company',
@@ -5450,23 +5457,23 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         get_client_data: function()
         {
-            let partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
-            let client = this.pos.get_order().get_client();
-            let client_id = null;
+            var partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
+            var client = this.pos.get_order().get_client();
+            var client_id = null;
             if (client){
-                client_id = client.id;
+                client_id = client.id; 
             }
             partner_id = partner_id ? partner_id : client_id;
-
-            //let amount = Number($('.total').attr('amount'));
-            let order = this.pos.get_order();
-            let amount = order.getNetTotalTaxIncluded();
-            let params = {
+            
+            //var amount = Number($('.total').attr('amount'));
+            var order = this.pos.get_order();
+            var amount = order.getNetTotalTaxIncluded();
+            var params = {
                 model: 'res.partner',
                 method: "get_partner_data",
                 args: [partner_id, amount],
             }
-            let partner = null;
+            var partner = null;
             rpc.query(params, {async: false}).then(function(partner_response)
             {
                 partner = partner_response;
@@ -5474,24 +5481,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
             return partner
         },
-        do_debit_payment: function ()
+        do_debit_payment: function () 
         {
-            let self = this;
-            let order = this.pos.get_order();
-
+            var self = this;
+            var order = this.pos.get_order();
+            
             if(order.get_is_debit())
             {
                 console.log("Adding debit transaction")
-                let journal = false;
-                let params = {
+                var journal = false;
+                var params = {
                     model: 'account.journal',
                     method: "get_journal_by_code",
                     args: ['PREPD'],
                 }
                 rpc.query(params, {async: false}).then(function(journal)
                 {
-                    let get_journal_id = false;
-                    let cashregister = false;
+                    var get_journal_id = false;                
+                    var cashregister = false;
                     console.log("ID")
                     console.log(journal)
                     if(journal)
@@ -5501,67 +5508,67 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
                     if(!get_journal_id)
                     {
-                        for(let i in self.pos.cashregisters){
-                            let reg = self.pos.cashregisters[i];
+                        for(var i in self.pos.cashregisters){
+                            var reg = self.pos.cashregisters[i];
                             if(String(reg.journal_id[1]).includes('Efectivo')){
                                 cashregister = reg;
                             }
                         }
                         get_journal_id = cashregister.journal_id[0];
                     }
-
+                    
                     if (get_journal_id)
-                    {
-
-                        //let amount = Number($('.total').attr('amount'));
-                        let amount = order.getNetTotalTaxIncluded();
-                        if(amount === 0)
+                    {                                    
+                        
+                        //var amount = Number($('.total').attr('amount'));
+                        var amount = order.getNetTotalTaxIncluded();
+                        if(amount==0)
                         {
                             amount=9;
                         }
-                        let pos_session_id = self.pos.pos_session.name;
-                        let partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
-                        let client = self.pos.get_order().get_client()
+                        var pos_session_id = self.pos.pos_session.name;
+                        var partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
+                        var client = self.pos.get_order().get_client()
                         partner_id = partner_id ? partner_id : client.id;
-                        let cashier_id = self.pos.get_cashier().id;
-                        let params = {
+                        var cashier_id = self.pos.get_cashier().id;
+                        var params = {
                             model: 'account.payment',
                             method: "payment_debit",
                             args: [get_journal_id, amount, pos_session_id, partner_id, cashier_id, true,order.name],
                         }
-
-                        let interval = setInterval(function()
-                        {
-                            rpc.query(params, {async: false}).then(function(vals){
-                                if(vals)
-                                {
-                                    if(vals.affected_order.length>0)
-                                    {
-                                        clearInterval(interval);
-                                    }
-                                }
-                            });
-
-                        },10);
-
-
+                        
+                        var interval = setInterval(function() 
+                                                                {
+                                                                    rpc.query(params, {async: false}).then(function(vals){
+                                                                        if(vals)
+                                                                        {
+                                                                            if(vals.affected_order.length>0)
+                                                                            {
+                                                                                clearInterval(interval);
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                    
+                                                                },10);
+                        
+                        
                     }
                 });
-
+                
             }
 
             if(order.get_is_credit())
             {
-                let journal = false;
-                let params = {
+                var journal = false;
+                var params = {
                     model: 'account.journal',
                     method: "get_journal_by_code",
                     args: ['POSCR'],
                 }
                 rpc.query(params, {async: false}).then(function(journal)
                 {
-                    let get_journal_id = false;
-                    // let cashregister = false;
+                    var get_journal_id = false;                
+                    var cashregister = false;
                     console.log("ID")
                     console.log(journal)
                     if(journal)
@@ -5575,19 +5582,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
 
                     if (get_journal_id)
-                    {
-
-                        //let amount = Number($('.total').attr('amount'));
-                        let amount = order.getNetTotalTaxIncluded();
-
-                        let pos_session_id = self.pos.pos_session.name;
-                        let partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
-                        let client = self.pos.get_order().get_client()
+                    {                                    
+                        
+                        //var amount = Number($('.total').attr('amount'));
+                        var amount = order.getNetTotalTaxIncluded();
+                        
+                        var pos_session_id = self.pos.pos_session.name;
+                        var partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
+                        var client = self.pos.get_order().get_client()
                         partner_id = partner_id ? partner_id : client.id;
-                        let cashier_id = self.pos.get_cashier().id;
-                        let payment_lines = order.get_paymentlines();
-                        let amount_is_low = false;
-                        let amount_credit = 0.0;
+                        var cashier_id = self.pos.get_cashier().id;
+                        var payment_lines = order.get_paymentlines();
+                        var amount_is_low = false;
+                        var amount_credit = 0.0;
                         _.map(payment_lines, function(line){
                             if (line.name === "POS-Crédito (MXN)"){
                                 amount_credit += line.amount;
@@ -5598,44 +5605,44 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
                         }
 
-                        let params = {
+                        var params = {
                             model: 'account.payment',
                             method: "payment_credit",
                             args: [get_journal_id, amount, pos_session_id, partner_id, cashier_id, true,order.name],
                         }
-
-                        let interval = setInterval(function()
-                        {
-                            rpc.query(params, {async: false}).then(function(vals){
-                                if(vals)
-                                {
-                                    if(vals.affected_order.length>0)
-                                    {
-                                        clearInterval(interval);
-                                    }
-                                }
-                            });
-
-                        },10);
-
-
+                        
+                        var interval = setInterval(function() 
+                                                                {
+                                                                    rpc.query(params, {async: false}).then(function(vals){
+                                                                        if(vals)
+                                                                        {
+                                                                            if(vals.affected_order.length>0)
+                                                                            {
+                                                                                clearInterval(interval);
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                    
+                                                                },10);
+                        
+                        
                     }
                 });
-
+                
             }
 
             if(order.get_is_meal_plan())
             {
-                let journal = false;
-                let params = {
-                    model: 'account.journal',
-                    method: "get_journal_by_code",
-                    args: ['MEALP'],
-                }
+                var journal = false;
+                var params = {
+                                model: 'account.journal',
+                                method: "get_journal_by_code",
+                                args: ['MEALP'],
+                            }
                 rpc.query(params, {async: false}).then(function(journal)
                 {
-                    let get_journal_id = false;
-                    let cashregister = false;
+                    var get_journal_id = false;                
+                    var cashregister = false;
                     console.log("ID")
                     console.log(journal)
                     if(journal)
@@ -5645,50 +5652,50 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
                     if(!get_journal_id)
                     {
-                        for(let i in self.pos.cashregisters){
-                            let reg = self.pos.cashregisters[i];
+                        for(var i in self.pos.cashregisters){
+                            var reg = self.pos.cashregisters[i];
                             if(String(reg.journal_id[1]).includes('Efectivo')){
                                 cashregister = reg;
                             }
                         }
                         get_journal_id = cashregister.journal_id[0];
                     }
-
+                    
                     if (get_journal_id)
-                    {
-
-                        //let amount = Number($('.total').attr('amount'));
-                        let amount = order.getNetTotalTaxIncluded();
-                        let pos_session_id = self.pos.pos_session.name;
-                        let partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
-                        let client = self.pos.get_order().get_client()
+                    {                                    
+                        
+                        //var amount = Number($('.total').attr('amount'));
+                        var amount = order.getNetTotalTaxIncluded();
+                        var pos_session_id = self.pos.pos_session.name;
+                        var partner_id = Number($('.client-line.highlight').attr('-id')) || Number($('.client-line.lowlight').attr('data-id'));
+                        var client = self.pos.get_order().get_client()
                         partner_id = partner_id ? partner_id : client.id;
-                        let cashier_id = self.pos.get_cashier().id;
-                        let params = {
+                        var cashier_id = self.pos.get_cashier().id;
+                        var params = {
                             model: 'account.payment',
                             method: "payment_meal_plan",
                             args: [get_journal_id, amount, pos_session_id, partner_id, cashier_id, true,order.name],
                         }
-
-                        let interval = setInterval(function()
-                        {
-                            rpc.query(params, {async: false}).then(function(vals)
-                            {
-                                if(vals)
-                                {
-                                    if(vals.affected_order.length>0)
-                                    {
-                                        clearInterval(interval);
-                                    }
-                                }
-                            });
-
-                        },10);
-
-
+                        
+                        var interval = setInterval(function() 
+                                                                {
+                                                                    rpc.query(params, {async: false}).then(function(vals)
+                                                                    {
+                                                                        if(vals)
+                                                                        {
+                                                                            if(vals.affected_order.length>0)
+                                                                            {
+                                                                                clearInterval(interval);
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                    
+                                                                },10);
+                        
+                        
                     }
                 });
-
+                
             }
 
         },
@@ -5697,8 +5704,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.$('.total-value').html(this.format_currency(this.pos.get_order().getNetTotalTaxIncluded()));
         },
         print_xml: function() {
-            let order = this.pos.get_order();
-            let env = {
+            var order = this.pos.get_order();
+            var env = {
                 widget:  this,
                 pos: this.pos,
                 order: this.pos.get_order(),
@@ -5706,24 +5713,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 paymentlines: this.pos.get_order().get_paymentlines()
             };
             if(order.get_free_data()){
-                let receipt = QWeb.render('XmlFreeTicket',env);
+                var receipt = QWeb.render('XmlFreeTicket',env);
             } else if(order.get_delivery_payment_data()){
-                let data = {
+                var data = {
                     widget:  this,
                     pos: this.pos,
                     order: this.pos.get_order(),
                     pos_order: order.get_delivery_payment_data(),
                 }
-                let receipt = QWeb.render('XmlDeliveryPaymentTicket',data);
+                var receipt = QWeb.render('XmlDeliveryPaymentTicket',data);
             } else{
                 if(order && order.is_reprint){
                     order.is_reprint = false;
                     this.pos.proxy.print_receipt(order.print_xml_receipt_html);
                     return this.pos.get_order()._printed = true;
                 }else{
-                    let receipt = QWeb.render('XmlReceipt',env);
+                    var receipt = QWeb.render('XmlReceipt',env);
                     if(this.pos.config.generate_token && this.pos.config.seperate_receipt){
-                        let token_receipt = QWeb.render('XMLTokenTicket',{
+                        var token_receipt = QWeb.render('XMLTokenTicket',{
                             widget:this,
                             order: order,
                             orderlines: order.get_orderlines(),
@@ -5734,16 +5741,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             this.pos.proxy.print_receipt(receipt);
             this.pos.get_order()._printed = true;
-
+            
         },
     });
 
     /* Order list screen */
-    let OrderListScreenWidget = screens.ScreenWidget.extend({
+    var OrderListScreenWidget = screens.ScreenWidget.extend({
         template: 'OrderListScreenWidget',
 
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.reload_btn = function(){
                 $('.reload_order').toggleClass('rotate', 'rotate-reset');
@@ -5780,7 +5787,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.gui.show_screen('products');
         },
         click_draft: function(event){
-            let self = this;
+            var self = this;
             if($(event.currentTarget).hasClass('selected')){
                 $(event.currentTarget).removeClass('selected');
                 self.filter = "all";
@@ -5793,7 +5800,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.render_list(self.get_orders());
         },
         click_paid: function(event){
-            let self = this;
+            var self = this;
             if($(event.currentTarget).hasClass('selected')){
                 $(event.currentTarget).removeClass('selected');
                 self.filter = "all";
@@ -5806,7 +5813,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.render_list(self.get_orders());
         },
         click_posted: function(event){
-            let self = this;
+            var self = this;
             if($(event.currentTarget).hasClass('selected')){
                 $(event.currentTarget).removeClass('selected');
                 self.filter = "all";
@@ -5819,10 +5826,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.render_list(self.get_orders());
         },
         clear_cart: function(){
-            let self = this;
-            let order = self.pos.get_order();
-            let currentOrderLines = order.get_orderlines();
-            let lines_ids = []
+            var self = this;
+            var order = self.pos.get_order();
+            var currentOrderLines = order.get_orderlines();
+            var lines_ids = []
             if(!order.is_empty()) {
                 _.each(currentOrderLines,function(item) {
                     lines_ids.push(item.id);
@@ -5833,12 +5840,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         pay_order_due: function(event, order_id){
-            let self = this;
-            order_id = event ? parseInt($(event.currentTarget).data('id')) : order_id;
-            let selectedOrder = this.pos.get_order();
-            let result = self.pos.db.get_order_by_id(order_id);
+            var self = this;
+            var order_id = event ? parseInt($(event.currentTarget).data('id')) : order_id;
+            var selectedOrder = this.pos.get_order();
+            var result = self.pos.db.get_order_by_id(order_id);
             if(!result){
-                let params = {
+                var params = {
                     model: 'pos.order',
                     method: 'search_read',
                     domain: [['id', '=', order_id], ['state', 'not in', ['draft']]]
@@ -5849,11 +5856,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
             }
             if(result){
-                if(result.state === "paid"){
+                if(result.state == "paid"){
                     alert(_t("Sorry, This order is paid State"));
                     return
                 }
-                if(result.state === "done"){
+                if(result.state == "done"){
                     alert(_t("Sorry, This Order is Done State"));
                     return
                 }
@@ -5861,7 +5868,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.clear_cart();
                     selectedOrder.set_client(null);
                     if (result.partner_id && result.partner_id[0]) {
-                        let partner = self.pos.db.get_partner_by_id(result.partner_id[0])
+                        var partner = self.pos.db.get_partner_by_id(result.partner_id[0])
                         if(partner){
                             selectedOrder.set_client(partner);
                         }
@@ -5876,10 +5883,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     selectedOrder.set_sequence(result.name);
                     selectedOrder.set_delivery(result.is_delivery);
                     if(result.lines.length >= 0){
-                        let order_lines = self.get_orderlines_from_order(result.lines);
+                        var order_lines = self.get_orderlines_from_order(result.lines);
                         if(order_lines.length >= 0){
                             _.each(order_lines, function(line){
-                                let product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
+                                var product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
                                 if(product){
                                     selectedOrder.add_product(product, {
                                         quantity: line.qty,
@@ -5888,16 +5895,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                     });
                                 }
                             });
-                            let prd = self.pos.db.get_product_by_id(self.pos.config.prod_for_payment[0]);
+                            var prd = self.pos.db.get_product_by_id(self.pos.config.prod_for_payment[0]);
                             if(prd && result.amount_due){
-                                let paid_amt = result.amount_total - result.amount_due;
+                                var paid_amt = result.amount_total - result.amount_due;
                                 selectedOrder.add_product(prd,{'price':-paid_amt});
                             }
                             self.gui.show_screen('payment');
                             if(result.picking_id){
                                 $('.deliver_items').hide();
                             }
-                            if(result.amount_due === 0){
+                            if(result.amount_due == 0){
                                 selectedOrder.set_amount_paid(result.amount_paid)
                             }
                         }
@@ -5906,7 +5913,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             this.reload_orders();
             $('input#datepicker').datepicker({
@@ -5915,7 +5922,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 closeText: 'Clear',
                 showButtonPanel: true,
                 onSelect: function (dateText, inst) {
-                    let date = $(this).val();
+                    var date = $(this).val();
                     if (date){
                         self.date = date;
                         self.render_list(self.get_orders());
@@ -5927,27 +5934,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         self.render_list(self.get_orders());
                     }
                 }
-            }).focus(function(){
-                let thisCalendar = $(this);
+           }).focus(function(){
+                var thisCalendar = $(this);
                 $('.ui-datepicker-close').click(function() {
                     thisCalendar.val('');
                     self.date = "all";
                     self.render_list(self.get_orders());
                 });
-            });
-            $('.button.paid').removeClass('selected').trigger('click');
+           });
+           $('.button.paid').removeClass('selected').trigger('click');
         },
         get_journal_from_order: function(statement_ids){
-            let self = this;
-            let order = this.pos.get_order();
-            let params = {
+            var self = this;
+            var order = this.pos.get_order();
+            var params = {
                 model: 'account.bank.statement.line',
                 method: 'search_read',
                 domain: [['id', 'in', statement_ids]],
             }
             rpc.query(params, {async: false}).then(function(statements){
                 if(statements.length > 0){
-                    let order_statements = []
+                    var order_statements = []
                     _.each(statements, function(statement){
                         if(statement.amount > 0){
                             order_statements.push({
@@ -5963,10 +5970,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         get_orderlines_from_order: function(line_ids){
-            let self = this;
-            let order = this.pos.get_order();
-            let orderlines = false;
-            let params = {
+            var self = this;
+            var order = this.pos.get_order();
+            var orderlines = false;
+            var params = {
                 model: 'pos.order.line',
                 method: 'load_pos_order_lines',
                 args: [line_ids],
@@ -5981,13 +5988,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return orderlines
         },
         click_reprint: function(event){
-            let self = this;
-            let selectedOrder = this.pos.get_order();
-            let order_id = parseInt($(event.currentTarget).data('id'));
+            var self = this;
+            var selectedOrder = this.pos.get_order();
+            var order_id = parseInt($(event.currentTarget).data('id'));
             selectedOrder.empty_cart();
             selectedOrder.set_client(null);
-            selectedOrder = this.pos.get_order();
-            let result = self.pos.db.get_order_by_id(order_id);
+            var selectedOrder = this.pos.get_order();
+            var result = self.pos.db.get_order_by_id(order_id);
             if(result.pos_normal_receipt_html){
                 selectedOrder.print_receipt_html = result.pos_normal_receipt_html;
                 selectedOrder.print_xml_receipt_html = result.pos_xml_receipt_html;
@@ -5997,7 +6004,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }else{
                 if (result && result.lines.length > 0) {
                     if (result.partner_id && result.partner_id[0]) {
-                        let partner = self.pos.db.get_partner_by_id(result.partner_id[0])
+                        var partner = self.pos.db.get_partner_by_id(result.partner_id[0])
                         if(partner){
                             selectedOrder.set_client(partner);
                         }
@@ -6014,10 +6021,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         self.get_journal_from_order(result.statement_ids);
                     }
                     if(result.lines.length > 0){
-                        let order_lines = self.get_orderlines_from_order(result.lines);
+                        var order_lines = self.get_orderlines_from_order(result.lines);
                         if(order_lines.length > 0){
                             _.each(order_lines, function(line){
-                                let product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
+                                var product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
                                 if(product){
                                     selectedOrder.add_product(product, {
                                         quantity: line.qty,
@@ -6034,12 +6041,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
 //        click_view_lines: function(event){
-//        	let self = this;
-//        	let order_id = parseInt($(event.currentTarget).data('id'));
-//            let order = this.pos.get_order();
-//            let result = self.pos.db.get_order_by_id(order_id);
+//        	var self = this;
+//        	var order_id = parseInt($(event.currentTarget).data('id'));
+//            var order = this.pos.get_order();
+//            var result = self.pos.db.get_order_by_id(order_id);
 //            if(result.lines.length > 0){
-//            	let order_lines = self.get_orderlines_from_order(result.lines);
+//            	var order_lines = self.get_orderlines_from_order(result.lines);
 //            	if(order_lines){
 //            		self.gui.show_popup('product_popup', {
 //            			order_lines: order_lines,
@@ -6051,19 +6058,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //            }
 //        },
         click_duplicate_order: function(event){
-            let self = this;
-            let order_id = parseInt($(event.currentTarget).data('id'));
-            let selectedOrder = this.pos.get_order();
-            let result = self.pos.db.get_order_by_id(order_id);
-            let gift_card_product_id = self.pos.config.gift_card_product_id[0] || false;
+            var self = this;
+            var order_id = parseInt($(event.currentTarget).data('id'));
+            var selectedOrder = this.pos.get_order();
+            var result = self.pos.db.get_order_by_id(order_id);
+            var gift_card_product_id = self.pos.config.gift_card_product_id[0] || false;
             if(result.lines.length > 0){
-                let order_lines = self.get_orderlines_from_order(result.lines);
+                var order_lines = self.get_orderlines_from_order(result.lines);
                 if(order_lines && order_lines[0]){
-                    let valid_product = false;
+                    var valid_product = false;
                     order_lines.map(function(line){
                         if(line.product_id && line.product_id[0]){
-                            let product = self.pos.db.get_product_by_id(line.product_id[0]);
-                            if((product && !product.is_dummy_product) && (line.line_status !== 'full')){
+                            var product = self.pos.db.get_product_by_id(line.product_id[0]);
+                            if((product && !product.is_dummy_product) && (line.line_status != 'full')){
                                 valid_product = true;
                             }
                         }
@@ -6080,148 +6087,148 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         click_edit_order: function(event){
-            let self = this;
-            let order_id = parseInt($(event.currentTarget).data('id'));
-            let result = self.pos.db.get_order_by_id(order_id);
+            var self = this;
+            var order_id = parseInt($(event.currentTarget).data('id'));
+            var result = self.pos.db.get_order_by_id(order_id);
 //            if(result && result.lines.length > 0){
-            let selectedOrder = this.pos.get_order();
-            self.pos.chrome.screens.orderlist.clear_cart();
-            selectedOrder.set_client(null);
-            if (result.partner_id && result.partner_id[0]) {
-                let partner = self.pos.db.get_partner_by_id(result.partner_id[0]);
-                if(partner){
-                    selectedOrder.set_client(partner);
+                var selectedOrder = this.pos.get_order();
+                self.pos.chrome.screens.orderlist.clear_cart();
+                selectedOrder.set_client(null);
+                if (result.partner_id && result.partner_id[0]) {
+                    var partner = self.pos.db.get_partner_by_id(result.partner_id[0]);
+                    if(partner){
+                        selectedOrder.set_client(partner);
+                    }
                 }
-            }
-            selectedOrder.set_pos_reference(result.pos_reference);
-            selectedOrder.set_order_id(order_id);
-            selectedOrder.set_sequence(result.name);
+                selectedOrder.set_pos_reference(result.pos_reference);
+                selectedOrder.set_order_id(order_id);
+                selectedOrder.set_sequence(result.name);
 //	           	if(result.lines.length > 0){
-            if(result.table_ids && result.table_ids.length > 0){
-                if(result.rest_table_reservation_id.length > 0){
-//	           	 			let table = self.pos.tables_by_id[result.table_ids[0]];
+                    if(result.table_ids && result.table_ids.length > 0){
+                        if(result.rest_table_reservation_id.length > 0){
+//	           	 			var table = self.pos.tables_by_id[result.table_ids[0]];
 //	           	 			if(table){
 //	           	 				self.pos.set_table(table);
 //	           	 			}
-                }
-                let merged_tables = [];
-                result.table_ids.map(function(id){
-                    if(self.pos.table.id !== id){
-                        let table_name = self.pos.tables_by_id[id];
-                        if(table_name && table_name.name){
-                            merged_tables.push(table_name);
-                            table_name.parent_linked_table = self.pos.table;
                         }
-                    }
-                });
-                selectedOrder.set_merge_table_ids(result.table_ids);
-                $('span.orders.touch-scrollable .floor-button').replaceWith(QWeb.render('BackToFloorButton',{table: self.pos.table, floor:self.pos.table.floor,merged_tables:merged_tables}));
-                $('span.orders.touch-scrollable .floor-button').click(function(){
-                    self.pos.chrome.widget.order_selector.floor_button_click_handler();
-                });
-            }
-            if(result.asst_cashier_id.length > 0){
-                selectedOrder.asst_cashier_id = result.asst_cashier_id[0];
-            }
-            let order_lines = self.pos.chrome.screens.orderlist.get_orderlines_from_order(result.lines);
-            if(order_lines.length > 0){
-                _.each(order_lines, function(line){
-                    if(line.modifier || line.combo_product_id.length > 0){
-                        return true;
-                    }
-                    let product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
-                    selectedOrder.add_product(product, {
-                        quantity: line.qty,
-                        discount: line.discount,
-                        price: line.price_unit,
-                    });
-                    let selected_orderline = selectedOrder.get_selected_orderline();
-                    if(selected_orderline){
-                        if(line.deliver){
-                            selected_orderline.set_deliver_info(true);
-                            if(line.delivery_product_id.length > 0){
-                                selected_orderline.set_delivery_charges_color(true);
-                                selected_orderline.set_delivery_charges_flag(true);
-                                selected_orderline.set_delivery_product_id(line.delivery_product_id[0]);
-                                selected_orderline.state = 'done';
-                                selectedOrder.set_delivery(true);
+                        var merged_tables = [];
+                        result.table_ids.map(function(id){
+                            if(self.pos.table.id != id){
+                                var table_name = self.pos.tables_by_id[id];
+                                if(table_name && table_name.name){
+                                    merged_tables.push(table_name);
+                                    table_name.parent_linked_table = self.pos.table;
+                                }
                             }
-                        }
-                        if(line.tech_combo_data && line.tech_combo_data[0]){
-                            selected_orderline.set_combo_prod_info(line.tech_combo_data);
-                            self.pos.chrome.screens.products.order_widget.rerender_orderline(selected_orderline);
-                        }
-                        selected_orderline.state = line.state;
-                        selected_orderline.set_note(line.line_note || '');
-                        selected_orderline.set_take_away(!!line.is_takeaway);
-                        if(line.pos_cid){
-                            selected_orderline.cid = line.pos_cid;
-                        }
-                        let params = {
-                            model: 'modifier.order.line',
-                            method: 'search_read',
-                            domain: [['id', 'in', line.mod_lines]],
-                        }
-                        rpc.query(params, {async: false}).then(function(modifiers){
-                            if(modifiers && modifiers[0]){
-                                modifiers.map(function(modifier){
-                                    selected_orderline.set_modifier_line({
-                                        id: modifier.prod_mod_id[0],
-                                        price: Number(modifier.price),
-                                        product_id: modifier.product_id[0],
-                                        name:modifier.display_name,
-                                        consider: false,
-                                    }, modifier.qty);
+                        });
+                        selectedOrder.set_merge_table_ids(result.table_ids);
+                        $('span.orders.touch-scrollable .floor-button').replaceWith(QWeb.render('BackToFloorButton',{table: self.pos.table, floor:self.pos.table.floor,merged_tables:merged_tables}));
+                        $('span.orders.touch-scrollable .floor-button').click(function(){
+                            self.pos.chrome.widget.order_selector.floor_button_click_handler();
+                        });
+                    }
+                    if(result.asst_cashier_id.length > 0){
+                        selectedOrder.asst_cashier_id = result.asst_cashier_id[0];
+                    }
+                    var order_lines = self.pos.chrome.screens.orderlist.get_orderlines_from_order(result.lines);
+                    if(order_lines.length > 0){
+                        _.each(order_lines, function(line){
+                            if(line.modifier || line.combo_product_id.length > 0){
+                                return true;
+                            }
+                            var product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
+                            selectedOrder.add_product(product, {
+                                quantity: line.qty,
+                                discount: line.discount,
+                                price: line.price_unit,
+                            });
+                            var selected_orderline = selectedOrder.get_selected_orderline();
+                            if(selected_orderline){
+                                if(line.deliver){
+                                    selected_orderline.set_deliver_info(true);
+                                    if(line.delivery_product_id.length > 0){
+                                        selected_orderline.set_delivery_charges_color(true);
+                                        selected_orderline.set_delivery_charges_flag(true);
+                                        selected_orderline.set_delivery_product_id(line.delivery_product_id[0]);
+                                        selected_orderline.state = 'done';
+                                        selectedOrder.set_delivery(true);
+                                    }
+                                }
+                                if(line.tech_combo_data && line.tech_combo_data[0]){
+                                    selected_orderline.set_combo_prod_info(line.tech_combo_data);
+                                    self.pos.chrome.screens.products.order_widget.rerender_orderline(selected_orderline);
+                                }
+                                selected_orderline.state = line.state;
+                                selected_orderline.set_note(line.line_note || '');
+                                selected_orderline.set_take_away(line.is_takeaway ? true : false);
+                                if(line.pos_cid){
+                                    selected_orderline.cid = line.pos_cid;
+                                }
+                                var params = {
+                                    model: 'modifier.order.line',
+                                    method: 'search_read',
+                                    domain: [['id', 'in', line.mod_lines]],
+                                }
+                                rpc.query(params, {async: false}).then(function(modifiers){
+                                    if(modifiers && modifiers[0]){
+                                        modifiers.map(function(modifier){
+                                            selected_orderline.set_modifier_line({
+                                                   id: modifier.prod_mod_id[0],
+                                                   price: Number(modifier.price),
+                                                   product_id: modifier.product_id[0],
+                                                   name:modifier.display_name,
+                                                   consider: false,
+                                               }, modifier.qty);
+                                        });
+                                    }
                                 });
                             }
                         });
+                        if(selectedOrder.get_delivery()){
+                            selectedOrder.set_is_delivery(true);
+                            selectedOrder.set_delivery_date(result.delivery_date);
+                            selectedOrder.set_delivery_time(result.delivery_time);
+                            selectedOrder.set_delivery_address(result.delivery_address);
+                            selectedOrder.set_delivery_user_id(result.delivery_user_id[0]);
+                        }
                     }
-                });
-                if(selectedOrder.get_delivery()){
-                    selectedOrder.set_is_delivery(true);
-                    selectedOrder.set_delivery_date(result.delivery_date);
-                    selectedOrder.set_delivery_time(result.delivery_time);
-                    selectedOrder.set_delivery_address(result.delivery_address);
-                    selectedOrder.set_delivery_user_id(result.delivery_user_id[0]);
-                }
-            }
 //	            }
-            selectedOrder.name = result.pos_reference;
-            self.chrome.screens.products.order_widget.renderElement();
-            self.gui.show_screen('products');
+                selectedOrder.name = result.pos_reference;
+                self.chrome.screens.products.order_widget.renderElement();
+                self.gui.show_screen('products');
 //            }
         },
         search_order: function(event){
-            let self = this;
-            let search_timeout = null;
+            var self = this;
+            var search_timeout = null;
             clearTimeout(search_timeout);
-            let query = $(event.currentTarget).val();
+            var query = $(event.currentTarget).val();
             search_timeout = setTimeout(function(){
                 self.perform_search(query,event.which === 13);
             },70);
         },
         perform_search: function(query, associate_result){
-            let self = this;
+            var self = this;
             if(query){
-                let orders = this.pos.db.search_order(query);
+                var orders = this.pos.db.search_order(query);
                 if ( associate_result && orders.length === 1){
                     this.gui.back();
                 }
                 this.render_list(orders);
             }else{
-                let orders = self.pos.get('pos_order_list');
+                var orders = self.pos.get('pos_order_list');
                 this.render_list(orders);
             }
         },
         clear_search: function(){
-            let orders = this.pos.get('pos_order_list');
+            var orders = this.pos.get('pos_order_list');
             this.render_list(orders);
             this.$('.searchbox input')[0].value = '';
             this.$('.searchbox input').focus();
         },
         check_filters: function(orders){
-            let self = this;
-            let filtered_orders = false;
+            var self = this;
+            var filtered_orders = false;
             if(self.filter !== "" && self.filter !== "all"){
                 filtered_orders = $.grep(orders,function(order){
                     return order.state === self.filter;
@@ -6230,12 +6237,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return filtered_orders || orders;
         },
         check_date_filter: function(orders){
-            let self = this;
-            let date_filtered_orders = [];
+            var self = this;
+            var date_filtered_orders = [];
             if(self.date !== "" && self.date !== "all"){
 
-                for (let i=0; i<orders.length;i++){
-                    let date_order = $.datepicker.formatDate("yy-mm-dd",new Date(orders[i].date_order));
+                for (var i=0; i<orders.length;i++){
+                    var date_order = $.datepicker.formatDate("yy-mm-dd",new Date(orders[i].date_order));
                     if(self.date === date_order){
                         date_filtered_orders.push(orders[i]);
                     }
@@ -6244,20 +6251,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return date_filtered_orders;
         },
         render_list: function(orders){
-            let self = this;
+            var self = this;
             if(orders){
-                let contents = this.$el[0].querySelector('.order-list-contents');
+                var contents = this.$el[0].querySelector('.order-list-contents');
                 contents.innerHTML = "";
-                let temp = [];
+                var temp = [];
                 orders = self.check_filters(orders);
                 if(self.date !== "" && self.date !== "all"){
                     orders = self.check_date_filter(orders);
                 }
-                for(let i = 0, len = Math.min(orders.length,1000); i < len; i++){
-                    let order    = orders[i];
-                    let orderlines = [];
+                for(var i = 0, len = Math.min(orders.length,1000); i < len; i++){
+                    var order    = orders[i];
+                    var orderlines = [];
                     order.amount_total = parseFloat(order.amount_total).toFixed(2);
-                    let table_ids_str = '';
+                    var table_ids_str = '';
                     if(order && order.table_ids[0]){
                         order.table_ids.map(function(table_id){
                             if(self.pos.tables_by_id[table_id]){
@@ -6266,8 +6273,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         });
                     }
                     order['table_ids_str'] = table_ids_str.replace(/,\s*$/, "");
-                    let clientline_html = QWeb.render('OrderlistLine',{widget: this, order:order, orderlines:orderlines});
-                    let clientline = document.createElement('tbody');
+                    var clientline_html = QWeb.render('OrderlistLine',{widget: this, order:order, orderlines:orderlines});
+                    var clientline = document.createElement('tbody');
                     clientline.innerHTML = clientline_html;
                     clientline = clientline.childNodes[1];
                     contents.appendChild(clientline);
@@ -6282,14 +6289,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         reload_orders: function(){
-            let self = this;
-            let orders=self.pos.get('pos_order_list');
+            var self = this;
+            var orders=self.pos.get('pos_order_list');
             this.render_list(orders);
         },
         reloading_orders: function(){
-            let self = this;
-            let date = new Date();
-            let params = {
+            var self = this;
+            var date = new Date();
+            var params = {
                 model: 'pos.order',
                 method: 'ac_pos_search_read',
                 args: [{'domain': this.pos.domain_as_args}],
@@ -6302,24 +6309,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             }).fail(function (type, error){
                 if( error.data && error.code === 200 ){    // Business Logic Error, not a connection problem
-                    self.gui.show_popup('error-traceback',{
+                   self.gui.show_popup('error-traceback',{
                         'title': error.data.message,
                         'body':  error.data.debug
-                    });
+                   });
                 } else {
                     self.pos.db.notification('danger','Connection lost');
                 }
             });
         },
         edit_pos_order: function(event){
-            let self = this;
-            let order_id = parseInt($(event.currentTarget).data('id'));
-            let result = self.pos.db.get_order_by_id(order_id);
-            let selectedOrder = this.pos.get_order();
+            var self = this;
+            var order_id = parseInt($(event.currentTarget).data('id'));
+            var result = self.pos.db.get_order_by_id(order_id);
+            var selectedOrder = this.pos.get_order();
             self.pos.chrome.screens.orderlist.clear_cart();
             selectedOrder.set_client(null);
             if (result.partner_id && result.partner_id[0]) {
-                let partner = self.pos.db.get_partner_by_id(result.partner_id[0]);
+                var partner = self.pos.db.get_partner_by_id(result.partner_id[0]);
                 if(partner){
                     selectedOrder.set_client(partner);
                 }
@@ -6329,10 +6336,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             selectedOrder.set_sequence(result.name);
             if(result.lines.length > 0){
                 if(result.table_ids && result.table_ids.length > 0){
-                    let merged_tables = [];
+                    var merged_tables = [];
                     result.table_ids.map(function(id){
-                        if(self.pos.table.id !== id){
-                            let table_name = self.pos.tables_by_id[id];
+                        if(self.pos.table.id != id){
+                            var table_name = self.pos.tables_by_id[id];
                             if(table_name && table_name.name){
                                 merged_tables.push(table_name);
                                 table_name.parent_linked_table = self.pos.table;
@@ -6348,19 +6355,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 if(result.asst_cashier_id.length > 0){
                     selectedOrder.asst_cashier_id = result.asst_cashier_id[0];
                 }
-                let order_lines = self.screens.orderlist.get_orderlines_from_order(result.lines);
+                var order_lines = self.screens.orderlist.get_orderlines_from_order(result.lines);
                 if(order_lines.length > 0){
                     _.each(order_lines, function(line){
                         if(line.modifier || line.combo_product_id.length > 0){
                             return true;
                         }
-                        let product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
+                        var product = self.pos.db.get_product_by_id(Number(line.product_id[0]));
                         selectedOrder.add_product(product, {
                             quantity: line.qty,
                             discount: line.discount,
                             price: line.price_unit,
                         });
-                        let selected_orderline = selectedOrder.get_selected_orderline();
+                        var selected_orderline = selectedOrder.get_selected_orderline();
                         if(selected_orderline){
                             if(line.deliver){
                                 selected_orderline.set_deliver_info(true);
@@ -6378,11 +6385,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             }
                             selected_orderline.state = line.state;
                             selected_orderline.set_note(line.line_note || '');
-                            selected_orderline.set_take_away(!!line.is_takeaway);
+                            selected_orderline.set_take_away(line.is_takeaway ? true : false);
                             if(line.pos_cid){
                                 selected_orderline.cid = line.pos_cid;
                             }
-                            let params = {
+                            var params = {
                                 model: 'modifier.order.line',
                                 method: 'search_read',
                                 domain: [['id', 'in', line.mod_lines]],
@@ -6391,12 +6398,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 if(modifiers && modifiers[0]){
                                     modifiers.map(function(modifier){
                                         selected_orderline.set_modifier_line({
-                                            id: modifier.prod_mod_id[0],
-                                            price: Number(modifier.price),
-                                            product_id: modifier.product_id[0],
-                                            name:modifier.display_name,
-                                            consider: false,
-                                        }, modifier.qty);
+                                               id: modifier.prod_mod_id[0],
+                                               price: Number(modifier.price),
+                                               product_id: modifier.product_id[0],
+                                               name:modifier.display_name,
+                                               consider: false,
+                                           }, modifier.qty);
                                     });
                                 }
                             });
@@ -6416,34 +6423,34 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.gui.show_screen('products');
         },
         renderElement: function(){
-            let self = this;
+            var self = this;
             self._super();
             self.el.querySelector('.button.reload').addEventListener('click',this.reload_btn);
         },
     });
     gui.define_screen({name:'orderlist', widget: OrderListScreenWidget});
 
-    let GraphScreenWidget = screens.ScreenWidget.extend({
+    var GraphScreenWidget = screens.ScreenWidget.extend({
         template: 'GraphScreenWidget',
         init: function(parent, options){
             this._super(parent, options);
             this.bar_chart = function(){
-                let self = this;
-                let order = self.pos.get_order();
-                let data = order.get_result();
-                let dps = [];
+                var self = this;
+                var order = self.pos.get_order();
+                var data = order.get_result();
+                var dps = [];
                 if(data){
-                    for(let i=0;i<data.length;i++){
+                    for(var i=0;i<data.length;i++){
                         dps.push({label: data[i][0], y: data[i][1]});
                     }
                 }
-                let symbol = false;
+                var symbol = false;
                 if($('#top_products').hasClass('menu_selected')){
                     symbol = 'Qty-#######.00';
                 }else{
                     symbol = self.pos.currency.symbol ? self.pos.currency.symbol+"#######.00" : false;
                 }
-                let chart = new CanvasJS.Chart("chartContainer",{
+                var chart = new CanvasJS.Chart("chartContainer",{
                     width: data && data.length > 10 ? 1200 : 0,
                     dataPointMaxWidth:25,
                     zoomEnabled:true,
@@ -6472,57 +6479,61 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 chart.render();
             };
             this.pie_chart = function(){
-                let order = this.pos.get_order();
-                let data = order.get_result();
-                let dps = [];
-                for(let i=0;i<data.length;i++){
+                var order = this.pos.get_order();
+                var data = order.get_result();
+                var dps = [];
+                for(var i=0;i<data.length;i++){
                     dps.push({y: data[i][1], indexLabel: data[i][0]});
                 }
-                let chart = new CanvasJS.Chart("chartContainer",
-                    {
-                        exportFileName: $('a.menu_selected').text(),
-                        exportEnabled: true,
-                        zoomEnabled:true,
-                        theme: "theme2",
-                        title:{
-                            text: $('a.menu_selected').text()
-                        },
-                        data: [{
-                            type: "pie",
-                            showInLegend: true,
-                            toolTipContent: "{y} - #percent %",
-                            yValueFormatString: "",
-                            legendText: "{indexLabel}",
-                            dataPoints: dps
-                        }]
-                    });
+                var chart = new CanvasJS.Chart("chartContainer",
+                {
+                    exportFileName: $('a.menu_selected').text(),
+                    exportEnabled: true,
+                    zoomEnabled:true,
+                    theme: "theme2",
+                    title:{
+                        text: $('a.menu_selected').text()
+                    },
+                    data: [{
+                        type: "pie",
+                        showInLegend: true,
+                        toolTipContent: "{y} - #percent %",
+                        yValueFormatString: "",
+                        legendText: "{indexLabel}",
+                        dataPoints: dps
+                    }]
+                });
                 chart.render();
             };
         },
         filter:"all",
         date: "all",
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             $('#duration_selection').prop('selectedIndex',1);
             $("#start_date").val('');
             $("#end_date").val('');
-            let from = moment(new Date()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
-            let to = moment(new Date()).locale('en').format('YYYY-MM-DD HH:mm:ss');
-            let active_chart = $('span.selected_chart').attr('id');
-            let category = $('a.menu_selected').attr('id');
-            let limit = $('#limit_selection').val() || 10;
+            var from = false;
+            var to = false;
+//        	if($('#duration_selection').val() != "nofilter"){
+                from = moment(new Date()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
+                to = moment(new Date()).locale('en').format('YYYY-MM-DD HH:mm:ss');
+//        	}
+            var active_chart = $('span.selected_chart').attr('id');
+            var category = $('a.menu_selected').attr('id');
+            var limit = $('#limit_selection').val() || 10;
             self.graph_data(from, to, active_chart, category, limit);
             self.bar_chart();
         },
         start: function(){
-            let self = this;
+            var self = this;
             this._super();
-            let active_chart = $('span.selected_chart').attr('id');
-            let category = $('a.menu_selected').attr('id');
-            let from;
-            let to;
-            let limit = $('#limit_selection').val() || 10;
+            var active_chart = $('span.selected_chart').attr('id');
+            var category = $('a.menu_selected').attr('id');
+            var from;
+            var to;
+            var limit = $('#limit_selection').val() || 10;
             $("#start_date").datepicker({
                 dateFormat: 'yy-mm-dd',
                 onSelect: function(dateText, inst) {
@@ -6731,7 +6742,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
             /*Bar Chart*/
             this.$('#bar_chart').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if($('#bar_chart').hasClass('selected_chart')){
 //            		$('#bar_chart').removeClass('selected_chart');
 //            		$('#chartContainer').html('');
@@ -6760,22 +6771,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         graph_data: function(from, to, active_chart, category, limit){
-            let self = this;
-            let current_session_report = self.pos.config.current_session_report;
-            let records = rpc.query({
+            var self = this;
+            var current_session_report = self.pos.config.current_session_report;
+            var records = rpc.query({
                 model: 'pos.order',
                 method: 'graph_data',
                 args: [from, to, category, limit, self.pos.pos_session.id, current_session_report],
             });
             records.then(function(result){
-                let order = self.pos.get_order();
-                let dummy_product_ids = self.pos.db.get_dummy_product_ids();
+                var order = self.pos.get_order();
+                var dummy_product_ids = self.pos.db.get_dummy_product_ids();
                 if(result){
                     if(result.length > 0){
-                        if(category === "top_products"){
-                            let new_data = [];
+                        if(category == "top_products"){
+                            var new_data = [];
                             result.map(function(data){
-                                if(($.inArray(data[1], dummy_product_ids) === -1)){
+                                if(($.inArray(data[1], dummy_product_ids) == -1)){
                                     new_data.push(data);
                                 }
                             });
@@ -6789,10 +6800,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     order.set_result(0);
                 }
-                if(active_chart === "bar_chart"){
+                if(active_chart == "bar_chart"){
                     self.bar_chart();
                 }
-                if(active_chart === "pie_chart"){
+                if(active_chart == "pie_chart"){
                     self.pie_chart();
                 }
             }).fail(function(error, event) {
@@ -6803,37 +6814,37 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         get_graph_information: function(){
-            let self = this;
-            let time_period = $('#duration_selection').val();
-            let active_chart = $('span.selected_chart').attr('id');
-            let category = $('a.menu_selected').attr('id');
-            let limit = $('#limit_selection').val() || 10;
-            if(time_period === "today"){
-                let from = moment(new Date()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
-                let to = moment(new Date()).locale('en').format('YYYY-MM-DD HH:mm:ss');
+            var self = this;
+            var time_period = $('#duration_selection').val();
+            var active_chart = $('span.selected_chart').attr('id');
+            var category = $('a.menu_selected').attr('id');
+            var limit = $('#limit_selection').val() || 10;
+            if(time_period == "today"){
+                var from = moment(new Date()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
+                var to = moment(new Date()).locale('en').format('YYYY-MM-DD HH:mm:ss');
                 self.graph_data(from, to, active_chart, category, limit);
-            }else if(time_period === "week"){
-                let from = moment(moment().startOf('week').toDate()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
-                let to   = moment(moment().endOf('week').toDate()).locale('en').format('YYYY-MM-DD')+" 23:59:59";
+            }else if(time_period == "week"){
+                var from = moment(moment().startOf('week').toDate()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
+                var to   = moment(moment().endOf('week').toDate()).locale('en').format('YYYY-MM-DD')+" 23:59:59";
                 self.graph_data(from, to, active_chart, category, limit);
-            }else if(time_period === "month"){
-                let from = moment(moment().startOf('month').toDate()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
-                let to   = moment(moment().endOf('month').toDate()).locale('en').format('YYYY-MM-DD')+" 23:59:59";
+            }else if(time_period == "month"){
+                var from = moment(moment().startOf('month').toDate()).locale('en').format('YYYY-MM-DD')+" 00:00:00";
+                var to   = moment(moment().endOf('month').toDate()).locale('en').format('YYYY-MM-DD')+" 23:59:59";
                 self.graph_data(from, to, active_chart, category, limit);
             }else{
-                let from = $('#start_date').val() ? $('#start_date').val() + " 00:00:00" : false;
-                let to   = $('#end_date').val() ? $('#end_date').val() + " 23:59:59" : false;
+                var from = $('#start_date').val() ? $('#start_date').val() + " 00:00:00" : false;
+                var to   = $('#end_date').val() ? $('#end_date').val() + " 23:59:59" : false;
                 self.graph_data(from, to, active_chart, category, limit);
             }
         },
     });
     gui.define_screen({name:'graph_view', widget: GraphScreenWidget});
 
-    let GiftCardListScreenWidget = screens.ScreenWidget.extend({
+    var GiftCardListScreenWidget = screens.ScreenWidget.extend({
         template: 'GiftCardListScreenWidget',
 
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.reload_btn = function(){
                 $('.gift_reload').toggleClass('rotate', 'rotate-reset');
@@ -6869,11 +6880,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         click_recharge: function(event){
-            let self = this;
-            let card_id = parseInt($(event.currentTarget).data('id'));
-            let result = self.pos.db.get_card_by_id(card_id);
-            let order = self.pos.get_order();
-            let client = order.get_client();
+            var self = this;
+            var card_id = parseInt($(event.currentTarget).data('id'));
+            var result = self.pos.db.get_card_by_id(card_id);
+            var order = self.pos.get_order();
+            var client = order.get_client();
             self.gui.show_popup('recharge_card_popup',{
                 'card_id':result.id,
                 'card_no':result.card_no,
@@ -6883,28 +6894,28 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         click_edit_giftcard: function(event){
-            let self  = this;
-            let card_id = parseInt($(event.currentTarget).data('id'));
-            let result = self.pos.db.get_card_by_id(card_id);
+            var self  = this;
+            var card_id = parseInt($(event.currentTarget).data('id'));
+            var result = self.pos.db.get_card_by_id(card_id);
             if (result) {
                 self.gui.show_popup('edit_card_popup',{'card_id':card_id,'card_no':result.card_no,'expire_date':result.expire_date});
             }
         },
 
         click_exchange: function(event){
-            let self = this;
-            let card_id = parseInt($(event.currentTarget).data('id'));
-            let result = self.pos.db.get_card_by_id(card_id);
+            var self = this;
+            var card_id = parseInt($(event.currentTarget).data('id'));
+            var result = self.pos.db.get_card_by_id(card_id);
             if (result) {
                 self.gui.show_popup('exchange_card_popup',{'card_id':card_id,'card_no':result.card_no});
             }
         },
 
         search_order: function(event){
-            let self = this;
-            let search_timeout = null;
+            var self = this;
+            var search_timeout = null;
             clearTimeout(search_timeout);
-            let query = $(event.currentTarget).val();
+            var query = $(event.currentTarget).val();
             search_timeout = setTimeout(function(){
                 self.perform_search(query,event.which === 13);
             },70);
@@ -6915,7 +6926,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             this.reload_gift_cards();
             this.reloading_gift_cards();
@@ -6925,7 +6936,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 closeText: 'Clear',
                 showButtonPanel: true,
                 onSelect: function (dateText, inst) {
-                    let date = $(this).val();
+                    var date = $(this).val();
                     if (date){
                         self.date = date;
                         self.render_list(self.get_gift_cards());
@@ -6937,21 +6948,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         self.render_list(self.get_gift_cards());
                     }
                 }
-            }).focus(function(){
-                let thisCalendar = $(this);
+           }).focus(function(){
+                var thisCalendar = $(this);
                 $('.ui-datepicker-close').click(function() {
                     thisCalendar.val('');
                     self.date = "all";
                     self.render_list(self.get_gift_cards());
                 });
-            });
-            $('.expiry_date_filter').datepicker({
+           });
+           $('.expiry_date_filter').datepicker({
                 dateFormat: 'yy-mm-dd',
                 autoclose: true,
                 closeText: 'Clear',
                 showButtonPanel: true,
                 onSelect: function (dateText, inst) {
-                    let date = $(this).val();
+                    var date = $(this).val();
                     if (date){
                         self.expire_date = date;
                         self.render_list(self.get_gift_cards());
@@ -6963,20 +6974,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         self.render_list(self.get_gift_cards());
                     }
                 }
-            }).focus(function(){
-                let thisCalendar = $(this);
+           }).focus(function(){
+                var thisCalendar = $(this);
                 $('.ui-datepicker-close').click(function() {
                     thisCalendar.val('');
                     self.expire_date = "all";
                     self.render_list(self.get_gift_cards());
                 });
-            });
+           });
         },
 
         perform_search: function(query, associate_result){
-            let self = this;
+            var self = this;
             if(query){
-                let gift_cards = self.pos.db.search_gift_card(query);
+                var gift_cards = self.pos.db.search_gift_card(query);
                 if ( associate_result && gift_cards.length === 1){
                     this.gui.back();
                 }
@@ -6993,42 +7004,42 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         render_list: function(gift_cards){
-            let self = this;
-            let contents = this.$el[0].querySelector('.giftcard-list-contents');
+            var self = this;
+            var contents = this.$el[0].querySelector('.giftcard-list-contents');
             contents.innerHTML = "";
-            let temp = [];
+            var temp = [];
             if(self.filter !== "" && self.filter !== "all"){
                 gift_cards = $.grep(gift_cards,function(gift_card){
                     return gift_card.state === self.filter;
                 });
             }
             if(self.date !== "" && self.date !== "all"){
-                let x = [];
-                for (let i=0; i<gift_cards.length;i++){
-                    let date_expiry = gift_cards[i].expire_date;
-                    let date_issue = gift_cards[i].issue_date;
-                    if(self.date === date_issue){
+                var x = [];
+                for (var i=0; i<gift_cards.length;i++){
+                    var date_expiry = gift_cards[i].expire_date;
+                    var date_issue = gift_cards[i].issue_date;
+                    if(self.date == date_issue){
                         x.push(gift_cards[i]);
                     }
                 }
                 gift_cards = x;
             }
             if(self.expire_date !== "" && self.expire_date !== "all"){
-                let y = [];
-                for (let i=0; i<gift_cards.length;i++){
-                    let date_expiry = gift_cards[i].expire_date;
-                    let date_issue = gift_cards[i].issue_date;
-                    if(self.expire_date === date_expiry){
+                var y = [];
+                for (var i=0; i<gift_cards.length;i++){
+                    var date_expiry = gift_cards[i].expire_date;
+                    var date_issue = gift_cards[i].issue_date;
+                    if(self.expire_date == date_expiry){
                         y.push(gift_cards[i]);
                     }
                 }
                 gift_cards = y;
             }
-            for(let i = 0, len = Math.min(gift_cards.length,1000); i < len; i++){
-                let gift_card    = gift_cards[i];
-                gift_card.amount = parseFloat(gift_card.amount).toFixed(2);
-                let clientline_html = QWeb.render('GiftCardlistLine',{widget: this, gift_card:gift_card});
-                let clientline = document.createElement('tbody');
+            for(var i = 0, len = Math.min(gift_cards.length,1000); i < len; i++){
+                var gift_card    = gift_cards[i];
+                gift_card.amount = parseFloat(gift_card.amount).toFixed(2); 
+                var clientline_html = QWeb.render('GiftCardlistLine',{widget: this, gift_card:gift_card});
+                var clientline = document.createElement('tbody');
                 clientline.innerHTML = clientline_html;
                 clientline = clientline.childNodes[1];
                 contents.appendChild(clientline);
@@ -7043,13 +7054,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         reload_gift_cards: function(){
-            let self = this;
+            var self = this;
             this.render_list(self.get_gift_cards());
         },
 
         reloading_gift_cards: function(){
-            let self = this;
-            let params = {
+            var self = this;
+            var params = {
                 model: 'aspl.gift.card',
                 method: 'search_read',
                 domain: [['is_active', '=', true]],
@@ -7071,7 +7082,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.db.notification('danger','Connection lost');
                 }
                 event.preventDefault();
-                let gift_cards = self.pos.get('gift_card_order_list');
+                var gift_cards = self.pos.get('gift_card_order_list');
                 console.error('Failed to send gift card:', gift_cards);
                 self.reload_gift_cards();
                 return gift_cards
@@ -7080,11 +7091,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
     gui.define_screen({name:'giftcardlistscreen', widget: GiftCardListScreenWidget});
 
-    let GiftVoucherListScreenWidget = screens.ScreenWidget.extend({
+    var GiftVoucherListScreenWidget = screens.ScreenWidget.extend({
         template: 'GiftVoucherListScreenWidget',
 
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.reload_btn = function(){
                 $('.voucher_reload').toggleClass('rotate', 'rotate-reset');
@@ -7099,9 +7110,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         date: "all",
 
         start: function(){
-            let self = this;
+            var self = this;
             this._super();
-            let gift_vouchers = self.pos.get('gift_voucher_list');
+            var gift_vouchers = self.pos.get('gift_voucher_list');
             this.render_list(gift_vouchers);
             this.$('.back').click(function(){
                 self.gui.back();
@@ -7111,8 +7122,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
             $('input#search_voucher_expiry_date').datepicker({
                 'dateFormat': 'yy-mm-dd',
-                'autoclose': true,
-                onSelect: function(dateText) {
+               'autoclose': true,
+               onSelect: function(dateText) {
                     if(dateText === ""){
                         self.date = "all"
                     }else {
@@ -7123,13 +7134,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
 
             //searchbox
-            let search_timeout = null;
+            var search_timeout = null;
             if(this.pos.config.iface_vkeyboard && self.chrome.widget.keyboard){
                 self.chrome.widget.keyboard.connect(this.$('.searchbox.voucher_search input'));
             }
             this.$('.searchbox.voucher_search input').on('keyup',function(event){
                 clearTimeout(search_timeout);
-                let query = this.value;
+                var query = this.value;
                 search_timeout = setTimeout(function(){
                     self.perform_search(query,event.which === 13);
                 },70);
@@ -7145,21 +7156,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         perform_search: function(query, associate_result){
-            let self = this;
+            var self = this;
             if(query){
-                let gift_vouchers = self.pos.db.search_gift_vouchers(query);
+                var gift_vouchers = self.pos.db.search_gift_vouchers(query);
                 if ( associate_result && gift_vouchers.length === 1){
                     this.gui.back();
                 }
                 this.render_list(gift_vouchers);
             }else{
-                let gift_vouchers = self.pos.get('gift_voucher_list');
+                var gift_vouchers = self.pos.get('gift_voucher_list');
                 this.render_list(gift_vouchers);
             }
         },
 
         clear_search: function(){
-            let gift_cards = this.pos.get('gift_voucher_list');
+            var gift_cards = this.pos.get('gift_voucher_list');
             this.render_list(gift_cards);
             this.$('.searchbox.voucher_search input')[0].value = '';
             this.$('.searchbox.voucher_search input').focus();
@@ -7169,30 +7180,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(!gift_vouchers){
                 return;
             }
-            let self = this;
-            let contents = this.$el[0].querySelector('.giftvoucher-list-contents');
+            var self = this;
+            var contents = this.$el[0].querySelector('.giftvoucher-list-contents');
             contents.innerHTML = "";
-            let temp = [];
+            var temp = [];
             if(self.filter !== "" && self.filter !== "all"){
                 gift_vouchers = $.grep(gift_vouchers,function(gift_voucher){
                     return gift_vouchers.state === self.filter;
                 });
             }
             if(self.date !== "" && self.date !== "all"){
-                let x = [];
-                for (let i=0; i<gift_vouchers.length;i++){
-                    let date_expiry = gift_vouchers[i].expiry_date;
+                var x = [];
+                for (var i=0; i<gift_vouchers.length;i++){
+                    var date_expiry = gift_vouchers[i].expiry_date;
                     if(self.date === date_expiry){
                         x.push(gift_vouchers[i]);
                     }
                 }
                 gift_vouchers = x;
             }
-            for(let i = 0, len = Math.min(gift_vouchers.length,1000); i < len; i++){
-                let gift_voucher    = gift_vouchers[i];
+            for(var i = 0, len = Math.min(gift_vouchers.length,1000); i < len; i++){
+                var gift_voucher    = gift_vouchers[i];
                 gift_voucher.amount = parseFloat(gift_voucher.amount).toFixed(2);
-                let clientline_html = QWeb.render('GiftVoucherlistLine',{widget: this, gift_voucher:gift_voucher});
-                let clientline = document.createElement('tbody');
+                var clientline_html = QWeb.render('GiftVoucherlistLine',{widget: this, gift_voucher:gift_voucher});
+                var clientline = document.createElement('tbody');
                 clientline.innerHTML = clientline_html;
                 clientline = clientline.childNodes[1];
                 contents.appendChild(clientline);
@@ -7207,14 +7218,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         reload_gift_vouchers: function(){
-            let self = this;
-            let gift_vouchers = self.pos.get('gift_voucher_list');
+            var self = this;
+            var gift_vouchers = self.pos.get('gift_voucher_list');
             this.render_list(gift_vouchers);
         },
 
         reloading_gift_vouchers: function(){
-            let self = this;
-            let voucher_params = {
+            var self = this;
+            var voucher_params = {
                 model: 'aspl.gift.voucher',
                 method: 'search_read',
                 args: [],
@@ -7235,7 +7246,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.db.notification('danger','Connection lost');
                 }
                 event.preventDefault();
-                let gift_vouchers = self.pos.get('gift_voucher_list');
+                var gift_vouchers = self.pos.get('gift_voucher_list');
                 console.error('Failed to send orders:', gift_cards);
                 self.reload_gift_vouchers();
                 return gift_vouchers
@@ -7243,33 +7254,33 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         renderElement: function(){
-            let self = this;
+            var self = this;
             self._super();
             self.el.querySelector('.button.reload').addEventListener('click',this.reload_btn);
         },
     });
     gui.define_screen({name:'voucherlistscreen', widget: GiftVoucherListScreenWidget});
 
-    let ModifierWidget = PosBaseWidget.extend({
+    var ModifierWidget = PosBaseWidget.extend({
         template: 'ModifierWidget',
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent,options);
             this.modifiers = [];
             this.add_modifier = function(){
-                let order = self.pos.get_order();
-                let selected_modifier_id = $(this).data('modifier-id');
+                var order = self.pos.get_order();
+                var selected_modifier_id = $(this).data('modifier-id');
                 if(order.get_selected_orderline() && selected_modifier_id){
-                    let selected_line = order.get_selected_orderline();
-                    let selected_modifier = self.pos.db.get_modifier_by_id(selected_modifier_id);
+                    var selected_line = order.get_selected_orderline();
+                    var selected_modifier = self.pos.db.get_modifier_by_id(selected_modifier_id);
                     if(selected_modifier){
-                        let line_price = 0.00;
-                        let line_qty = 0;
+                        var line_price = 0.00;
+                        var line_qty = 0;
                         if(selected_line.get_quantity() > 1){
                             line_price = selected_line.get_unit_price();
                             line_qty = selected_line.get_quantity();
                         }
-                        let qty = order.get_remove_toggle() ? -1 : 1;
+                        var qty = order.get_remove_toggle() ? -1 : 1;
                         selected_line.set_modifier_line({
                             id: selected_modifier.id,
                             price: selected_modifier.price,
@@ -7295,7 +7306,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             };
             this.remove_toggle = function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 order.set_remove_toggle(!order.get_remove_toggle());
                 if(order.get_remove_toggle()){
                     $(this).addClass('mode_selected');
@@ -7304,7 +7315,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             };
             this.remove_all = function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 if(order.get_selected_orderline()){
                     order.get_selected_orderline().remove_modifier_line();
                     parent.order_widget.orderline_change(order.get_selected_orderline());
@@ -7313,16 +7324,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         replace: function($target){
             this.renderElement();
-            let target = $target[0];
+            var target = $target[0];
             target.parentNode.replaceChild(this.el,target);
         },
         _get_modifiers: function(product){
-            let self = this;
+            var self = this;
             this.modifiers = [];
-            let unload_modifiers = '';
+            var unload_modifiers = '';
             if(product && product.modifier_line){
                 _.each(product.modifier_line, function(modifier_id){
-                    let modifier = self.pos.db.get_modifier_by_id(modifier_id);
+                    var modifier = self.pos.db.get_modifier_by_id(modifier_id);
                     if(modifier){
                         if(self.pos.db.get_product_by_id(modifier.product_id[0])){
                             self.modifiers.push(modifier);
@@ -7346,10 +7357,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $(this.el).addClass('oe_hidden');
         },
         renderElement: function(){
-            let self = this;
+            var self = this;
             if(self.modifiers && self.modifiers.length > 0){
-                let el_str  = QWeb.render(this.template, {widget: this, modifiers: self.modifiers});
-                let el_node = document.createElement('div');
+                var el_str  = QWeb.render(this.template, {widget: this, modifiers: self.modifiers});
+                var el_node = document.createElement('div');
 
                 el_node.innerHTML = el_str;
                 el_node = el_node.childNodes[1];
@@ -7358,9 +7369,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     this.el.parentNode.replaceChild(el_node,this.el);
                 }
                 this.el = el_node;
-                let modifier_button = this.el.querySelectorAll('.modifier_button');
+                var modifier_button = this.el.querySelectorAll('.modifier_button');
                 if(modifier_button && modifier_button.length > 0){
-                    for(let i = 0; i < modifier_button.length; i++){
+                    for(var i = 0; i < modifier_button.length; i++){
                         modifier_button[i].addEventListener('click', this.add_modifier);
                     }
                 }
@@ -7376,17 +7387,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return window.location.origin + '/web/image?model=product.modifier&field=icon&id='+modifier.id;
         },
         get_product_name: function(modifier){
-            let product_tmpl_id = modifier.product_id[0];
-            let product_product = this.pos.db.get_product_by_tmpl_id(product_tmpl_id);
+            var product_tmpl_id = modifier.product_id[0];
+            var product_product = this.pos.db.get_product_by_tmpl_id(product_tmpl_id);
         },
     });
 
     screens.NumpadWidget.include({
         template: 'NumpadWidget01_9',
         start: function() {
-            let self = this;
+            var self = this;
             this._super();
-            let customer_display = this.pos.config.customer_display;
+            var customer_display = this.pos.config.customer_display;
             this.$(".input-button").click(function(){
                 if(customer_display){
                     self.pos.get_order().mirror_image_data();
@@ -7399,21 +7410,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         clickChangeMode: function(event) {
-            let newMode = event.currentTarget.attributes['data-mode'].nodeValue;
-            if(newMode === "price" || newMode === "discount"){
+            var newMode = event.currentTarget.attributes['data-mode'].nodeValue;
+            if(newMode == "price" || newMode == "discount"){
                 this.user_access(newMode);
-
+                return;
             }else{
                 return this.state.changeMode(newMode);
             }
         },
         user_access: function(newMode){
-            let self = this;
+            var self = this;
             if(self.pos.config.authentication_user_ids && self.pos.config.authentication_user_ids.length > 0) {
-                let users_pass = [];
+                var users_pass = [];
                 _.each(self.pos.users, function (user) {
                     self.pos.config.authentication_user_ids.map(function (user_id) {
-                        if (user.id === user_id) {
+                        if (user.id == user_id) {
                             if (user.pos_security_pin) {
                                 users_pass.push(user.pos_security_pin);
                             }
@@ -7426,15 +7437,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         ask_password: function(password, newMode) {
-            let self = this;
-            let ret = new $.Deferred();
+            var self = this;
+            var ret = new $.Deferred();
             if (password) {
                 this.gui.show_popup('password',{
                     'title': _t('Password ?'),
                     confirm: function(pw) {
-                        let flag = false;
-                        for (let i = 0; i < password.length; i++){
-                            if(password[i] === pw) {
+                        var flag = false;
+                        for (var i = 0; i < password.length; i++){
+                            if(password[i] == pw) {
                                 flag = true;
                             }
                         }
@@ -7449,7 +7460,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     },
                     cancel: function() {
                         if(self.gui.current_screen && self.gui.current_screen.order_widget &&
-                            self.gui.current_screen.order_widget.numpad_state){
+                        self.gui.current_screen.order_widget.numpad_state){
                             self.gui.current_screen.order_widget.numpad_state.reset();
                         }
                     }
@@ -7460,9 +7471,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return ret;
         },
         clickDeleteLastChar: function() {
-            let order = this.pos.get_order();
-            let selected_orderline = order.get_selected_orderline() || false;
-            if(selected_orderline && selected_orderline.get_quantity() === 0){
+            var order = this.pos.get_order();
+            var selected_orderline = order.get_selected_orderline() || false;
+            if(selected_orderline && selected_orderline.get_quantity() == 0){
                 if(selected_orderline && selected_orderline.get_product() && selected_orderline.get_product().modifier_line.length > 0){
                     this.pos.chrome.screens.products.modifier_widget.hide_modifiers();
                 }
@@ -7471,22 +7482,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
 
-    let OutStockProductsScreenWidget = screens.ScreenWidget.extend({
+    var OutStockProductsScreenWidget = screens.ScreenWidget.extend({
         template: 'OutStockProductsScreenWidget',
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.category = 0;
             self.product_click = function(){
-                let prodict_id = $(this).data('product-id');
+                var prodict_id = $(this).data('product-id');
                 if(prodict_id){
-                    let product = self.pos.db.get_product_by_id(prodict_id);
+                    var product = self.pos.db.get_product_by_id(prodict_id);
                     if(product){
                         if($(this).hasClass('highlight')){
                             $(this).removeClass('highlight');
-                            let removeItem = product;
+                            var removeItem = product;
                             self.selected_product = jQuery.grep(self.selected_product, function(value) {
-                                return value !== removeItem;
+                              return value != removeItem;
                             });
                         } else{
                             $(this).addClass('highlight');
@@ -7498,11 +7509,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             };
             self.clear_search_handler = function(event){
                 self.clear_search();
-                let input = $('.searchbox input');
+                var input = $('.searchbox input');
                 input.val('');
                 input.focus();
             };
-            let search_timeout  = null;
+            var search_timeout  = null;
             self.namelist = [];
             _.each(self.pos.db.get_product_namelist(),function(list){
                 self.namelist.push(list[1]);
@@ -7511,8 +7522,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $(this).autocomplete({
                     source:self.namelist,
                 });
-                let searchbox = this;
-                if(event.type === "keypress" || event.keyCode === 46 || event.keyCode === 8){
+                var searchbox = this;
+                if(event.type == "keypress" || event.keyCode === 46 || event.keyCode === 8){
                     clearTimeout(search_timeout);
                     search_timeout = setTimeout(function(){
                         self.perform_search(self.category, searchbox.value, event.which === 13);
@@ -7533,9 +7544,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.gui.show_screen('products');
         },
         click_receipt: function(){
-            let self = this;
-            let order = self.pos.get_order();
-            let list_product;
+            var self = this;
+            var order = self.pos.get_order();
+            var list_product;
             order.set_receipt_mode(true);
             if(self.selected_product.length > 0){
                 list_product = self.selected_product;
@@ -7545,8 +7556,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(list_product.length > 0){
                 order.set_product_vals(list_product)
                 if (self.pos.config.iface_print_via_proxy) {
-                    let data = order.get_product_vals();
-                    let receipt = QWeb.render('OutStockProductXmlReceipt', {
+                    var data = order.get_product_vals();
+                    var receipt = "";
+                    receipt = QWeb.render('OutStockProductXmlReceipt', {
                         widget: self,
                         pos: self.pos,
                         order: order,
@@ -7554,16 +7566,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         location_data: order.get_location_vals(),
                         product_data: data,
                     });
-                    self.pos.proxy.print_receipt(receipt);
-                    self.selected_product = [];
+                   self.pos.proxy.print_receipt(receipt);
+                   self.selected_product = [];
                 }else{
                     self.gui.show_screen('receipt');
                 }
             }
         },
         click_create_po: function(){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             if(self.selected_product.length > 0){
                 order.set_list_products(self.selected_product);
                 this.gui.show_popup('create_purchase_order_popup',{'list_products':self.selected_product});
@@ -7572,23 +7584,23 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         start: function(){
-            let self = this;
+            var self = this;
             self._super();
             this.$('.manage_kanban_view').delegate('.out-stock-main-product','click',self.product_click);
         },
         render_products: function(products){
-            let order = this.pos.get_order();
-            let product;
-            let stock_products = [];
-            let location_id = $(".select_location_type").val();
-            for(let i = 0, len = products.length; i < len; i++){
+            var order = this.pos.get_order();
+            var product;
+            var stock_products = [];
+            var location_id = $(".select_location_type").val();
+            for(var i = 0, len = products.length; i < len; i++){
                 product = products[i];
                 if(location_id){
-                    if(product && !product.is_dummy_product && product.type === 'product'){
+                    if(product && !product.is_dummy_product && product.type == 'product'){
                         stock_products.push(product);
                     }
                 }else{
-                    if(product && !product.is_dummy_product && product.type === 'product' && product.qty_available === 0){
+                    if(product && !product.is_dummy_product && product.type == 'product' && product.qty_available == 0){
                         stock_products.push(product);
                     }
                 }
@@ -7602,7 +7614,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 products: stock_products}));
         },
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             if(this.pos.config.iface_vkeyboard && this.chrome.widget.keyboard){
                 $(self.el.querySelector('.searchbox input#product_search')).focus(function(){
@@ -7612,16 +7624,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.chrome.widget.keyboard.connect($(self.el.querySelector('.searchbox input#category_search')));
                 });
             }
-            let order = this.pos.get_order();
-            let product;
+            var order = this.pos.get_order();
+            var product;
             self.selected_product = [];
             self.all_products = [];
             $(".select_location_type").val("");
 //            $('.product.main-product.header').hide();
-            let all_products = this.pos.db.get_product_by_category(0)
-            for(let i = 0, len = all_products.length; i < len; i++){
+            var all_products = this.pos.db.get_product_by_category(0)
+            for(var i = 0, len = all_products.length; i < len; i++){
                 product = all_products[i];
-                if(!product.is_dummy_product && product.type === 'product' && product.qty_available === 0){
+                if(!product.is_dummy_product && product.type == 'product' && product.qty_available == 0){
                     self.all_products.push(product)
                 }
             }
@@ -7632,39 +7644,39 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $('.searchbox input').focus();
             $('span.out_stock_category_clear').click(function(e){
                 self.clear_search();
-                let input = $('.out_stock_search_category input');
+                var input = $('.out_stock_search_category input');
                 input.val('');
                 input.focus();
             });
             $(".select_location").on('change', function() {
-                let location_id = $(".select_location_type").val();
+                var location_id = $(".select_location_type").val();
                 self.all_products = [];
                 if(location_id){
-                    let params = {
+                    var params = {
                         model: 'stock.location',
                         method: 'filter_location_wise_product',
                         args: [location_id],
                     }
                     rpc.query(params, {async: false}).then(function(res){
                         if(res){
-                            let location_name = Object.keys(res)[0];
+                            var location_name = Object.keys(res)[0];
                             order.set_location_vals(location_name)
-                            _.each(res, function(product_data) {
-                                if(product_data.length > 0){
-                                    _.each(product_data, function(product_id) {
-                                        let product_data = self.pos.db.get_product_by_id(product_id);
-                                        self.all_products.push(product_data)
-                                    });
-                                }
-                            });
-                            self.render_products(self.all_products);
+                             _.each(res, function(product_data) {
+                                    if(product_data.length > 0){
+                                        _.each(product_data, function(product_id) {
+                                            var product_data = self.pos.db.get_product_by_id(product_id);
+                                            self.all_products.push(product_data)
+                                        });
+                                    }
+                             });
+                             self.render_products(self.all_products);
                         }
                     });
                 } else{
                     order.set_location_vals();
-                    for(let i = 0, len = all_products.length; i < len; i++){
+                    for(var i = 0, len = all_products.length; i < len; i++){
                         product = all_products[i];
-                        if(!product.is_dummy_product && product.type === 'product'){
+                        if(!product.is_dummy_product && product.type == 'product'){
                             self.all_products.push(product)
                         }
                     }
@@ -7674,7 +7686,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.render_products(all_products);
         },
         renderElement: function(){
-            let self = this;
+            var self = this;
             self._super();
             this.el.querySelector('.searchbox input').addEventListener('keypress',this.search_handler);
 
@@ -7683,22 +7695,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.el.querySelector('.search-clear').addEventListener('click',this.clear_search_handler);
 
             $('.out_stock_search_category input', this.el).keyup(function(e){
-                if($(this).val() === ""){
-                    let cat = self.pos.db.get_product_by_category(self.pos.db.root_category_id);
+                if($(this).val() == ""){
+                    var cat = self.pos.db.get_product_by_category(self.pos.db.root_category_id);
                     self.render_products(cat);
                 }
-                $('.out_stock_search_category input').autocomplete({
-                    source:self.pos.db.get_category_search_list(),
-                    select: function(event, select_category){
-                        if(select_category.item && select_category.item.id){
-                            let cat = self.pos.db.get_product_by_category(select_category.item.id);
-                            self.render_products(cat);
-                            let input = $('.out_stock_search_category input');
-                            input.val(select_category.item.label);
-                            input.focus();
-                        }
-                    },
-                });
+                 $('.out_stock_search_category input').autocomplete({
+                     source:self.pos.db.get_category_search_list(),
+                     select: function(event, select_category){
+                         if(select_category.item && select_category.item.id){
+                            var cat = self.pos.db.get_product_by_category(select_category.item.id);
+                             self.render_products(cat);
+                             var input = $('.out_stock_search_category input');
+                             input.val(select_category.item.label);
+                             input.focus();
+                         }
+                     },
+                 });
                 e.stopPropagation();
             });
             $('.out_stock_search_category input', this.el).keypress(function(e){
@@ -7706,9 +7718,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     source:self.pos.db.get_category_search_list(),
                     select: function(event, select_category){
                         if(select_category.item && select_category.item.id){
-                            let cat = self.pos.db.get_product_by_category(select_category.item.id);
+                            var cat = self.pos.db.get_product_by_category(select_category.item.id);
                             self.render_products(cat);
-                            let input = $('.out_stock_search_category input');
+                            var input = $('.out_stock_search_category input');
                             input.val(select_category.item.label);
                             input.focus();
                         }
@@ -7718,13 +7730,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
 
         },
-        // empties the content of the search box
+    // empties the content of the search box
         clear_search: function(){
-            let products = this.pos.db.get_product_by_category(0);
+            var products = this.pos.db.get_product_by_category(0);
             this.render_products(products);
         },
         perform_search: function(category, query, buy_result){
-            let products = this.pos.db.get_product_by_category(category);
+            var products = this.pos.db.get_product_by_category(category);
             if(query){
                 products = this.pos.db.search_product(query);
             }
@@ -7746,94 +7758,94 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
     gui.define_screen({name:'product-out-of-stock', widget: OutStockProductsScreenWidget});
 
-    let POSDashboardGraphScreenWidget = screens.ScreenWidget.extend({
+    var POSDashboardGraphScreenWidget = screens.ScreenWidget.extend({
         template: 'POSDashboardGraphScreenWidget',
         init: function(parent, options){
             this._super(parent, options);
-            let self = this;
+            var self = this;
             this.pie_chart_journal = function(){
-                let order = this.pos.get_order();
-                let data = order.get_graph_data_journal();
-                let dps = [];
-                for(let i=0;i<data.length;i++){
+                var order = this.pos.get_order();
+                var data = order.get_graph_data_journal();
+                var dps = [];
+                for(var i=0;i<data.length;i++){
                     dps.push({label: data[i].name, y: data[i].sum});
                 }
-                let chart = new CanvasJS.Chart("chartContainer_journal",
-                    {
-                        zoomEnabled:true,
-                        theme: "theme2",
-                        data: [{
-                            type: "pie",
-                            showInLegend: true,
-                            toolTipContent: "{y} - #percent %",
-                            yValueFormatString: "",
-                            legendText: "{indexLabel}",
-                            dataPoints: dps
-                        }]
-                    });
+                var chart = new CanvasJS.Chart("chartContainer_journal",
+                {
+                    zoomEnabled:true,
+                    theme: "theme2",
+                    data: [{
+                        type: "pie",
+                        showInLegend: true,
+                        toolTipContent: "{y} - #percent %",
+                        yValueFormatString: "",
+                        legendText: "{indexLabel}",
+                        dataPoints: dps
+                    }]
+                });
                 chart.render();
             };
             this.pie_chart_top_product = function(){
-                let order = this.pos.get_order();
-                let data = order.get_top_product_result();
-                let dps = [];
+                var order = this.pos.get_order();
+                var data = order.get_top_product_result();
+                var dps = [];
                 if(data && data[0]){
-                    for(let i=0;i<data.length;i++){
+                    for(var i=0;i<data.length;i++){
                         dps.push({label: data[i].name, y: data[i].sum});
                     }
                 }
-                let chart = new CanvasJS.Chart("chartContainer_top_product",
-                    {
-                        zoomEnabled:true,
-                        theme: "theme2",
-                        data: [{
-                            type: "pie",
-                            showInLegend: true,
-                            toolTipContent: "{y} - #percent %",
-                            yValueFormatString: "",
-                            legendText: "{indexLabel}",
-                            dataPoints: dps
-                        }]
-                    });
+                var chart = new CanvasJS.Chart("chartContainer_top_product",
+                {
+                    zoomEnabled:true,
+                    theme: "theme2",
+                    data: [{
+                        type: "pie",
+                        showInLegend: true,
+                        toolTipContent: "{y} - #percent %",
+                        yValueFormatString: "",
+                        legendText: "{indexLabel}",
+                        dataPoints: dps
+                    }]
+                });
                 chart.render();
             };
             this.pie_chart_customer = function(){
-                let order = this.pos.get_order();
-                let data = order.get_customer_summary();
-                let dps = [];
+                var order = this.pos.get_order();
+                var data = order.get_customer_summary();
+                var dps = [];
                 if(data){
                     dps.push({label: "New Customer", y: data.new_client_sale});
                     dps.push({label: "Existing Customer", y: data.existing_client_sale});
                     dps.push({label: "Without Customer", y: data.without_client_sale});
                 }
-                let chart = new CanvasJS.Chart("chartContainer_based_customer",
-                    {
-                        zoomEnabled:true,
-                        theme: "theme2",
-                        data: [{
-                            type: "pie",
-                            showInLegend: true,
-                            toolTipContent: "{y} - #percent %",
-                            yValueFormatString: "",
-                            legendText: "{indexLabel}",
-                            dataPoints: dps
-                        }]
-                    });
+                var chart = new CanvasJS.Chart("chartContainer_based_customer",
+                {
+                    zoomEnabled:true,
+                    theme: "theme2",
+                    data: [{
+                        type: "pie",
+                        showInLegend: true,
+                        toolTipContent: "{y} - #percent %",
+                        yValueFormatString: "",
+                        legendText: "{indexLabel}",
+                        dataPoints: dps
+                    }]
+                });
                 chart.render();
             };
             this.bar_chart_hourly = function(){
-                let order = this.pos.get_order();
-                let data = order.get_hourly_summary();
-                let dps = [];
-                let dps2 = [];
+                var order = this.pos.get_order();
+                var data = order.get_hourly_summary();
+                var dps = [];
+                var dps2 = [];
                 if(data && data[0]){
-                    for(let i=0;i<data.length;i++){
+                    for(var i=0;i<data.length;i++){
                         dps.push({label: "("+data[i].date_order_hour[0] + "-" + data[i].date_order_hour[1	]+")", y: data[i].price_total});
                         dps2.push({y: data[i].price_total});
                     }
                 }
-                let symbol = 'Amount-#######.00';
-                let chart = new CanvasJS.Chart("chartContainer_hourly_sale",{
+                var symbol = 'Amount-#######.00';
+                var chart = new CanvasJS.Chart("chartContainer_hourly_sale",{
                     width: data && data.length > 10 ? 1200 : 0,
                     dataPointMaxWidth:25,
                     zoomEnabled:true,
@@ -7846,10 +7858,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         suffix: "",
                         title:"Amount",
                     },
-                    axisX:{
-                        title:"Hours",
-                        labelAngle: 45,
-                        interval:1
+                     axisX:{
+                          title:"Hours",
+                          labelAngle: 45,
+                          interval:1
                     },
                     legend :{
                         verticalAlign: 'bottom',
@@ -7868,15 +7880,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 chart.render();
             };
             this.bar_chart_monthly = function(){
-                let order = this.pos.get_order();
-                let data = order.get_month_summary();
-                let dps = [];
+                var order = this.pos.get_order();
+                var data = order.get_month_summary();
+                var dps = [];
                 if(data && data[0]){
-                    for(let i=0;i<data.length;i++){
+                    for(var i=0;i<data.length;i++){
                         dps.push({label: data[i].date_order_day +'/'+data[i].date_order_month, y: data[i].price_total});
                     }
-                    let symbol = 'Amount-#######.00';
-                    let chart = new CanvasJS.Chart("chartContainer_monthly_sale",{
+                    var symbol = 'Amount-#######.00';
+                    var chart = new CanvasJS.Chart("chartContainer_monthly_sale",{
                         width: data && data.length > 10 ? 1200 : 0,
                         dataPointMaxWidth:25,
                         zoomEnabled:true,
@@ -7888,8 +7900,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             suffix: "",
                             title:"Amount",
                         },axisX:{
-                            title:"Days",
-                            interval:1
+                              title:"Days",
+                              interval:1
                         },legend :{
                             verticalAlign: 'bottom',
                             horizontalAlign: "center"
@@ -7905,15 +7917,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             };
             this.bar_chart_six_month = function(){
-                let order = this.pos.get_order();
-                let data = order.get_six_month_summary();
-                let dps = [];
+                var order = this.pos.get_order();
+                var data = order.get_six_month_summary();
+                var dps = [];
                 if(data && data[0]){
-                    for(let i=0;i<data.length;i++){
+                    for(var i=0;i<data.length;i++){
                         dps.push({x: data[i].date_order_month, y: data[i].price_total});
                     }
-                    let symbol = 'Amount-#######.00';
-                    let chart = new CanvasJS.Chart("chartContainer_six_month_sale",{
+                    var symbol = 'Amount-#######.00';
+                    var chart = new CanvasJS.Chart("chartContainer_six_month_sale",{
                         width: data && data.length > 10 ? 1200 : 0,
                         dataPointMaxWidth:25,
                         zoomEnabled:true,
@@ -7925,8 +7937,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             suffix: "",
                             title:"Amount",
                         },axisX:{
-                            title:"Months",
-                            interval:1
+                              title:"Months",
+                              interval:1
                         },legend :{
                             verticalAlign: 'bottom',
                             horizontalAlign: "center"
@@ -7941,15 +7953,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             };
             this.bar_chart_active_session_wise_sale = function(){
-                let order = this.pos.get_order();
-                let data = order.get_active_session_sales();
-                let dps = [];
+                var order = this.pos.get_order();
+                var data = order.get_active_session_sales();
+                var dps = [];
                 if(data && data[0]){
                     _.each(data,function(session){
                         dps.push({label: session.pos_session_id[0].display_name, y: session.sum});
                     })
                 }
-                let chart = new CanvasJS.Chart("chartContainer_session_wise_sale",{
+                var chart = new CanvasJS.Chart("chartContainer_session_wise_sale",{
                     width: data && data.length > 10 ? 1200 : 0,
                     dataPointMaxWidth:25,
                     zoomEnabled:true,
@@ -7976,15 +7988,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 chart.render();
             };
             this.bar_chart_closed_session_wise_sale = function(){
-                let order = this.pos.get_order();
-                let data = order.get_closed_session_sales();
-                let dps = [];
+                var order = this.pos.get_order();
+                var data = order.get_closed_session_sales();
+                var dps = [];
                 if(data && data[0]){
                     _.each(data,function(session){
                         dps.push({label: session.pos_session_id[0].display_name, y: session.sum});
                     })
                 }
-                let chart = new CanvasJS.Chart("chartContainer_closed_session_wise_sale",{
+                var chart = new CanvasJS.Chart("chartContainer_closed_session_wise_sale",{
                     width: data && data.length > 10 ? 1200 : 0,
                     dataPointMaxWidth:25,
                     zoomEnabled:true,
@@ -8012,53 +8024,53 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             };
         },
         get_graph_information: function(){
-            let from = $('#start_date_journal').val() ? $('#start_date_journal').val() + " 00:00:00" : false;
-            let to   = $('#end_date_journal').val() ? $('#end_date_journal').val() + " 23:59:59" : false;
+            var from = $('#start_date_journal').val() ? $('#start_date_journal').val() + " 00:00:00" : false;
+            var to   = $('#end_date_journal').val() ? $('#end_date_journal').val() + " 23:59:59" : false;
             this.graph_data_journal(from,to);
         },
         get_top_product_graph_information: function(){
-            let from = $('#start_date_top_product').val() ? $('#start_date_top_product').val() + " 00:00:00" : false;
-            let to   = $('#end_date_top_product').val() ? $('#end_date_top_product').val() + " 23:59:59" : false;
+            var from = $('#start_date_top_product').val() ? $('#start_date_top_product').val() + " 00:00:00" : false;
+            var to   = $('#end_date_top_product').val() ? $('#end_date_top_product').val() + " 23:59:59" : false;
             this.graph_data_top_product(from,to);
         },
         get_sales_by_user_information: function(){
-            let from = $('#start_date_sales_by_user').val() ? $('#start_date_sales_by_user').val() + " 00:00:00" : false;
-            let to   = $('#end_date_sales_by_user').val() ? $('#end_date_sales_by_user').val() + " 23:59:59" : false;
+            var from = $('#start_date_sales_by_user').val() ? $('#start_date_sales_by_user').val() + " 00:00:00" : false;
+            var to   = $('#end_date_sales_by_user').val() ? $('#end_date_sales_by_user').val() + " 23:59:59" : false;
             this.sales_by_user(from,to)
         },
         render_journal_list: function(journal_data){
-            let contents = this.$el[0].querySelector('.journal-list-contents');
+            var contents = this.$el[0].querySelector('.journal-list-contents');
             contents.innerHTML = "";
-            for(let i = 0, len = Math.min(journal_data.length,1000); i < len; i++){
-                let journal = journal_data[i];
-                let journal_html = QWeb.render('JornalLine',{widget: this, journal:journal_data[i]});
-                let journalline = document.createElement('tbody');
+            for(var i = 0, len = Math.min(journal_data.length,1000); i < len; i++){
+                var journal = journal_data[i];
+                var journal_html = QWeb.render('JornalLine',{widget: this, journal:journal_data[i]});
+                var journalline = document.createElement('tbody');
                 journalline.innerHTML = journal_html;
                 journalline = journalline.childNodes[1];
                 contents.appendChild(journalline);
             }
         },
         render_top_product_list: function(top_product_list){
-            let contents = this.$el[0].querySelector('.top-product-list-contents');
+            var contents = this.$el[0].querySelector('.top-product-list-contents');
             contents.innerHTML = "";
-            for(let i = 0, len = Math.min(top_product_list.length,1000); i < len; i++){
-                let top_product = top_product_list[i];
-                let top_product_html = QWeb.render('TopProductLine',{widget: this, top_product:top_product_list[i]});
-                let top_product_line = document.createElement('tbody');
+            for(var i = 0, len = Math.min(top_product_list.length,1000); i < len; i++){
+                var top_product = top_product_list[i];
+                var top_product_html = QWeb.render('TopProductLine',{widget: this, top_product:top_product_list[i]});
+                var top_product_line = document.createElement('tbody');
                 top_product_line.innerHTML = top_product_html;
                 top_product_line = top_product_line.childNodes[1];
                 contents.appendChild(top_product_line);
             }
         },
         graph_data_journal: function(from, to){
-            let self = this;
+            var self = this;
             rpc.query({
                 model: 'pos.order',
                 method: 'graph_date_on_canvas',
                 args: [from, to]
             },{async:false}).then(
                 function(result) {
-                    let order = self.pos.get_order();
+                    var order = self.pos.get_order();
                     if(result){
                         self.render_journal_list(result)
                         if(result.length > 0){
@@ -8078,14 +8090,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         graph_data_top_product: function(from, to){
-            let self = this;
+            var self = this;
             rpc.query({
                 model: 'pos.order',
                 method: 'graph_best_product',
                 args: [from, to]
             },{async:false}).then(
                 function(result) {
-                    let order = self.pos.get_order();
+                    var order = self.pos.get_order();
                     if(result){
                         self.render_top_product_list(result)
                         if(result.length > 0){
@@ -8105,7 +8117,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         sales_by_user: function(from, to){
-            let self = this;
+            var self = this;
             rpc.query({
                 model: 'pos.order',
                 method: 'orders_by_salesperson',
@@ -8117,7 +8129,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         sales_from_session: function(){
-            let self = this;
+            var self = this;
             rpc.query({
                 model: 'pos.order',
                 method: 'session_details_on_canvas',
@@ -8135,33 +8147,33 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         render_user_wise_sales: function(sales_users){
-            let contents = this.$el[0].querySelector('.user-wise-sales-list-contents');
+            var contents = this.$el[0].querySelector('.user-wise-sales-list-contents');
             contents.innerHTML = "";
-            for(let i = 0, len = Math.min(sales_users.length,1000); i < len; i++){
-                let user_data = sales_users[i];
-                let user_sales_html = QWeb.render('UserSalesLine',{widget: this, user_sales:sales_users[i]});
-                let user_sales_line = document.createElement('tbody');
+            for(var i = 0, len = Math.min(sales_users.length,1000); i < len; i++){
+                var user_data = sales_users[i];
+                var user_sales_html = QWeb.render('UserSalesLine',{widget: this, user_sales:sales_users[i]});
+                var user_sales_line = document.createElement('tbody');
                 user_sales_line.innerHTML = user_sales_html;
                 user_sales_line = user_sales_line.childNodes[1];
                 contents.appendChild(user_sales_line);
             }
         },
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             this.$('.back').click(function(){
                 self.gui.show_screen('products');
             });
-            let today = moment().locale('en').format("YYYY-MM-DD");
+            var today = moment().locale('en').format("YYYY-MM-DD");
             $("#start_date_journal").val(today);
             $("#end_date_journal").val(today);
             $("#start_date_top_product").val(today);
             $("#end_date_top_product").val(today);
             $("#start_date_sales_by_user").val(today);
             $("#end_date_sales_by_user").val(today);
-            let start_date = false;
-            let end_date = false;
-            // let active_chart = $('span.selected_chart').attr('id');
+            var start_date = false;
+            var end_date = false;
+            var active_chart = $('span.selected_chart').attr('id');
             $("#start_date_journal").datepicker({
                 dateFormat: 'yy-mm-dd',
                 autoclose: true,
@@ -8169,7 +8181,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 showButtonPanel: true,
                 onSelect: function(dateText, inst) {
                     start_date = dateText;
-                    // let active_chart = $('span.selected_chart').attr('id');
+                    var active_chart = $('span.selected_chart').attr('id');
                     self.graph_data_journal(start_date, end_date);
                 },
             });
@@ -8180,7 +8192,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 showButtonPanel: true,
                 onSelect: function(dateText, inst) {
                     end_date = dateText;
-                    // let active_chart = $('span.selected_chart').attr('id');
+                    var active_chart = $('span.selected_chart').attr('id');
                     self.graph_data_journal(start_date, end_date);
                 },
             });
@@ -8191,7 +8203,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 showButtonPanel: true,
                 onSelect: function(dateText, inst) {
                     start_date = dateText;
-                    // let active_chart = $('span.selected_chart').attr('id');
+                    var active_chart = $('span.selected_chart').attr('id');
                     self.graph_data_top_product(start_date, end_date);
                 },
             });
@@ -8202,7 +8214,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 showButtonPanel: true,
                 onSelect: function(dateText, inst) {
                     end_date = dateText;
-                    // let active_chart = $('span.selected_chart').attr('id');
+                    var active_chart = $('span.selected_chart').attr('id');
                     self.graph_data_top_product(start_date, end_date);
                 },
             });
@@ -8237,7 +8249,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     $('#total_closed_session').text(result['closed_sessions'])
                     $('#total_sale_count').text(result['total_orders']);
                     $('#total_sale_amount').text(self.chrome.format_currency(result['total_sales']));
-                    let order = self.pos.get_order();
+                    var order = self.pos.get_order();
                     order.set_hourly_summary(result['sales_based_on_hours']);
                     order.set_month_summary(result['current_month']);
                     order.set_six_month_summary(result['last_6_month_res']);
@@ -8260,20 +8272,20 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
     gui.define_screen({name:'pos_dashboard_graph_view', widget: POSDashboardGraphScreenWidget});
 
-    let CustomerCreditListScreenWidget = screens.ScreenWidget.extend({
+    var CustomerCreditListScreenWidget = screens.ScreenWidget.extend({
         template: 'CustomerCreditListScreenWidget',
         get_customer_list: function(){
             return this.pos.get('customer_credit_list');
         },
         show: function(options){
-            let self = this;
+            var self = this;
             this.reloading_orders(this.get_cust_id());
             self.date = "all";
-            let records = self.pos.get('customer_credit_list');
+            var records = self.pos.get('customer_credit_list');
             this._super();
             self.render_list(records);
             if(records){
-                let partner = this.pos.db.get_partner_by_id(this.get_cust_id());
+                var partner = this.pos.db.get_partner_by_id(this.get_cust_id());
                 self.display_client_details(partner);
             }
             $('.back').click(function(){
@@ -8281,7 +8293,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             })
             self.reload_orders();
             this.$('.print-ledger').click(function(){
-                let order = self.pos.get_order();
+                var order = self.pos.get_order();
                 order.set_ledger_click(true);
                 self.gui.show_popup('cash_inout_statement_popup');
             });
@@ -8291,7 +8303,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 closeText: 'Clear',
                 showButtonPanel: true,
                 onSelect: function (dateText, inst) {
-                    let date = $(this).val();
+                    var date = $(this).val();
                     if (date){
                         self.date = date;
                         self.render_list(self.get_customer_list());
@@ -8304,25 +8316,25 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 },
             }).focus(function(){
-                let thisCalendar = $(this);
+                var thisCalendar = $(this);
                 $('.fa-times, .ui-datepicker-close').click(function() {
                     thisCalendar.val('');
                     self.date = "all";
                     self.render_list(self.get_customer_list());
                 });
             });
-            let old_goToToday = $.datepicker._gotoToday
+            var old_goToToday = $.datepicker._gotoToday
             $.datepicker._gotoToday = function(id) {
                 old_goToToday.call(this,id)
                 this._selectDate(id)
             }
         },
         check_date_filter: function(records){
-            let self = this;
+            var self = this;
             if(self.date !== "" && self.date !== "all"){
-                let date_filtered_records = [];
-                for (let i=0; i<records.length;i++){
-                    let date_record = $.datepicker.formatDate("yy-mm-dd",new Date(records[i].create_date));
+                var date_filtered_records = [];
+                for (var i=0; i<records.length;i++){
+                    var date_record = $.datepicker.formatDate("yy-mm-dd",new Date(records[i].create_date));
                     if(self.date === date_record){
                         date_filtered_records.push(records[i]);
                     }
@@ -8332,24 +8344,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return records;
         },
         render_list: function(records){
-            let self = this;
+            var self = this;
             if(records && records.length > 0){
-                let contents = this.$el[0].querySelector('.credit-list-contents');
+                var contents = this.$el[0].querySelector('.credit-list-contents');
                 contents.innerHTML = "";
                 if(self.date !== "" && self.date !== "all"){
                     records = self.check_date_filter(records);
                 }
-                for(let i = 0, len = Math.min(records.length,1000); i < len; i++){
-                    let self = this;
-                    let record    = records[i];
-                    let clientline_html = QWeb.render('CreditlistLine',{widget: this, record:record});
-                    let clientline = document.createElement('tbody');
+                for(var i = 0, len = Math.min(records.length,1000); i < len; i++){
+                    var self = this;
+                    var record    = records[i];
+                    var clientline_html = QWeb.render('CreditlistLine',{widget: this, record:record});
+                    var clientline = document.createElement('tbody');
                     clientline.innerHTML = clientline_html;
                     clientline = clientline.childNodes[1];
                     contents.appendChild(clientline);
                 }
             } else{
-                let contents = this.$el[0].querySelector('.credit-list-contents');
+                var contents = this.$el[0].querySelector('.credit-list-contents');
                 contents.innerHTML = "Record Not Found";
                 $("#pagination").hide();
             }
@@ -8358,9 +8370,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return this.gui.get_current_screen_param('cust_id');
         },
         reloading_orders: function(cust_id){
-            let self = this;
-            let partner = self.pos.db.get_partner_by_id(cust_id);
-            let domain = []
+            var self = this;
+            var partner = self.pos.db.get_partner_by_id(cust_id);
+            var domain = []
             if(partner){
                 if(partner.parent_id){
                     partner = self.pos.db.get_partner_by_id(partner.parent_id[0]);
@@ -8369,26 +8381,26 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     partner = self.pos.db.get_partner_by_id(cust_id)
                     domain.push(['partner_id','=',partner.id])
                 }
-                let today = new Date();
-                let end_date = moment(today).locale('en').format('YYYY-MM-DD');
-                let client_acc_id = partner.property_account_receivable_id;
+                var today = new Date();
+                var end_date = moment(today).locale('en').format('YYYY-MM-DD');
+                var client_acc_id = partner.property_account_receivable_id;
                 domain.push(['account_id','=',client_acc_id[0]],['date_maturity', '<=', end_date + " 23:59:59"]);
-                let params = {
+                var params = {
                     model: "account.move.line",
                     method: "search_read",
                     domain: domain,
                 }
                 rpc.query(params, {async: false})
-                    .then(function(records){
-                        self.pos.set({'customer_credit_list' : records});
-                        self.reload_orders();
-                        return self.pos.get('customer_credit_list')
-                    });
+                .then(function(records){
+                    self.pos.set({'customer_credit_list' : records});
+                    self.reload_orders();
+                    return self.pos.get('customer_credit_list')
+                });
             }
         },
         reload_orders: function(){
-            let self = this;
-            let records = self.pos.get('customer_credit_list');
+            var self = this;
+            var records = self.pos.get('customer_credit_list');
             this.search_list = []
             _.each(self.pos.partners, function(partner){
                 self.search_list.push(partner.name);
@@ -8400,14 +8412,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.render_list(records);
         },
         line_select: function(event,$line,id){
-            let partner = this.pos.db.get_partner_by_id(id);
+            var partner = this.pos.db.get_partner_by_id(id);
             this.$('.credit-list .lowlight').removeClass('lowlight');
-            this.$('.credit-list .highlight').removeClass('highlight');
-            $line.addClass('highlight');
-            this.new_client = partner;
+                this.$('.credit-list .highlight').removeClass('highlight');
+                $line.addClass('highlight');
+                this.new_client = partner;
         },
         load_image_file: function(file, callback){
-            let self = this;
+            var self = this;
             if (!file.type.match(/image.*/)) {
                 this.gui.show_popup('error',{
                     title: _t('Unsupported File Format'),
@@ -8416,10 +8428,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 return;
             }
 
-            let reader = new FileReader();
+            var reader = new FileReader();
             reader.onload = function(event){
-                let dataurl = event.target.result;
-                let img     = new Image();
+                var dataurl = event.target.result;
+                var img     = new Image();
                 img.src = dataurl;
                 self.resize_image_to_dataurl(img,800,600,callback);
             };
@@ -8432,15 +8444,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             reader.readAsDataURL(file);
         },
         display_client_details: function(partner, clickpos){
-            let self = this;
-            let contents = this.$('.credit-details-contents');
+            var self = this;
+            var contents = this.$('.credit-details-contents');
             contents.empty();
-            let parent   = this.$('.order-list').parent();
-            let scroll   = parent.scrollTop();
-            let height   = contents.height();
-//            let partner = Number($('.client-line.highlight').attr('data-id'));
+            var parent   = this.$('.order-list').parent();
+            var scroll   = parent.scrollTop();
+            var height   = contents.height();
+//            var partner = Number($('.client-line.highlight').attr('data-id'));
             contents.append($(QWeb.render('CustomerCreditDisplay',{widget:this, partner: partner})));
-            let new_height   = contents.height();
+            var new_height   = contents.height();
             if(!this.details_visible){
                 parent.height('-=' + new_height);
                 if(clickpos < scroll + new_height + 20 ){
@@ -8460,16 +8472,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     gui.define_screen({name:'customercreditlistscreen', widget: CustomerCreditListScreenWidget});
 
     // Kitchen Screen
-    let kitchenScreenWidget = screens.ScreenWidget.extend({
+    var kitchenScreenWidget = screens.ScreenWidget.extend({
         template: 'kitchenScreenWidget',
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.categ_id = 0;
             this.category_list = [];
             this.config_categ_ids = [];
             this.scroll_position = 0;
-            let cashier = self.pos.get_cashier() || self.pos.user;
+            var cashier = self.pos.get_cashier() || self.pos.user;
             if(_.contains(['cook','cook_manager'], cashier.user_role)){
                 rpc.query({
                     model: 'res.users',
@@ -8482,13 +8494,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
             }
             this.config_categ_ids.map(function(id){
-                let object = self.pos.db.get_category_by_id(id);
+                var object = self.pos.db.get_category_by_id(id);
                 self.category_list.push(object);
             });
         },
         show: function() {
             this._super();
-            let self = this;
+            var self = this;
             this.categ_id = 0;
             this.renderElement();
 //        	if(self.pos.user.user_role === 'cook'){
@@ -8496,7 +8508,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //                this.$el.find('span.category:first').addClass('selected');
 //            }
             this.pos.mirror_kitchen_orders();
-            if(self.pos.user.user_role === 'cook'){
+            if(self.pos.user.user_role == 'cook'){
                 $('.order-list,.kitchen-buttons').addClass('disappear');
                 $('.order-kanban').removeClass('disappear');
                 $('.kitchen-screen').find('.top-content').hide();
@@ -8506,12 +8518,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         render_screen_order_lines: function(screen_data){
             if(screen_data){
                 screen_data = _.sortBy(screen_data, 'order');
-                let contents = this.$el[0].querySelector('.order-list-contents');
+                var contents = this.$el[0].querySelector('.order-list-contents');
                 contents.innerHTML = "";
-                for(let i = 0, len = Math.min(screen_data.length,1000); i < len; i++){
-                    let order_line_data    = screen_data[i];
-                    let orderline_html = QWeb.render('KitchenOrderlistLine',{widget: this, order_line_data:order_line_data});
-                    let orderlines = document.createElement('div');
+                for(var i = 0, len = Math.min(screen_data.length,1000); i < len; i++){
+                    var order_line_data    = screen_data[i];
+                    var orderline_html = QWeb.render('KitchenOrderlistLine',{widget: this, order_line_data:order_line_data});
+                    var orderlines = document.createElement('div');
                     orderlines.innerHTML = orderline_html;
                     orderlines = orderlines.childNodes[1];
                     contents.appendChild(orderlines);
@@ -8520,27 +8532,27 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $('.kitchen-screen-view').scrollTop(self.scroll_position);
         },
         render_table_data: function(table_data){
-            let self = this;
+            var self = this;
             if(table_data){
                 table_data = _.sortBy(table_data, 'order_id');
-                let contents = this.$el[0].querySelector('.table-order-contents');
+                var contents = this.$el[0].querySelector('.table-order-contents');
                 contents.innerHTML = "";
-                for(let i = 0, len = Math.min(table_data.length,1000); i < len; i++){
-                    let order_data = table_data[i];
+                for(var i = 0, len = Math.min(table_data.length,1000); i < len; i++){
+                    var order_data = table_data[i];
                     order_data.order_lines = _(order_data.order_lines).filter(function(line) {
-                        if(_.contains(self.config_categ_ids, line.categ_id) && line.state !== 'done'){
-                            let record = _.find(self.category_list, function(c_list){
+                        if(_.contains(self.config_categ_ids, line.categ_id) && line.state != 'done'){
+                            var record = _.find(self.category_list, function(c_list){
                                 return c_list.id === line.categ_id;
                             });
-                            if(_.contains(self.config_categ_ids, line.categ_id) && line.state !== 'done' && record){
+                            if(_.contains(self.config_categ_ids, line.categ_id) && line.state != 'done' && record){
                                 return line;
                             }
                         }
                     });
                     if(order_data.order_lines.length > 0){
                         order_data['grouped_data'] = _.groupBy(order_data.order_lines, 'priority');
-                        let order_html = QWeb.render('TableOrders',{widget: this, order_data:order_data});
-                        let order = document.createElement('div');
+                        var order_html = QWeb.render('TableOrders',{widget: this, order_data:order_data});
+                        var order = document.createElement('div');
                         order.innerHTML = order_html;
                         order = order.childNodes[1];
                         if(order){
@@ -8549,11 +8561,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 if(order_data.est_ordertime > 0){
                                     this.countdown(order_data.order_id,order_data.est_ordertime)
                                 }else{
-                                    let element = document.getElementById(order_data.order_id.toString());
+                                    var element = document.getElementById(order_data.order_id.toString());
                                     $(element).parent().hide();
                                 }
                             } else{
-                                let time_sec = this.pos.kitchen_order_timer[order_data.order_id].time.split(':')
+                                var time_sec = this.pos.kitchen_order_timer[order_data.order_id].time.split(':')
                                 this.countdown(order_data.order_id,Number(time_sec[0]),Number(time_sec[1]))
                             }
                         }
@@ -8563,9 +8575,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $('.kitchen-screen-view').scrollTop(self.scroll_position);
         },
         countdown: function(elementName, minutes, seconds){
-            let self = this;
+            var self = this;
             seconds = seconds ? seconds : 0
-            let element, endTime, hours, mins, msLeft, time;
+            var element, endTime, hours, mins, msLeft, time;
             function twoDigits( n ){
                 return (n <= 9 ? "0" + n : n);
             }
@@ -8573,13 +8585,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 msLeft = endTime - (+new Date);
                 if ( msLeft < 1000 ) {
                     element.innerHTML = "Order time is over!";
-                    let ele = $("[data-pos-order-id='"+ element.id +"']")
+                    var ele = $("[data-pos-order-id='"+ element.id +"']")
                     ele.css('background','#ffbaba');
                 } else {
                     time = new Date( msLeft );
                     hours = time.getUTCHours();
                     mins = time.getUTCMinutes();
-                    let run_time = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+                    var run_time = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
                     if(element){
                         element.innerHTML = run_time;
                     }
@@ -8622,41 +8634,41 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $('.order-kanban').removeClass('disappear');
         },
         show_order_note:function(event){
-            let self = this;
-            let note = $(event.currentTarget).data('note');
+            var self = this;
+            var note = $(event.currentTarget).data('note');
             self.gui.show_popup('kitchen_line_note_popup',{'note':note});
         },
         click_categ_button: function(event){
-            let self = this;
+            var self = this;
             this.categ_id = parseInt($(event.currentTarget).data('id'));
             $('span.category').removeClass('selected');
             $(event.currentTarget).addClass('selected');
-            let screen_data = [];
+            var screen_data = [];
             _.each(self.pos.get('screen_data'),function(line){
-                if(self.categ_id === 0){
-                    let record = _.find(self.category_list, function(c_list){
+                if(self.categ_id == 0){
+                    var record = _.find(self.category_list, function(c_list){
                         return c_list.id === line.categ_id;
                     });
                     if(record){
                         screen_data.push(line);
                     }
-                }else if(line.categ_id && line.categ_id === self.categ_id){
-                    screen_data.push(line);
+                }else if(line.categ_id && line.categ_id == self.categ_id){
+                     screen_data.push(line);
                 }
             });
             self.render_screen_order_lines(screen_data);
         },
         change_state_click:function(event){
-            let self = this;
-            let state_id = $(event.currentTarget).data('state');
-            let order_line_id = parseInt($(event.currentTarget).data('id'));
-            let order_id = parseInt($(event.currentTarget).data('order-id'));
-            let route = $(event.currentTarget).data('route');
-            let $el = $('[data-pos-order-id="'+order_id+'"].order-container');
+            var self = this;
+            var state_id = $(event.currentTarget).data('state');
+            var order_line_id = parseInt($(event.currentTarget).data('id'));
+            var order_id = parseInt($(event.currentTarget).data('order-id'));
+            var route = $(event.currentTarget).data('route');
+            var $el = $('[data-pos-order-id="'+order_id+'"].order-container');
             self.scroll_position = Number($('.kitchen-screen-view').scrollTop()) || 0;
             $el.addClass('show_loading');
             if(route){
-                if(state_id === 'waiting'){
+                if(state_id == 'waiting'){
                     rpc.query({
                         model: 'pos.order.line',
                         method: 'update_orderline_state',
@@ -8666,7 +8678,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             self.pos.mirror_kitchen_orders();
                         }
                     });
-                }else if(state_id === 'preparing'){
+                }else if(state_id == 'preparing'){
                     rpc.query({
                         model: 'pos.order.line',
                         method: 'update_orderline_state',
@@ -8674,9 +8686,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     },{async: false}).then(function(result) {
                         if(result){
                             self.pos.mirror_kitchen_orders();
-                        }
+                         }
                     });
-                }else if(state_id === 'delivering'){
+                }else if(state_id == 'delivering'){
                     rpc.query({
                         model: 'pos.order.line',
                         method: 'update_orderline_state',
@@ -8688,7 +8700,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     });
                 }
             }else{
-                if(state_id === 'waiting'){
+                if(state_id == 'waiting'){
                     rpc.query({
                         model: 'pos.order.line',
                         method: 'update_orderline_state',
@@ -8696,9 +8708,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     },{async: false}).then(function(result) {
                         if(result){
                             self.pos.mirror_kitchen_orders();
-                        }
+                         }
                     });
-                }else if(state_id === 'delivering'){
+                }else if(state_id == 'delivering'){
                     rpc.query({
                         model: 'pos.order.line',
                         method: 'update_orderline_state',
@@ -8712,8 +8724,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         cancel_order_click:function(event){
-            let self = this;
-            let order_line_id = parseInt($(event.currentTarget).data('id'));
+            var self = this;
+            var order_line_id = parseInt($(event.currentTarget).data('id'));
             if(order_line_id){
                 rpc.query({
                     model: 'pos.order.line',
@@ -8727,8 +8739,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         order_print_receipt: function(ev){
-            let self = this;
-            let order_id = $(ev.currentTarget).data('pos-order-id');
+            var self = this;
+            var order_id = $(ev.currentTarget).data('pos-order-id');
             if(order_id){
                 rpc.query({
                     model: 'pos.order',
@@ -8736,7 +8748,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     args: [order_id],
                 },{async:false}).done(function(lines) {
                     if(lines && lines[0]){
-                        let receipt = QWeb.render('KitchenLineReceipt', {
+                        var receipt = QWeb.render('KitchenLineReceipt', {
                             widget: self,
                             lines:lines,
                         });
@@ -8747,14 +8759,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 //        renderElement:function(){
 //            this._super();
-//            let self = this;
+//            var self = this;
 //            $('.kitchen-screen-view').scrollTop(this.scroll_position);
 //        },
     });
     gui.define_screen({name:'kitchen_screen', widget: kitchenScreenWidget});
 
 //     Delivery details Screen
-//	let DeliveryDetailsScreenWidget = screens.ScreenWidget.extend({
+//	var DeliveryDetailsScreenWidget = screens.ScreenWidget.extend({
 //        template: 'DeliveryDetailsScreenWidget',
 //        events:{
 //	        'click .button.back':  'click_back',
@@ -8763,7 +8775,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //	        'click .reload_delivery_orders':'reload_delivery_orders'
 //        },
 //        init: function(parent, options){
-//            let self = this;
+//            var self = this;
 //            this._super(parent, options);
 //            this.pos_orders = [];
 //        },
@@ -8775,14 +8787,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        	this.gui.back();
 //        },
 //        change_deliver_state: function(event){
-//        	let self = this;
-//        	let order_id = $(event.currentTarget).data('id');
-//        	let delivery_state = $(event.currentTarget).data('delivery-state');
-//        	let order_state = $(event.currentTarget).data('order-state');
-//        	if(order_state !== 'draft'){
+//        	var self = this;
+//        	var order_id = $(event.currentTarget).data('id');
+//        	var delivery_state = $(event.currentTarget).data('delivery-state');
+//        	var order_state = $(event.currentTarget).data('order-state');
+//        	if(order_state != 'draft'){
 //        		if(order_id){
-//            		if(delivery_state === 'pending'){
-//            			let params = {
+//            		if(delivery_state == 'pending'){
+//            			var params = {
 //        		    		model: 'pos.order',
 //        		    		method: 'change_delivery_state',
 //        		    		args: [order_id, 'delivered'],
@@ -8792,7 +8804,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        		    		if(result){
 //        		    			self.pos.db.notification('success','Order delivered successful!');
 //        		    			self.load_delivery_orders();
-//        		    			let statements = [];
+//        		    			var statements = [];
 //        		    			if(result.statement_ids.length > 0){
 //        		    				statements = self.get_journal_from_order(result.statement_ids);
 //        		                }
@@ -8812,13 +8824,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        	}
 //        },
 //        get_journal_from_order: function(statement_ids){
-//	    	let self = this;
-//	    	let params = {
+//	    	var self = this;
+//	    	var params = {
 //	    		model: 'account.bank.statement.line',
 //	    		method: 'search_read',
 //	    		domain: [['id', 'in', statement_ids]],
 //	    	}
-//	    	let order_statements = [];
+//	    	var order_statements = [];
 //	    	rpc.query(params, {async: false}).then(function(statements){
 //	    		if(statements.length > 0){
 //	    			_.each(statements, function(statement){
@@ -8836,8 +8848,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //	    	return order_statements;
 //	    },
 //        change_delivery_user: function(event){
-//        	let delivery_user_id = $(event.currentTarget).data('delivery-user-id');
-//        	let order_id = $(event.currentTarget).data('id');
+//        	var delivery_user_id = $(event.currentTarget).data('delivery-user-id');
+//        	var order_id = $(event.currentTarget).data('id');
 //        	this.pos.gui.show_popup('change_delivery_user_popup',{'delivery_user_id':delivery_user_id, 'order_id':order_id});
 //        },
 //        reload_delivery_orders: function(){
@@ -8845,8 +8857,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        	this.load_delivery_orders();
 //        },
 //        load_delivery_orders: function(){
-//        	let self = this;
-//        	let params = {
+//        	var self = this;
+//        	var params = {
 //	    		model: 'pos.order',
 //	    		method: 'ac_pos_search_read',
 //	    		args: [{'domain': [['delivery_type','=','pending']]}],
@@ -8860,16 +8872,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //            });
 //        },
 //        render_delivery_data: function(orders){
-//	    	let self = this;
-//	    	let contents = $('.kanban-delivery-orders');
+//	    	var self = this;
+//	    	var contents = $('.kanban-delivery-orders');
 //            contents.empty();
 //	        if(orders){
 //	        	orders = _.sortBy(orders, 'id');
 //	        	this.pos_orders = orders;
-//	            for(let i = 0, len = Math.min(orders.length,1000); i < len; i++){
-//	                let order = orders[i];
-////	            	let order_html = QWeb.render('DeliveryOrderlistLine',{widget: this, order:order});
-//	                let order_html = QWeb.render('DeliveryOrderViews',{widget: this, order:order});
+//	            for(var i = 0, len = Math.min(orders.length,1000); i < len; i++){
+//	                var order = orders[i];
+////	            	var order_html = QWeb.render('DeliveryOrderlistLine',{widget: this, order:order});
+//	                var order_html = QWeb.render('DeliveryOrderViews',{widget: this, order:order});
 //	            	contents.append(order_html);
 //	            }
 //	        }else{
@@ -8880,17 +8892,17 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //	});
 //    gui.define_screen({name:'delivery_details_screen', widget: DeliveryDetailsScreenWidget});
 
-    let add_multistore_button = screens.ActionButtonWidget.extend({
+    var add_multistore_button = screens.ActionButtonWidget.extend({
         template: 'AddMultiStoreButton',
         button_click: function(){
-            let self = this;
-            let user_stores = self.pos.get_cashier().shop_ids;
-            let store_list = [];
+            var self = this;
+            var user_stores = self.pos.get_cashier().shop_ids;
+            var store_list = [];
             _.each(user_stores, function(id){
-                let store = self.pos.store_by_id[id]
+                var store = self.pos.store_by_id[id]
                 if(store){store_list.push(store);}
             });
-            if(store_list.length !== 0) {
+            if(store_list.length != 0) {
                 self.gui.show_popup('multi_shop_popup',{'cashier_store':store_list});
             } else{
                 alert("You have no access rights for select Shop!");
@@ -8910,8 +8922,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
 
     splitbill.prototype.button_click = function(){
-        let self = this;
-        let order = this.pos.get_order();
+        var self = this;
+        var order = this.pos.get_order();
         if(order.get_orderlines().length > 0){
             if(order.get_discount_product_id() && order.get_order_total_discount() > 0){
                 self.gui.show_popup('confirm',{
@@ -8927,7 +8939,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         }
     };
 
-//	let SelectVariantScreen = screens.ScreenWidget.extend({
+//	var SelectVariantScreen = screens.ScreenWidget.extend({
 //        template:'SelectVariantScreen',
 //
 //        init: function(parent, options){
@@ -8935,7 +8947,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //        start: function(){
 //        	this._super();
-//            let self = this;
+//            var self = this;
 //            // Define Variant Widget
 //            this.variant_list_widget = new VariantListWidget(this,{});
 //            this.variant_list_widget.replace(this.$('.placeholder-VariantListWidget'));
@@ -8957,25 +8969,25 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //
 //        show: function(options){
 //        	this._super();
-//            let self = this;
-//            let product_tmpl_id = self.gui.get_current_screen_param('product_tmpl_id');
-//            let template = this.pos.db.template_by_id[product_tmpl_id];
+//            var self = this;
+//            var product_tmpl_id = self.gui.get_current_screen_param('product_tmpl_id');
+//            var template = this.pos.db.template_by_id[product_tmpl_id];
 //            // Display Name of Template
 //            this.$('#variant-title-name').html(template.name);
 //
 //            // Render Variants
-//            let variant_ids  = this.pos.db.template_by_id[product_tmpl_id].product_variant_ids;
-//            let variant_list = [];
-//            for (let i = 0, len = variant_ids.length; i < len; i++) {
+//            var variant_ids  = this.pos.db.template_by_id[product_tmpl_id].product_variant_ids;
+//            var variant_list = [];
+//            for (var i = 0, len = variant_ids.length; i < len; i++) {
 //                variant_list.push(this.pos.db.get_product_by_id(variant_ids[i]));
 //            }
 //            this.variant_list_widget.filters = {}
 //            this.variant_list_widget.set_variant_list(variant_list);
 //
 //            // Render Attributes
-//            let attribute_ids  = this.pos.db.attribute_by_template_id(template.id);
-//            let attribute_list = [];
-//            for (let i = 0, len = attribute_ids.length; i < len; i++) {
+//            var attribute_ids  = this.pos.db.attribute_by_template_id(template.id);
+//            var attribute_list = [];
+//            for (var i = 0, len = attribute_ids.length; i < len; i++) {
 //                attribute_list.push(this.pos.db.get_product_attribute_by_id(attribute_ids[i]));
 //            }
 //            this.attribute_list_widget.set_attribute_list(attribute_list, template);
@@ -8984,34 +8996,34 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //    });
 //	gui.define_screen({name:'select_variant_screen', widget: SelectVariantScreen});
 //
-//	let VariantListWidget = PosBaseWidget.extend({
+//	var VariantListWidget = PosBaseWidget.extend({
 //        template:'VariantListWidget',
 //
 //        init: function(parent, options) {
-//            let self = this;
+//            var self = this;
 //            this._super(parent, options);
 //            this.variant_list = [];
 //            this.filter_variant_list = [];
 //            this.filters = {};
 //            this.click_variant_handler = function(event){
-//                let variant = self.pos.db.get_product_by_id(this.dataset['variantId']);
+//                var variant = self.pos.db.get_product_by_id(this.dataset['variantId']);
 //                if(variant.to_weight && self.pos.config.iface_electronic_scale){
 //                    self.__parentedParent.hide();
 //                    self.pos_widget.screen_selector.set_current_screen('scale',{product: variant});
 //                }else{
 ////                	ModifierWidget
 ////                	if(variant && variant.modifier_line.length > 0){
-////                		let modifier_list = [];
+////                		var modifier_list = [];
 ////                		_.each(variant.modifier_line, function(modifier_id){
-////                        	let modifier = self.pos.db.get_modifier_by_id(modifier_id);
+////                        	var modifier = self.pos.db.get_modifier_by_id(modifier_id);
 ////                        	if(modifier){
 ////                        		if(self.pos.db.get_product_by_id(modifier.product_id[0])){
 ////                        			modifier_list.push(modifier);
 ////                        		}
 ////                        	}
 ////                        });
-////                		let modifier_html = QWeb.render("VariantModifierWidget",{widget: self, modifiers:modifier_list});
-////    					let reseveline = document.createElement('tbody');
+////                		var modifier_html = QWeb.render("VariantModifierWidget",{widget: self, modifiers:modifier_list});
+////    					var reseveline = document.createElement('tbody');
 ////    					reseveline.innerHTML = modifier_html;
 ////    					reseveline = reseveline.childNodes[1];
 ////    					$('.placeholder-ModifierWidget').html(reseveline);
@@ -9026,7 +9038,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //
 //        replace: function($target){
 //            this.renderElement();
-//            let target = $target[0];
+//            var target = $target[0];
 //            target.parentNode.replaceChild(this.el,target);
 //        },
 //
@@ -9043,16 +9055,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //
 //        filter_variant: function(){
-//            let value_list = []
-//            for (let item in this.filters){
+//            var value_list = []
+//            for (var item in this.filters){
 //                value_list.push(parseInt(this.filters[item]));
 //            }
 //            this.filter_variant_list = [];
-//            for (let index in this.variant_list){
-//                let variant = this.variant_list[index];
-//                let found = true;
-//                for (let i = 0; i < value_list.length; i++){
-//                    found = found && (variant.attribute_value_ids.indexOf(value_list[i]) !== -1);
+//            for (var index in this.variant_list){
+//                var variant = this.variant_list[index];
+//                var found = true;
+//                for (var i = 0; i < value_list.length; i++){
+//                    found = found && (variant.attribute_value_ids.indexOf(value_list[i]) != -1);
 //                }
 //                if (found){
 //                    this.filter_variant_list.push(variant);
@@ -9068,15 +9080,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //
 //        render_variant: function(variant){
-//        	let order = this.pos.get_order();
-//        	let image_url = this.get_product_image_url(variant);
-//            let variant_html = QWeb.render('VariantWidget', {
+//        	var order = this.pos.get_order();
+//        	var image_url = this.get_product_image_url(variant);
+//            var variant_html = QWeb.render('VariantWidget', {
 //                    widget:  this,
 //                    variant: variant,
 //                    image_url: image_url,
 //                    pricelist: order.pricelist,
 //                });
-//            let variant_node = document.createElement('div');
+//            var variant_node = document.createElement('div');
 //            variant_node.innerHTML = variant_html;
 //            variant_node = variant_node.childNodes[1];
 //            return variant_node;
@@ -9087,19 +9099,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //
 //        renderElement: function() {
-//            let self = this;
-//            let el_html  = QWeb.render(this.template, {widget: this});
-//            let el_node = document.createElement('div');
+//            var self = this;
+//            var el_html  = QWeb.render(this.template, {widget: this});
+//            var el_node = document.createElement('div');
 //            el_node.innerHTML = el_html;
 //            el_node = el_node.childNodes[1];
 //            if(this.el && this.el.parentNode){
 //                this.el.parentNode.replaceChild(el_node,this.el);
 //            }
 //            this.el = el_node;
-//            let list_container = el_node.querySelector('.variant-list');
-//            for(let i = 0, len = this.filter_variant_list.length; i < len; i++){
+//            var list_container = el_node.querySelector('.variant-list');
+//            for(var i = 0, len = this.filter_variant_list.length; i < len; i++){
 //            	if(this.filter_variant_list[i]){
-//            		let variant_node = this.render_variant(this.filter_variant_list[i]);
+//            		var variant_node = this.render_variant(this.filter_variant_list[i]);
 //                    variant_node.addEventListener('click',this.click_variant_handler);
 //                    list_container.appendChild(variant_node);
 //            	}
@@ -9107,21 +9119,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //    });
 //
-//	let AttributeListWidget = PosBaseWidget.extend({
+//	var AttributeListWidget = PosBaseWidget.extend({
 //        template:'AttributeListWidget',
 //
 //        init: function(parent, options) {
-//            let self = this;
+//            var self = this;
 //            this.attribute_list = [];
 //            this.product_template = null;
 //            this.click_set_attribute_handler = function(event){
 //                /*TODO: Refactor this function with elegant DOM manipulation */
-//            	let parent = this.parentElement.parentElement.parentElement;
+//            	var parent = this.parentElement.parentElement.parentElement;
 //                parent.children[0].classList.remove('selected');
 ////            	if($(this).find('div.button').hasClass('selected')){
 ////            		remove selected item
-//                    for (let i = 0 ; i < parent.children[1].children[0].children.length; i ++){
-//                        let elem = parent.children[1].children[0].children[i];
+//                    for (var i = 0 ; i < parent.children[1].children[0].children.length; i ++){
+//                        var elem = parent.children[1].children[0].children[i];
 //                        elem.children[0].classList.remove('selected');
 //                    }
 ////                }else{
@@ -9134,11 +9146,11 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //            this.click_reset_attribute_handler = function(event){
 //                /*TODO: Refactor this function with elegant DOM manipulation */
 //                // remove selected item
-//                let parent = this.parentElement;
+//                var parent = this.parentElement;
 //                if($(this).parent().find('.value-list-container').is(":visible")){
 //                	parent.children[0].classList.remove('selected');
-//                	for (let i = 0 ; i < parent.children[1].children[0].children.length; i ++){
-//                        let elem = parent.children[1].children[0].children[i];
+//                	for (var i = 0 ; i < parent.children[1].children[0].children.length; i ++){
+//                        var elem = parent.children[1].children[0].children[i];
 //                        elem.children[0].classList.remove('selected');
 //                    }
 //                	$(this).parent().find('.value-list-container').slideUp(300);
@@ -9160,7 +9172,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //
 //        replace: function($target){
 //            this.renderElement();
-//            let target = $target[0];
+//            var target = $target[0];
 //            target.parentNode.replaceChild(this.el,target);
 //        },
 //
@@ -9171,23 +9183,23 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //
 //        render_attribute: function(attribute){
-//            let attribute_html = QWeb.render('AttributeWidget',{
+//            var attribute_html = QWeb.render('AttributeWidget',{
 //                    widget:  this,
 //                    attribute: attribute,
 //                });
-//            let attribute_node = document.createElement('div');
+//            var attribute_node = document.createElement('div');
 //            attribute_node.innerHTML = attribute_html;
 //            attribute_node = attribute_node.childNodes[1];
 //            
-//            let list_container = attribute_node.querySelector('.value-list');
-//            for(let i = 0, len = attribute.value_ids.length; i < len; i++){
-//                let value = this.pos.db.get_product_attribute_value_by_id(attribute.value_ids[i]);
-//                let product_list = this.pos.db.get_product_by_ids(this.product_template.product_variant_ids);
-//                let subproduct_list = this.pos.db.get_product_by_value_and_products(value.id, product_list);
-//                let variant_qty = subproduct_list.length;
+//            var list_container = attribute_node.querySelector('.value-list');
+//            for(var i = 0, len = attribute.value_ids.length; i < len; i++){
+//                var value = this.pos.db.get_product_attribute_value_by_id(attribute.value_ids[i]);
+//                var product_list = this.pos.db.get_product_by_ids(this.product_template.product_variant_ids);
+//                var subproduct_list = this.pos.db.get_product_by_value_and_products(value.id, product_list);
+//                var variant_qty = subproduct_list.length;
 //                // Hide product attribute value if there is no product associated to it
-//                if (variant_qty !== 0) {
-//                    let value_node = this.render_value(value, variant_qty);
+//                if (variant_qty != 0) {
+//                    var value_node = this.render_value(value, variant_qty);
 //                    value_node.addEventListener('click', this.click_set_attribute_handler);
 //                    list_container.appendChild(value_node);
 //                }
@@ -9196,12 +9208,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //
 //        render_value: function(value, variant_qty){
-//            let value_html = QWeb.render('AttributeValueWidget',{
+//            var value_html = QWeb.render('AttributeValueWidget',{
 //                    widget:  this,
 //                    value: value,
 //                    variant_qty: variant_qty,
 //                });
-//            let value_node = document.createElement('div');
+//            var value_node = document.createElement('div');
 //            value_node.innerHTML = value_html;
 //            value_node = value_node.childNodes[1];
 //            return value_node;
@@ -9209,9 +9221,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //
 //
 //        renderElement: function() {
-//            let self = this;
-//            let el_html  = QWeb.render(this.template, {widget: this});
-//            let el_node = document.createElement('div');
+//            var self = this;
+//            var el_html  = QWeb.render(this.template, {widget: this});
+//            var el_node = document.createElement('div');
 //            el_node.innerHTML = el_html;
 //            el_node = el_node.childNodes[1];
 //            if(this.el && this.el.parentNode){
@@ -9219,9 +9231,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //            }
 //            this.el = el_node;
 //
-//            let list_container = el_node.querySelector('.attribute-list');
-//            for(let i = 0, len = this.attribute_list.length; i < len; i++){
-//                let attribute_node = this.render_attribute(this.attribute_list[i]);
+//            var list_container = el_node.querySelector('.attribute-list');
+//            for(var i = 0, len = this.attribute_list.length; i < len; i++){
+//                var attribute_node = this.render_attribute(this.attribute_list[i]);
 //                attribute_node.querySelector('.attribute-name').addEventListener('click', this.click_reset_attribute_handler);
 ////                attribute_node.addEventListener('click', this.click_reset_attribute_handler);
 //                list_container.appendChild(attribute_node);
@@ -9229,7 +9241,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        },
 //    });
 
-    let SelectVariantScreen = screens.ScreenWidget.extend({
+    var SelectVariantScreen = screens.ScreenWidget.extend({
         template:'SelectVariantScreen',
         events: {
             'click .variant-virtual-cart-table .delete-variant': 'delete_variant_line',
@@ -9242,13 +9254,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this._super(parent, options);
         },
         line_click: function(event){
-            let self = this;
-            let variant_id = Number($(event.currentTarget).attr('data-variant-id'));
+            var self = this;
+            var variant_id = Number($(event.currentTarget).attr('data-variant-id'));
             if(variant_id){
                 self.remove_selected_lines();
                 $(event.currentTarget).addClass('selected-variant-cart-line');
                 if(self.variant_list_widget.variant_info.length > 0){
-                    let variant_detail = _.find(self.variant_list_widget.variant_info, function(variant_data){
+                    var variant_detail = _.find(self.variant_list_widget.variant_info, function(variant_data){
                         return variant_data.id === variant_id;
                     });
                     if(variant_detail){
@@ -9260,7 +9272,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         remove_selected_lines: function(){
-            let self = this;
+            var self = this;
             if(self.variant_list_widget.variant_info.length > 0){
                 self.variant_list_widget.variant_info.map(function(variant){
                     variant['is_selected'] = false;
@@ -9269,16 +9281,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         modifier_delete: function(event){
-            let self = this;
-            let variant_id = Number($(event.currentTarget).attr('data-variant-id'));
-            let modifire_id = Number($(event.currentTarget).attr('data-modifier-id'));
+            var self = this;
+            var variant_id = Number($(event.currentTarget).attr('data-variant-id'));
+            var modifire_id = Number($(event.currentTarget).attr('data-modifier-id'));
             if(variant_id && modifire_id){
                 if(self.variant_list_widget.variant_info.length > 0){
-                    let variant_detail = _.find(self.variant_list_widget.variant_info, function(variant_data){
+                    var variant_detail = _.find(self.variant_list_widget.variant_info, function(variant_data){
                         return variant_data.id === variant_id;
                     });
                     if(variant_detail.modifiers && variant_detail.modifiers.length > 0){
-                        let modifier = _.find(variant_detail.modifiers, function(mod){
+                        var modifier = _.find(variant_detail.modifiers, function(mod){
                             return mod.modifier_id === modifire_id;
                         });
                         variant_detail.modifiers = variant_detail.modifiers.filter(function(item) {
@@ -9294,13 +9306,13 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         change_variant_quantity: function(event){
-            let self = this;
-            let qty = Number($(event.currentTarget).val());
-            if(qty || qty === 0){
-                let variant_id = Number($(event.currentTarget).attr('data-variant-id'));
+            var self = this;
+            var qty = Number($(event.currentTarget).val());
+            if(qty || qty == 0){
+                var variant_id = Number($(event.currentTarget).attr('data-variant-id'));
                 if(variant_id){
                     if(self.variant_list_widget.variant_info.length > 0){
-                        let variant_modifier = _.find(self.variant_list_widget.variant_info, function(item){
+                        var variant_modifier = _.find(self.variant_list_widget.variant_info, function(item){
                             return item.id === variant_id;
                         });
                         if(variant_modifier){
@@ -9316,21 +9328,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         click_proceed: function(){
-            let self = this;
+            var self = this;
             if(this.variant_list_widget.variant_info.length > 0){
                 this.variant_list_widget.variant_info.map(function(variant){
-                    let product = self.pos.db.get_product_by_id(variant.id);
+                    var product = self.pos.db.get_product_by_id(variant.id);
                     if(product){
-                        let order = self.pos.get_order();
-                        let unit_price = self.pos.db.get_product_by_id(variant.id).get_price(order.pricelist,1);
-                        let line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
+                        var order = self.pos.get_order();
+                        var unit_price = self.pos.db.get_product_by_id(variant.id).get_price(order.pricelist,1);
+                        var line = new models.Orderline({}, {pos: self.pos, order: order, product: product});
                         line.set_quantity(variant.qty);
                         line.set_unit_price(unit_price);
 
-                        let product_quaty = self.pos.get_order().cart_product_qnty(product.id,true);
-                        if(self.pos.config.restrict_order && self.pos.get_cashier().access_show_qty && product.type !== "service"){
+                        var product_quaty = self.pos.get_order().cart_product_qnty(product.id,true);
+                        if(self.pos.config.restrict_order && self.pos.get_cashier().access_show_qty && product.type != "service"){
                             if(self.pos.config.prod_qty_limit){
-                                let remain = product.qty_available-self.pos.config.prod_qty_limit
+                                var remain = product.qty_available-self.pos.config.prod_qty_limit
                                 if(product_quaty >= remain){
                                     if(self.pos.config.custom_msg){
                                         self.pos.db.notification('warning',self.pos.config.custom_msg);
@@ -9354,12 +9366,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             order.add_orderline(line);
                         }
                         if(variant.modifiers && variant.modifiers.length > 0){
-//        					let selected_line = self.pos.get_order().get_selected_orderline();
+//        					var selected_line = self.pos.get_order().get_selected_orderline();
                             if(line){
-                                let take_away = $('div#take_away').hasClass('selected-menu');
-                                let drive_through_mode = $('div#drive_through_mode').hasClass('selected-menu');
-                                let drive_in = $('div#dine_in_mode').hasClass('selected-menu');
-                                let online = $('div#online_mode').hasClass('selected-menu');
+                                var take_away = $('div#take_away').hasClass('selected-menu');
+                                var drive_through_mode = $('div#drive_through_mode').hasClass('selected-menu');
+                                var drive_in = $('div#dine_in_mode').hasClass('selected-menu');
+                                var online = $('div#online_mode').hasClass('selected-menu');
                                 variant.modifiers.map(function(modifier){
                                     line.set_modifier_line({
                                         id: modifier.modifier_id,
@@ -9384,8 +9396,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         delete_variant_line: function(event){
-            let self = this;
-            let variant_id = Number($(event.currentTarget).attr('data-variant-id'));
+            var self = this;
+            var variant_id = Number($(event.currentTarget).attr('data-variant-id'));
             if(variant_id){
 //      	this.variant_list_widget.variant_info.map(function(variant){
                 this.variant_list_widget.variant_info = this.variant_list_widget.variant_info.filter(function(item) {
@@ -9402,7 +9414,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         start: function(){
             this._super();
-            let self = this;
+            var self = this;
             // Define Variant Widget
             this.variant_list_widget = new VariantListWidget(this,{});
             this.variant_list_widget.replace(this.$('.placeholder-VariantListWidget'));
@@ -9419,7 +9431,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
         show: function(options){
             this._super();
-            let self = this;
+            var self = this;
             self.$el.find('.modifiers-list-contents').html('');
             $(".modifier_base_variant").html('');
             self.variant_list_widget.variant_info = [];
@@ -9427,24 +9439,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 'background':'#000',
                 'color':'#fff',
             });
-            let product_tmpl_id = self.gui.get_current_screen_param('product_tmpl_id');
-            let template = this.pos.db.template_by_id[product_tmpl_id];
+            var product_tmpl_id = self.gui.get_current_screen_param('product_tmpl_id');
+            var template = this.pos.db.template_by_id[product_tmpl_id];
             // Display Name of Template
             this.$('#variant-title-name').html(template.name);
 
             // Render Variants
-            let variant_ids  = this.pos.db.template_by_id[product_tmpl_id].product_variant_ids;
-            let variant_list = [];
-            for (let i = 0, len = variant_ids.length; i < len; i++) {
+            var variant_ids  = this.pos.db.template_by_id[product_tmpl_id].product_variant_ids;
+            var variant_list = [];
+            for (var i = 0, len = variant_ids.length; i < len; i++) {render
                 variant_list.push(this.pos.db.get_product_by_id(variant_ids[i]));
             }
             this.variant_list_widget.filters = {}
             this.variant_list_widget.set_variant_list(variant_list);
 
             // Render Attributes
-            let attribute_ids  = this.pos.db.attribute_by_template_id(template.id);
-            let attribute_list = [];
-            for (let i = 0, len = attribute_ids.length; i < len; i++) {
+            var attribute_ids  = this.pos.db.attribute_by_template_id(template.id);
+            var attribute_list = [];
+            for (var i = 0, len = attribute_ids.length; i < len; i++) {
                 attribute_list.push(this.pos.db.get_product_attribute_by_id(attribute_ids[i]));
             }
             this.attribute_list_widget.set_attribute_list(attribute_list, template);
@@ -9453,14 +9465,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     });
     gui.define_screen({name:'select_variant_screen', widget: SelectVariantScreen});
 
-    let VariantModifierWidget = screens.ScreenWidget.extend({
+    var VariantModifierWidget = screens.ScreenWidget.extend({
         template:'VariantModifierWidget',
         init : function(options,modifier_ids){
-            let self = this;
+            var self = this;
             this._super(options);
             this.modifier_list = [];
             _.each(modifier_ids, function(modifier_id){
-                let modifier = self.pos.db.get_modifier_by_id(modifier_id);
+                var modifier = self.pos.db.get_modifier_by_id(modifier_id);
                 if(modifier){
                     if(self.pos.db.get_product_by_id(modifier.product_id[0])){
                         self.modifier_list.push(modifier);
@@ -9469,22 +9481,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         start:function(){
-            let self = this;
-            let madifier_html = QWeb.render('VariantModifierListWidget', {
+            var self = this;
+            var madifier_html = QWeb.render('VariantModifierListWidget', {
                 widget:  this,
                 modifiers:self.modifier_list
             });
             $('.modifier_base_variant').html(madifier_html);
             $('.modifier_base_variant').find('.modifier_button').click(function(event){
-                let modifier_id = Number($(event.currentTarget).data('modifier-id'));
-                let variant_info = self.__parentedParent.variant_info;
+                var modifier_id = Number($(event.currentTarget).data('modifier-id'));
+                var variant_info = self.__parentedParent.variant_info;
                 if(variant_info && variant_info.length > 0){
-                    let variant_data = _.find(variant_info, function(variant){
-                        return variant.is_selected === true;
+                    var variant_data = _.find(variant_info, function(variant){
+                        return variant.is_selected == true;
                     });
-                    let modifier = self.pos.db.get_modifier_by_id(modifier_id);
+                    var modifier = self.pos.db.get_modifier_by_id(modifier_id);
                     if(modifier && variant_data){
-                        let modifier_data = {
+                        var modifier_data = {
                             'modifier_qty': modifier.qty,
                             'modifier_id': modifier.id,
                             'modifier_price': modifier.price,
@@ -9495,7 +9507,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             modifier_data['modifier_qty'] = variant_data.qty;
                             variant_data['modifiers'] = [modifier_data];
                         }else{
-                            let exis_modifier = _.find(variant_data['modifiers'], function(mod){
+                            var exis_modifier = _.find(variant_data['modifiers'], function(mod){
                                 return mod.id === modifier.id;
                             });
                             if(!exis_modifier){
@@ -9514,7 +9526,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
 
-    let VariantListWidget = PosBaseWidget.extend({
+    var VariantListWidget = PosBaseWidget.extend({
         template:'VariantListWidget',
 //        events : _.extend({}, PosBaseWidget.prototype.events, {
 //	    	'click .js_variant_qty' : 'update_return_product_qty',
@@ -9523,24 +9535,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 //        	alert("call;")
 //        	ev.preventDefault();
 //        	alert("call2;")
-//            let $link = $(ev.currentTarget);
-//            let $input = $link.parent().parent().find("input");
+//            var $link = $(ev.currentTarget);
+//            var $input = $link.parent().parent().find("input");
 //            console.log("$input",$input);
-//            let product_elem = $('.variant-quantity[data-variant-id="'+$link.attr("data-variant-id")+'"]')
+//            var product_elem = $('.variant-quantity[data-variant-id="'+$link.attr("data-variant-id")+'"]')
 //            console.log("product_elem",product_elem);
 ////            if(!product_elem.hasClass('select_item')){
 ////            	product_elem.addClass('select_item')
 ////            }
-//            let min = parseFloat($input.data("min") || 0);
-//            let max = parseFloat($input.data("max") || $input.val());
-//            let total_qty = parseFloat($input.data("total-qty") || 0);
-//            let quantity = ($link.has(".fa-minus").length ? -1 : 1) + parseFloat($input.val(),10);
+//            var min = parseFloat($input.data("min") || 0);
+//            var max = parseFloat($input.data("max") || $input.val());
+//            var total_qty = parseFloat($input.data("total-qty") || 0);
+//            var quantity = ($link.has(".fa-minus").length ? -1 : 1) + parseFloat($input.val(),10);
 //            $input.val(quantity > min ? quantity : min);
 //            $input.change();
 //            return false;
 //        },
         init: function(parent, options) {
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.variant_list = [];
             this.filter_variant_list = [];
@@ -9548,22 +9560,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.variant_info = [];
 //            this.update_product_qty = function(ev){
 //	        	ev.preventDefault();
-//	            let $link = $(ev.currentTarget);
-//	            let $input = $link.parent().parent().find("input");
-//	            let product_elem = $('.product_content[data-line-id="'+$input.attr("name")+'"]')
+//	            var $link = $(ev.currentTarget);
+//	            var $input = $link.parent().parent().find("input");
+//	            var product_elem = $('.product_content[data-line-id="'+$input.attr("name")+'"]')
 //	            if(!product_elem.hasClass('select_item')){
 //	            	product_elem.addClass('select_item')
 //	            }
-//	            let min = parseFloat($input.data("min") || 0);
-//	            let max = parseFloat($input.data("max") || $input.val());
-//	            let total_qty = parseFloat($input.data("total-qty") || 0);
-//	            let quantity = ($link.has(".fa-minus").length ? -1 : 1) + parseFloat($input.val(),10);
+//	            var min = parseFloat($input.data("min") || 0);
+//	            var max = parseFloat($input.data("max") || $input.val());
+//	            var total_qty = parseFloat($input.data("total-qty") || 0);
+//	            var quantity = ($link.has(".fa-minus").length ? -1 : 1) + parseFloat($input.val(),10);
 //	            $input.val(quantity > min ? (quantity < max ? quantity : max) : min);
 //	            $input.change();
 //	            return false;
 //	        };
             this.click_variant_handler = function(event){
-                let variant = self.pos.db.get_product_by_id(this.dataset['variantId']);
+                var variant = self.pos.db.get_product_by_id(this.dataset['variantId']);
                 if(variant.to_weight && self.pos.config.iface_electronic_scale){
                     self.__parentedParent.hide();
                     self.pos_widget.screen_selector.set_current_screen('scale',{product: variant});
@@ -9586,10 +9598,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             };
         },
         update_variant_cart: function(variant){
-            let self = this;
-            let order = self.pos.get_order();
+            var self = this;
+            var order = self.pos.get_order();
             if(order && variant){
-                let vals = {
+                var vals = {
                     'id':variant.id,
                     'display_name':variant.display_name,
                     'image':self.get_product_image_url(variant),
@@ -9600,7 +9612,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 if(!self.variant_info || self.variant_info.length <= 0){
                     self.variant_info = [vals];
                 }else{
-                    let exist_variant = _.find(self.variant_info, function(variant_rec){
+                    var exist_variant = _.find(self.variant_info, function(variant_rec){
                         return variant_rec.id === variant.id;
                     });
                     if(!exist_variant){
@@ -9608,8 +9620,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 }
                 if(self.variant_info && self.variant_info.length > 0){
-                    let contents = $('.modifiers-list-contents')
-                    let line_html = QWeb.render('VariantVirtualCartLines', {
+                    var contents = $('.modifiers-list-contents')
+                    var line_html = QWeb.render('VariantVirtualCartLines', {
                         widget: self,
                         variant_info: self.variant_info,
                     });
@@ -9631,23 +9643,23 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             $('a.js_variant_qty').click(function(ev){
                 ev.preventDefault();
-                let $link = $(ev.currentTarget);
-                let $input = $link.parent().parent().find("input");
-                let product_elem = $('.product_content[data-line-id="'+$input.attr("name")+'"]')
+                var $link = $(ev.currentTarget);
+                var $input = $link.parent().parent().find("input");
+                var product_elem = $('.product_content[data-line-id="'+$input.attr("name")+'"]')
                 if(!product_elem.hasClass('select_item')){
                     product_elem.addClass('select_item')
                 }
-                let min = parseFloat($input.data("min") || 1);
-                let max = parseFloat($input.data("max") || $input.val());
-                let total_qty = parseFloat($input.data("total-qty") || 0);
-                let quantity = ($link.has(".fa-minus").length ? -1 : 1) + parseFloat($input.val(),10);
+                var min = parseFloat($input.data("min") || 1);
+                var max = parseFloat($input.data("max") || $input.val());
+                var total_qty = parseFloat($input.data("total-qty") || 0);
+                var quantity = ($link.has(".fa-minus").length ? -1 : 1) + parseFloat($input.val(),10);
                 $input.val(quantity > min ? quantity : min);
                 $input.change();
             })
         },
         replace: function($target){
             this.renderElement();
-            let target = $target[0];
+            var target = $target[0];
             target.parentNode.replaceChild(this.el,target);
         },
         set_filter: function(attribute_id, value_id){
@@ -9661,16 +9673,16 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.filter_variant();
         },
         filter_variant: function(){
-            let value_list = []
-            for (let item in this.filters){
+            var value_list = []
+            for (var item in this.filters){
                 value_list.push(parseInt(this.filters[item]));
             }
             this.filter_variant_list = [];
-            for (let index in this.variant_list){
-                let variant = this.variant_list[index];
-                let found = true;
-                for (let i = 0; i < value_list.length; i++){
-                    found = found && (variant.attribute_value_ids.indexOf(value_list[i]) !== -1);
+            for (var index in this.variant_list){
+                var variant = this.variant_list[index];
+                var found = true;
+                for (var i = 0; i < value_list.length; i++){
+                    found = found && (variant.attribute_value_ids.indexOf(value_list[i]) != -1);
                 }
                 if (found){
                     this.filter_variant_list.push(variant);
@@ -9684,15 +9696,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.renderElement();
         },
         render_variant: function(variant){
-            let order = this.pos.get_order();
-            let image_url = this.get_product_image_url(variant);
-            let variant_html = QWeb.render('VariantWidget', {
-                widget:  this,
-                variant: variant,
-                image_url: image_url,
-                pricelist: order.pricelist,
-            });
-            let variant_node = document.createElement('div');
+            var order = this.pos.get_order();
+            var image_url = this.get_product_image_url(variant);
+            var variant_html = QWeb.render('VariantWidget', {
+                    widget:  this,
+                    variant: variant,
+                    image_url: image_url,
+                    pricelist: order.pricelist,
+                });
+            var variant_node = document.createElement('div');
             variant_node.innerHTML = variant_html;
             variant_node = variant_node.childNodes[1];
             return variant_node;
@@ -9701,19 +9713,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             return window.location.origin + '/web/image?model=product.product&field=image_medium&id='+product.id;
         },
         renderElement: function() {
-            let self = this;
-            let el_html  = QWeb.render(this.template, {widget: this});
-            let el_node = document.createElement('div');
+            var self = this;
+            var el_html  = QWeb.render(this.template, {widget: this});
+            var el_node = document.createElement('div');
             el_node.innerHTML = el_html;
             el_node = el_node.childNodes[1];
             if(this.el && this.el.parentNode){
                 this.el.parentNode.replaceChild(el_node,this.el);
             }
             this.el = el_node;
-            let list_container = el_node.querySelector('.variant-list');
-            for(let i = 0, len = this.filter_variant_list.length; i < len; i++){
+            var list_container = el_node.querySelector('.variant-list');
+            for(var i = 0, len = this.filter_variant_list.length; i < len; i++){
                 if(this.filter_variant_list[i]){
-                    let variant_node = this.render_variant(this.filter_variant_list[i]);
+                    var variant_node = this.render_variant(this.filter_variant_list[i]);
                     variant_node.addEventListener('click',this.click_variant_handler);
                     list_container.appendChild(variant_node);
                 }
@@ -9721,38 +9733,38 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
     });
 
-    let AttributeListWidget = PosBaseWidget.extend({
+    var AttributeListWidget = PosBaseWidget.extend({
         template:'AttributeListWidget',
 
         init: function(parent, options) {
-            let self = this;
+            var self = this;
             this.attribute_list = [];
             this.product_template = null;
             this.click_set_attribute_handler = function(event){
                 /*TODO: Refactor this function with elegant DOM manipulation */
-                let parent = this.parentElement.parentElement.parentElement;
+                var parent = this.parentElement.parentElement.parentElement;
                 parent.children[0].classList.remove('selected');
 //            	if($(this).find('div.button').hasClass('selected')){
 //            		remove selected item
-                for (let i = 0 ; i < parent.children[1].children[0].children.length; i ++){
-                    let elem = parent.children[1].children[0].children[i];
-                    elem.children[0].classList.remove('selected');
-                }
+                    for (var i = 0 ; i < parent.children[1].children[0].children.length; i ++){
+                        var elem = parent.children[1].children[0].children[i];
+                        elem.children[0].classList.remove('selected');
+                    }
 //                }else{
-                // add selected item
-                $(this).parent().find('div.button').removeClass('selected');
-                this.children[0].classList.add('selected');
-                self.__parentedParent.variant_list_widget.set_filter(this.dataset['attributeId'], this.dataset['attributeValueId']);
+                    // add selected item
+                    $(this).parent().find('div.button').removeClass('selected');
+                    this.children[0].classList.add('selected');
+                    self.__parentedParent.variant_list_widget.set_filter(this.dataset['attributeId'], this.dataset['attributeValueId']);
 //                }
             };
             this.click_reset_attribute_handler = function(event){
                 /*TODO: Refactor this function with elegant DOM manipulation */
                 // remove selected item
-                let parent = this.parentElement;
+                var parent = this.parentElement;
                 if($(this).parent().find('.value-list-container').is(":visible")){
                     parent.children[0].classList.remove('selected');
-                    for (let i = 0 ; i < parent.children[1].children[0].children.length; i ++){
-                        let elem = parent.children[1].children[0].children[i];
+                    for (var i = 0 ; i < parent.children[1].children[0].children.length; i ++){
+                        var elem = parent.children[1].children[0].children[i];
                         elem.children[0].classList.remove('selected');
                     }
                     $(this).parent().find('.value-list-container').slideUp(300);
@@ -9774,7 +9786,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
         replace: function($target){
             this.renderElement();
-            let target = $target[0];
+            var target = $target[0];
             target.parentNode.replaceChild(this.el,target);
         },
 
@@ -9785,37 +9797,37 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
 
         render_attribute: function(attribute){
-            let attribute_html = QWeb.render('AttributeWidget',{
-                widget:  this,
-                attribute: attribute,
-            });
-            let attribute_node = document.createElement('div');
+            var attribute_html = QWeb.render('AttributeWidget',{
+                    widget:  this,
+                    attribute: attribute,
+                });
+            var attribute_node = document.createElement('div');
             attribute_node.innerHTML = attribute_html;
             attribute_node = attribute_node.childNodes[1];
-
-            let list_container = attribute_node.querySelector('.value-list');
-            for(let i = 0, len = attribute.value_ids.length; i < len; i++){
-                let value = this.pos.db.get_product_attribute_value_by_id(attribute.value_ids[i]);
-                let product_list = this.pos.db.get_product_by_ids(this.product_template.product_variant_ids);
-                let subproduct_list = this.pos.db.get_product_by_value_and_products(value.id, product_list);
-                let variant_qty = subproduct_list.length;
+            
+            var list_container = attribute_node.querySelector('.value-list');
+            for(var i = 0, len = attribute.value_ids.length; i < len; i++){
+                var value = this.pos.db.get_product_attribute_value_by_id(attribute.value_ids[i]);
+                var product_list = this.pos.db.get_product_by_ids(this.product_template.product_variant_ids);
+                var subproduct_list = this.pos.db.get_product_by_value_and_products(value.id, product_list);
+                var variant_qty = subproduct_list.length;
                 // Hide product attribute value if there is no product associated to it
-                if (variant_qty !== 0) {
-                    let value_node = this.render_value(value, variant_qty);
+                if (variant_qty != 0) {
+                    var value_node = this.render_value(value, variant_qty);
                     value_node.addEventListener('click', this.click_set_attribute_handler);
                     list_container.appendChild(value_node);
                 }
-            }
+            };
             return attribute_node;
         },
 
         render_value: function(value, variant_qty){
-            let value_html = QWeb.render('AttributeValueWidget',{
-                widget:  this,
-                value: value,
-                variant_qty: variant_qty,
-            });
-            let value_node = document.createElement('div');
+            var value_html = QWeb.render('AttributeValueWidget',{
+                    widget:  this,
+                    value: value,
+                    variant_qty: variant_qty,
+                });
+            var value_node = document.createElement('div');
             value_node.innerHTML = value_html;
             value_node = value_node.childNodes[1];
             return value_node;
@@ -9823,9 +9835,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
 
 
         renderElement: function() {
-            let self = this;
-            let el_html  = QWeb.render(this.template, {widget: this});
-            let el_node = document.createElement('div');
+            var self = this;
+            var el_html  = QWeb.render(this.template, {widget: this});
+            var el_node = document.createElement('div');
             el_node.innerHTML = el_html;
             el_node = el_node.childNodes[1];
             if(this.el && this.el.parentNode){
@@ -9833,21 +9845,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             this.el = el_node;
 
-            let list_container = el_node.querySelector('.attribute-list');
-            for(let i = 0, len = this.attribute_list.length; i < len; i++){
-                let attribute_node = this.render_attribute(this.attribute_list[i]);
+            var list_container = el_node.querySelector('.attribute-list');
+            for(var i = 0, len = this.attribute_list.length; i < len; i++){
+                var attribute_node = this.render_attribute(this.attribute_list[i]);
                 attribute_node.querySelector('.attribute-name').addEventListener('click', this.click_reset_attribute_handler);
 //                attribute_node.addEventListener('click', this.click_reset_attribute_handler);
                 list_container.appendChild(attribute_node);
-            }
+            };
         },
     });
 
     /* Add Table Reservation Screen */
-    let AddTableReservationScreenWidget = screens.ScreenWidget.extend({
+    var AddTableReservationScreenWidget = screens.ScreenWidget.extend({
         template: 'AddTableReservationScreenWidget',
         init: function(parent, options){
-            let self = this;
+            var self = this;
             this._super(parent, options);
             this.table_seat = 0;
         },
@@ -9861,9 +9873,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         on_keyup_no_of_guest: function(event){
             self.$el.find('.all_table_show').html('');
-            let date = self.$el.find("#table_reservation_date").val();
-            let time = self.$el.find("#table_reservation_time").val();
-            let duration = self.$el.find("#table_reservation_duration").val();
+            var date = self.$el.find("#table_reservation_date").val();
+            var time = self.$el.find("#table_reservation_time").val();
+            var duration = self.$el.find("#table_reservation_duration").val();
             if(date && time && duration){
                 self.$el.find('.check_table_availability_btn').addClass("active");
             }
@@ -9871,9 +9883,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         on_keyup_reservation_duration: function(event){
             self = this;
             self.$el.find('.all_table_show').html('');
-            let date = self.$el.find("#table_reservation_date").val();
-            let time = self.$el.find("#table_reservation_time").val();
-            let no_of_guest = self.$el.find("#enter_no_of_guest").val();
+            var date = self.$el.find("#table_reservation_date").val();
+            var time = self.$el.find("#table_reservation_time").val();
+            var no_of_guest = self.$el.find("#enter_no_of_guest").val();
             if(date && time && no_of_guest){
                 self.$el.find('.check_table_availability_btn').addClass("active");
             }
@@ -9881,9 +9893,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         on_change_reservation_date: function(event){
             self = this;
             self.$el.find('.all_table_show').html('');
-            let time = self.$el.find("#table_reservation_time").val();
-            let duration = self.$el.find("#table_reservation_duration").val();
-            let no_of_guest = self.$el.find("#enter_no_of_guest").val();
+            var time = self.$el.find("#table_reservation_time").val();
+            var duration = self.$el.find("#table_reservation_duration").val();
+            var no_of_guest = self.$el.find("#enter_no_of_guest").val();
             if(time && duration && no_of_guest){
                 self.$el.find('.check_table_availability_btn').addClass("active");
             }
@@ -9891,9 +9903,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         on_change_reservation_time: function(event){
             self = this;
             self.$el.find('.all_table_show').html('');
-            let date = self.$el.find("#table_reservation_date").val()
-            let duration = self.$el.find("#table_reservation_duration").val();
-            let no_of_guest = self.$el.find("#enter_no_of_guest").val();
+            var date = self.$el.find("#table_reservation_date").val()
+            var duration = self.$el.find("#table_reservation_duration").val();
+            var no_of_guest = self.$el.find("#enter_no_of_guest").val();
             if(date && duration && no_of_guest){
                 self.$el.find('.check_table_availability_btn').addClass("active");
             }
@@ -9902,7 +9914,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.pos.gui.back();
         },
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             self.$el.find("#table_reservation_time").timepicker();
             self.$el.find("#table_reservation_duration").val(self.pos.config.table_reservation_duration);
@@ -9911,10 +9923,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.$el.find(".table_availability").click(function(event){
                 event.stopImmediatePropagation();
                 self.table_seat = 0;
-                let no_of_guest = Number($('#enter_no_of_guest').val());
-                let reservation_date = $('#table_reservation_date').val();
-                let reservation_time = $('#table_reservation_time').val();
-                let duration_time = $('#table_reservation_duration').val();
+                var no_of_guest = Number($('#enter_no_of_guest').val());
+                var reservation_date = $('#table_reservation_date').val();
+                var reservation_time = $('#table_reservation_time').val();
+                var duration_time = $('#table_reservation_duration').val();
                 if(duration_time <= 0){
                     $('#table_reservation_duration').focus();
                     return alert("Please enter valid duration")
@@ -9924,24 +9936,24 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     if(reservation_date){
                         if(reservation_time){
                             if(duration_time){
-                                let arg = {
+                                var arg = {
                                     'reserve_date_time':reservation_date + ' ' + reservation_time ,
                                     'no_of_guest':no_of_guest,
                                     'requested_duration':duration_time,
                                 };
-                                let params = {
+                                var params = {
                                     model: 'restaurant.table.reservation',
                                     method: 'reservation_validation',
                                     args: [arg],
                                 }
                                 rpc.query(params, {async: false})
-                                    .then(function(res){
-                                        if(res && res[0]){
-                                            self.render_tables(res)
-                                        } else{
-                                            self.render_tables([]);
-                                        }
-                                    })
+                                .then(function(res){
+                                    if(res && res[0]){
+                                        self.render_tables(res)
+                                    } else{
+                                        self.render_tables([]);
+                                    }
+                                })
                             } else{
                                 alert("Please enter duration for hold the table!");
                             }
@@ -9957,31 +9969,31 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             });
         },
         render_tables: function(tbl_ids){
-            let self = this;
-            let all_table_ids = []
-            let booked = [];
-            let tables = self.pos.table.floor.tables
+            var self = this;
+            var all_table_ids = []
+            var booked = [];
+            var tables = self.pos.table.floor.tables
             self.$el.find('.all_table_show').html('');
             if(tbl_ids.length > 0){
-                let filter_ids = [];
+                var filter_ids = [];
                 _.each(tables,function(table){
                     all_table_ids.push(table.id)
                 });
-                all_table_ids = all_table_ids.filter(function(obj) { return tbl_ids.indexOf(obj) === -1; });
+                all_table_ids = all_table_ids.filter(function(obj) { return tbl_ids.indexOf(obj) == -1; });
             } else{
                 _.each(tables,function(table){
-                    if(self.pos.table.floor_id[0] === table.floor_id[0]){
+                    if(self.pos.table.floor_id[0] == table.floor_id[0]){
                         all_table_ids.push(table.id)
                     }
                 });
             }
             _.each(tbl_ids,function(tbl){
-                let table = self.pos.tables_by_id[tbl]
-                if(self.pos.table.floor_id[0] === table.floor_id[0]){
+                var table = self.pos.tables_by_id[tbl]
+                if(self.pos.table.floor_id[0] == table.floor_id[0]){
                     booked.push(tbl);
                 }
             })
-            let param = {
+            var param = {
                 widget: self,
                 restrict_table_ids: all_table_ids,
                 booked_table_ids : booked,
@@ -9993,19 +10005,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.$el.find('.all_table_show').html('');
         },
         click_table: function(event){
-            let self = this;
+            var self = this;
             if($(event.currentTarget).hasClass('booked')){
                 return;
             }
-            let table_id = $(event.currentTarget).data('table-id');
+            var table_id = $(event.currentTarget).data('table-id');
             if(table_id){
-                let table = self.pos.tables_by_id[table_id];
-                let no_of_guest = Number($('#enter_no_of_guest').val());
-                let reservation_date = $('#table_reservation_date').val();
-                let reservation_time = $('#table_reservation_time').val();
-                let reservation_duration = $('#table_reservation_duration').val();
+                var table = self.pos.tables_by_id[table_id];
+                var no_of_guest = Number($('#enter_no_of_guest').val());
+                var reservation_date = $('#table_reservation_date').val();
+                var reservation_time = $('#table_reservation_time').val();
+                var reservation_duration = $('#table_reservation_duration').val();
                 if(no_of_guest){
-                    let tables = [];
+                    var tables = [];
                     if($(event.currentTarget).hasClass('table_selected')){
                         $(event.currentTarget).removeClass('table_selected');
                         self.table_seat -= table.seats
@@ -10018,7 +10030,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             if(reservation_time){
                                 _.each($(".each_tbl"), function(el){
                                     if($(el).hasClass('table_selected')){
-                                        let tbl_id = $(el).data('table-id');
+                                        var tbl_id = $(el).data('table-id');
                                         tables.push(self.pos.tables_by_id[tbl_id]);
                                     }
                                 });
@@ -10036,7 +10048,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                             alert("Please select reservation date");
                         }
                     } else{
-
+                        return;
                     }
                 } else{
                     alert("Please select number of guest!");
@@ -10049,7 +10061,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     gui.define_screen({name:'add_table_reservation_screen', widget: AddTableReservationScreenWidget});
 
     /* Table Reservation List Screen */
-    let TableReservationScreenWidget = screens.ScreenWidget.extend({
+    var TableReservationScreenWidget = screens.ScreenWidget.extend({
         template: 'TableReservationScreenWidget',
         init: function(parent, options){
             this._super(parent, options);
@@ -10064,30 +10076,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             'click #allocate_table' : 'allocate_table',
         },
         allocate_table: function(e){
-            let self = this;
-            let record_id = $(e.currentTarget).data('id');
-            let selectedOrder = self.pos.get_order();
+            var self = this;
+            var record_id = $(e.currentTarget).data('id');
+            var selectedOrder = self.pos.get_order();
             if(record_id){
-                let reservation_data = {
+                var reservation_data = {
                     model: 'restaurant.table.reservation',
                     method: 'write',
                     args: [Number(record_id), {'state':'confirm'}]
                 }
                 rpc.query(reservation_data, {async: false})
-                    .then(function(result){
-                        if(result){
-                            let records = self.pos.db.get_reserved_table_orders();
-                            let match = _.findWhere(records, {id:record_id});
-                            match.state = 'confirm';
-                            self.render_list(records);
-                            self.pos.db.notification('success',"Table(s) has been allocated!");
-                        }
-                    });
-                let reserved_rec = self.pos.db.get_reserved_table_order_by_id(record_id);
+                .then(function(result){
+                    if(result){
+                        var records = self.pos.db.get_reserved_table_orders();
+                        var match = _.findWhere(records, {id:record_id});
+                        match.state = 'confirm';
+                        self.render_list(records);
+                        self.pos.db.notification('success',"Table(s) has been allocated!");
+                    }
+                });
+                var reserved_rec = self.pos.db.get_reserved_table_order_by_id(record_id);
                 if(reserved_rec.table_ids && reserved_rec.table_ids[0]){
                     selectedOrder.set_merge_table_ids(reserved_rec.table_ids);
                 }
-                let client = self.pos.db.get_partner_by_id(reserved_rec.partner_id[0]);
+                var client = self.pos.db.get_partner_by_id(reserved_rec.partner_id[0]);
                 selectedOrder.set_client(client);
                 selectedOrder.set_rest_table_reservation_id(Number(record_id));
                 selectedOrder.initialize_validation_date();
@@ -10098,21 +10110,21 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         start_reserved_table_order: function(e){
-            let self = this;
-            let record_id = $(e.currentTarget).data('id');
-            let order = self.pos.get_order();
+            var self = this;
+            var record_id = $(e.currentTarget).data('id');
+            var order = self.pos.get_order();
             if(record_id){
-                let reserved_rec = self.pos.db.get_reserved_table_order_by_id(record_id);
-                if(reserved_rec.table_ids.length === 1){
-                    let table = self.pos.tables_by_id[reserved_rec.table_ids[0]];
+                var reserved_rec = self.pos.db.get_reserved_table_order_by_id(record_id);
+                if(reserved_rec.table_ids.length == 1){
+                    var table = self.pos.tables_by_id[reserved_rec.table_ids[0]];
                     self.pos.set_table(table)
                 } else{
-                    let merge_table_ids = reserved_rec.table_ids;
+                    var merge_table_ids = reserved_rec.table_ids;
                     /*Unlink existing table*/
-                    let floor = self.pos.floors_by_id[self.pos.table.floor_id[0]];
+                    var floor = self.pos.floors_by_id[self.pos.table.floor_id[0]];
                     if (floor && floor.tables && floor.tables[0]) {
                         floor.tables.map(function(table) {
-                            if (table.parent_linked_table === self.pos.table) {
+                            if (table.parent_linked_table == self.pos.table) {
                                 table.parent_linked_table = undefined;
                             }
                         });
@@ -10120,12 +10132,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     if(merge_table_ids && merge_table_ids[0]){
                         order.set_merge_table_ids(merge_table_ids);
                     }
-                    let table = self.pos.tables_by_id[merge_table_ids[0]];
+                    var table = self.pos.tables_by_id[merge_table_ids[0]];
                     if(order.get_merge_table_ids() && order.get_merge_table_ids()[0]){
-                        let merged_tables = [];
+                        var merged_tables = [];
                         merge_table_ids.map(function(id){
-                            if(table.id !== id){
-                                let table_name = self.pos.tables_by_id[id];
+                            if(table.id != id){
+                                var table_name = self.pos.tables_by_id[id];
                                 if(table_name && table_name.name){
                                     merged_tables.push(table_name);
                                     table_name.parent_linked_table = table;
@@ -10143,18 +10155,18 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         });
                     }
                 }
-                let reservation_data = {
+                var reservation_data = {
                     model: 'restaurant.table.reservation',
                     method: 'write',
                     args: [Number(record_id), {'state':'confirm'}]
                 }
                 rpc.query(reservation_data, {async: false}).then(function(result){
                     if(result){
-                        let records = self.pos.db.get_reserved_table_orders();
-                        let match = _.findWhere(records, {id:record_id});
+                        var records = self.pos.db.get_reserved_table_orders();
+                        var match = _.findWhere(records, {id:record_id});
                         match.state = 'confirm';
                         self.render_list(records);
-                        let value = {};
+                        var value = {};
                         value[Number(record_id)] = 'done'
                         self.pos.get_order().set_reservation_order_state(value)
                     }
@@ -10165,14 +10177,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.gui.show_screen('products');
         },
         click_add_reservation: function(event){
-            let self = this;
+            var self = this;
             self.gui.show_screen('add_table_reservation_screen');
         },
         clear_cart: function(){
-            let self = this;
-            let order = self.pos.get_order();
-            let currentOrderLines = order.get_orderlines();
-            let lines_ids = []
+            var self = this;
+            var order = self.pos.get_order();
+            var currentOrderLines = order.get_orderlines();
+            var lines_ids = []
             if(!order.is_empty()) {
                 _.each(currentOrderLines,function(item) {
                     lines_ids.push(item.id);
@@ -10183,62 +10195,61 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         show: function(){
-            let self = this;
+            var self = this;
             this._super();
             this.load_table_reservation();
-            let today = new Date();
-            document.getElementById(
-                "table_reservation_date"
-            ).min = moment(today).locale('en').format('YYYY-MM-DD');
+            var today = new Date();
+            var end_date = moment(today).locale('en').format('YYYY-MM-DD');
+            document.getElementById("table_reservation_date").min = end_date;
         },
         load_table_reservation: function(){
-            let self = this;
-            let today = new Date();
-            let end_date = moment(today).locale('en').format('YYYY-MM-DD');
-            let params = {
+            var self = this;
+            var today = new Date();
+            var end_date = moment(today).locale('en').format('YYYY-MM-DD');
+            var params = {
                 model: 'restaurant.table.reservation',
                 method: 'search_read',
                 domain: [['tbl_reserve_datetime', '>=', end_date + " 00:00:00"]],
             }
             rpc.query(params, {async: false}).then(function(records){
-                records = _.sortBy(records, 'tbl_reserve_datetime');
+                var records = _.sortBy(records, 'tbl_reserve_datetime');
                 self.reserved_table_order_data = records
                 self.pos.db.add_reserved_table_orders(records);
                 self.render_list(records);
             });
         },
         render_list: function(records){
-            let self = this;
+            var self = this;
             if(records && records.length > 0){
-                let contents = this.$el[0].querySelector('.reserved-table-order-list');
+                var contents = this.$el[0].querySelector('.reserved-table-order-list');
                 contents.innerHTML = "";
-                for(let i = 0, len = Math.min(records.length,1000); i < len; i++){
-                    let self = this;
-                    let record = records[i];
-                    let table_name_string = "";
+                for(var i = 0, len = Math.min(records.length,1000); i < len; i++){
+                    var self = this;
+                    var record = records[i];
+                    var table_name_string = "";
                     if(record.table_ids && record.table_ids[0]){
                         _.each(record.table_ids, function(table_id){
-                            let table = self.pos.tables_by_id[table_id]
+                            var table = self.pos.tables_by_id[table_id]
                             table_name_string += table.name + ',' + ' '
                         })
                         table_name_string = table_name_string.replace(/,\s*$/, "");
                     }
                     record['tables_string'] = table_name_string
-                    let reseveline_html = QWeb.render('ReserveTablelistLine',{widget: this, record:record});
-                    let reseveline = document.createElement('tbody');
+                    var reseveline_html = QWeb.render('ReserveTablelistLine',{widget: this, record:record});
+                    var reseveline = document.createElement('tbody');
                     reseveline.innerHTML = reseveline_html;
                     reseveline = reseveline.childNodes[1];
                     contents.appendChild(reseveline);
                 }
             } else{
-                let contents = this.$el[0].querySelector('.reserved-table-order-list');
+                var contents = this.$el[0].querySelector('.reserved-table-order-list');
                 contents.innerHTML = "Record Not Found";
             }
         },
         perform_search_table_reservation: function(query, associate_result){
-            let self = this;
+            var self = this;
             if(query){
-                let records = this.pos.db.search_reserve_table(query);
+                var records = this.pos.db.search_reserve_table(query);
                 if ( associate_result && records.length === 1){
                     this.gui.back();
                 }
@@ -10248,19 +10259,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         clear_search: function(){
-            let orders = this.reserved_table_order_data;
+            var orders = this.reserved_table_order_data;
             this.render_list(orders);
             this.$('.searchbox input')[0].value = '';
             this.$('.searchbox input').focus();
         },
         search_table_reservation: function(e){
-            let self = this;
-            let search_timeout = null;
+            var self = this;
+            var search_timeout = null;
             clearTimeout(search_timeout);
-            let query = $(e.currentTarget).val();
-            // search_timeout = setTimeout(function(){
-            //     self.perform_search_table_reservation(query,e.which === 13);
-            // },70);
+            var query = $(e.currentTarget).val();
+            search_timeout = setTimeout(function(){
+                self.perform_search_table_reservation(query,e.which === 13);
+            },70);
         },
     });
     gui.define_screen({name:'table_reservation_screen', widget: TableReservationScreenWidget});
