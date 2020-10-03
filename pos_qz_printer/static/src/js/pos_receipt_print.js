@@ -1,25 +1,25 @@
 
 odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
-"use strict";
+    "use strict";
 
-var core = require('web.core');
-var ajax = require('web.ajax');
-var framework = require('web.framework');
-var Dialog = require('web.Dialog');
-var action_model = null;
-var controller = null;
-var company_id = null;
-var controller_url = null;
-var PopupWidget = require('point_of_sale.popups');
-var gui = require('point_of_sale.gui');
-var models = require('point_of_sale.models');
-var screens = require('point_of_sale.screens');
-var QWeb = core.qweb;
-var web_data = require('web.data');
+    var core = require('web.core');
+    var ajax = require('web.ajax');
+    var framework = require('web.framework');
+    var Dialog = require('web.Dialog');
+    var action_model = null;
+    var controller = null;
+    var company_id = null;
+    var controller_url = null;
+    var PopupWidget = require('point_of_sale.popups');
+    var gui = require('point_of_sale.gui');
+    var models = require('point_of_sale.models');
+    var screens = require('point_of_sale.screens');
+    var QWeb = core.qweb;
+    var web_data = require('web.data');
 
-var _t = core._t;
-var qzVersion = 0;
-var data_to_print = ''
+    var _t = core._t;
+    var qzVersion = 0;
+    var data_to_print = ''
 
     function findVersion() {
         qz.api.getVersion().then(function(data) {
@@ -97,10 +97,10 @@ var data_to_print = ''
         var ds = new web_data.DataSet(this, 'res.company');
         ds.call('read', [company_id]).done(function (company) {
             qz.printers.find(company[0].pos_printer).then(function(data) {
-                 console.log("Found: " + data);
-                 setPrinter(data);
-             }).catch(function(err) {
-             console.log("Found Printer Error:", err);
+                console.log("Found: " + data);
+                setPrinter(data);
+            }).catch(function(err) {
+                console.log("Found Printer Error:", err);
             });
         });
     }
@@ -144,32 +144,47 @@ var data_to_print = ''
     }
     function printReceipt() {
         var config = getUpdatedConfig();
-            var printData =
+        var printData =
             [
                 data_to_print
-           ];
-            console.log("ddddddddddddd", printData)
-            qz.print(config, printData).catch(function(e) { console.error(e); });
+            ];
+        console.log("ddddddddddddd", printData)
+        qz.print(config, printData).catch(function(e) { console.error(e); });
         location.reload();
     }
-screens.ReceiptScreenWidget.include({
+    screens.ReceiptScreenWidget.include({
+        // print: function() {
+        //     var self = this;
+        //     if(self.template != 'ReceiptScreenWidget'){
+        //         self._super();
+        //         return;
+        //     }
+        //     company_id = self.pos.company.id
+        //     var order = self.pos.get_order();
+        //     var receipt = self.$('.pos-receipt-container').html(QWeb.render('PosTicket',{
+        //             widget:self,
+        //             order: order,
+        //             receipt: order.export_for_printing(),
+        //             orderlines: order.get_orderlines(),
+        //             paymentlines: order.get_paymentlines(),
+        //         }));
+        //     data_to_print = receipt[0].outerHTML
+        //     startConnection();
+        // },
         print: function() {
-            var self = this;
-            if(self.template != 'ReceiptScreenWidget'){
-                self._super();
-                return;
-            }
-            company_id = self.pos.company.id
-            var order = self.pos.get_order();
-            var receipt = self.$('.pos-receipt-container').html(QWeb.render('PosTicket',{
-                    widget:self,
-                    order: order,
-                    receipt: order.export_for_printing(),
-                    orderlines: order.get_orderlines(),
-                    paymentlines: order.get_paymentlines(),
-                }));
-            data_to_print = receipt[0]['outerText']
-            startConnection();
+            company_id = this.pos.company.id;
+            data_to_print = '';
+            let receipt = this.$('.pos-receipt-container')
+
+            if(receipt.length > 0)
+                data_to_print = receipt[0].innerText;
+            else if (receipt.prevObject.length > 0)
+                data_to_print = receipt.prevObject[0].innerText;
+
+            if (data_to_print === '')
+                this._super();
+            else
+                startConnection();
         },
     });
 });
