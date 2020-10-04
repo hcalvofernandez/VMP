@@ -2,32 +2,17 @@
 odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
     "use strict";
 
-    var core = require('web.core');
-    var ajax = require('web.ajax');
-    var framework = require('web.framework');
-    var Dialog = require('web.Dialog');
-    var action_model = null;
-    var controller = null;
-    var company_id = null;
-    var controller_url = null;
-    var PopupWidget = require('point_of_sale.popups');
-    var gui = require('point_of_sale.gui');
-    var models = require('point_of_sale.models');
-    var screens = require('point_of_sale.screens');
-    var QWeb = core.qweb;
-    var web_data = require('web.data');
-
-    var _t = core._t;
-    var qzVersion = 0;
-    var data_to_print = '';
+    let rpc = require('web.rpc');
+    let screens = require('point_of_sale.screens');
 
     /// Authentication setup ///
     qz.security.setCertificatePromise(function(resolve, reject) {
         //Preferred method - from server
-//        $.ajax({ url: "assets/signing/digital-certificate.txt", cache: false, dataType: "text" }).then(resolve, reject);
+//        fetch("assets/signing/digital-certificate.txt", {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
+//          .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
 
         //Alternate method 1 - anonymous
-//        resolve();
+//        resolve();  // remove this line in live environment
 
         //Alternate method 2 - direct
         resolve("-----BEGIN CERTIFICATE-----\n" +
@@ -92,59 +77,68 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
             "-----END CERTIFICATE-----\n");
     });
 
+    qz.security.setSignatureAlgorithm("SHA512"); // Since 2.1
     qz.security.setSignaturePromise(function(toSign) {
         return function(resolve, reject) {
             //Preferred method - from server
-//            $.ajax("/secure/url/for/sign-message?request=" + toSign).then(resolve, reject);
+//            fetch("/secure/url/for/sign-message?request=" + toSign, {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
+//              .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
 
             //Alternate method - unsigned
-            resolve();
+            resolve(); // remove this line in live environment
         };
     });
 
-    function findVersion() {
+    /// Connection ///
+    function startConnection(company_id, data2print) {
+        if (!qz.websocket.isActive()) {
+            qz.websocket.connect().then(function() {
+                console.log('Connection success');
+                findVersion(company_id, data2print);
+            }).catch(function(err) {
+                alert(err || 'Connection failed');
+            });
+        } else {
+            getPrinterFromOdoo(company_id, data2print);
+        }
+    }
+
+    /// Page load ///
+    function findVersion(company_id, data2print) {
         qz.api.getVersion().then(function(data) {
-            qzVersion = data;
-            findPrinters();
+            let qz_version = qz.version
+            if (data !== qz_version)
+                alert('QZ Tray Version must be equal to ' + qz_version);
+            else
+                getPrinterFromOdoo(company_id, data2print);
         }).catch(function(err) {
             alert(err || 'Connection failed');
         });
     }
 
-    function startConnection(config) {
-        if (!qz.websocket.isActive()) {
-            qz.websocket.connect(config).then(function() {
-                console.log('Connection success');
-                findVersion();
-            }).catch(function(err) {
-                alert(err || 'Connection failed');
-            });
-        } else {
-            findPrinters();
-        }
-    }
-
-    function findPrinters() {
-        var ds = new web_data.DataSet(this, 'res.company');
-        ds.call('read', [company_id]).done(function (company) {
-            qz.printers.find(company[0].pos_printer).then(function(data) {
-                console.log("Found: " + data);
-                setPrinter(data);
-                printReceipt();
+    /// Detection ///
+    // Based on findPrinter from sample.html file
+    function getPrinterFromOdoo(company_id, data2print) {
+        rpc.query({
+                model: 'res.company',
+                method: 'read',
+                args: [[company_id], []],
+            }, undefined
+        ).done(function(company) {
+            let pos_printer = company[0].pos_printer;
+            qz.printers.find(pos_printer).then(function(printer) {
+                console.log("Found: " + printer);
+                setPrinter(printer);
+                printReceipt(data2print);
             }).catch(function(err) {
                 console.log("Found Printer Error:", err);
             });
         });
     }
 
-    function setPrinter(printer) {
-        var cf = getUpdatedConfig();
-        cf.setPrinter(printer);
-    }
-
     /// QZ Config ///
-    var cfg = null;
-
+    // From sample.html check function named updateConfig
+    let cfg = null;
     function getUpdatedConfig() {
         if (cfg == null) {
             cfg = qz.configs.create(null);
@@ -158,11 +152,33 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
         return cfg
     }
 
-    function printReceipt() {
-        var config = getUpdatedConfig();
+    function setPrinter(printer) {
+        let cf = getUpdatedConfig();
+        cf.setPrinter(printer);
+    }
 
-        var printData = [
-            { type: 'raw', format: 'plain', data: data_to_print }
+    /// Pixel Printers ///
+    function printReceipt(data2print) {
+        let config = getUpdatedConfig();
+        // From sample.html check function named getUpdatedOptions
+        // let opts = getUpdatedOptions(true);
+        let opts = {
+            pageWidth: "", // $("#pPxlWidth").val(),
+            pageHeight: "", // $("#pPxlHeight").val()
+        };
+
+        let printData = [
+            {
+                type: 'pixel',
+                format: 'html',
+                flavor: 'plain',
+                data: '<html>' +
+                    '<body>' +
+                        data2print +
+                    '</body>' +
+                    '</html>',
+                options: opts
+            }
         ];
 
         qz.print(config, printData).catch(function(err) {
@@ -172,19 +188,19 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
 
     screens.ReceiptScreenWidget.include({
         print: function() {
-            company_id = this.pos.company.id;
-            data_to_print = '';
+            let company_id = this.pos.company.id;
+            let data2print = '';
             let receipt = this.$('.pos-receipt-container')
 
             if(receipt.length > 0)
-                data_to_print = receipt[0].innerText;
+                data2print = receipt[0].outerHTML;
             else if (receipt.prevObject.length > 0)
-                data_to_print = receipt.prevObject[0].innerText;
+                data2print = receipt.prevObject[0].outerHTML;
 
-            if (data_to_print === '')
+            if (data2print === '')
                 this._super();
             else
-                startConnection();
+                startConnection(company_id, data2print);
         },
     });
 });
