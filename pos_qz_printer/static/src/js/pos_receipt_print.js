@@ -15,6 +15,8 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
 //        resolve();  // remove this line in live environment
 
         //Alternate method 2 - direct
+
+        //Aquí va el contenido de cert.pem
         resolve("-----BEGIN CERTIFICATE-----\n" +
             "MIIEJzCCAw+gAwIBAgIUZBiEqLcWY/TFyR/k7iO+jczNN2MwDQYJKoZIhvcNAQEL\n" +
             "BQAwgaExCzAJBgNVBAYTAkNVMQ8wDQYDVQQIDAZIYXZhbmExFDASBgNVBAcMC0hh\n" +
@@ -42,6 +44,7 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
             "-----END CERTIFICATE-----");
     });
 
+    //Aquí va el contenido de key.pem
     let privateKey = "-----BEGIN PRIVATE KEY-----\n" +
         "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJQXiFx/iyEuoU\n" +
         "rbCILbT7hPG2YgLs5QLzaoV68q3Im8g/++nIg+FydiFKpm+2a5qvG5q1c7zIOzmT\n" +
