@@ -162,7 +162,7 @@ msgstr ""
 #. module: stock_variants_measure
 #: model:ir.model.fields,field_description:stock_variants_measure.field_purchase_order_line__price_unit
 msgid "Unit Price"
-msgstr "Precio unitario"
+msgstr "Costo unitario"
 
 #. module: stock_variants_measure
 #: code:addons/stock_variants_measure/models/product_template_attribute_value.py:44
