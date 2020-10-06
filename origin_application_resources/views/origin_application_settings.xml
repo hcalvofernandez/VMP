@@ -6,7 +6,7 @@
             <field name="model">origin_application_resources.settings</field>
             <field name="arch" type="xml">
                 <form>
-                    <group string="Ajustes de Diarios">
+                    <group string="Journals Settings">
                         <group>
                             <field name="name" invisible="1"/>
                             <field name="origin_journal_ids" widget="many2many_tags"/>

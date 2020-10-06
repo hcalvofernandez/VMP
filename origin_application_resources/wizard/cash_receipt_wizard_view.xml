@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cash_receipt_wizard_form" model="ir.ui.view">
+            <field name="name">Cash Receipt Wizard Form</field>
+            <field name="model">origin_application_resources.cash_receipt_wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" force_save="1" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="oar_type" invisible="1"/>
+                                <field name="journal_id" readonly="1" force_save="1"/>
+                                <field name="amount"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="generate_account_entry" type="object" string="Generate" class="oe_highlight"/>
+                            <button string="Cancel" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="cash_receipt_wizard_action">
+            <field name="name">cash_receipt_wizard_action</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="state">code</field>
+            <field name="code">
+origin_journals = env.ref("origin_application_resources.general_settings_data").origin_journal_ids
+if not origin_journals:
+    raise Warning("Please, set the journals in the configuration")
+account_ids = origin_journals.mapped('default_debit_account_id.id')
+domain = [('journal_id', 'in', origin_journals.ids),('oar_type', '=', 'origin'),
+                    ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
+context = {'default_journal_id': origin_journals[0].id,
+            'default_oar_type': 'origin',
+            'default_name': 'transfer_received'}
+action = {
+    'name': 'Recibos de Efectivo',
+    'type': 'ir.actions.act_window',
+    'res_model': 'origin_application_resources.cash_receipt_wizard',
+    'view_type': 'form',
+    'view_mode': 'form',
+    'target': 'new',
+    'domain': domain,
+    'context': context,
+}
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="other_payments_wizard_action">
+            <field name="name">other_payments_wizard_action</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="state">code</field>
+            <field name="code">
+application_journals = env.ref("origin_application_resources.general_settings_data").application_journal_ids
+if not application_journals:
+    raise Warning("Please, set the journals in the configuration")
+account_ids = application_journals.mapped('default_credit_account_id.id')
+domain = [('journal_id', 'in', application_journals.ids),('oar_type', '=', 'application'),
+                    ('account_id', 'in', account_ids),('move_state', '=', 'posted')]
+context = {'default_journal_id': application_journals[0].id,
+            'default_oar_type': 'application',
+            'default_name': 'other_payments'}
+action = {
+    'name': 'Otros Pagos',
+    'type': 'ir.actions.act_window',
+    'res_model': 'origin_application_resources.cash_receipt_wizard',
+    'view_type': 'form',
+    'view_mode': 'form',
+    'target': 'new',
+    'domain': domain,
+    'context': context,
+}
+            </field>
+        </record>
+
+    </data>
+</odoo>

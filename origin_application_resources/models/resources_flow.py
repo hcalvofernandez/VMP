@@ -10,7 +10,7 @@ class ResourcesFlow(models.Model):
     color = fields.Integer(string="Color Index")
     type = fields.Selection([('origin', "Resources Origin"),
                              ('application', "Resources Application"),
-                             ('liquidation', "Liquidation")], string="Type")
+                             ('liquidation', "Balance")], string="Type")
     total_settled = fields.Float(string="Total Settled", compute="_compute_total")
     total = fields.Float(compute="_compute_total", string="Total")
     diff = fields.Float(compute="_compute_total", string="Difference")
