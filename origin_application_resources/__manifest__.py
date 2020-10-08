@@ -10,7 +10,7 @@
     "license": "",
     'support': '',
     'category': 'Account',
-    'depends': ['account', 'point_of_sale'],
+    'depends': ['account', 'flexibite_com_advance'],
     'data': [
         'security/ir.model.access.csv',
         'views/res_company.xml',

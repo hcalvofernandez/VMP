@@ -2523,8 +2523,11 @@ class pos_session(models.Model):
         
 
         self.set_end_balance_real_declared()
-        self._check_pos_session_balance()
+        return self.validate_and_close()
 
+    @api.multi
+    def validate_and_close(self):
+        self._check_pos_session_balance()
         for session in self:
             session.write({'state': 'closing_control', 'stop_at': fields.Datetime.now()})
             if not session.config_id.cash_control:

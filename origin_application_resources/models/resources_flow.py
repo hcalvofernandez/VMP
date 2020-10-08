@@ -125,8 +125,8 @@ class ResourcesFlow(models.Model):
             return [{"total": 0, "total_pending": 0}]
         account_ids = [liquidation_journal.default_credit_account_id.id, ]
         liquidation_total_sql = """SELECT
-                                    SUM(aml.debit - aml.credit) AS total,
-                                    SUM(CASE WHEN am.is_settled = false THEN aml.debit - aml.credit ELSE 0 END) 
+                                    SUM(aml.credit - aml.debit) AS total,
+                                    SUM(CASE WHEN am.is_settled = false THEN aml.credit - aml.debit ELSE 0 END) 
                                     AS total_pending
                                     FROM account_move_line AS aml
                                     INNER JOIN account_move AS am ON am.id = aml.move_id

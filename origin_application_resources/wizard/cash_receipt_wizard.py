@@ -63,7 +63,3 @@ class CashReceiptWizard(models.TransientModel):
             return transfer_id.id
         if self.name == 'other_payments':
             raise ValidationError(_("Sorry, this functionality is don't implemented"))
-
-
-
-

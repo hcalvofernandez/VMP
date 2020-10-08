@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-06 21:32+0000\n"
-"PO-Revision-Date: 2020-10-06 17:40-0400\n"
+"POT-Creation-Date: 2020-10-08 02:19+0000\n"
+"PO-Revision-Date: 2020-10-07 22:21-0400\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"Language: es\n"
+"Language: es_MX\n"
 "X-Generator: Poedit 2.3.1\n"
 
 #. module: origin_application_resources
@@ -220,6 +220,11 @@ msgstr "Cancelar"
 #, python-format
 msgid "Cannot make a transaction with an amount less than or equal to zero"
 msgstr "No puede hacer una transacción por un valor menor o igual a cero"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_cash_box_out
+msgid "Cash Box Out"
+msgstr "Salida de caja"
 
 #. module: origin_application_resources
 #: code:addons/origin_application_resources/wizard/liquidation_wizard.py:173
@@ -494,6 +499,12 @@ msgid "Loss"
 msgstr "Perdida"
 
 #. module: origin_application_resources
+#: code:addons/origin_application_resources/models/pos_session.py:26
+#, python-format
+msgid "Manager Withdraw Remaining Cash"
+msgstr "Retiro Gerencial de Efectivo al Corte"
+
+#. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.view_move_form
 msgid "Mark as Application"
 msgstr "Marcar como Aplicación"
@@ -642,6 +653,11 @@ msgid "Point of Sale Orders"
 msgstr "Pedidos del TPV"
 
 #. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_pos_session
+msgid "Point of Sale Session"
+msgstr "Sesión TPV"
+
+#. module: origin_application_resources
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__previous_guard
 #: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__previous_guard
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
@@ -751,7 +767,7 @@ msgstr "Liquidado"
 #: code:addons/origin_application_resources/wizard/cash_receipt_wizard.py:65
 #, python-format
 msgid "Sorry, this functionality is don't implemented"
-msgstr "Lo sentimos, esta funcionalidad aún no está implementada"
+msgstr "Lo sentimos, esta funcionalidad aun no está implementada"
 
 #. module: origin_application_resources
 #: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_move_tree_view
@@ -786,6 +802,12 @@ msgid "The journal %s is not a origin journal"
 msgstr "El diario %s no es un diario de origen"
 
 #. module: origin_application_resources
+#: code:addons/origin_application_resources/models/cash_box_out.py:20
+#, python-format
+msgid "The journal for this payment is not found"
+msgstr ""
+
+#. module: origin_application_resources
 #: code:addons/origin_application_resources/wizard/liquidation_wizard.py:154
 #, python-format
 msgid "The transfer account for the company %s cannot be found."
@@ -797,6 +819,12 @@ msgstr "No se encuentra la cuenta de transferencia de la compañía %s."
 #, python-format
 msgid "The transfer account for this company cannot be found."
 msgstr "No se encuentra la cuenta de transferencia de la compañía actual."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/cash_box_out.py:23
+#, python-format
+msgid "The transfer account for this company is not found"
+msgstr ""
 
 #. module: origin_application_resources
 #: code:addons/origin_application_resources/models/account_bank_statement.py:26
