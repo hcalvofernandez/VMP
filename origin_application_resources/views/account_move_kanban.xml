@@ -79,20 +79,19 @@
                             <div class="row">
                                 <div class="col-4 o_kanban_card_manage_section o_kanban_manage_new">
                                     <div class="o_kanban_card_manage_title">
-                                        <span role="separator">Nuevo</span>
+                                        <span role="separator">New</span>
                                     </div>
                                     <div name="bank_cash_commands">
-                                        <a role="menuitem" type="object" name="" t-if="type_flow == 'origin'">Origen</a>
-                                        <a role="menuitem" type="object" name="" t-if="type_flow == 'application'">Aplicación</a>
-                                        <a role="menuitem" type="object" name="" t-if="type_flow == 'liquidation'">Liquidación</a>
+                                        <a role="menuitem" type="action" name="%(cash_receipt_wizard_action)d"
+                                           t-if="type_flow == 'origin'">Cash Receipt</a>
+                                        <a role="menuitem" type="action" name="%(other_payments_wizard_action)d"
+                                           t-if="type_flow == 'application'">Other Payments</a>
+                                        <a role="menuitem" type="action" name="%(liquidation_wizard_action)d"
+                                           t-if="type_flow == 'liquidation' and record.diff.raw_value > 0">
+                                            Bank deposit
+                                        </a>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="o_kanban_card_manage_settings row">
-                                <button type="action" name="%(liquidation_wizard_action)d"
-                                        class="btn btn-primary" t-if="type_flow == 'liquidation' and record.diff.raw_value > 0">
-                                    <span>Liquidar</span>
-                                </button>
                             </div>
                             <div class="o_kanban_card_manage_settings row">
                                 <div class="col-8">
@@ -102,7 +101,7 @@
 
                             <div groups="account.group_account_manager" class="row o_kanban_card_settings">
                                 <div class="col-6 text-right">
-                                    <a name="%(origin_application_settings_action)d" type="action">Ajustes</a>
+                                    <a name="%(origin_application_settings_action)d" type="action">Settings</a>
                                 </div>
                             </div>
                         </t>
@@ -115,21 +114,21 @@
                                            context="{'search_default_settled':1}"
                                            t-if="type_flow == 'origin'">
                                             <span title="Origin Settled">
-                                                Histórico de Cortes
+                                                History of Cash Courts
                                             </span>
                                         </a>
                                         <a type="action" name="%(resources_application_account_move_line_action)d"
                                            context="{'search_default_settled':1}"
                                            t-if="type_flow == 'application'">
                                             <span title="Application Settled">
-                                                Histórico de Pagos
+                                                Payment History
                                             </span>
                                         </a>
                                         <a type="action" name="%(liquidation_account_move_line_action)d"
                                            context="{'search_default_settled':1}"
                                            t-if="type_flow == 'liquidation'">
                                             <span title="Settled">
-                                                Histórico de Depósitos
+                                                Deposit History
                                             </span>
                                         </a>
                                     </div>
@@ -139,12 +138,12 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="row" t-if="type_flow == 'liquidation'">
+                                <div class="row" t-if="type_flow == 'origin'">
                                     <div class="col-7">
                                         <a type="action" name=""
                                            context="{'search_default_settled':1}">
                                             <span title="Settled">
-                                                Efectivo en Resguardo
+                                                Previous Safekeepings
                                             </span>
                                         </a>
                                     </div>
@@ -159,19 +158,19 @@
                                         <a type="action" name="%(resources_origin_account_move_line_action)d"
                                            context="{'search_default_to_settle':1}" t-if="type_flow == 'origin'">
                                            <span title="Origin to Settle">
-                                                Cortes de Caja
+                                                Cash Entries
                                             </span>
                                         </a>
                                         <a type="action" name="%(resources_application_account_move_line_action)d"
                                            context="{'search_default_to_settle':1}" t-if="type_flow == 'application'">
                                             <span title="Application to Settle">
-                                                Pagos Realizados
+                                                Payments made
                                             </span>
                                         </a>
                                         <a type="action" name="" context="{'search_default_to_settle':1}"
                                            t-if="type_flow == 'liquidation'">
                                             <span title="To Settle">
-                                                Efectivo a Depositar
+                                                Cash in Safekeeping
                                             </span>
                                         </a>
                                     </div>
@@ -186,7 +185,7 @@
                                         <a type="action" name=""
                                            context="{'search_default_settled':1}">
                                             <span title="Settled">
-                                                Cortes de Caja + Resguardo
+                                                Cash Entries + Guard
                                             </span>
                                         </a>
                                     </div>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.actions.server" id="payment_default_application_journal_action">
+            <field name="name">Resources Application Account Move</field>
+            <field name="model_id" ref="account.model_account_payment"/>
+            <field name="state">code</field>
+            <field name="code">
+application_journals = env.ref("origin_application_resources.general_settings_data").application_journal_ids
+action = env.ref("account.action_account_invoice_payment").read()[0]
+action['context'] = {'default_invoice_ids': [(4, env.context.get('active_id'), None)]}
+if application_journals:
+    action['context']['default_journal_id'] = application_journals[0].id
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='148']" position="attributes">
+                    <attribute name="name">%(payment_default_application_journal_action)d</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
