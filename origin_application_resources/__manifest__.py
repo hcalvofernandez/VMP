@@ -25,6 +25,7 @@
         'data/resources_flow_data.xml',
         'report/origin_application_resources_report.xml',
         'wizard/origin_application_wizard_views.xml',
+        'views/account_invoice.xml',
         'views/menus.xml',
     ],
     'application': True,
