@@ -9,6 +9,7 @@
                 <page string="Printer Configuration" name="printer_config">
                     <group>
                         <field name="pos_printer"/>
+                        <field name="use_qz"/>
                     </group>
                 </page>
             </xpath>
