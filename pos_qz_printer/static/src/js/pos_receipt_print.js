@@ -249,13 +249,23 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
             let company_id = this.pos.company.id;
             let data2print = '';
             let receipt = this.$('.pos-receipt-container')
+            let use_qz = false
+
+            rpc.query({
+                model: 'res.company',
+                method: 'read',
+                args: [[company_id], []],
+            }, {async: false}
+        ).done(function(company) {
+            use_qz = company[0].use_qz;
+        });
 
             if(receipt.length > 0)
                 data2print = receipt[0].outerHTML;
             else if (receipt.prevObject.length > 0)
                 data2print = receipt.prevObject[0].outerHTML;
 
-            if (data2print === '')
+            if (data2print === '' || !use_qz)
                 this._super();
             else
                 startConnection(company_id, data2print);
