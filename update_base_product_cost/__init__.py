@@ -9,4 +9,4 @@ def update_base_product_cost(cr, registry):
             'force_company': company.id}).search([], order="id asc")
         for pl in purchase_lines:
             template_id = pl.product_id.product_tmpl_id
-            template_id.write({"standard_price": pl.price_unit})
+            template_id.write({"base_standard_price": pl.price_unit})
