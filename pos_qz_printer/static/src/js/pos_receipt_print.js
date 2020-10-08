@@ -18,29 +18,29 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
 
         //Aquí va el contenido de cert.pem
         resolve("-----BEGIN CERTIFICATE-----\n" +
-            "MIIEOzCCAyOgAwIBAgIUfjftE3R8Q5Kuyy3iAyiNcWKIyyQwDQYJKoZIhvcNAQEL\n" +
-            "BQAwgasxCzAJBgNVBAYTAkNVMREwDwYDVQQIDAhIb2xndcKhbjERMA8GA1UEBwwI\n" +
-            "SG9sZ3XCoW4xFTATBgNVBAoMDE9kb28gZXhwZXJ0czEVMBMGA1UECwwMT2RvbyBF\n" +
-            "eHBlcnRzMR8wHQYDVQQDDBZ2bXAub2Rvb2V4cGVydHMuY29tLm14MScwJQYJKoZI\n" +
-            "hvcNAQkBFhh2bGFkaW1pcjg4MTAwMkBnbWFpbC5jb20wIBcNMjAxMDA3MDI1ODQy\n" +
-            "WhgPMjA1MjA0MDEwMjU4NDJaMIGrMQswCQYDVQQGEwJDVTERMA8GA1UECAwISG9s\n" +
-            "Z3XCoW4xETAPBgNVBAcMCEhvbGd1wqFuMRUwEwYDVQQKDAxPZG9vIGV4cGVydHMx\n" +
-            "FTATBgNVBAsMDE9kb28gRXhwZXJ0czEfMB0GA1UEAwwWdm1wLm9kb29leHBlcnRz\n" +
-            "LmNvbS5teDEnMCUGCSqGSIb3DQEJARYYdmxhZGltaXI4ODEwMDJAZ21haWwuY29t\n" +
-            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2JoUu6I9pzKMyUV2Nio4\n" +
-            "Xp38pZ2J15Aj8Aeob8Pk6PP9+gsV8yVeLWJ7sZsFEihFzKF7+Tur/QBENUTTqk2j\n" +
-            "zdEInDFNh+dmH33W+z2/8lTXCMtzdjEls5ni8qxSsfN9uZGdkuQ+yYvW0qgD9Mxu\n" +
-            "MLYc0GE6O/sWUcsPvJFFIVa9IWl2Kug0k7ZO7HHslvVqaBqYsr+MOM13AUWquMj4\n" +
-            "+3FLjvHPy49Ksy/DSw630Opilzkx4WiBoRun6B7dsoAUOTkZwCNZWEsgAgVse3wa\n" +
-            "MYnWh5OrJ3hSKkDaDaFO6HqgXrfwWCkWJsyaw3tt5+go/B3f88A9zvvqEaU9wBWP\n" +
-            "zwIDAQABo1MwUTAdBgNVHQ4EFgQUzyEE5Re4twVG/49Naa3TOLGPdgIwHwYDVR0j\n" +
-            "BBgwFoAUzyEE5Re4twVG/49Naa3TOLGPdgIwDwYDVR0TAQH/BAUwAwEB/zANBgkq\n" +
-            "hkiG9w0BAQsFAAOCAQEAqe/vfUSQXNnvK4eG2OILECdINd34NAfPRLbsecMQX1v3\n" +
-            "jYR4MnFJg+RMUOt66opN4MWri1EdYYISoBh2Iaw6PaQwoS6Hf9sgcODN292TZVK4\n" +
-            "fuvSDywRk3MQGMi8bKERS+pUVQvpc67hzJfHtJsuuQjoSlY+nqtMFAfwYpYYSSSk\n" +
-            "2MHMMhdNetUtb5Z7LzG5rnyBzgMtewjOvz33M6aKFj4m+fnWmayUDw1YoXbkElZ+\n" +
-            "/eQx+Xc7IlJLF/CRHPEF1U1EIPVDW1DupscbtdS8t0ykW9Bi4j17TSAxvwHFY/dz\n" +
-            "xnlGQdrfXAx5wcxIZ3CksNKDfYw87kpp+Iz+XOrPeA==\n" +
+            "MIIELTCCAxWgAwIBAgIUMFYIs4ORi2pNTM2YOrKD6yZX76owDQYJKoZIhvcNAQEL\n" +
+            "BQAwgaQxCzAJBgNVBAYTAkNVMREwDwYDVQQIDAhIb2xndcKhbjERMA8GA1UEBwwI\n" +
+            "SG9sZ3XCoW4xFTATBgNVBAoMDE9kb28gRXhwZXJ0czEVMBMGA1UECwwMT2RvbyBF\n" +
+            "eHBlcnRzMRgwFgYDVQQDDA9vZG9vLnZtcC5jb20ubXgxJzAlBgkqhkiG9w0BCQEW\n" +
+            "GHZsYWRpbWlyODgxMDAyQGdtYWlsLmNvbTAgFw0yMDEwMDcwMjI1MDFaGA8yMDUy\n" +
+            "MDQwMTAyMjUwMVowgaQxCzAJBgNVBAYTAkNVMREwDwYDVQQIDAhIb2xndcKhbjER\n" +
+            "MA8GA1UEBwwISG9sZ3XCoW4xFTATBgNVBAoMDE9kb28gRXhwZXJ0czEVMBMGA1UE\n" +
+            "CwwMT2RvbyBFeHBlcnRzMRgwFgYDVQQDDA9vZG9vLnZtcC5jb20ubXgxJzAlBgkq\n" +
+            "hkiG9w0BCQEWGHZsYWRpbWlyODgxMDAyQGdtYWlsLmNvbTCCASIwDQYJKoZIhvcN\n" +
+            "AQEBBQADggEPADCCAQoCggEBANp4ZOmaVp9c4J+mEl+YCYwNS+iBgUQs4oZP+Vym\n" +
+            "J3agvADis5nAQmmAAutG7kJKcJFz5nhRQU72tUlvTJkEjaUB3EXWwA+Yn20M0w/n\n" +
+            "3dpUiE84+1ZSfM9SRnLxTx3fuD2wYx2lUTHMTKEjBeE5a+aABnYjlAjHA5LjR0PB\n" +
+            "2xo8oq43DVYjAvbawcAVwLWGazAcyDX3YM4SYgU9dAvVZCRaCXRhJIVs+Wz1wiji\n" +
+            "GwgyOAS3QeLB5bfK2Odisk9kLqUPIIO3e/2QT1EMfimfCf0emokVGu81BI5lN/kT\n" +
+            "NmiQMeC3OSToy0KYI0e7bQ0mMNBC/2DQN0RpCRRe+NiaR7UCAwEAAaNTMFEwHQYD\n" +
+            "VR0OBBYEFP1y6lg/2WSmPPj45Q4PvMkYWQMLMB8GA1UdIwQYMBaAFP1y6lg/2WSm\n" +
+            "PPj45Q4PvMkYWQMLMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEB\n" +
+            "ADJuhh0dVT4cmT/b2T7KfRzq0NBoCoReIJE1j0gYiwtxQJ+o+Lp8PhMTjxCwFUek\n" +
+            "iD79mVVW3PpR7uaa+3GAAKX3wcX6r7LtDQXSUr8jcgLEbAMp4IrzYVnsQ4cn5acv\n" +
+            "1m/zYpH/ESLZopQDt1OYUaKCJAY8ds4UWBioK8pRR9fed7ohhDRUUhax8bPGAEpk\n" +
+            "TLko/JKsTaBGCjW0EoFbf3yK3+wQ8yDVqjP4uhBuvdVUuTSqvpdkNF5AngvBZSuM\n" +
+            "EwQaLRdX2GgzcKRH8CSAMTSeXbXof+9yMu+i8B7Ql3HQ7N/1tEh3fiQBNyIZ9FZ3\n" +
+            "v3rkvCwfzN/NAaUpg7A3rjo=\n" +
             "-----END CERTIFICATE-----");
         //
         //     resolve("-----BEGIN CERTIFICATE-----\n" +
@@ -72,33 +72,33 @@ odoo.define('pos_qz_printer.pos_receipt_print', function (require) {
 
     //Aquí va el contenido de key.pem
     let privateKey = "-----BEGIN PRIVATE KEY-----\n" +
-        "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDYmhS7oj2nMozJ\n" +
-        "RXY2KjhenfylnYnXkCPwB6hvw+To8/36CxXzJV4tYnuxmwUSKEXMoXv5O6v9AEQ1\n" +
-        "RNOqTaPN0QicMU2H52Yffdb7Pb/yVNcIy3N2MSWzmeLyrFKx8325kZ2S5D7Ji9bS\n" +
-        "qAP0zG4wthzQYTo7+xZRyw+8kUUhVr0haXYq6DSTtk7sceyW9WpoGpiyv4w4zXcB\n" +
-        "Raq4yPj7cUuO8c/Lj0qzL8NLDrfQ6mKXOTHhaIGhG6foHt2ygBQ5ORnAI1lYSyAC\n" +
-        "BWx7fBoxidaHk6sneFIqQNoNoU7oeqBet/BYKRYmzJrDe23n6Cj8Hd/zwD3O++oR\n" +
-        "pT3AFY/PAgMBAAECggEBAIPwr6pwNKARYcMExfJOm5G/KPP1V87wZYPEFm0mZd0l\n" +
-        "K1NRx2gaHhkFQZW5eUhLMeFpiKwUFjsCG4pbR5gYvSwVJeqG+dRMN1/9dqQKRE8o\n" +
-        "MOiRjd60J2QU3DK4l5MAYFhWhCbDVB/PR+eAIxDOKl0PwdOJNkDtPPZL/GUAFJ0u\n" +
-        "KpUPfdg+pCG25OxaLSA8rLYAG2PGIo94w0Pj92Opn6PfdAgA/M7DDes+QCnT4psa\n" +
-        "YE1i4taAy8e98KA7GeVc10cSW/fwUkqDf7t2rbitXTyokxU7wHk3AwHVOMEqR7Q6\n" +
-        "nexauyXHMi87JwHfABSgtWD0+eB9CbEohw+3vPQUtskCgYEA+ik1B5Rxhhs2HGbd\n" +
-        "JNTpU6Lj1q+UWg+2mX7qayoKI5v0hK1qr/+JN4OHXSjX6Vn4o1d24lfPoCL/khGd\n" +
-        "70IhuO68rUUer5VLL0y9EL8RyqF+blyPlrjrw7zsQe/EZbOMZRSYjp0QnlJY6/Lh\n" +
-        "5s2yr46DpTU3dT4aJtsgyfxnGyMCgYEA3ahY8JzVrSQY3A1FxEyGCfdjRAK8WC8I\n" +
-        "Ixa+eDqMDLYLgrYe0SdVpTUBQA+n0GoF3g6ZLAjTqfY/Egi6uLXtrpXrqFdCY9Up\n" +
-        "anJHzkBHQnyy4bio8eS38Wn5o72GdnFD6qnNQGUA211SV4aG59pGpbxCB96fs3/D\n" +
-        "29/e6U9H6WUCgYEAlhWY6jZGMdYrjbitHsbaQcJtfUUT9UCOJeM+ExNCyABuIBfG\n" +
-        "9VaTZYn08ZBqkWbYRG9aNQvH1mSI/oKxRXVgtAoPisj4UxF37SXWHLD1pKNlLiM8\n" +
-        "RoolcObsu9Z09ytUpORJbu6OpN302YJ7w7RPawJOuxSFdELQ/9TiBCz5Uw8CgYEA\n" +
-        "wpVS3ocPnVse565PHLAAyyb9YWr1ZISFJCiHNIxQ/aeiGzE9hGZ/bPRHELGto+wv\n" +
-        "EmzGUj29cmrVm0NGh3hOGwFJSxKvGWy7WtLP7mPHKrrFXhn5VcBvKeLaX7+1Fqz/\n" +
-        "7jT6FhmU0v3tlyBltYuMkVnerYHluHHkwlSZHz+V5XECgYBru0rf8b/KWNKUnEC+\n" +
-        "0LvsZrQTBBynv1wEF7hfOKq2MT57Efm5zBvSXyMsMQwGn4/ZSAbkcCHMJugPo3nn\n" +
-        "AjKADscjRGYx7yr1PoK/FIy95NNbm8YBIq41wO63H+VN9iFaeqjXQZfI31wXifdg\n" +
-        "cleLydfxLMLVphM5NmuFQ5XqAg==\n" +
-        "-----END PRIVATE KEY-----\n";
+        "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDaeGTpmlafXOCf\n" +
+        "phJfmAmMDUvogYFELOKGT/lcpid2oLwA4rOZwEJpgALrRu5CSnCRc+Z4UUFO9rVJ\n" +
+        "b0yZBI2lAdxF1sAPmJ9tDNMP593aVIhPOPtWUnzPUkZy8U8d37g9sGMdpVExzEyh\n" +
+        "IwXhOWvmgAZ2I5QIxwOS40dDwdsaPKKuNw1WIwL22sHAFcC1hmswHMg192DOEmIF\n" +
+        "PXQL1WQkWgl0YSSFbPls9cIo4hsIMjgEt0HiweW3ytjnYrJPZC6lDyCDt3v9kE9R\n" +
+        "DH4pnwn9HpqJFRrvNQSOZTf5EzZokDHgtzkk6MtCmCNHu20NJjDQQv9g0DdEaQkU\n" +
+        "XvjYmke1AgMBAAECggEASvmEUDL6RUifgcqBhbLsm9a4VTuUfCwXNVbe0e/nnSt+\n" +
+        "OaOTVVGIuSIIXmwCOlfHl/M5hdME4a+C+Yerttu8LIOd743Kbc/H7qm3CT9egJ4A\n" +
+        "BYgdoTs/v/qRWML9jtgHJ4yQB02Dtt5Q8f/N9cQ6BmmrTgHZvMVnsZI0E8nEgpTo\n" +
+        "IdWZBXA4Jj3JlIGZtCzTtHggOGdDDwFcXZxb/Aip6bz4NvAdCPSmHg65ZPRTioQq\n" +
+        "VWZmNzDePJxKLFBfJsCiFxqdDju5Sa6WKKZcqq9CR5N2DU+2KeCqOJ/EgvkjPE5q\n" +
+        "bVXjxupK3JDpkzkpkKEeWaz+MDCuY2ejlqqj66vfwQKBgQD13stfptYcAMo+h/K7\n" +
+        "CUFekUpgNyfHOH4ojk0cXSEQJyJNx3PyDPSQ5SM2OBWb1uCVzr1EBsyG0KB1zJE6\n" +
+        "SMLkI/UvXlW++O16hPxbnFP79dFQLnJvAOikz53LtUIKkKFxY3t/ekrXWjN/zJzR\n" +
+        "8xpfT4VrKzPmQyV4/tm409rwUQKBgQDjeJxUA6zE1Ot85hRb/Nm/2sZJnwvAE4f2\n" +
+        "I3Dx1xqzjPSCdSNU8mbGuQHehekYUikF77dozQYe4iDrY9F8f2v6XUMB8rXNZIWx\n" +
+        "vKJQjCIOWV8YvbW+NER5OhtPI/ZApTSepBbG5Rwpn2OxN8X2coNj1iNlO4IVv18N\n" +
+        "HZCxquXMJQKBgCB/H/Y2gNoWqKR3J3fdE0zCe0gYQiOsrdACbuKu1G3kHj6VfBej\n" +
+        "6rcz8eF6rDB6yBhEyPMyytmOvYaUUSWY9Fle/0sRdtfU4t5ssUYSdW854D5uxSUy\n" +
+        "w4z0+/Auttnan9vywCHrMfUgsOnVS2zcasHqKsItZaCrg0potLIfHjLhAoGAV4St\n" +
+        "KQns7CI7pGdlh+rl4JIM3oCJ5dHd6s7CAtpPFKvz20m0WVeWQXknBfWhtFDQJc+Q\n" +
+        "UosngrRgFBDopazk34QIZvR6DFdTtQmtra3s4HZ0RzGeflrfyYCYxz8/3KlzcGIT\n" +
+        "vVyjFESV97ZMvUBb2wqlvapCp5lkucgZRrJJDd0CgYEA0ZUE0oY5JAaP2mgJZDdP\n" +
+        "57Pg9MUVcr1VLjY0VAGlCiVPtUu52n47WZKjjhAnOsa63SujqB626VowW9HLX/zF\n" +
+        "N8xuYMpH8k/U8yOkUKl0i4PslUnbCWPGKTxGFy74UE7f2rsdxG/Apm4elBN7gCHV\n" +
+        "pkMOnKY8PNW6ZsNrgNtzMzY=\n" +
+        "-----END PRIVATE KEY-----";
     //
     //     let privateKey = "-----BEGIN PRIVATE KEY-----\n" +
     //     "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJQXiFx/iyEuoU\n" +
