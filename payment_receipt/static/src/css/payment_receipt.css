@@ -1,0 +1,29 @@
+@font-face{
+    font-family: 'Inconsolata';
+    src: url(../fonts/Inconsolata.otf);
+}
+
+.page{
+    font-family: "Inconsolata";
+}
+
+.text-center{
+    text-align:center;
+}
+
+.text-right{
+    text-align: right;
+}
+
+.text-bold{
+    font-weight: bold;
+}
+
+.text-upper{
+    text-transform: uppercase;
+}
+
+.main-table{
+    width: 300px;
+    margin: 0px auto;
+}
