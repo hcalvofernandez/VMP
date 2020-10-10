@@ -1,0 +1,189 @@
+﻿id,name,code_prefix,parent_id/id
+group_1,ACTIVO,1,
+group_1_1,Activo Circulante,1.1,l10n_mx_update.group_1
+group_1_1_1,Efectivo y Equivalentes,1.1.1,l10n_mx_update.group_1_1
+group_1_1_2,Derechos a Recibir Efectivo o Equivalentes,1.1.2,l10n_mx_update.group_1_1
+group_1_1_3,Derechos a Recibir Bienes o Servicios,1.1.3,l10n_mx_update.group_1_1
+group_1_1_4,Inventarios,1.1.4,l10n_mx_update.group_1_1
+group_1_1_5,Almacenes,1.1.5,l10n_mx_update.group_1_1
+group_1_1_6,Estimación por Pérdida o Deterioro de Activos Circulantes,1.1.6,l10n_mx_update.group_1_1
+group_1_1_9,Otros Activos Circulantes,1.1.9,l10n_mx_update.group_1_1
+group_1_2,Activo No Circulante,1.2,l10n_mx_update.group_1
+group_1_2_1,Inversiones Financieras a Largo Plazo,1.2.1,l10n_mx_update.group_1_2
+group_1_2_2,Derechos a Recibir Efectivo o Equivalentes a Largo Plazo,1.2.2,l10n_mx_update.group_1_2
+group_1_2_3,Bienes Inmuebles,1.2.3,l10n_mx_update.group_1_2
+group_1_2_4,Bienes Muebles,1.2.4,l10n_mx_update.group_1_2
+group_1_2_5,Activos Intangibles,1.2.5,l10n_mx_update.group_1_2
+group_1_2_6,Depreciación,1.2.6,l10n_mx_update.group_1_2
+group_1_2_7,Activos Diferidos,1.2.7,l10n_mx_update.group_1_2
+group_1_2_8,Estimación por Pérdida o Deterioro de Activos no Circulantes,1.2.8,l10n_mx_update.group_1_2
+group_1_2_9,Otros Activos no Circulantes,1.2.9,l10n_mx_update.group_1_2
+group_2,PASIVO,2,
+group_2_1,Pasivo Circulante,2.1,l10n_mx_update.group_2
+group_2_1_1,Cuentas por Pagar a Corto Plazo,2.1.1,l10n_mx_update.group_2_1
+group_2_1_2,Documentos por Pagar a Corto Plazo,2.1.2,l10n_mx_update.group_2_1
+group_2_1_3,Porción a Corto Plazo de la Deuda Pública a Largo Plazo,2.1.3,l10n_mx_update.group_2_1
+group_2_1_4,Títulos y Valores a Corto Plazo,2.1.4,l10n_mx_update.group_2_1
+group_2_1_5,Pasivos Diferidos a Corto Plazo,2.1.5,l10n_mx_update.group_2_1
+group_2_1_6,Fondos y Bienes de Terceros en Garantía y/o Administración a Corto Plazo,2.1.6,l10n_mx_update.group_2_1
+group_2_1_7,Provisiones a Corto Plazo,2.1.7,l10n_mx_update.group_2_1
+group_2_1_9,Otros Pasivos a Corto Plazo,2.1.9,l10n_mx_update.group_2_1
+group_2_2,Pasivo No Circulante,2.2,l10n_mx_update.group_2
+group_2_2_1,Cuentas por Pagar a Largo Plazo,2.2.1,l10n_mx_update.group_2_1
+group_2_2_2,Documentos por Pagar a Largo Plazo,2.2.2,l10n_mx_update.group_2_1
+group_2_2_3,Deuda Pública a Largo Plazo,2.2.3,l10n_mx_update.group_2_1
+group_2_2_4,Pasivos Diferidos a Largo Plazo,2.2.4,l10n_mx_update.group_2_1
+group_2_2_5,Fondos y Bienes de Terceros en Garantía y/o Administración a Largo Plazo,2.2.5,l10n_mx_update.group_2_1
+group_2_2_6,Provisiones a Largo Plazo,2.2.6,l10n_mx_update.group_2_1
+group_3,HACIENDA PÚBLICA/PATRIMONIO,3,
+group_3_1,Hacienda Pública/Patrimonio Contribuido,3.1,l10n_mx_update.group_3
+group_3_1_1,Aportaciones,3.1.1,l10n_mx_update.group_3_1
+group_3_1_2,Donaciones de Capital,3.1.2,l10n_mx_update.group_3_1
+group_3_1_3,Actualización de la Hacienda Pública/ Patrimonio,3.1.3,l10n_mx_update.group_3_1
+group_3_2,Patrimonio Generado,3.2,l10n_mx_update.group_3
+group_3_2_1,Resultados del Ejercicio(Ahorro/ Desahorro),3.2.1,l10n_mx_update.group_3_2
+group_3_2_2,Resultados de Ejercicios Anteriores,3.2.2,l10n_mx_update.group_3_2
+group_3_2_3,Revalúos,3.2.3,l10n_mx_update.group_3_2
+group_3_2_4,Reservas,3.2.4,l10n_mx_update.group_3_2
+group_3_2_5,Rectificaciones de Resultados de Ejercicios Anteriores,3.2.5,l10n_mx_update.group_3_2
+group_3_3,Exceso o Insuficiencia en la Actualización de la Hacienda Pública/Patrimonio,3.3,l10n_mx_update.group_3
+group_3_3_1,Resultado por Posición Monetaria,3.3.1,l10n_mx_update.group_3_3
+group_3_3_2,Resultado por Tenencia de Activos no Monetarios,3.3.2,l10n_mx_update.group_3_3
+group_4,INGRESOS Y OTROS BENEFICIOS,4,
+group_4_1,Ingresos de Gestión,4.1,l10n_mx_update.group_4
+group_4_1_1,Impuestos,4.1.1,l10n_mx_update.group_4_1
+group_4_1_2,Cuotas y Aportaciones de Seguridad Social,4.1.2,l10n_mx_update.group_4_1
+group_4_1_3,Contribuciones de Mejoras,4.1.3,l10n_mx_update.group_4_1
+group_4_1_4,Derechos,4.1.4,l10n_mx_update.group_4_1
+group_4_1_5,Productos,4.1.5,l10n_mx_update.group_4_1
+group_4_1_6,Aprovechamientos,4.1.6,l10n_mx_update.group_4_1
+group_4_1_7,Ingresos por Venta de Bienes y Prestación de Servicios,4.1.7,l10n_mx_update.group_4_1
+group_4_2,Participaciones Aportaciones Convenios Incentivos Derivados de la Colaboración Fiscal Fondos Distintos de Aportaciones Transferencias Asignaciones Subsidios y Subvenciones y Pensiones y Jubilaciones,4.2,l10n_mx_update.group_4
+group_4_2_1,Participaciones Aportaciones Convenios Incentivos Derivados de la Colaboración Fiscal y Fondos Distintos de Aportaciones,4.2.1,l10n_mx_update.group_4_2
+group_4_2_2,Transferencias Asignaciones Subsidios y Subvenciones y Pensiones y Jubilaciones,4.2.2,l10n_mx_update.group_4_2
+group_4_3,Otros Ingresos y Beneficios,4.3,l10n_mx_update.group_4
+group_4_3_1,Ingresos Financieros,4.3.1,l10n_mx_update.group_4_3
+group_4_3_2,Incremento por Variación de Inventarios,4.3.2,l10n_mx_update.group_4_3
+group_4_3_3,Disminución del Exceso de Estimaciones por Pérdida o Deterioro u Obsolescencia,4.3.3,l10n_mx_update.group_4_3
+group_4_3_4,Disminución del Exceso de Provisiones,4.3.4,l10n_mx_update.group_4_3
+group_4_3_9,Otros Ingresos y Beneficios Varios,4.3.9,l10n_mx_update.group_4_3
+group_5,GASTOS Y OTRAS PÉRDIDAS,5,
+group_5_1,Gastos de Funcionamiento,5.1,l10n_mx_update.group_5
+group_5_1_1,Servicios Personales,5.1.1,l10n_mx_update.group_5_1
+group_5_1_2,Materiales y Suministros,5.1.2,l10n_mx_update.group_5_1
+group_5_1_3,Servicios Generales,5.1.3,l10n_mx_update.group_5_1
+group_5_2,Transferencias Asignaciones,5.2,l10n_mx_update.group_5
+group_5_2_1,Transferencias Internas y Asignaciones al Sector Público,5.2.1,l10n_mx_update.group_5_2
+group_5_2_2,Transferencias al Resto del Sector Público,5.2.2,l10n_mx_update.group_5_2
+group_5_2_3,Subsidios y Subvenciones,5.2.3,l10n_mx_update.group_5_2
+group_5_2_4,Ayudas Sociales,5.2.4,l10n_mx_update.group_5_2
+group_5_2_5,Pensiones y Jubilaciones,5.2.5,l10n_mx_update.group_5_2
+group_5_2_6,Transferencias a Fideicomisos Mandatos y Contratos Análogos,5.2.6,l10n_mx_update.group_5_2
+group_5_2_7,Transferencias a la Seguridad Social,5.2.7,l10n_mx_update.group_5_2
+group_5_2_8,Donativos,5.2.8,l10n_mx_update.group_5_2
+group_5_2_9,Transferencias al Exterior,5.2.9,l10n_mx_update.group_5_2
+group_5_3,Participaciones y Aportaciones,5.3,l10n_mx_update.group_5
+group_5_3_1,Participaciones,5.3.1,l10n_mx_update.group_5_3
+group_5_3_2,Aportaciones,5.3.2,l10n_mx_update.group_5_3
+group_5_3_3,Convenios,5.3.3,l10n_mx_update.group_5_3
+group_5_4,Intereses Comisiones y Otros Gastos de la Deuda Pública,5.4,l10n_mx_update.group_5
+group_5_4_1,Intereses de la Deuda Pública,5.4.1,l10n_mx_update.group_5_4
+group_5_4_2,Comisiones de la Deuda Pública,5.4.2,l10n_mx_update.group_5_4
+group_5_4_3,Gastos de la Deuda Pública,5.4.3,l10n_mx_update.group_5_4
+group_5_4_4,Costo por Coberturas,5.4.4,l10n_mx_update.group_5_4
+group_5_4_5,Apoyos Financieros,5.4.5,l10n_mx_update.group_5_4
+group_5_5,Otros Gastos y Pérdidas Extraordinarias,5.5,l10n_mx_update.group_5
+group_5_5_1,Estimaciones Depreciaciones Deterioros Obsolescencias y Amortizaciones,5.5.1,l10n_mx_update.group_5_5
+group_5_5_2,Provisiones,5.5.2,l10n_mx_update.group_5_5
+group_5_5_3,Disminución de Inventarios,5.5.3,l10n_mx_update.group_5_5
+group_5_5_4,Aumento por Insuficiencia de Estimaciones por Pérdida o Deterioro u Obsolescencia,5.5.4,l10n_mx_update.group_5_5
+group_5_5_5,Aumento por Insuficiencia de Provisiones,5.5.5,l10n_mx_update.group_5_5
+group_5_5_9,Otros Gastos,5.5.9,l10n_mx_update.group_5_5
+group_5_6,Inversión Pública,5.6,l10n_mx_update.group_5
+group_5_6_1,Inversión Pública no Capitalizable,5.6.1,l10n_mx_update.group_5_6
+group_6,CUENTAS DE CIERRE CONTABLE,6,
+group_6_1,Resumen de Ingresos y Gastos,6.1,l10n_mx_update.group_6
+group_6_1_1,Resumen de Ingresos y Gastos,6.1.1,l10n_mx_update.group_6_1
+group_6_2,Ahorro de la Gestión,6.2,l10n_mx_update.group_6
+group_6_2_1, Ahorro de la Gestión,6.2.1,l10n_mx_update.group_6_2
+group_6_3,Desahorro de la Gestión,6.3,l10n_mx_update.group_6
+group_6_3_1,Desahorro de la Gestión,6.3.1,l10n_mx_update.group_6_3
+group_7,CUENTAS DE ORDEN CONTABLES,7,
+group_7_1,Valores,7.1,l10n_mx_update.group_7
+group_7_1_1,Valores en Custodia,7.1.1,l10n_mx_update.group_7_1
+group_7_1_2,Custodia de Valores,7.1.2,l10n_mx_update.group_7_1
+group_7_1_3,Instrumentos de Crédito Prestados a Formadores de Mercado,7.1.3,l10n_mx_update.group_7_1
+group_7_1_4,Préstamo de Instrumentos de Crédito a Formadores de Mercado y su Garantía,7.1.4,l10n_mx_update.group_7_1
+group_7_1_5,Instrumentos de Créditos Recibidos en Garantía de los Formadores de Mercado,7.1.5,l10n_mx_update.group_7_1
+group_7_1_6,Garantía de Créditos Recibidos de los Formadores de Mercado,7.1.6,l10n_mx_update.group_7_1
+group_7_2,Emisión de Obligaciones,7.2,l10n_mx_update.group_7
+group_7_2_1,Autorización para la Emisión de Bonos  Títulos y Valores de la Deuda Pública Interna,7.2.1,l10n_mx_update.group_7_2
+group_7_2_2,Autorización para la Emisión de Bonos  Títulos y Valores de la Deuda Pública Externa,7.2.2,l10n_mx_update.group_7_2
+group_7_2_3,Emisiones Autorizadas de la Deuda Pública Interna y Externa,7.2.3,l10n_mx_update.group_7_2
+group_7_2_4,Suscripción de Contratos de Préstamos y Otras Obligaciones de la Deuda Pública Interna,7.2.4,l10n_mx_update.group_7_2
+group_7_2_5,Suscripción de Contratos de Préstamos y Otras Obligaciones de la Deuda Pública Externa,7.2.5,l10n_mx_update.group_7_2
+group_7_2_6,Contratos de Préstamos y Otras Obligaciones de la Deuda Pública Interna y Externa,7.2.6,l10n_mx_update.group_7_2
+group_7_3,Avales y Garantías,7.3,l10n_mx_update.group_7
+group_7_3_1,Avales Autorizados,7.3.1,l10n_mx_update.group_7_3
+group_7_3_2,Avales Firmados,7.3.2,l10n_mx_update.group_7_3
+group_7_3_3,Fianzas y Garantías Recibidas por Deudas a Cobrar,7.3.3,l10n_mx_update.group_7_3
+group_7_3_4,Fianzas y Garantías Recibidas,7.3.4,l10n_mx_update.group_7_3
+group_7_3_5,Fianzas Otorgadas para Respaldar Obligaciones no Fiscales del Gobierno,7.3.5,l10n_mx_update.group_7_3
+group_7_3_6,Fianzas Otorgadas del Gobierno para Respaldadas Obligaciones no Fiscales,7.3.6,l10n_mx_update.group_7_3
+group_7_3_7,Fianzas y Garantías de Créditos Fiscales,7.3.7,l10n_mx_update.group_7_3
+group_7_3_8,Derechos Contingentes,7.3.8,l10n_mx_update.group_7_3
+group_7_4,Juicios,7.4,l10n_mx_update.group_7
+group_7_4_1,Demandas Judicial en Proceso de Resolución,7.4.1,l10n_mx_update.group_7_4
+group_7_4_2,Resolución de Demandas en Proceso Judicial,7.4.2,l10n_mx_update.group_7_4
+group_7_5,Inversión Mediante Proyectos para Prestación de Servicios (PPS) y Similares,7.5,l10n_mx_update.group_7
+group_7_5_1,Contratos para Inversión Mediante Proyectos para Prestación de Servicios (PPS) y Similares,7.5.1,l10n_mx_update.group_7_5
+group_7_5_2,Inversión Pública Contratada Mediante Proyectos para Prestación de Servicios (PPS) y Similares,7.5.2,l10n_mx_update.group_7_5
+group_7_6,Bienes en Concesionados o en Comodato,7.6,l10n_mx_update.group_7
+group_7_6_1,Bienes Bajo Contrato en Concesión,7.6.1,l10n_mx_update.group_7_6
+group_7_6_2,Contrato de Concesión por Bienes,7.6.2,l10n_mx_update.group_7_6
+group_7_6_3,Bienes Bajo Contrato en Comodato,7.6.3,l10n_mx_update.group_7_6
+group_7_6_4,Contrato de Comodato por Bienes,7.6.4,l10n_mx_update.group_7_6
+group_7_6_5,Dación en Pago  Embargos  Asegurados y en Consignación,7.6.5,l10n_mx_update.group_7_6
+group_7_6_6,Bienes en Consignación,7.6.6,l10n_mx_update.group_7_6
+group_7_6_7,Bienes Entregados o Transferidos,7.6.7,l10n_mx_update.group_7_6
+group_7_6_8,Bienes en Custodia,7.6.8,l10n_mx_update.group_7_6
+group_7_6_9,Custodia de Bienes,7.6.9,l10n_mx_update.group_7_6
+group_7_7,Rectificaciones,7.7,l10n_mx_update.group_7
+group_7_7_1,Rectificaciones a la Ley de Ingresos,7.7.1,l10n_mx_update.group_7_7
+group_7_7_2,Rectificaciones al Presupuesto de Egresos,7.7.2,l10n_mx_update.group_7_7
+group_7_8,Cuentadantes y Responsables,7.8,l10n_mx_update.group_7
+group_7_8_1,Comprobación de Gastos,7.8.1,l10n_mx_update.group_7_8
+group_7_8_2,Operaciones Pendientes de Regularización,7.8.2,l10n_mx_update.group_7_8
+group_7_8_3,Ingresos Aduaneros,7.8.3,l10n_mx_update.group_7_8
+group_7_8_4,Comisionado Habilitado,7.8.4,l10n_mx_update.group_7_8
+group_7_9,Otras Cuentas,7.9,l10n_mx_update.group_7
+group_7_9_1,Divisas,7.9.1,l10n_mx_update.group_7_9
+group_7_9_2,Fondo de los Trabajadores,7.9.2,l10n_mx_update.group_7_9
+group_7_9_3,Créditos Fiscales,7.9.3,l10n_mx_update.group_7_9
+group_7_9_4,Cheques,7.9.4,l10n_mx_update.group_7_9
+group_7_9_5,Intereses,7.9.5,l10n_mx_update.group_7_9
+group_7_9_6,Apoyo y Servicios a la Comercialización Agropecuaria,7.9.6,l10n_mx_update.group_7_9
+group_7_9_7,Parcialidades,7.9.7,l10n_mx_update.group_7_9
+group_7_9_8,Diferencias Aritméticas,7.9.8,l10n_mx_update.group_7_9
+group_8,CUENTAS DE ORDEN PRESUPUESTARIAS,8,
+group_8_1,Ley de Ingresos,8.1,l10n_mx_update.group_8
+group_8_1_1,Ley de Ingresos Estimada,8.1.1,l10n_mx_update.group_8_1
+group_8_1_2,Ley de Ingresos por Ejecutar,8.1.2,l10n_mx_update.group_8_1
+group_8_1_3,Modificaciones a la Ley de Ingresos Estimada,8.1.3,l10n_mx_update.group_8_1
+group_8_1_4,Ley de Ingresos Devengada,8.1.4,l10n_mx_update.group_8_1
+group_8_1_5,Ley de Ingresos Recaudada,8.1.5,l10n_mx_update.group_8_1
+group_8_2,Presupuesto de Egresos,8.2,l10n_mx_update.group_8
+group_8_2_1,Presupuesto de Egresos Aprobado,8.2.1,l10n_mx_update.group_8_2
+group_8_2_2,Presupuesto de Egresos por Ejercer,8.2.2,l10n_mx_update.group_8_2
+group_8_2_3,Modificaciones al Presupuesto de Egresos Aprobado,8.2.3,l10n_mx_update.group_8_2
+group_8_2_4,Presupuesto de Egresos Comprometido,8.2.4,l10n_mx_update.group_8_2
+group_8_2_5,Presupuesto de Egresos Devengado,8.2.5,l10n_mx_update.group_8_2
+group_8_2_6,Presupuesto de Egresos Ejercido,8.2.6,l10n_mx_update.group_8_2
+group_8_2_7,Presupuesto de Egresos Pagado,8.2.7,l10n_mx_update.group_8_2
+group_9,CUENTAS DE CIERRE PRESUPUESTARIO,9,
+group_9_1,Superávit Financiero,9.1,l10n_mx_update.group_9
+group_9_1_1,Superávit Financiero,9.1.1,l10n_mx_update.group_9_1
+group_9_2,Déficit Financiero,9.2,l10n_mx_update.group_9
+group_9_2_1,Déficit Financiero,9.2.1,l10n_mx_update.group_9_2
+group_9_3,Adeudos de Ejercicios Fiscales Anteriores,9.3,l10n_mx_update.group_9
+group_9_3_1,Adeudos de Ejercicios Fiscales Anteriores,9.3.1,l10n_mx_update.group_9_3
