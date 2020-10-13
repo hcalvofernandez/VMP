@@ -50,7 +50,7 @@ msgstr "Datos de Facturas"
 #. module: payment_receipt
 #: model:ir.actions.report,name:payment_receipt.payment_receipt_report
 msgid "Payment Receipt"
-msgstr "Recibo de Pago"
+msgstr "Ticket de Pago"
 
 #. module: payment_receipt
 #: model:ir.model,name:payment_receipt.model_account_payment

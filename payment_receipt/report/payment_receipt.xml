@@ -52,7 +52,7 @@
                     <span class="fa-2x text-bold text-upper">Payment Receipt</span>
                 </div>
                 <div>
-                    <p t-field="o.company_id.partner_id"
+                    <p t-field="company.partner_id"
                        t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
                 </div>
                 <div>
