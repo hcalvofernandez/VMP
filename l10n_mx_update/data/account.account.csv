@@ -1,22 +1,22 @@
-id,name,code,user_type_id/id,company_id/id,group_id/id,tag_ids/id,
-cuenta112_03,Deudores Diversos por Cobrar a Corto Plazo,1.1.2.3,account.data_account_type_current_assets,3,l10n_mx_update.group_1_1_2,l10n_mx.account_tag_107_05,
-cuenta112_04,Deudores Empleados,1.1.2.4,account.data_account_type_current_assets,3,l10n_mx_update.group_1_1_2,l10n_mx.account_tag_107_06,
-cuenta123_03,Edificio,1.2.3.3,account.data_account_type_fixed_assets,3,l10n_mx_update.group_1_2_3,l10n_mx.account_tag_152_01,
-cuenta124_04,Equipo Transporte,1.2.4.4,account.data_account_type_fixed_assets,3,l10n_mx_update.group_1_2_4,l10n_mx.account_tag_154_01,
-cuenta124_01,Equipo de Cocina,1.2.4.1,account.data_account_type_fixed_assets,3,l10n_mx_update.group_1_2_4,l10n_mx.account_tag_160_01,
-cuenta124_05,Herramienta,1.2.4.5,account.data_account_type_fixed_assets,3,l10n_mx_update.group_1_2_4,l10n_mx.account_tag_160_01,
-cuenta124_07,Depositos en Garantia,1.2.4.7,account.data_account_type_fixed_assets,3,l10n_mx_update.group_1_2_2,l10n_mx.account_tag_160_01,
-cuenta124_06,Maquinaria y Equipo,1.2.4.6,account.data_account_type_fixed_assets,3,l10n_mx_update.group_1_2_4,l10n_mx.account_tag_153_01,
-cuenta126_03,Depreciaciones Contables,1.2.6.3,account.data_account_type_depreciation,3,l10n_mx_update.group_1_2_6,l10n_mx.account_tag_171_01,
-cuenta211_03,Acreedores Diversos,2.1.1.3,account.data_account_type_current_liabilities,3,l10n_mx_update.group_2_1_1,l10n_mx.account_tag_205_02,
-cuenta211_09,Tarjetas de Credito VMP,2.1.1.9,account.data_account_type_current_liabilities,3,l10n_mx_update.group_2_1_1,l10n_mx.account_tag_205_02,
-cuenta221_01,Acreedores Diversos a Largo Plazo,2.2.1.1,account.data_account_type_non_current_liabilities,3,l10n_mx_update.group_2_2_1,l10n_mx.account_tag_251_02,
-cuenta439_02,Otros Ingresos,4.3.9.2,account.data_account_type_other_income,3,l10n_mx_update.group_4_3_9,l10n_mx.account_tag_403_01,
-cuenta511_01,Nomina y gto. relacionados,5.1.1.1,account.data_account_type_expenses,3,l10n_mx_update.group_5_1_1,l10n_mx.account_tag_501_06,
-cuenta513_01,Gastos de operacion,5.1.3.1,account.data_account_type_expenses,3,l10n_mx_update.group_5_1_3,l10n_mx.account_tag_504_01,
-cuenta513_02,Gastos fijos,5.1.3.2,account.data_account_type_expenses,3,l10n_mx_update.group_5_1_3,l10n_mx.account_tag_504_01,
-cuenta513_03,Publicidad,5.1.3.3,account.data_account_type_expenses,3,l10n_mx_update.group_5_1_3,l10n_mx.account_tag_504_01,
-cuenta513_04,Gastos instalacion,5.1.3.4,account.data_account_type_expenses,3,l10n_mx_update.group_5_1_3,l10n_mx.account_tag_504_01,
-cuenta543_01,Gastos financieros,5.4.3.1,account.data_account_type_expenses,3,l10n_mx_update.group_5_4_3,l10n_mx.account_tag_701_11,
-cuenta543_01,Comisiones e impuestos,5.4.3.1,account.data_account_type_expenses,3,l10n_mx_update.group_5_4_3,l10n_mx.account_tag_701_10,
-cuenta211_02,Dividendos,2.1.1.2,account.data_account_type_current_liabilities,3,l10n_mx_update.group_2_1_1,l10n_mx.account_tag_202_11,
+"id","name","code","user_type_id/id","company_id/.id","group_id/id","tag_ids/id"
+"cuenta112_03","Deudores Diversos por Cobrar a Corto Plazo","1.1.2.3","account.data_account_type_current_assets","3","l10n_mx_update.group_1_1_2","l10n_mx.account_tag_107_05"
+"cuenta112_04","Deudores Empleados","1.1.2.4","account.data_account_type_current_assets","3","l10n_mx_update.group_1_1_2","l10n_mx.account_tag_107_05"
+"cuenta123_03","Edificio","1.2.3.3","account.data_account_type_fixed_assets","3","l10n_mx_update.group_1_2_3","l10n_mx.account_tag_152_01"
+"cuenta124_04","Equipo Transporte","1.2.4.4","account.data_account_type_fixed_assets","3","l10n_mx_update.group_1_2_4","l10n_mx.account_tag_154_01"
+"cuenta124_01","Equipo de Cocina","1.2.4.1","account.data_account_type_fixed_assets","3","l10n_mx_update.group_1_2_4","l10n_mx.account_tag_160_01"
+"cuenta124_05","Herramienta","1.2.4.5","account.data_account_type_fixed_assets","3","l10n_mx_update.group_1_2_4","l10n_mx.account_tag_160_01"
+"cuenta124_07","Depositos en Garantia","1.2.4.7","account.data_account_type_fixed_assets","3","l10n_mx_update.group_1_2_2","l10n_mx.account_tag_160_01"
+"cuenta124_06","Maquinaria y Equipo","1.2.4.6","account.data_account_type_fixed_assets","3","l10n_mx_update.group_1_2_4","l10n_mx.account_tag_153_01"
+"cuenta126_03","Depreciaciones Contables","1.2.6.3","account.data_account_type_depreciation","3","l10n_mx_update.group_1_2_6","l10n_mx.account_tag_171_01"
+"cuenta211_03","Acreedores Diversos","2.1.1.3","account.data_account_type_current_liabilities","3","l10n_mx_update.group_2_1_1","l10n_mx.account_tag_205_02"
+"cuenta211_09","Tarjetas de Credito VMP","2.1.1.9","account.data_account_type_current_liabilities","3","l10n_mx_update.group_2_1_1","l10n_mx.account_tag_205_02"
+"cuenta221_01","Acreedores Diversos a Largo Plazo","2.2.1.1","account.data_account_type_non_current_liabilities","3","l10n_mx_update.group_2_2_1","l10n_mx.account_tag_251_02"
+"cuenta439_02","Otros Ingresos","4.3.9.2","account.data_account_type_other_income","3","l10n_mx_update.group_4_3_9","l10n_mx.account_tag_403_01"
+"cuenta511_01","Nómina y gto. relacionados","5.1.1.1","account.data_account_type_expenses","3","l10n_mx_update.group_5_1_1","l10n_mx.account_tag_501_06"
+"cuenta513_01","Gastos de operacion","5.1.3.1","account.data_account_type_expenses","3","l10n_mx_update.group_5_1_3","l10n_mx.account_tag_504_01"
+"cuenta513_02","Gastos fijos","5.1.3.2","account.data_account_type_expenses","3","l10n_mx_update.group_5_1_3","l10n_mx.account_tag_504_01"
+"cuenta513_03","Publicidad","5.1.3.3","account.data_account_type_expenses","3","l10n_mx_update.group_5_1_3","l10n_mx.account_tag_504_01"
+"cuenta513_04","Gastos instalacion","5.1.3.4","account.data_account_type_expenses","3","l10n_mx_update.group_5_1_3","l10n_mx.account_tag_504_01"
+"cuenta543_01","Gastos financieros","5.4.3.1","account.data_account_type_expenses","3","l10n_mx_update.group_5_4_3","l10n_mx.account_tag_701_11"
+"cuenta543_01","Comisiones e impuestos","5.4.3.1","account.data_account_type_expenses","3","l10n_mx_update.group_5_4_3","l10n_mx.account_tag_701_10"
+"cuenta211_02","Dividendos","2.1.1.2","account.data_account_type_current_liabilities","3","l10n_mx_update.group_2_1_1","l10n_mx.account_tag_202_11"
