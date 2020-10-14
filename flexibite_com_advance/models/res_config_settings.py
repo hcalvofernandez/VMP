@@ -78,12 +78,15 @@ class res_company(models.Model):
     @api.model
     def get_info_to_receipt(self, company_id, partner_id):
         company = self.env['res.company'].search([('id', '=', company_id)])
-        partner = self.env['res.partner'].search([('id', '=', partner_id)])
+        partner = self.env['res.partner'].search([('id', '=', partner_id)]) or False
         response = {
             'rfc': company.rfc,
             'zip': company.zip,
+            'state': company.state_id.name,
             'regimen_fiscal': company.regimen_fiscal,
-            'partner_rfc': partner.rfc,
+            'regimen_text': dict(company._fields['regimen_fiscal'].selection).get(company.regimen_fiscal),
+            'partner_rfc': partner and partner.rfc,
+            'r_social': company.nombre_fiscal,
         }
         return response
 
