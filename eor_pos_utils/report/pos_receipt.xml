@@ -86,6 +86,26 @@
                         <t t-esc="o.company_id.name"/>
                         <br/>
                     </t>
+                    <t>
+                        <t t-if="o.company_id.nombre_fiscal" t-esc="o.company_id.nombre_fiscal"/><br/>
+                        <t t-if="o.company_id.rfc">
+                            <span>RFC: </span>
+                            <t t-esc="o.company_id.rfc"/><br/>
+                        </t>
+                        <t t-esc="o.company_id.street"/>
+                        <span>, </span>
+                        <t t-esc="o.company_id.street2"/>
+                        <span>, </span>
+                        <t t-esc="o.company_id.city"/>
+                        <span>, </span>
+                        <t t-if="o.company_id.state_id" t-esc="o.company_id.state_id.name"/>
+                        <span>, </span>
+                        <t t-if="o.company_id.country_id" t-esc="o.company_id.country_id.name"/><br/>
+                        <t t-if="o.company_id.regimen_fiscal">
+                            <span>Regimen Fiscal: </span>
+                            <t t-esc="dict(o.company_id._fields['regimen_fiscal'].selection).get(o.company_id.regimen_fiscal)"/><br/>
+                        </t>
+                    </t>
                 </div>
                 <br/>
                 <div class="pos-center-align">
