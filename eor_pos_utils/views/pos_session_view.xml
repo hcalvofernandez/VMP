@@ -95,16 +95,16 @@
                     </group>
                 </group>
             </xpath>
-            <field name="statement_ids" position="after">
+            <!--<field name="statement_ids" position="after">
 
-                <!--<div name="resume_real">
+                <div name="resume_real">
                     <group attrs="{'invisible': ['|', ('cash_control', '=', False), ('state', '=', 'opening_control')]}">
                         <field name="cash_register_balance_end_real" string="Real Closing Balance" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     </group>
                     <group attrs="{'invisible': ['|', ('cash_control', '=', False), ('state', '=', 'opening_control')]}">
                         <field name="cash_register_difference" class="oe_subtotal_footer_separator oe_right oe_pos_total oe_pos_difference" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     </group>
-                </div>-->
+                </div>
                 <separator string="Abono a débitos"/>
                 <field name="payment_debit_widget" widget="debit_widget"/>
                 <field name="payment_lines" invisible="1">
@@ -117,7 +117,7 @@
                 </field>
                 <separator string="Total Abonos a débito" invisible="1"/>
                 <field name="abono_total_debito" invisible="1"/>
-            </field>
+            </field>-->
         </field>
     </record>
 </odoo>
