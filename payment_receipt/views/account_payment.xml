@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="add_print_receipt" model="ir.ui.view">
+            <field name="name">Add Print Receipt</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="print_receipt"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

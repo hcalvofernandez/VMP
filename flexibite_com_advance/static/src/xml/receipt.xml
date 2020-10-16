@@ -423,13 +423,32 @@
                         </t>
                     </t>
                     <t t-if="widget.pos.config.header_info == 'company'">
-                        <t t-esc="widget.pos.company.name"/>
-                        <br/>
+                        <t t-esc="widget.pos.company.name"/><br/>
                     </t>
                 </t>
                 <t t-if="!widget.pos.config.multi_shop_id or widget.pos.config.multi_shop_id.length == 0">
                     <t t-esc="widget.pos.company.name"/>
                     <br/>
+                </t>
+                <t t-if="info">
+                    <t t-if="info.r_social" t-esc="info.r_social"/><br/>
+                    <t t-if="info.rfc || info.partner_rfc">
+                        <span>RFC: </span>
+                        <t t-esc="info.rfc || info.partner_rfc"/><br/>
+                    </t>
+                    <t t-esc="widget.pos.company.street"/>
+                    <span>, </span>
+                    <t t-esc="widget.pos.company.street2"/>
+                    <span>, </span>
+                    <t t-esc="widget.pos.company.city"/>
+                    <span>, </span>
+                    <t t-esc="info.state"/>
+                    <span>, </span>
+                    <t t-esc="widget.pos.company.country.name"/><br/>
+                    <t t-if="info.regimen_text">
+                        <span>Regimen Fiscal: </span>
+                        <t t-esc="info.regimen_text"/><br/>
+                    </t>
                 </t>
             </div>
         </t>

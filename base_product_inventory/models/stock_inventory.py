@@ -33,14 +33,15 @@ class StockInventory(models.Model):
                 WHERE bpl.id in (%s)""" % str(inv.base_product_ids.mapped('id'))[1:-1]
                 self.env.cr.execute(cost_sql)
                 result = self.env.cr.dictfetchall()
+            theoretical = 0
+            real = 0
             if result:
-                inv.theoretical_cost_amount = result[0]['theoretical_cost']
-                inv.real_cost_amount = result[0]['real_cost']
-                inv.cost_difference = abs(result[0]['theoretical_cost'] - result[0]['real_cost'])
-            else:
-                inv.theoretical_cost_amount = 0
-                inv.real_cost_amount = 0
-                inv.cost_difference = 0
+                theoretical = result[0]['theoretical_cost'] or 0
+                real = result[0]['real_cost'] or 0
+
+            inv.theoretical_cost_amount = theoretical
+            inv.real_cost_amount = real
+            inv.cost_difference = abs(theoretical - real)
 
 
     @api.model
@@ -69,7 +70,8 @@ class StockInventory(models.Model):
                 vals.update({'base_product_ids': [(0, 0, {
                     'product_tmpl_id': line['id'],
                     'base_theoretical_qty': line['qty_available'],
-                    'base_product_qty': line['qty_available']}) for line in
+                    'base_product_qty': line['qty_available'],
+                    'base_standard_price': line['base_standard_price']}) for line in
                                                   inventory._get_base_product_lines_values()]})
                 # vals.update(
                 #     {'line_ids': [(0, 0, line_values) for line_values in inventory._get_inventory_lines_values()]})
@@ -102,12 +104,24 @@ class StockInventory(models.Model):
         if not self.exhausted:
             domain.append(('qty_available', '>', 0))
 
-        products = product_ids.search(domain, order='name asc').read(['id', 'qty_available'])
+        products = product_ids.search(domain, order='name asc').read(['id', 'qty_available', 'base_standard_price'])
         return products
 
     def action_validate(self):
         self.add_line_ids()
-        return super(StockInventory, self).action_validate()
+        res = super(StockInventory, self).action_validate()
+        self.update_product_cost()
+        return res
+
+    def update_product_cost(self):
+        for product in self.base_product_ids:
+            product.product_tmpl_id.write({"base_standard_price": product.base_standard_price})
+
+            template_attributes = self.env['product.template.attribute.value'].search([
+                ('product_tmpl_id', '=', product.product_tmpl_id.id)])
+            for attr in template_attributes:
+                attr.write({'cost_price': product.base_standard_price*attr.variant_ratio})
+
 
     def add_line_ids(self):
         # It add the product line ids from the base product list.

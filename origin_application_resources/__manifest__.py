@@ -2,7 +2,7 @@
 {
     'name': 'Origin and Application of Resources',
     'description': "Allow viewing and recording information about cash sales application and source flow",
-    'author': "Jorge Luis López Ricardo",
+    'author': "Odoo Experts",
     'website': "",
     'summary': """
     """,
@@ -10,13 +10,14 @@
     "license": "",
     'support': '',
     'category': 'Account',
-    'depends': ['base', 'account', 'point_of_sale'],
+    'depends': ['account', 'flexibite_com_advance'],
     'data': [
         'security/ir.model.access.csv',
         'views/res_company.xml',
         'views/search_views_account_move.xml',
         'views/account_move.xml',
         'views/actions.xml',
+        'wizard/cash_receipt_wizard_view.xml',
         'wizard/liquidation_wizard_views.xml',
         'views/account_move_kanban.xml',
         'views/origin_application_settings.xml',
@@ -24,6 +25,7 @@
         'data/resources_flow_data.xml',
         'report/origin_application_resources_report.xml',
         'wizard/origin_application_wizard_views.xml',
+        'views/account_invoice.xml',
         'views/menus.xml',
     ],
     'application': True,

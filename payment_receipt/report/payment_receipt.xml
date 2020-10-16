@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="reports_assets_common" inherit_id="web.report_assets_common">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/css" href="/payment_receipt/static/src/css/payment_receipt.css"/>
+            </xpath>
+        </template>
+
+        <record id="payment_receipt_paperformat" model="report.paperformat">
+            <field name="name">Payment Receipt paper format</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">154</field>
+            <field name="page_width">80</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">0</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+        </record>
+
+        <template id="payment_receipt_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="payment_receipt.payment_receipt_external_layout">
+                        <div class="page" style="page-break-inside:avoid">
+                            <t t-call="payment_receipt.payment_receipt_template" t-lang="o.partner_id.lang"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="payment_receipt_template">
+            <div class="text-center">
+                <div>
+                    <span t-esc="o.name"/><br/>
+                    <span t-esc="o.payment_date" t-options="{'widget': 'date'}"/>
+                </div>
+                <div>
+                    <t t-set="company" t-value="o.company_id"/>
+                    <img t-if="company.parent_id" t-attf-src="data:image/png;base64,#{o.company_id.parent_id.logo}"
+                         style="max-height: 70px;width:auto;height:auto;"/>
+                    <img t-else="" t-attf-src="data:image/png;base64,#{o.company_id.logo}"
+                         style="max-height: 70px;width:auto;height:auto;"/>
+                    <br/>
+                </div>
+                <div>
+                    <span class="fa-2x text-bold text-upper">Payment Receipt</span>
+                </div>
+                <div>
+                    <p t-field="company.partner_id"
+                       t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                </div>
+                <div>
+                    <span class="text-bold text-upper">Vendor:</span>
+                    <span t-field="o.partner_id"
+                       t-options='{"widget": "contact", "fields": ["name"], "no_marker": True}'/>
+                </div>
+                <div>
+                    <table class="main-table">
+                        <thead>
+                            <tr>
+                                <td colspan="2">Invoice Data</td>
+                            </tr>
+                            <tr>
+                                <td>Invoice</td>
+                                <td class="text-right">Internal Ref.</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.invoice_ids" t-as="inv">
+                                <tr>
+                                    <td><t t-esc="inv.reference"/></td>
+                                    <td class="text-right"><t t-esc="inv.number"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <div>
+                        <span>Total paid: </span>
+                        <span t-esc="o.amount" t-options="{'widget':'monetary', 'display_currency': company.currency_id}"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="payment_receipt_external_layout">
+            <div class="header"/>
+            <div class="article o_report_layout_standard">
+                <t t-raw="0"/>
+            </div>
+            <div class="footer"/>
+        </template>
+
+        <report id="payment_receipt_report"
+            model="account.payment"
+            string="Payment Receipt"
+            report_type="qweb-html"
+            name="payment_receipt.payment_receipt_document"
+            file="payment_receipt.payment_receipt_document"
+            print_report_name="'Payment_Receipt - %s' % (object.name).replace('/', '')"/>
+
+        <record id="payment_receipt.payment_receipt_report" model="ir.actions.report">
+            <field name="paperformat_id" ref="payment_receipt.payment_receipt_paperformat"/>
+        </record>
+    </data>
+</odoo>
