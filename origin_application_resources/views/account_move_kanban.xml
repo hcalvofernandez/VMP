@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="origin_application_dashboard_kanban_view" model="ir.ui.view">
+            <field name="name">origin application dashboard kanban</field>
+            <field name="model">origin_application_resources.resources_flow</field>
+            <field name="arch" type="xml">
+                <kanban create="false" class="oe_background_grey o_kanban_dashboard o_account_kanban">
+                    <field name="type"/>
+                    <field name="color"/>
+                    <field name="percent_in_origin"/>
+                    <field name="total_settled"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="#{kanban_color(record.color.raw_value)}">
+                                <t t-value="record.type.raw_value" t-set="type_flow"/>
+                                <t t-call="JournalTop"/>
+                                <div class="container o_kanban_card_content">
+                                    <div class="row">
+                                        <div class="col-5 oe_left o_kanban_primary_left">
+                                            <div style="border:1px solid black;">
+                                                <div class="bg-400" style="width:100%;height:15px;margin-top:5px;">
+                                                    <t t-if="record.percent_in_origin.raw_value &gt; 100"
+                                                       t-set="percent2" t-value="100.0"/>
+                                                    <div t-if="record.percent_in_origin.raw_value &lt; 0"
+                                                         class="bg-primary"
+                                                         t-attf-style="width:#{0}%;height:100%;}">
+                                                    </div>
+                                                    <div t-elif="record.percent_in_origin.raw_value &gt; 100"
+                                                         class="bg-primary"
+                                                         t-attf-style="width:#{100}%;height:100%;}">
+                                                    </div>
+                                                    <div t-else="" class="bg-primary"
+                                                         t-attf-style="width:#{record.percent_in_origin.raw_value}%;height:100%;}">
+                                                    </div>
+                                                </div>
+                                                <h1 style="width:100%;text-align:center;">
+                                                    <field name="percent_in_origin"></field>
+                                                    <span>%</span>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                        <t t-call="body_card"/>
+                                    </div>
+                                </div>
+                                <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                    <t t-call="JournalManage"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-name="JournalTop">
+                            <div t-attf-class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <a type="action" name="%(resources_origin_account_move_action)d"
+                                           t-if="type_flow == 'origin'">
+                                            <field name="type"/>
+                                        </a>
+                                        <a type="action" name="%(resources_application_account_move_action)d"
+                                           t-if="type_flow == 'application'">
+                                            <field name="type"/>
+                                        </a>
+                                        <a type="action" name="%(liquidation_account_move_action)d"
+                                           t-if="type_flow == 'liquidation'">
+                                            <field name="type"/>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <a class="o_kanban_manage_toggle_button" href="#">
+                                        <i class="fa fa-ellipsis-v" aria-label="Selection" role="img"
+                                           title="Selection"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-name="JournalManage">
+                            <div class="row">
+                                <div class="col-4 o_kanban_card_manage_section o_kanban_manage_new">
+                                    <div class="o_kanban_card_manage_title">
+                                        <span role="separator">Nuevo</span>
+                                    </div>
+                                    <div name="bank_cash_commands">
+                                        <a role="menuitem" type="object" name="" t-if="type_flow == 'origin'">Origen</a>
+                                        <a role="menuitem" type="object" name="" t-if="type_flow == 'application'">Aplicación</a>
+                                        <a role="menuitem" type="object" name="" t-if="type_flow == 'liquidation'">Liquidación</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_manage_settings row">
+                                <button type="action" name="%(liquidation_wizard_action)d"
+                                        class="btn btn-primary" t-if="type_flow == 'liquidation' and record.diff.raw_value > 0">
+                                    <span>Liquidar</span>
+                                </button>
+                            </div>
+                            <div class="o_kanban_card_manage_settings row">
+                                <div class="col-8">
+                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                </div>
+                            </div>
+
+                            <div groups="account.group_account_manager" class="row o_kanban_card_settings">
+                                <div class="col-6 text-right">
+                                    <a name="%(origin_application_settings_action)d" type="action">Ajustes</a>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-name="body_card">
+                            <div class="col-7 o_kanban_primary_right">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <a type="action" name="%(resources_origin_account_move_line_action)d"
+                                           context="{'search_default_settled':1}"
+                                           t-if="type_flow == 'origin'">
+                                            <span title="Origin Settled">
+                                                Histórico de Cortes
+                                            </span>
+                                        </a>
+                                        <a type="action" name="%(resources_application_account_move_line_action)d"
+                                           context="{'search_default_settled':1}"
+                                           t-if="type_flow == 'application'">
+                                            <span title="Application Settled">
+                                                Histórico de Pagos
+                                            </span>
+                                        </a>
+                                        <a type="action" name="%(liquidation_account_move_line_action)d"
+                                           context="{'search_default_settled':1}"
+                                           t-if="type_flow == 'liquidation'">
+                                            <span title="Settled">
+                                                Histórico de Depósitos
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <span>
+                                            <field name="total_settled"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row" t-if="type_flow == 'liquidation'">
+                                    <div class="col-7">
+                                        <a type="action" name=""
+                                           context="{'search_default_settled':1}">
+                                            <span title="Settled">
+                                                Efectivo en Resguardo
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <span>
+                                            <field name="in_guard"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-7">
+                                        <a type="action" name="%(resources_origin_account_move_line_action)d"
+                                           context="{'search_default_to_settle':1}" t-if="type_flow == 'origin'">
+                                           <span title="Origin to Settle">
+                                                Cortes de Caja
+                                            </span>
+                                        </a>
+                                        <a type="action" name="%(resources_application_account_move_line_action)d"
+                                           context="{'search_default_to_settle':1}" t-if="type_flow == 'application'">
+                                            <span title="Application to Settle">
+                                                Pagos Realizados
+                                            </span>
+                                        </a>
+                                        <a type="action" name="" context="{'search_default_to_settle':1}"
+                                           t-if="type_flow == 'liquidation'">
+                                            <span title="To Settle">
+                                                Efectivo a Depositar
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <span>
+                                            <field name="diff"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row" t-if="type_flow == 'origin'">
+                                    <div class="col-7">
+                                        <a type="action" name=""
+                                           context="{'search_default_settled':1}">
+                                            <span title="Settled">
+                                                Cortes de Caja + Resguardo
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <span>
+                                            <field name="total_guard"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="origin_application_show_kanban_act_window" model="ir.actions.act_window">
+            <field name="name">Origin and Application Dashboard</field>
+            <field name="res_model">origin_application_resources.resources_flow</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="view_id" ref="origin_application_dashboard_kanban_view"/>
+        </record>
+    </data>
+</odoo>

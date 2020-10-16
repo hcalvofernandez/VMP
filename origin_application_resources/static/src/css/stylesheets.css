@@ -1,0 +1,46 @@
+.page{
+    padding-top: 50px;
+}
+
+.div-table{
+    border: 3px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.page .main_table{
+    width: 100%;
+}
+
+th{
+   text-transform: uppercase;
+}
+
+td .identation{
+    margin-left: 30px;
+}
+
+table th.width-desc{
+    width: 60%;
+}
+
+table td .text-center{
+    text-align: center;
+}
+
+table td .text-right{
+    text-align: right;
+}
+
+.upper-case{
+    text-transform: uppercase;
+}
+
+.text-bold{
+    font-weight: bold;
+}
+
+.sign_separate{
+    margin-top: 100px;
+}

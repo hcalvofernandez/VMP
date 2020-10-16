@@ -240,7 +240,7 @@
         </record>
         <record id="wallet_product_1" model="product.product">
             <field name="name">From Wallet</field>
-            <field name="default_code">Wallet</field>
+<!--            <field name="default_code">Wallet</field>-->
             <field name="sale_ok" eval="True"/>
             <field name="is_dummy_product">True</field>
             <field name="send_to_kitchen">False</field>

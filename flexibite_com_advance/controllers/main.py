@@ -16,40 +16,73 @@ from odoo.http import request
 from odoo.tools.translate import _
 import werkzeug.utils
 import hashlib
-from odoo import http
+from odoo import http, exceptions
 from odoo.http import request
 import json
 
 import logging
-from odoo.addons.web.controllers.main import Home, ensure_db
+from odoo.addons.web.controllers.main import ensure_db
+from odoo.addons.website.controllers.main import Website
 from odoo.addons.bus.controllers.main import BusController
 
 _logger = logging.getLogger(__name__)
 
-class Home(Home):
-    @http.route('/web/login', type='http', auth="none", sitemap=False)
+class Home(Website):
+
+    @http.route()
     def web_login(self, redirect=None, **kw):
         res = super(Home, self).web_login(redirect, **kw)
         if request.params['login_success']:
             uid = request.session.authenticate(request.session.db, request.params['login'], request.params['password'])
             users = request.env['res.users'].browse([uid])
             if users.login_with_pos_screen or users.user_role == 'cook':
-                pos_session = request.env['pos.session'].sudo().search(
-                    [('config_id', '=', users.default_pos.id), ('state', '=', 'opened')])
-                if pos_session:
-                    return http.redirect_with_hash('/pos/web')
-                else:
-                    session_id = users.default_pos.open_session_cb()
-                    pos_session = request.env['pos.session'].sudo().search(
-                        [('config_id', '=', users.default_pos.id), ('state', '=', 'opening_control')])
-                    if users.default_pos.cash_control:
-                        pos_session.write({'opening_balance': True})
-                    session_open = pos_session.action_pos_session_open()
-                    return http.redirect_with_hash('/pos/web')
+                return werkzeug.utils.redirect('/pos/select')
             else:
                 return res
         else:
             return res
+
+    @http.route('/pos/select', type='http', auth="user", sitemap=False, website=True)
+    def web_select_pos(self, cash_register=None, **kw):
+        ensure_db()
+        if not request.session.uid:
+            return werkzeug.utils.redirect('/web/login', 303)
+        else:
+            users = request.env['res.users'].browse([request.session.uid])
+            pos_session = request.env['pos.session'].search(
+                [('user_id', '=', users.id), ('state', '=', 'opened')])
+            if pos_session:
+                return http.redirect_with_hash('/pos/web')
+            elif cash_register:
+                config = request.env['pos.config'].search([('id', '=', cash_register)])
+                pos_session = request.env['pos.session'].sudo().search(
+                    [('config_id', '=', config.id), ('state', '=', 'opened')])
+                if config and not pos_session:
+                    session_id = config.open_session_cb()
+                    pos_session = request.env['pos.session'].search(
+                        [('config_id', '=', config.id), ('state', '=', 'opening_control')])
+                    if config.cash_control:
+                        pos_session.write({'opening_balance': True})
+                    session_open = pos_session.action_pos_session_open()
+                    return http.redirect_with_hash('/pos/web')
+                else:
+                    raise exceptions.MissingError(_('La caja especificada no existe o esta ocupada. Por favor contacte con el administrador'))
+
+            pos_list = []
+            pos_ids = request.env['pos.config'].search([('company_id', '=', request.env.user.company_id.id)])
+            for pos in pos_ids:
+                occupied = False
+                user = ''
+                pos_session = request.env['pos.session'].sudo().search(
+                    [('config_id', '=', pos.id), ('state', '!=', 'closed')], limit=1, order='id desc')
+                if pos_session:
+                    occupied = True
+                    user = pos_session.user_id.name
+                pos_list.append({'occupied': occupied, 'pos': pos, 'user': user})
+
+            response = request.render('flexibite_com_advance.pos_selector', {'pos_list': pos_list})
+            response.headers['X-Frame-Options'] = 'DENY'
+            return response
 
 class DataSet(http.Controller):
 
@@ -62,7 +95,7 @@ class DataSet(http.Controller):
         if country_id:
 #             return json.dumps(country_id.read())
             data = country_id.read()
-            data[0]['image'] = False 
+            data[0]['image'] = False
             return json.dumps(data)
         else:
             return False
@@ -90,14 +123,15 @@ class DataSet(http.Controller):
          fields = eval(kw.get('fields'))
          stock_location_id = eval(kw.get('stock_location_id'))
          if product_ids and fields:
-             records = request.env['product.product'].with_context({'location' : stock_location_id, 'compute_child': False}).search_read([('id', 'in', product_ids)], fields)
+             # records = request.env['product.product'].with_context({'location' : stock_location_id, 'compute_child': False}).search_read([('id', 'in', product_ids)], fields)
+             records = request.env['product.product'].search_read([('id', 'in', product_ids)], fields)
              template_ids = []
              if records:
                  for each_rec in records:
                      template_ids.append(each_rec['product_tmpl_id'][0])
                      new_date = each_rec['write_date']
                      each_rec['write_date'] = new_date.strftime('%Y-%m-%d %H:%M:%S')
- 
+
                  template_fields = fields + ['name', 'display_name', 'product_variant_ids','product_variant_count']
                  template_ids = list(dict.fromkeys(template_ids))
                  product_temp_ids = request.env['product.template'].with_context({'location' : stock_location_id, 'compute_child': False}).search_read([('id', 'in', template_ids)], template_fields)
@@ -119,12 +153,12 @@ class DataSet(http.Controller):
         else:
             pos_cache = request.env['pos.cache']
             pos_cache.create({
-                'config_id': self.id,
+                'config_id': config.id,
                 'product_domain': str(domain),
                 'product_fields': str(fields),
-                'compute_user_id': self.env.uid
+                'compute_user_id': request.env.uid
             })
-            new_cache = request.env['pos.config']._get_cache_for_user()
+            new_cache = config._get_cache_for_user()
             return json.dumps(new_cache.get_cache(domain, fields) or [])
 
 
@@ -210,7 +244,7 @@ class TerminalLockController(BusController):
         return super(TerminalLockController, self)._poll(dbname, channels, last, options)
 
 class PosMirrorController(http.Controller):
- 
+
     @http.route('/web/customer_display', type='http', auth='user')
     def white_board_web(self, **k):
         config_id = False

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_move_form" model="ir.ui.view">
+            <field name="name">view move form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='button_cancel']" position="after">
+                    <field name="oar_type" invisible="True"/>
+                    <field name="is_settled" invisible="True"/>
+                    <button name="mark_as_origin" type="object" string="Mark as Origin"
+                            attrs="{'invisible': ['|',('is_settled', '=', True),('oar_type', '!=', False)]}"/>
+                    <button name="mark_as_application" type="object" string="Mark as Application"
+                            attrs="{'invisible': ['|',('is_settled', '=', True),('oar_type', '!=', False)]}"/>
+                    <button name="remove_mark" type="object" string="Remove mark"
+                            attrs="{'invisible': ['|',('is_settled', '=', True),('oar_type', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="origin_application_move_tree_view" model="ir.ui.view">
+            <field name="name">Origin and Application Move</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="ref"/>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="journal_id" invisible="True"/>
+                    <field name="partner_id"/>
+                    <field name="account_id"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance" sum="Total" string="Source Amount"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>

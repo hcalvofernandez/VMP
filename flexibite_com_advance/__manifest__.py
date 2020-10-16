@@ -16,11 +16,11 @@
     'description': "Odoo POS Restaurant",
     'category': 'Point Of Sale',
     'website': 'http://www.acespritech.com',
-    'depends': ['base', 'bus', 'pos_restaurant', 'mrp', 'sale_management', 'barcodes', 'purchase', 'hr_attendance', 'account', 'eor_pos_utils'],
+    'depends': ['base', 'bus', 'pos_restaurant', 'mrp', 'sale_management', 'barcodes', 'purchase', 'hr_attendance', 'account', 'pos_datetimes_control', 'website'],
     'price': 350.00, 
     'currency': 'EUR',
     'images': [
-        'static/description/main_screenshot.png',
+        'static/description/main_screenshot.png', 
     ],
     'data': [
         'data/temporal_cron.xml',
@@ -97,7 +97,11 @@
         'wizard/product_expiry_report_wizard_view.xml',
         'wizard/wizard_pos_modify_payment_method.xml',
         'views/product_expiry_report_view.xml',
-        'data/send_mail.xml'
+        'views/computer_equipment_view.xml',
+        'data/send_mail.xml',
+        'report/report_stockinventory.xml',
+        'views/stock_views.xml',
+        'views/webclient_templates.xml',
     ],
     'qweb': ['static/src/xml/*.xml'],
     'installable': True,

@@ -70,16 +70,16 @@ class res_company(models.Model):
     def cron_set_next_day_datetimes(self):
         companies = self.env['res.company'].search([])
         for company in companies:
-            is_current_time_between = self.is_current_datetime_between_internal(company.start_day_datetime, company.ends_day_datetime, company)
+            # is_current_time_between = self.is_current_datetime_between_internal(company.start_day_datetime, company.ends_day_datetime, company)
             #raise Warning(is_current_time_between)
-            if(not is_current_time_between):
-                new_start_day_datetime = company.start_day_datetime + timedelta(days=1)
-                new_ends_day_datetime = company.ends_day_datetime + timedelta(days=1)
-                _company = self.env['res.company'].browse(company.id)
-                _company.sudo().update({'start_day_datetime':new_start_day_datetime,'ends_day_datetime':new_ends_day_datetime})                
-                pass
-            else:
-                pass
+            # if(not is_current_time_between):
+            new_start_day_datetime = company.start_day_datetime + timedelta(days=1)
+            new_ends_day_datetime = company.ends_day_datetime + timedelta(days=1)
+            _company = self.env['res.company'].browse(company.id)
+            _company.sudo().update({'start_day_datetime':new_start_day_datetime,'ends_day_datetime':new_ends_day_datetime})
+            #     pass
+            # else:
+            #     pass
 
 class AccountBankStatementLine(models.Model):
     _inherit = "account.bank.statement"

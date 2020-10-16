@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="account_invoice_form" model="ir.ui.view">
+        <field name="name">Account Invoice Form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="show_credit_orders" type="object" attrs="{'invisible': [('count_pos_order', '=', 0)]}"
+                        icon="fa-list" class="oe_stat_button">
+                    <field string="Órdenes de Crédito" name="count_pos_order" widget="statinfo"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+  </data>
+</odoo>

@@ -9,14 +9,17 @@
     "license": "OPL-1",
     'support': '',
     'category': 'Stock',
-        # any module necessary for this one to work correctly
-    'depends': ['base', 'product','stock', 'sale', 'purchase'],
+    # any module necessary for this one to work correctly
+    'depends': ['base', 'product', 'stock', 'sale', 'purchase'],
 
     # always loaded
     'data': [
-             'views/templates.xml',             
-             'views/views.xml',
-            ],
-    #'qweb': ['static/src/xml/*.xml'],
+        'security/group_modify_cost.xml',
+        'views/templates.xml',
+        'views/views.xml',
+        'data/ir_config_parameter.xml',
+        'views/res_config_settings.xml',
+    ],
+    # 'qweb': ['static/src/xml/*.xml'],
     'installable': True,
 }

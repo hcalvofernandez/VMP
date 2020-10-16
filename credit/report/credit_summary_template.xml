@@ -43,22 +43,33 @@
                     }
                 </style>
                   <table style="width:100%">
-                    <div class="text-center"><img src="http://www.vmp.com.mx/Images/web-vmp.png" class="img-fluid"/></div>
+                    <tr class="text-uppercase text-center">
+                      <td><div class="text-center"><img style="width:200px; height:130px;" src="/credit/static/src/img/web-vmp.png" class="img-fluid"/></div></td>
+                      <td></td>
+                    </tr>
                     <tr class="text-uppercase text-center">
                       <th>
                         <p><t t-esc="partner.name"/></p>
-                        <p>ms10102212</p>
+                        <p><t t-esc="partner.rfc"/></p>
                       </th>
                       <th class="text-center">
                         <h4>Estado de cuenta</h4>
-                        <p><t t-esc="partner.street+' '+partner.street2"/></p>
-                        <p><t t-esc="partner.city+' '+partner.state_id.name"/></p>
-                        <p><t t-esc="partner.country_id.name+' CP:'+partner.zip"/></p>
+                        <p><t t-if="partner.street and partner.street2" t-esc="partner.street+' '+partner.street2"/></p>
+                        <p><t t-if="partner.city and partner.state_id" t-esc="partner.city+' '+partner.state_id.name"/></p>
+                        <p><t t-if="partner.country_id and partner.zip" t-esc="partner.country_id.name+' CP:'+partner.zip"/></p>
                       </th>
                     </tr>
                     <tr>
                       <td>
                         <table class="text-uppercase table-sm table-striped table-center table-attenuate">
+                          <tr>
+                            <td>fecha inicio</td>
+                            <td><t t-esc="start_date_format"/></td>
+                          </tr>
+                          <tr>
+                            <td>fecha fin</td>
+                            <td><t t-esc="end_date_format"/></td>
+                          </tr>
                           <tr>
                             <td>fecha límite de pago</td>
                             <td><t t-esc="max_pay_date"/></td>
@@ -67,11 +78,11 @@
                             <td>fecha de corte</td>
                             <td><t t-esc="cut_date"/></td>
                           </tr>
-                          <tr>
+                          <tr t-if="partner.account_number">
                             <td>no. de cuenta</td>
                             <td><t t-esc="partner.account_number"/></td>
                           </tr>
-                          <tr>
+                          <tr t-if="partner.spei_key">
                             <td>clave spei</td>
                             <td><t t-esc="partner.spei_key"/></td>
                           </tr>
@@ -81,11 +92,13 @@
                         <table class="text-uppercase table-sm table-striped table-center table-attenuate">
                           <tr>
                             <td>saldo anterior</td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="float(last_period_total) * 1.16"
+                                                      t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>pagos y abonos</td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="float(last_period_total) * 1.16"
+                                                      t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>compras y cargos</td>
@@ -101,13 +114,15 @@
                             <td>saldo vencido</td>
                             <td  class="text-right">$0.00</td>
                           </tr>
-                          <tr class="table-highlight">
+                          <tr t-if="not len(partner.child_ids)" class="table-highlight">
                             <td>limite de crédito</td>
-                            <td  class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="partner.credit_limit"
+                                   t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td>crédito disponible</td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right"><t t-esc="partner.credit_limit - float(total) * 1.16"
+                                   t-options="{'widget': 'monetary', 'display_currency': company_currency}"/></td>
                           </tr>
                           <tr>
                             <td colspan="2" class="text-center">Días del periodo:

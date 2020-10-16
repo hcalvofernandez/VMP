@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="reports_assets_common" inherit_id="web.report_assets_common">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/css"
+                      href="/origin_application_resources/static/src/css/stylesheets.css"/>
+            </xpath>
+        </template>
+
+        <template id="report_document">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <t t-if="user" t-set="lang" t-value="user.lang"/>
+                    <div class="page" t-lang="lang">
+                        <h1 class="upper-case">Origin and Application of Resources</h1>
+                        <p><span>Date: </span>
+                            <span t-esc="last_date"  t-options='{"widget": "date"}'/>
+                        </p>
+                        <div class="div-table">
+                            <table class="main_table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" colspan="3">
+                                            Income / Cash cutoff
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Turn</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td class="upper-case">Previous Guard</td>
+                                        <td class="text-right">
+                                            $ <span t-esc="liquidation.previous_guard"
+                                                    t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <t t-foreach="origins" t-as="orig">
+                                        <tr t-if="orig['balance']">
+                                            <td>
+                                                <span t-esc="orig['date']" t-options='{"widget": "date"}'/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="orig['ref']"/>
+                                            </td>
+                                            <td class="text-right">
+                                                $ <span t-esc="orig['balance']"
+                                                        t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td colspan="2" class="text-center upper-case text-bold">
+                                            Cutoff Sum
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="liquidation.origin_amount + liquidation.previous_guard"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="div-table">
+                            <table class="main_table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" colspan="2">
+                                            Application
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="upper-case">
+                                            Pay/Suppliers
+                                        </td>
+                                        <td class="text-right upper-case">
+                                            $ <span t-esc="-liquidation.application_amount"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="upper-case">
+                                            Banorte deposit
+                                        </td>
+                                        <td class="text-right upper-case">
+                                            $ <span t-esc="liquidation.to_deposit"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="upper-case text-bold">
+                                            Application Sum
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="liquidation.application_amount + liquidation.to_deposit"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="upper-case text-bold">
+                                            Cash in Guard
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="liquidation.in_guard"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="div-table" t-if="pays">
+                            <table class="main_table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" colspan="4">
+                                            Pay Relations
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Vendor/Customer</th>
+                                        <th class="text-center">Invoice</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="pays" t-as="ad">
+                                        <td>
+                                            <span t-esc="ad.date" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td>
+                                            <span t-if="ad.partner_id" t-esc="ad.partner_id.name"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="ad.ref"/>
+                                        </td>
+                                        <td class="text-right">
+                                            $ <span t-esc="-ad.balance" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-center upper-case text-bold">
+                                            Documents Total
+                                        </td>
+                                        <td class="text-right upper-case text-bold">
+                                            $ <span t-esc="-liquidation.application_amount"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="text-center sign_separate">Seal and Sign Manager of the Branch</div>
+                </t>
+            </t>
+        </template>
+
+        <report id="origin_application_resources_report"
+            model="origin_application_resources.resources_flow"
+            string="Origin and Applications of Resources"
+            report_type="qweb-pdf"
+            name="origin_application_resources.report_document"
+            file="report.origin_application_resources.report_document"
+            print_report_name="'Origin and Application Report'"/>
+    </data>
+</odoo>

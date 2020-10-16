@@ -13,6 +13,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
     var PosBaseWidget = require('point_of_sale.BaseWidget');
     var field_utils = require('web.field_utils');
     var framework = require('web.framework');
+    var utils = require('web.utils');
+
+    var round_di = utils.round_decimals;
     var splitbill = require('pos_restaurant.splitbill').SplitbillButton;
     var QWeb = core.qweb;
     var _t = core._t;
@@ -362,7 +365,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self.clear_category_search_handler = function(event){
                 self.clear_cat_search();
             };
-            if(!self.pos.load_background){
+            // if(!self.pos.load_background){
+            if(false){
                 var product_ids_list = [];
                 var product_fields = self.pos.product_fields.concat(['name', 'display_name', 'product_variant_ids', 'product_variant_count'])
                 $.ajax({
@@ -565,28 +569,112 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
             }
         },
-        render_category: function( category, with_image, is_back){
-            if(is_back){
-                var category_html = QWeb.render('CategoryButtonBack',{
-                            widget:  this,
-                            category: category,
-                        });
+        render_category: function (category, with_image, is_back, color) {
+            if (is_back) {
+                var category_html = QWeb.render('CategoryButtonBack', {
+                    widget: this,
+                    category: category,
+                });
                 var category_node = document.createElement('div');
                 category_node.innerHTML = category_html.trim();
                 category_node = category_node.childNodes[0];
+                category_node.setAttribute('style', 'background-color: #'+color);
                 return category_node;
             }
             return this._super(category, with_image)
         },
-        renderElement: function(){
-            var el_str  = QWeb.render(this.template, {widget: this});
+        getRangeOfDisplayedCategories: function(listContainer){
+            var container = $(listContainer)[0];
+            var start = -1;
+            var i = 1;
+            while (i < container.children.length - 1 && start < 0) {
+                var children = $(container.children[i]);
+                if (!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')) {
+                    start = i;
+                }
+                i++;
+            }
+            if (i < container.children.length - 1){
+                var end = 0;
+                var children;
+                do {
+                    children = $(container.children[i]);
+                    end = i;
+                    i++;
+                } while(i < container.children.length - 1 && !children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward'));
+                return { 'start': start, 'end': end };
+            }
+            return { 'start': 0, 'end': 17 };
+        },
+        addListenerSubCategoryBtnBack: function(button, list_container){
+            button.addEventListener('click', function (event) {
+                var container = $(list_container)[0];
+                var start = -1;
+                var i = 1;
+                while (i < container.children.length - 1 && start < 0) {
+                    var children = $(container.children[i]);
+                    if (!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')) {
+                        start = i;
+                    }
+                    i++;
+                }
+                if (start > 1) {
+                    var move = Math.min(4, start - 1);
+                    var i = 1;
+                    while (i <= move) {
+                        $(container.children[start - i]).removeClass('d-none');
+                        i++;
+                    }
+                    if (start + 17 < container.children.length - 1) {
+                        i = 0;
+                        while (move) {
+                            $(container.children[start + 17 - i]).addClass('d-none');
+                            i++;
+                            move--;
+                        }
+                    }
+                }
+            });
+            return button;
+        },
+        addListenerSubCategoryBtnForward: function(button, list_container){
+            button.addEventListener('click', function (event) {
+                var container = $(list_container)[0];
+                var start = -1;
+                var i = 1;
+                while (i < container.children.length - 1 && start < 0) {
+                    var children = $(container.children[i]);
+                    if (!children.hasClass('d-none') && !children.hasClass('subcategory-button-back') && !children.hasClass('subcategory-button-forward')) {
+                        start = i;
+                    }
+                    i++;
+                }
+                if (start > -1 && start + 18 < container.children.length - 1) {
+                    var move = Math.min(4, container.children.length - 2 - (start + 17));
+                    var i = 0;
+                    while (i < move) {
+                        $(container.children[start + i]).addClass('d-none');
+                        i++;
+                    }
+                    var i = 1;
+                    while (i <= move) {
+                        $(container.children[start + 17 + i]).removeClass('d-none');
+                        i++;
+                    }
+                }
+            });
+            return button;
+        },
+        renderElement: function () {
+            var el_str = QWeb.render(this.template, {widget: this});
             var el_node = document.createElement('div');
+            self = this;
 
             el_node.innerHTML = el_str;
             el_node = el_node.childNodes[1];
 
-            if(this.el && this.el.parentNode){
-                this.el.parentNode.replaceChild(el_node,this.el);
+            if (this.el && this.el.parentNode) {
+                this.el.parentNode.replaceChild(el_node, this.el);
             }
 
             this.el = el_node;
@@ -600,17 +688,133 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 } else {
                     list_container.classList.remove('simple');
                 }
-                if(this.category.name != 'Root' && !this.category.parent_id){
-                    list_container.appendChild(this.render_category(this.pos.db.get_category_by_id(this.pos.db.root_category_id), withpics, true));
+                // =====================Add the parent categories===========================
+                var parent = this.category.parent_id
+                var c = 999999;
+                var last_child = this.category;
+                var node_category_parent = false;
+                var start_range = -1;
+                var end_range = -1;
+                while(parent){
+                    node_category_parent = list_container.cloneNode();
+                    var parent_category = this.pos.db.get_category_by_id(parent[0]);
+                    if(start_range == -1 && parent_category.child_id.length > 18){
+                        var position = -1;
+                        var i = 0;
+                        while(position == -1 && i < parent_category.child_id.length){
+                            if(parent_category.child_id[i] == this.category.id){
+                                position = i;
+                            }
+                            i++;
+                        }
+                        if(position < 8){
+                            start_range = Math.max(0, position - 8);
+                            end_range = position + 17 - (position - start_range);
+                        }else{
+                            end_range = Math.min(parent_category.child_id.length - 1, position + 9);
+                            start_range = position - ( 17 - (end_range - position));
+                        }
+                    }
+                    var super_parent = false;
+                    if (parent_category.child_id.length > 18){
+                        var back_button_html = QWeb.render('SubCategoryButtonBack', {});
+                        back_button_html = _.str.trim(back_button_html);
+                        var back_button_node = document.createElement('div');
+                        back_button_node.innerHTML = back_button_html;
+                        back_button_node = back_button_node.childNodes[0];
+                        node_category_parent.appendChild(this.addListenerSubCategoryBtnBack(back_button_node, node_category_parent));
+                    }
+                    for(var i = 0; i < parent_category.child_id.length; i++) {
+                        var super_child = parent_category.child_id[i];
+                        var child_obj = self.pos.db.get_category_by_id(super_child);
+                        var real_color = c+"";
+                        if(last_child.id == super_child){
+                            real_color = "6ec89b";
+                            last_child = parent_category;
+                        }
+                        var category_node = self.render_category(child_obj, withpics, true, real_color);
+                        if ((i < start_range || i > end_range)  && parent_category.child_id.length > 18){
+                            $(category_node).addClass('d-none');
+                        }else if(parent_category.child_id.length > 18){
+                            $(category_node).removeClass('d-none');
+                        }
+                        node_category_parent.appendChild(category_node);
+                        if (!super_parent) {
+                            super_parent = parent_category.parent_id;
+                        }
+                    }
+                    if (parent_category.child_id.length > 18){
+                        var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
+                        forward_button_html = _.str.trim(forward_button_html);
+                        var forward_button_node = document.createElement('div');
+                        forward_button_node.innerHTML = forward_button_html;
+                        forward_button_node = forward_button_node.childNodes[0];
+                        node_category_parent.appendChild(this.addListenerSubCategoryBtnForward(forward_button_node, node_category_parent));
+                    }
+                    list_container.parentElement.prepend(node_category_parent);
+                    parent = super_parent;
+                    c -= 333333;
                 }
-                if(this.category.name != 'Root' && this.category.parent_id){
-                    list_container.appendChild(this.render_category(this.pos.db.get_category_by_id(this.category.parent_id[0]), withpics, true));
+                if (this.category.id != 0) {
+                    var all_categories = this.pos.db.category_by_id;
+                    var list_home = [];
+                    _.each(all_categories, function(category_item){
+                        if (category_item.parent_id == false) {
+                            list_home.push(category_item);
+                        }
+                    });
+                    list_home = list_home.sort(function(a, b){
+                        if(a.name > b.name){
+                                return 1;
+                            }
+                            if(a.name < b.name){
+                                return -1;
+                            }
+                        return 0;
+                    });
+                    var div_list_home = list_container.cloneNode();
+                    _.each(list_home, function (item_home) {
+                        var real_color = c+"";
+                        if(last_child.id == item_home.id){
+                            real_color = "6ec89b";
+                        }
+                        div_list_home.appendChild(self.render_category(item_home, withpics, true, real_color));
+                    });
+                    list_container.parentElement.prepend(div_list_home);
                 }
-                for(var i = 0, len = this.subcategories.length; i < len; i++){
-                    list_container.appendChild(this.render_category(this.subcategories[i],withpics,false));
+
+                // =========Ending the addition of parent categories================================
+                if (this.subcategories.length > 18){
+                    var range = this.getRangeOfDisplayedCategories(list_container);
+                    start_range = range['start'];
+                    end_range = range['end'];
+                    var back_button_html = QWeb.render('SubCategoryButtonBack', {});
+                    back_button_html = _.str.trim(back_button_html);
+                    var back_button_node = document.createElement('div');
+                    back_button_node.innerHTML = back_button_html;
+                    back_button_node = back_button_node.childNodes[0];
+                    list_container.appendChild(this.addListenerSubCategoryBtnBack(back_button_node, list_container));
+                }
+
+                for (var i = 0, len = this.subcategories.length; i < len; i++) {
+                    var category_node = this.render_category(this.subcategories[i], withpics, false);
+                    if (i >= start_range && i <= end_range && this.subcategories.length > 18){
+                        $(category_node).removeClass('d-none');
+                    }else if(this.subcategories.length > 18){
+                        $(category_node).addClass('d-none');
+                    }
+                    list_container.appendChild(category_node);
+                }
+
+                if (this.subcategories.length > 18){
+                    var forward_button_html = QWeb.render('SubCategoryButtonForward', {});
+                    forward_button_html = _.str.trim(forward_button_html);
+                    var forward_button_node = document.createElement('div');
+                    forward_button_node.innerHTML = forward_button_html;
+                    forward_button_node = forward_button_node.childNodes[0];
+                    list_container.appendChild(this.addListenerSubCategoryBtnForward(forward_button_node, list_container));
                 }
             }
-
             var buttons = el_node.querySelectorAll('.js-category-switch');
             for(var i = 0; i < buttons.length; i++){
                 buttons[i].addEventListener('click',this.switch_category_handler);
@@ -817,7 +1021,29 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $('.pos-login-topheader').hide();
                 self.chrome.widget.username.renderElement();
                 if(self.pos.pos_session.opening_balance){
-                    return self.gui.show_screen('openingbalancescreen');
+                    var params = {
+                        model: 'pos.session',
+                        method: 'open_balance',
+                        args:[self.pos.pos_session.id, 0.00]
+                    };
+                    rpc.query(params, {async: false}).then(function(res){
+                        if(res){
+                        }
+                        else {
+                        	self.gui.show_popup('error-traceback',{
+                                'title': "No se pudo entrar a la caja",
+                                'body':  "Por favor intentelo mas tarde",
+                           });
+						}
+                    }).fail(function (type, error){
+                        if(error.code === 200 ){    // Business Logic Error, not a connection problem
+                           self.gui.show_popup('error-traceback',{
+                                'title': error.data.message,
+                                'body':  error.data.debug
+                           });
+                        }
+                    });
+                    // return self.gui.show_screen('openingbalancescreen');
                 }
                 if(self.pos.config.module_pos_restaurant){
                     if (self.pos.config.iface_floorplan) {
@@ -987,8 +1213,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 $('.open_subtotal').text(self.format_currency(subtotal));
             }
             $('#validate_open_balance').click(function(){
-                var items = []
-                var open_balance = []
+                var items = [];
+                var open_balance = [];
                 var total_open_balance = 0.00;
                 $(".openbalance_td").each(function(){
                     items.push($(this).val());
@@ -1186,7 +1412,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }else if(amount <= credit_amount){
                             if (valid_credit){
                                 if(!self.order_is_valid()){
-                                    return
+                                    return;
                                 }
                                 self.gui.show_popup('show_pop_pin', {cashier: client, payment: payment, type: 'credit'});
                                 return;
@@ -1251,8 +1477,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         order_is_valid: function(force_validation) {
             var self = this;
-
             var order = this.pos.get_order();
+            // Validación para el método de pago por tarjeta bancaria
+            var amount_card_payment = 0;
+            var order_lines = order.get_paymentlines();
+            var amount = order.getNetTotalTaxIncluded();
+            _.map(order_lines, function(lines){
+                    if(lines.name == "Tarjeta Bancaria (MXN)"){
+                        amount_card_payment += lines.amount;
+                    }
+                });
+            if(amount_card_payment > amount){
+                self.pos.db.notification('danger', 'El total de pagos por tarjeta bancaria no puede ser mayor al monto de la orden');
+                return false;
+            }
+            // --------------------------------------------------------
+
             var client = order.get_client();
             if (client){
                 var params = {
@@ -1820,6 +2060,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         do_order: function(order, type){
+            var self = this;
             var order = order || this.pos.get_order();
             var tdebit = type === 'debit';
             var tcredit = type === 'credit';
@@ -1834,14 +2075,14 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 order.set_order_on_meal_plan(tmealplan);
                 order.set_is_meal_plan(tmealplan);
             }
-            
+
             order.set_delivery(true);
             var currentOrderLines = order.get_orderlines();
             var orderLines = [];
             _.each(currentOrderLines,function(item) {
                 return orderLines.push(item.export_as_JSON());
             });
-            
+
             var client = order.get_client();
 
             if (tdebit){
@@ -1909,8 +2150,19 @@ odoo.define('flexibite_com_advance.screens', function (require) {
         },
         // pos debit click
         pos_credit: function(e){
+            var self = this;
             this.to_invoice = true;
             var order = self.pos.get_order();
+            var order_lines = order.get_paymentlines();
+            if(order_lines.length && order.get_due() <= 0){
+                this.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
+                return false;
+            }
+            var client = order.get_client() || false;
+            if (client && client.remaining_credit_limit <= 0) {
+                this.pos.db.notification('danger', 'No es posible pagar utilizando crédito ya que el cliente seleccionado no tiene crédito disponible.');
+                return false;
+            }
             if(order.is_empty()){
                 self.pos.db.notification('danger',_t('Add product(s) in cart!'));
                 return
@@ -1920,8 +2172,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.pos.gui.show_screen('clientlist', {valid_credit: true, payment: self});
                 return
             }
-            var client = order.get_client() || false;
-            
+
             if (client){
                 if (client.client_pin){
                     var credit_amount = client.remaining_credit_limit;
@@ -1966,7 +2217,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
 
             if(order.get_ret_o_id()){
@@ -2009,9 +2260,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 self.pos.gui.show_screen('clientlist', {'valid_debit': true, 'payment': this});
                 return
             }
-            
+
             var client = order.get_client() || false;
-            
+
             if (client){
                 if (client.client_pin){
                      self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'debit'});
@@ -2019,7 +2270,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
 
             if(order.get_ret_o_id()){
@@ -2051,7 +2302,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }else{
                     self.pos.db.notification('danger', _t('Por favor asigna un PIN al cliente'));
                     return;
-                } 
+                }
             }
             /*if (client && client.client_pin){
                 self.gui.show_popup('show_pop_pin', {cashier: client, payment: self, type: 'mealplan'});
@@ -2089,7 +2340,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             $(".account_payment_btn").html("");
             var self = this;
             var order = self.pos.get_order();
-            
+
             var partner = order.get_client();
             var add_class = false;
             if($(e.currentTarget).hasClass('account_pay')){
@@ -2173,7 +2424,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var tabs = QWeb.render('FromCredit',{widget:self});
                 this.$('.foreign_infoline').html(tabs);
             }
-            var p_line = order.get_paymentlines(); 
+            var p_line = order.get_paymentlines();
             if(p_line.length > 0){
                 self.pos.gui.screen_instances.payment.render_paymentlines()
             }
@@ -2207,9 +2458,26 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
                 index += 1;
             }
-            for(var j = 0; j < index; j++) {
-                this.div_btns += "<div id=" + payment_buttons_order[j].id + " class='control-button 1quickpay' data=" + payment_buttons_order[j].display_name + ">" + self.format_currency(payment_buttons_order[j].display_name) + "</div>";
+            var columns = index % 4 > 0 ? Math.floor(index / 4) + 1 : Math.floor(index / 4);
+            var columns_html = [];
+            for (var i = 0; i < columns; i++) {
+                columns_html.push("<div>");
             }
+
+            for(var j = index - 1; j >= 0; j -= columns) {
+                for (var i = 1; i <= columns; i++){
+                    if(j - (i - 1) >= 0) {
+                        var amount_data = round_di(payment_buttons_order[j - (i - 1)].display_name, 0).toFixed(0);
+                        var amount = field_utils.format.float(round_di(payment_buttons_order[j - (i - 1)].display_name, 0), {digits: [69, 0]});
+                        var symbol = (self.pos && self.pos.currency) ? self.pos.currency.symbol : '$';
+                        columns_html[i - 1] += "<div id=" + payment_buttons_order[j - (i - 1)].id + " class='control-button 1quickpay' data=" + amount_data + "><span>" + symbol + ' ' + amount + "</span></div>";
+                    }
+                }
+            }
+            for (var i = columns - 1; i >= 0; i--) {
+                this.div_btns += columns_html[i] + "</div>"
+            }
+
             this.use_credit = function(event){
                 var order = self.pos.get_order();
                 if(order.get_due() <= 0){
@@ -2261,7 +2529,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 var key = '';
                 if (event.type === "keypress") {
                     if (event.keyCode === 13 && self.pos.get_login_from() != 'login') { // Enter
-                        self.validate_order();
+                        self.validate_order(false);
                     } else if ( event.keyCode === 190 || // Dot
                                 event.keyCode === 110 ||  // Decimal point (numpad)
                                 event.keyCode === 188 ||  // Comma
@@ -2357,6 +2625,15 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         },
                     });
                 } else {
+                    var paymentlines = order.get_paymentlines();
+                    var cid_paymentlines = [];
+                    _.each(paymentlines, function(paymentline){
+                       cid_paymentlines.push(paymentline.cid);
+                    });
+                    _.each(cid_paymentlines, function (cid) {
+                        self.chrome.screens.payment.click_delete_paymentline(cid);
+                    });
+                    order.set_client(false);
                     self._super();
                 }
             }
@@ -2500,8 +2777,41 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(order.selected_paymentline && order.selected_paymentline.get_freeze()){
                 return
             }
+
             var customer_display = self.pos.config.customer_display;
-            this._super(input);
+
+            var old_inputbuffer = this.inputbuffer;
+            var newbuf = this.gui.numpad_input(this.inputbuffer, input, {'firstinput': this.firstinput});
+            this.firstinput = (newbuf.length === 0);
+
+            // popup block inputs to prevent sneak editing.
+            if (this.gui.has_popup()) {
+                return;
+            }
+
+            if (newbuf !== this.inputbuffer) {
+                this.inputbuffer = newbuf;
+                var order = this.pos.get_order();
+                if (order.selected_paymentline) {
+                    var amount = this.inputbuffer;
+
+                    if (this.inputbuffer !== "-") {
+                        amount = field_utils.parse.float(this.inputbuffer);
+                    }
+
+                    if (order.selected_paymentline.name == "Tarjeta Bancaria (MXN)" && order.get_subtotal() < order.get_total_paid() - order.selected_paymentline.get_amount() + amount){
+                        self.pos.db.notification('danger',"No puede pagar más del total a pagar usando Tarjeta Barcaria.");
+                        this.inputbuffer = old_inputbuffer;
+                        this.firstinput = (this.inputbuffer.length === 0);
+                        return;
+                    }
+
+                    order.selected_paymentline.set_amount(amount);
+                    this.order_changes();
+                    this.render_paymentlines();
+                    this.$('.paymentline.selected .edit').text(this.format_currency_no_symbol(amount));
+                }
+            }
             if(customer_display){
                 order.mirror_image_data();
             }
@@ -2522,7 +2832,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.render_paymentlines();
         },
         show: function() {
-            self = this;
+            var self = this;
             self._super();
 
             var order = self.pos.get_order();
@@ -2549,7 +2859,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                                 self.$el.find('.paymentlines-container').after(QWeb.render('Payment-Sub', {data: data[0]}));
                                 $('.button-add-sub').click(function(){
                                     var amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
-                                    
+
                                     if(amt){
                                         var cashregister = false;
                                         for(var i in self.pos.cashregisters){
@@ -2603,7 +2913,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if((order.get_paying_due())){
                 self.$('#partial_pay').text("Pay");
             }
-            
+
             $("#payment_total").html(this.format_currency(order.getNetTotalTaxIncluded()));
             $("#payment_total").attr('amount',order.getNetTotalTaxIncluded());
 
@@ -2618,7 +2928,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 this.$el.find("#remaining_credit_amount").text('0.0');
                 this.$el.find("#remaining_meal_plan_limit").text('0.0');
             }
-            
+
             $("#email_id").focus(function() {
                 $('body').off('keypress', self.keyboard_handler);
                 $('body').off('keydown',self.keyboard_keydown_handler);
@@ -2738,9 +3048,9 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             if(self.pos.pos_session.locked){
                 self.pos.db.notification('danger',"This session has been blocked can't process order.");
-                return
+                return;
             }
-            if (this.order_is_valid(force_validation)) {
+            if(this.order_is_valid(force_validation)) {
                 //Bind notes for Order for store on database
                 if(this.pos.config.enable_order_note) {
                     order.set_order_note($('#order_note').val());
@@ -2812,6 +3122,8 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     order.add_orderline(new_line);
                     order.set_order_total_discount(0);
                 }
+            }else{
+                return false;
             }
             if(self.pos.config.enable_card_charges && self.pos.get_cashier().access_card_charges){
                 self.add_charge_product();
@@ -2819,7 +3131,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             if(order.get_change() && self.pos.config.enable_wallet && self.pos.get_cashier().access_wallet){
                 return self.gui.show_popup('AddToWalletPopup');
             }
-            
+
             this._super(force_validation);
         },
         add_charge_product: function(){
@@ -2890,8 +3202,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 });
                 return false;
             }
+            // Validación para el método de pago por tarjeta bancaria
+            var amount_card_payment = 0;
+            var order_lines = order.get_paymentlines();
+            var amount = order.getNetTotalTaxIncluded();
+            _.map(order_lines, function(lines){
+                    if(lines.name == "Tarjeta Bancaria (MXN)"){
+                        amount_card_payment += lines.amount;
+                    }
+                });
+            if(amount_card_payment > amount){
+                self.pos.db.notification('danger', 'El total de pagos por tarjeta bancaria no puede ser mayor al monto de la orden');
+                return false;
+            }
+            // --------------------------------------------------------
             var client = order.get_client();
-            if (client){
+            if(client){
                 var params = {
                     model: 'contract.contract',
                     method: 'is_valid_order_date',
@@ -3090,7 +3416,22 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             var cashregister = _.find(self.pos.cashregisters, function(cashregister){
                 return cashregister.journal_id[0] === id;
             });
-
+            var order = this.pos.get_order();
+            var repeat = false;
+            var order_lines = order.get_paymentlines();
+            if(order_lines.length && order.get_due() <= 0){
+                self.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
+                return false;
+            }
+            _.map(order_lines, function(lines){
+                    if(lines.name == cashregister.journal_id[1]){
+                        repeat = true;
+                    }
+                });
+            if(repeat){
+                self.pos.db.notification('danger', 'No puede incluir dos métodos de pago del mismo tipo');
+                return false;
+            }
             if(cashregister && cashregister.journal.is_online_journal){
                 is_online_journal = true;
             }
@@ -3110,10 +3451,10 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
         },
         pre_validate_order: function(){
-            var order = self.pos.get_order();
+            var order = this.pos.get_order();
 
             if (!order.get_client()){
-                self.validate_order();
+                this.validate_order(false);
             }
         },
         renderElement: function(){
@@ -3175,6 +3516,12 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                 }
             });
             this.$('div.1quickpay').click(function(){
+                var order = self.pos.get_order();
+                var order_lines = order.get_paymentlines();
+                if(order_lines.length && order.get_due() <= 0){
+                    self.pos.db.notification('danger', 'No puede agregar un método de pago cuando ya ha cubierto el total a pagar.');
+                    return false;
+                }
                 var amt = $(this).attr('data') ? Number($(this).attr('data')) : false;
                 if(amt){
                     var cashregister = false;
@@ -3185,7 +3532,6 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                         }
                     }
                     if (cashregister){
-                        var order = self.pos.get_order();
                         order.add_paymentline(cashregister);
                         order.selected_paymentline.set_amount( Math.max(amt),0 );
                         self.reset_input();
@@ -3254,7 +3600,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     }
                 }
                 if(!self.order_is_valid()){
-                    return
+                    return;
                 }
                 if (order.get_orderlines().length === 0){
                     return self.pos.db.notification('danger', 'Agregue una línea de Venta!.');
@@ -3339,7 +3685,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             self._super(button);
         },
     });
-    
+
     var OrderDetailScreenWidget = screens.ScreenWidget.extend({
         template: 'OrderDetailScreenWidget',
          init: function(parent, options){
@@ -4690,7 +5036,7 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             }
             order.set_is_categ_sideber_open(false)
             var img_src = "<i style='font-size: 50px;' class='fa fa-user' aria-hidden='true'></i>";
-            var user_nm = "Guest Customer";
+            var user_nm = "Público General";
             if(order && order.get_client()){
                 img_src = "<img style='height:50px;width:50px' src='"+this.partner_icon_url(order.get_client().id)+"'/>";
                 user_nm = order.get_client().name;
@@ -5084,18 +5430,30 @@ odoo.define('flexibite_com_advance.screens', function (require) {
             this.pos.last_receipt_render_env = this._super();
             var order = this.pos.get_order();
             var client_data = this.get_client_data();
-            
+            var info = false;
+            var company_id = this.pos.company.id;
+            var partner_id = order.get_client();
+            if(order.order_on_credit){
+                rpc.query({
+                    model: 'res.company',
+                    method: 'get_info_to_receipt',
+                    args: [company_id, partner_id.id],
+                }, {async: false}).then(function(response_info){
+                    info = response_info;
+                });
+            }
             return {
-                        widget: this,
-                        pos: this.pos,
-                        order: order,
-                        receipt: order.export_for_printing(),
-                        orderlines: order.get_orderlines(),
-                        paymentlines: order.get_paymentlines(),
-                        do_debit_payment:this.do_debit_payment(),
-                        client_data:client_data,
-                        //credit_balance: this.pos.get_client().remaining_credit_amount
-                    };
+                widget: this,
+                pos: this.pos,
+                order: order,
+                receipt: order.export_for_printing(),
+                orderlines: order.get_orderlines(),
+                paymentlines: order.get_paymentlines(),
+                do_debit_payment:this.do_debit_payment(),
+                client_data:client_data,
+                info:info,
+                //credit_balance: this.pos.get_client().remaining_credit_amount
+            };
         },
         get_client_data: function()
         {
@@ -7050,6 +7408,67 @@ odoo.define('flexibite_com_advance.screens', function (require) {
                     self.pos.chrome.screens.products.modifier_widget.hide_modifiers();
                 }
             });
+        },
+        clickChangeMode: function(event) {
+            var newMode = event.currentTarget.attributes['data-mode'].nodeValue;
+            if(newMode == "price" || newMode == "discount"){
+                this.user_access(newMode);
+                return;
+            }else{
+                return this.state.changeMode(newMode);
+            }
+        },
+        user_access: function(newMode){
+            var self = this;
+            if(self.pos.config.authentication_user_ids && self.pos.config.authentication_user_ids.length > 0) {
+                var users_pass = [];
+                _.each(self.pos.users, function (user) {
+                    self.pos.config.authentication_user_ids.map(function (user_id) {
+                        if (user.id == user_id) {
+                            if (user.pos_security_pin) {
+                                users_pass.push(user.pos_security_pin);
+                            }
+                        }
+                    });
+                });
+                if (users_pass && users_pass.length > 0) {
+                    self.ask_password(users_pass, newMode);
+                }
+            }
+        },
+        ask_password: function(password, newMode) {
+            var self = this;
+            var ret = new $.Deferred();
+            if (password) {
+                this.gui.show_popup('password',{
+                    'title': _t('Password ?'),
+                    confirm: function(pw) {
+                        var flag = false;
+                        for (var i = 0; i < password.length; i++){
+                            if(password[i] == pw) {
+                                flag = true;
+                            }
+                        }
+                        if(flag){
+                            self.state.changeMode(newMode)
+                        }else{
+                            self.gui.show_popup('error_popup',{
+                                'title':_t('Contraseña incorrecta.'),
+                                'body':_('La contraseña no es correcta.')
+                            });
+                        }
+                    },
+                    cancel: function() {
+                        if(self.gui.current_screen && self.gui.current_screen.order_widget &&
+                        self.gui.current_screen.order_widget.numpad_state){
+                            self.gui.current_screen.order_widget.numpad_state.reset();
+                        }
+                    }
+                });
+            } else {
+                ret.resolve();
+            }
+            return ret;
         },
         clickDeleteLastChar: function() {
             var order = this.pos.get_order();

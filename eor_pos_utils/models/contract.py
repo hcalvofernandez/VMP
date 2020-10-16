@@ -20,6 +20,12 @@ class Contract(models.Model):
         string='Esquemas de Crédito',
     )
 
+    @api.model
+    @api.onchange('credit_schemes_line_ids')
+    def onchange_credit_schemes(self):
+        partners = self.partner_id + self.partner_id.child_ids
+        partners._compute_schemes_credit()
+
     @api.multi
     def write(self, vals):
         partnerobj = self.env['res.partner']

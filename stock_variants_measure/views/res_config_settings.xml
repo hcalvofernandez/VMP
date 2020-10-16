@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">Config Cost Inflation</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@data-key='stock']/div[hasclass('o_settings_container')][3]"
+                       position="inside">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="inflation_cost" class="oe_inline"/>
+                            <field name="inflation_cost" class="oe_inline text-right"/>
+                            <span>%</span>
+                            <div class="text-muted">
+                                Set the margin of variation in product cost
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

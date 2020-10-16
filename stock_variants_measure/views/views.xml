@@ -31,6 +31,9 @@
     <field name="model">purchase.order.line</field>
     <field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
     <field name="arch" type="xml">
+        <field name="product_id" position="attributes">
+            <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+        </field>
       <field name="product_qty" position="before">
         <field name="qty_custom"/>
         <field name="rendimiento"/>    
@@ -48,11 +51,33 @@
     </field>
   </record>
 
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name"></field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/field[@name='move_ids_without_package']/tree/field[@name='quantity_done']" position="after">
+                <field name="product_uom_qty_purchase"
+                       attrs="{'column_invisible': ['&amp;',('parent.immediate_transfer', '=', True), ('parent.is_locked', '=', True)], 'readonly': [('is_initial_demand_editable', '=', False)]}"/>
+                <field name="real_quantity_done" attrs="{'readonly': [('is_quantity_done_editable', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//page/field[@name='move_ids_without_package']/tree/field[@name='product_uom_qty']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_ids_without_package']/tree/field[@name='quantity_done']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
   <record model="ir.ui.view" id="purchase_order_line_tree">
     <field name="name">purchase_discount.order.line.tree</field>
     <field name="model">purchase.order.line</field>
     <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
     <field name="arch" type="xml">
+        <field name="product_id" position="attributes">
+            <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+        </field>
       <field name="product_qty" position="before">
         <field name="qty_custom"/>
         <field name="rendimiento"/> 
@@ -77,7 +102,12 @@
     <field name="model">purchase.order</field>
     <field name="inherit_id" ref="purchase.purchase_order_form"/>
     <field name="arch" type="xml">
-
+        <field name="partner_id" position="attributes">
+            <attribute name="widget"></attribute>
+        </field>
+        <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
+            <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+        </xpath>
       <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="before">
         <field name="qty_custom"/>
         <field name="rendimiento"  invisible="1"/>

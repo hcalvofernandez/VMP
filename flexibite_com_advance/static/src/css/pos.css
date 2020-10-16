@@ -6,12 +6,14 @@
 {
     padding-left: 59px;
     display: block;
-    max-width: 265px;
+    max-width: 600px;
     min-width: 200px;
     float: left;
     padding-top: 1px;
 	font-size: 18px;
 	color: white;
+	border-collapse: separate;
+	border-spacing: 20px 20px;
 }
 
 .color-black{
@@ -1747,11 +1749,20 @@ thead.bgcolorset tr td {
 	top: 1;
 	left: 0;
 	margin-left: 0 !important;
+	flex-basis: 15%;
 }
 
 span.category-button-back {
-	background-color: #333333 !important;
+	/*background-color: #333333 !important;*/
 	color: white !important;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.d-block {
+    display: block !important;
 }
 
 .v-category {
@@ -3178,10 +3189,8 @@ ul.sidebar-nav li.sidebar-brand .user_name {
 
 .pos .payment-numpad .numpad {
 	width: 100%;
-	max-width: 41%;
 	float: left;
 	position: relative;
-	border-right: 1px solid #fff;
 }
 
 .selected-menu {
@@ -5150,7 +5159,8 @@ li div.divider span {
 
 .quickpay {
 	max-width: 100%;
-	display: inline-block;
+	display: flex;
+	justify-content: center;
 }
 
 .quickpay_credit {
@@ -5492,6 +5502,15 @@ header.rightpane-header .listview:hover {
 	font-size: 14px;
 	font-weight: bold;
 	background: transparent;
+}
+
+.product-list.list .barcode-tag{
+	left: 680px !important;
+	visibility:visible !important;
+}
+
+.barcode-tag{
+	visibility:collapse;
 }
 
 .pos .product-list.list .product-name {

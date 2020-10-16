@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id='dashboard_assets_backend' name="Dashboard Assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/amcharts.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/serial.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/pie.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/export.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/light.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/libs/blob.js/blob.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/libs/fabric.js/fabric.min.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/libs/pdfmake/pdfmake.min.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/libs/pdfmake/vfs_fonts.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/libs/jszip/jszip.min.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/libs/xlsx/xlsx.min.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/libs/FileSaver.js/FileSaver.min.js"/>
+                <link rel="stylesheet" href="/supplies_dashboard/static/src/css/backend_dashboard_css/export.css"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/dashboard.js"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/jquery.dataTables.min.js"/>
+                <link rel="stylesheet" href="/supplies_dashboard/static/src/css/backend_dashboard_css/style.css"/>
+                <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/daterangepicker.js"/>
+<!--                 <script type="text/javascript" src="/supplies_dashboard/static/src/js/backend_dashboard_js/bootstrap-datepicker.js"/> -->
+                <link rel="stylesheet" href="/supplies_dashboard/static/src/css/backend_dashboard_css/daterangepicker.css"/>
+                <link rel="stylesheet" href="/supplies_dashboard/static/src/css/backend_dashboard_css/custom.css"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

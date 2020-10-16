@@ -34,6 +34,8 @@ class PosConfig(models.Model):
     _inherit = 'pos.config'
 
     enable_meal_plan = fields.Boolean("Gestión de Meal Plan")
+    computer_equipment_id = fields.Many2one('flexibite_com_advance.computer_equipment', 'Equipo de cómputo')
+    automatic_balance_start = fields.Boolean('Poner apertura automaticamente', default=False)
 
     @api.constrains('time_interval','prod_qty_limit')
     def _check_time_interval(self):
@@ -2274,12 +2276,13 @@ class pos_session(models.Model):
     opening_balance = fields.Boolean(string="Opening Balance")
     increment_number = fields.Integer(string="Increment Number", default=0, size=3, help="This is a field is used for show increment number on kitchen screen when create pos order from point of sale.")
     shop_id = fields.Many2one('pos.shop',string='Shop' ,related='config_id.multi_shop_id')
+    closed_flag = fields.Boolean('Is_Closed', default=False)
 
     @api.model
     def get_datetime_now(self):
         tz = self._context.get('tz')
         tz = pytz.timezone(tz)
-        date_utc = fields.Datetime.now().astimezone(tz)
+        date_utc = pytz.utc.localize(fields.Datetime.now()).astimezone(tz)
         date = date_utc.strftime('%Y-%m-%d %H:%M:%S')
         return {'date_now': date}
 
@@ -2499,7 +2502,7 @@ class pos_session(models.Model):
 
     @api.multi
     def custom_close_pos_session(self):
-        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)        
+        postpaid_journal = self.env['account.journal'].sudo().search([('code', '=', 'POSCR'),('company_id', '=', self.env.user.company_id.id)],limit=1)
         if(postpaid_journal):
             account_bank_statements_lines = self.env['account.bank.statement.line'].sudo().search([('journal_id', '=', postpaid_journal.id)]) 
             for account_bank_statements_line in account_bank_statements_lines:
@@ -2553,6 +2556,10 @@ class pos_session(models.Model):
 
     @api.multi
     def cash_control_line(self,vals, statement_ids):
+        if self.closed_flag:
+            return False
+        else:
+            self.closed_flag = True
         total_amount = 0.00
         if vals:
             self.cashcontrol_ids.unlink()
@@ -2567,9 +2574,9 @@ class pos_session(models.Model):
 
     @api.multi
     def open_balance(self, vals):
-        for statement in self.statement_ids:
-            statement.write({'balance_start': vals})
-        self.write({'opening_balance':False})
+        # for statement in self.statement_ids:
+        #     statement.write({'balance_start': vals})
+        self.write({'opening_balance': False})
         return True
 
     @api.multi
@@ -3405,6 +3412,81 @@ class pos_session(models.Model):
     def _check_amount_currency(self):
         if not self._context.get('from_pos'):
             super(AccountBankStatementLine, self)._check_amount_currency()
+
+    @api.model
+    def create(self, values):
+        config_id = values.get('config_id') or self.env.context.get('default_config_id')
+        if not config_id:
+            raise UserError(_("You should assign a Point of Sale to your session."))
+
+        # journal_id is not required on the pos_config because it does not
+        # exists at the installation. If nothing is configured at the
+        # installation we do the minimal configuration. Impossible to do in
+        # the .xml files as the CoA is not yet installed.
+        pos_config = self.env['pos.config'].browse(config_id)
+        ctx = dict(self.env.context, company_id=pos_config.company_id.id)
+        if not pos_config.journal_id:
+            default_journals = pos_config.with_context(ctx).default_get(['journal_id', 'invoice_journal_id'])
+            if (not default_journals.get('journal_id') or
+                    not default_journals.get('invoice_journal_id')):
+                raise UserError(_("Unable to open the session. You have to assign a sales journal to your point of sale."))
+            pos_config.with_context(ctx).sudo().write({
+                'journal_id': default_journals['journal_id'],
+                'invoice_journal_id': default_journals['invoice_journal_id']})
+        # define some cash journal if no payment method exists
+        if not pos_config.journal_ids:
+            Journal = self.env['account.journal']
+            journals = Journal.with_context(ctx).search([('journal_user', '=', True), ('type', '=', 'cash')])
+            if not journals:
+                journals = Journal.with_context(ctx).search([('type', '=', 'cash')])
+                if not journals:
+                    journals = Journal.with_context(ctx).search([('journal_user', '=', True)])
+            if not journals:
+                raise ValidationError(_("No payment method configured! \nEither no Chart of Account is installed or no payment method is configured for this POS."))
+            journals.sudo().write({'journal_user': True})
+            pos_config.sudo().write({'journal_ids': [(6, 0, journals.ids)]})
+
+        pos_name = self.env['ir.sequence'].with_context(ctx).next_by_code('pos.session')
+        if values.get('name'):
+            pos_name += ' ' + values['name']
+
+        statements = []
+        ABS = self.env['account.bank.statement']
+        uid = SUPERUSER_ID if self.env.user.has_group('point_of_sale.group_pos_user') else self.env.user.id
+        for journal in pos_config.journal_ids:
+            # set the journal_id which should be used by
+            # account.bank.statement to set the opening balance of the
+            # newly created bank statement
+            ctx['journal_id'] = journal.id if pos_config.cash_control and journal.type == 'cash' else False
+
+            balance_start = 0.0
+            if not pos_config.automatic_balance_start:
+                balance_start = self.env["account.bank.statement"]._get_opening_balance(journal.id) if journal.type == 'cash' else 0
+            else:
+                lines = self.env['account.cashbox.line'].search([('default_pos_id', '=', config_id)])
+                for line in lines:
+                    balance_start += line.subtotal
+
+            st_values = {
+                'journal_id': journal.id,
+                'user_id': self.env.user.id,
+                'name': pos_name,
+                'balance_start': balance_start
+            }
+
+            statements.append(ABS.with_context(ctx).sudo(uid).create(st_values).id)
+
+        values.update({
+            'name': pos_name,
+            'statement_ids': [(6, 0, statements)],
+            'config_id': config_id
+        })
+
+        res = super(pos_session, self.with_context(ctx).sudo(uid)).create(values)
+        if not pos_config.cash_control:
+            res.action_pos_session_open()
+
+        return res
 
 class ReturnOrderReason(models.Model):
     _name = "pos.order.pre.note"
