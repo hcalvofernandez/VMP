@@ -1,5 +1,5 @@
 from odoo import api, _
-from addons.point_of_sale.wizard import pos_box
+from odoo.addons.point_of_sale.wizard import pos_box
 from odoo.exceptions import ValidationError
 
 
