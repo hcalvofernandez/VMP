@@ -13,7 +13,7 @@ class StockInventory(models.Model):
                                     readonly=True, domain=[('parent_id.name', 'like', 'Insumos')],
                                     help="Specify Product Categories to focus your inventory on particular categories.")
     base_product_ids = fields.One2many('base_product_inventory.base_product_line', 'stock_inventory_id',
-                                       string='Base Product Lines')
+                                       string='Base Product Lines',  context={'group_by': 'base_category_id'})
     product_tmpl_id = fields.Many2one('product.template', string='Inventoried Product')
     application_date = fields.Datetime(string='Application Date', required=True)
     theoretical_cost_amount = fields.Float(string='Theoretical Cost Amount', compute="compute_cost_amount")
@@ -69,6 +69,7 @@ class StockInventory(models.Model):
             if (inventory.filter != 'partial') and not inventory.line_ids:
                 vals.update({'base_product_ids': [(0, 0, {
                     'product_tmpl_id': line['id'],
+                    'base_category_id': line['categ_id'][0],
                     'base_theoretical_qty': line['qty_available'],
                     'base_product_qty': line['qty_available'],
                     'base_standard_price': line['base_standard_price']}) for line in
@@ -104,7 +105,7 @@ class StockInventory(models.Model):
         if not self.exhausted:
             domain.append(('qty_available', '>', 0))
 
-        products = product_ids.search(domain, order='name asc').read(['id', 'qty_available', 'base_standard_price'])
+        products = product_ids.search(domain, order='name asc').read(['id', 'qty_available', 'base_standard_price', 'categ_id'])
         return products
 
     def action_validate(self):
