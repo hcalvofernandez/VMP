@@ -18,6 +18,7 @@ class StockInventoryBaseProductLines(models.Model):
     base_theoretical_qty = fields.Float(string='Theoretical Quantity', readonly=True)
     base_product_qty = fields.Float(string='Real Quantity', digits=(16, 3))
     base_difference_qty = fields.Float(string='Difference', compute='_compute_difference')
+    base_category_id = fields.Many2one('product.category', string='Category')
 
     @api.depends('base_theoretical_qty', 'base_product_qty')
     def _compute_difference(self):
