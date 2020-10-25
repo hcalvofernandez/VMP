@@ -945,50 +945,51 @@ odoo.define('flexibite_com_advance.popup', function (require) {
         renderElement: function() {
             var self = this;
             this._super();
-//            $('.close-pos').click(function(){
-//            	self.gui.close_popup();
-//    	    	self.gui.close();
-//            });
+            function close_pos(force_logout) {
+                if (self.pos.config.cash_control) {
+                    if (self.pos.config.iface_cashdrawer) {
+                        self.pos.proxy.open_cashbox();
+                    }
+                    if (self.pos.config.iface_print_auto) {
+                        self.gui.show_screen('endBalanceTicket');
+                    }
+                    setTimeout(function () {
+                        self.gui.show_popup('cash_control', {
+                            title: 'Declaración de Efectivo',
+                            statement_id: self.statement_id,
+                            force_logout: force_logout
+                        });
+                    }, 1000);
+                } else {
+                    var cashier = self.pos.get_cashier() || false;
+                    if (!cashier) {
+                        cashier = self.pos.user;
+                    }
+                    if (cashier.login_with_pos_screen || force_logout) {
+                        var params = {
+                            model: 'pos.session',
+                            method: 'custom_close_pos_session',
+                            args: [self.pos.pos_session.id]
+                        };
+                        rpc.query(params, {async: false}).then(function (res) {
+                            setTimeout(function(){
+                                framework.redirect('/web/session/logout');
+                            }, 6000);
+                        });
+                    } else {
+                        self.gui.close();
+                    }
+                }
+            }
+
             $('.logout-pos').click(function(){
-                framework.redirect('/web/session/logout');
+                close_pos(true);
             });
             $('.close-popup-btn').click(function(){
                 self.gui.close_popup();
             });
             $('.close-pos-session').click(function(){
-                if(self.pos.config.cash_control) {
-                    if (self.pos.config.iface_cashdrawer) {
-                        self.pos.proxy.open_cashbox();
-                    }
-                    self.gui.show_screen('endBalanceTicket');
-                    setTimeout(function () {
-                        self.gui.show_popup('cash_control',{
-                            title:'Declaración de Efectivo',
-                            statement_id:self.statement_id,
-                        });
-                    }, 1000);
-                }else{
-                    var cashier = self.pos.get_cashier() || false;
-                    if(!cashier){
-                        cashier = self.pos.user;
-                    }
-                    if(cashier.login_with_pos_screen){
-                        var params = {
-                            model: 'pos.session',
-                            method: 'custom_close_pos_session',
-                            args:[self.pos.pos_session.id]
-                        }
-                        rpc.query(params, {async: false}).then(function(res) {
-                            if(res) {
-                                if(cashier.login_with_pos_screen){
-                                    framework.redirect('/web/session/logout');
-                                }
-                            }
-                        });
-                    }else{
-                        self.gui.close();
-                    }
-                }
+                close_pos(false);
             });
         },
     });
@@ -2775,6 +2776,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
     var CashControlWizardPopup = PopupWidget.extend({
         template : 'CashControlWizardPopup',
         show : function(options) {
+            nobackbutton();
             var self = this;
             options = options || {};
             this.title = options.title || ' ';
@@ -2949,6 +2951,11 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     }
                     rpc.query(params, {async: false}).then(function(res){
                             if(res){
+                            }else{
+                                self.gui.show_popup('error-traceback',{
+                                    'title': "Sessió Cerrada",
+                                    'body':  "Ya se ha cerrado la sesión, no puede editar el corte"
+                               });
                             }
                     }).fail(function (type, error){
                         if(error.code === 200 ){    // Business Logic Error, not a connection problem
@@ -2960,7 +2967,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     });
                 }
 
-                var params = {
+                    var params = {
                     model: 'pos.session',
                     method: 'cash_statement_ids',
                     args: [self.pos.pos_session.id,statement_ids]
@@ -3006,7 +3013,7 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                 $('.coins').addClass('disabled');
                 $('.cash').addClass('disabled');
                 $('.cash_paymentmethods').addClass('disabled');
-                //self.$('.button.close_session').trigger('click');
+                self.$('.button.close_session').trigger('click');
                 self.$('.button.cancel').hide();
             });
             this.$('.print_report_x').click(function(e){
@@ -3024,22 +3031,27 @@ odoo.define('flexibite_com_advance.popup', function (require) {
                     model: 'pos.session',
                     method: 'custom_close_pos_session',
                     args:[self.pos.pos_session.id]
-                }
+                };
                 rpc.query(params, {async: false}).then(function(res){
                     if(res){
                         var pos_session_id = [self.pos.pos_session.id];
-                        self.pos.chrome.do_action('flexibite_com_advance.pos_x_report',{
-                            additional_context:{
-                                active_ids:pos_session_id,
-                            }
-                        });
+                        // self.pos.chrome.do_action('flexibite_com_advance.pos_x_report',{
+                        //     additional_context:{
+                        //         active_ids:pos_session_id,
+                        //     }
+                        // }).fail(function(){
+                        //     self.pos.db.notification('danger',"Connection lost");
+                        // });
                         var cashier = self.pos.get_cashier() || self.pos.user;
-                        if(cashier.login_with_pos_screen){
+                        var force_logout = options.force_logout || false;
+                        if(cashier.login_with_pos_screen || force_logout){
                             setTimeout(function(){
                                 framework.redirect('/web/session/logout');
                             }, 5000);
                         }else{
-                            self.pos.gui.close();
+                            setTimeout(function () {
+                                self.pos.gui.close();
+                            }, 5000);
                         }
                      }
                 }).fail(function (type, error){

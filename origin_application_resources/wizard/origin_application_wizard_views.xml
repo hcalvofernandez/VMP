@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="origin_application_wizard_form" model="ir.ui.view">
+        <field name="name">Report Origin and Application of Resources </field>
+        <field name="model">origin_application_resources.report_wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group string='Select the liquidation period to report'>
+                    <field col="2" name="liquidation_id" options="{'no_open': True, 'no_create': True}"/>
+                </group>
+                <footer>
+                    <button name="print_report" type="object" string="Print" class="btn btn-success"/>
+                    <button string="Cancel" special="cancel" class="btn btn-danger"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="origin_application_wizard_action" model="ir.actions.act_window">
+        <field name="name">Report Configuration</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">origin_application_resources.report_wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="origin_application_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

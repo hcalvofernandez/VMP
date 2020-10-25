@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="search_views_account_move" model="ir.ui.view">
+            <field name="name">search views account move</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+            <field name="arch" type="xml">
+                <field name="tax_ids" position="after">
+                    <separator/>
+                    <filter string="Settled" name="settled" domain="[('is_settled', '=', True)]"/>
+                    <filter string="To Settle" name="to_settle" domain="[('is_settled', '=', False)]"/>
+                    <group>
+                        <filter string="Session" name="session_filter" domain="[]" context="{'group_by':'ref'}"/>
+                        <filter string="Analytic Account" name="analytic_filter" domain="[]" context="{'group_by':'partner_id'}"/>
+                    </group>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

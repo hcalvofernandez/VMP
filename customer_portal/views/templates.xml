@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_frontend" name="Website Assets" inherit_id="web.assets_frontend">
+        <xpath expr="//link[last()]" position="after">
+            <link rel="stylesheet" type="text/scss" href="/customer_portal/static/src/css/customer-portal.scss"/>
+        </xpath>
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/customer_portal/static/src/js/customer_portal.js"/>
+        </xpath>
+    </template>
+
+    <template id="login">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <t t-call-assets="web.assets_common"/>
+                <t t-call-assets="web.assets_frontend"/>
+            </t>
+            <div class="container-fluid customer-portal-login-container">
+                <div class="row full-viewport-height">
+                    <div class="col-md-12 login-form-container">
+                        <form action="/customer/portal/login" class="login-form" method="POST">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <h3>Portal de Cliente</h3>
+                            <div class="text-center">
+                                <img alt="Brand" src="/customer_portal/static/src/img/web-vmp.png" class="cp_logo"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Número de Cliente*" name="login"
+                                       value=""/>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Su PIN de Seguridad*" value=""
+                                       name="password"/>
+                            </div>
+                            <div class="form-group text-center">
+                                <input type="submit" class="btnSubmit" value="Login"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <t t-call-assets="web.assets_common"/>
+                <t t-call-assets="web.assets_frontend"/>
+            </t>
+            <div class="container-fluid customer-portal-container">
+                <div class="row full-viewport-height">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 navbar-container">
+                                <div class="modal fade" id="cp_modal_change_pin" tabindex="-1" role="dialog"
+                                     aria-labelledby="cp_change_pin_modal_title" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="cp_change_pin_modal_title">Cambiar PIN</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="false">&#215;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="cp_form_change_pin">
+                                                    <input type="hidden" name="csrf_token"
+                                                           t-att-value="request.csrf_token()"/>
+                                                    <div class="form-group">
+                                                        <label for="cp_old_pin" class="col-form-label">PIN Actual:
+                                                        </label>
+                                                        <input type="password" class="form-control" id="cp_old_pin"
+                                                               onpaste="return false" ondrop="return false"
+                                                               ondrag="return false"
+                                                               oncopy="return false" oncut="return false"
+                                                               autocomplete="off"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="cp_new_pin" class="col-form-label">Nuevo PIN:
+                                                        </label>
+                                                        <input type="password" class="form-control" id="cp_new_pin"
+                                                               onpaste="return false" ondrop="return false"
+                                                               ondrag="return false"
+                                                               oncopy="return false" oncut="return false"
+                                                               autocomplete="off"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="cp_new_pin_repeat" class="col-form-label">Repetir
+                                                            PIN:
+                                                        </label>
+                                                        <input type="password" class="form-control"
+                                                               id="cp_new_pin_repeat" onpaste="return false"
+                                                               ondrop="return false" ondrag="return false"
+                                                               oncopy="return false" oncut="return false"
+                                                               autocomplete="off"/>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                                    Cerrar
+                                                </button>
+                                                <button type="button" id="cp_change_pin_button" class="btn btn-primary">
+                                                    Cambiar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <nav class="navbar navbar-default">
+                                    <div class="container-fluid">
+                                        <div class="navbar-header">
+                                            <a class="navbar-brand" href="#">
+                                                <img alt="Brand" src="/customer_portal/static/src/img/web-vmp.png"/>
+                                            </a>
+                                        </div>
+                                        <div class="navbar-right">
+                                            <div class="dropdown">
+                                                <a href="#" class="dropdown-toggle cp_topbar_name"
+                                                   data-toggle="dropdown" role="button" aria-haspopup="true"
+                                                   aria-expanded="false">
+                                                    <t t-if="partner.image_small">
+                                                        <img alt="Avatar"
+                                                             class="rounded-circle cp_topbar_avatar"
+                                                             t-att-src="image_data_uri(partner.image_small)"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <img alt="Avatar"
+                                                             class="rounded-circle cp_topbar_avatar"
+                                                             src="/customer_portal/static/src/img/user_menu_avatar.png"/>
+                                                    </t>
+                                                    <span t-esc="partner.name" class=""></span>
+                                                </a>
+                                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                                    <a class="dropdown-item" id="cp_change_customer_pin"
+                                                       data-toggle="modal" data-target="#cp_modal_change_pin"
+                                                       href="#" role="menuitem">
+                                                        <span class="">Cambiar PIN</span>
+                                                    </a>
+                                                    <a class="dropdown-item"
+                                                       data-menu="logout"
+                                                       href="/customer/portal/logout"
+                                                       role="menuitem">
+                                                        <span class="">Cerrar sesión</span>
+                                                    </a>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="container">
+                                    <div class="row mt16">
+                                        <div class="col-md-4">
+                                            <div class="cp_panel cp_account_status">
+                                                <div class="cp_panel_title">
+                                                    <h2>Estado de cuenta</h2>
+                                                </div>
+                                                <div class="cp_panel_content">
+                                                    <p class="mb8">Crédito disponible</p>
+                                                    <div>
+                                                        <div class="cp_float_left cp_width_25">
+                                                            <span t-esc="partner.remaining_credit_limit"
+                                                                  t-options='{"widget": "monetary", "display_currency": partner.company_id.currency_id}'></span>
+                                                        </div>
+                                                        <div class="cp_float_left cp_width_50">
+                                                            <div class="progress">
+                                                                <div class="progress-bar progress-bar-striped"
+                                                                     role="progressbar"
+                                                                     t-att-style="('width: %.0f' % ( (((partner.remaining_credit_limit) * 100)/partner.credit_limit) if partner.credit_limit else 0)) + '%;'"
+                                                                     t-att-aria-valuenow="'%.0f' % (partner.remaining_credit_limit)"
+                                                                     aria-valuemin="0"
+                                                                     t-att-aria-valuemax="'%.0f' % (partner.credit_limit)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="cp_float_left cp_width_25 text-right">
+                                                            <span t-esc="partner.credit_limit"
+                                                                  t-options='{"widget": "monetary", "display_currency": partner.company_id.currency_id}'></span>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+
+                                                    <div class="mt8">
+                                                        <div class="cp_float_left cp_width_50">
+                                                            <span>Saldo actual al corte</span>
+                                                        </div>
+                                                        <div class="cp_float_left cp_width_50 text-right">
+                                                            <span t-esc="total"
+                                                                  t-options='{"widget": "monetary", "display_currency": partner.company_id.currency_id}'></span>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="mt8">
+                                                        <div class="cp_float_left cp_width_50">
+                                                            <span>Fecha Inicio</span>
+                                                        </div>
+                                                        <div class="cp_float_left cp_width_50 text-right">
+                                                            <span t-esc="start_date_format"></span>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="mt8">
+                                                        <div class="cp_float_left cp_width_50">
+                                                            <span>Fecha Corte</span>
+                                                        </div>
+                                                        <div class="cp_float_left cp_width_50 text-right">
+                                                            <span t-esc="end_date_format"></span>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="mt8">
+                                                        <div class="cp_float_left cp_width_50">
+                                                            <span>Días del período</span>
+                                                        </div>
+                                                        <div class="cp_float_left cp_width_50 text-right">
+                                                            <span t-esc="days"></span>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="mt8">
+                                                        <a target="new" class="btn btn-primary pull-right"
+                                                           href="/customer/portal/account/status" role="button">Imprimir
+                                                        </a>
+                                                        <button t-if="partner.email" id="cp_account_status_email"
+                                                                class="btn btn-primary pull-right mr-1"
+                                                                role="button">Enviar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="cp_panel cp_orders_list">
+                                                <div class="cp_panel_title">
+                                                    <h2>Pedidos del período</h2>
+                                                </div>
+                                                <div class="cp_panel_content">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <td class="cp_bt_none cp_pt_none">
+                                                                        <strong>#</strong>
+                                                                    </td>
+                                                                    <td class="cp_bt_none cp_pt_none">
+                                                                        <strong>Orden</strong>
+                                                                    </td>
+                                                                    <td class="cp_bt_none cp_pt_none">
+                                                                        <strong>FECHA Y HORA</strong>
+                                                                    </td>
+                                                                    <td class="cp_bt_none cp_pt_none">
+                                                                        <strong>NO. TICKET</strong>
+                                                                    </td>
+                                                                    <td class="cp_bt_none cp_pt_none">
+                                                                        <strong>IMPORTE</strong>
+                                                                    </td>
+                                                                    <td class="cp_bt_none cp_pt_none">
+                                                                    </td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <t t-set="i" t-value="1"/>
+                                                                <tr t-foreach="orders" t-as="order">
+                                                                    <td t-esc="i"></td>
+                                                                    <td>
+                                                                        <span t-esc="order['order']"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-esc="order['date']"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-esc="order['ticket']"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-esc="order['amount']"
+                                                                              t-options='{"widget": "monetary", "display_currency": partner.company_id.currency_id}'></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a target="new" class="fa fa-print cp_print_order_button" t-att-href="order['portal_url']"></a>
+                                                                    </td>
+                                                                    <t t-set="i" t-value="i + 1"/>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -4,8 +4,8 @@
         <template id="front_sales_report_pdf_document">
             <t t-call="web.basic_layout">
                 <div class="page" style="font-size:12px !important;">
-                    <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css"
-                          rel="stylesheet"/>
+<!--                    <link href="/odoo_mexico_v12/custom/addons/flexibite_com_advance/static/src/css/xreport.css"-->
+<!--                          rel="stylesheet"/>-->
                     <link href="/flexibite_com_advance/static/src/css/xreport.css" rel="stylesheet"/>
                     <div class="company-details fa-1x">
                         <div class="row-xreport" t-if="name">
@@ -472,7 +472,9 @@
                                     <tr>
                                         <td style="padding-top: 15px; width: 50%;">GERENTE
                                             <br/>
-                                            <t t-esc="o.config_id.authentication_user_ids[0].name"/>
+                                            <t t-if="len(o.config_id.authentication_user_ids) > 0">
+                                                <t t-esc="o.config_id.authentication_user_ids[0].name"/>
+                                            </t>
                                         </td>
                                         <td style="width: 50%;">
                                             CAJERO

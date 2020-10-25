@@ -1,0 +1,938 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* origin_application_resources
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-08 02:19+0000\n"
+"PO-Revision-Date: 2020-10-07 22:21-0400\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: es_MX\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "<i class=\"fa fa-ellipsis-v\" aria-label=\"Selection\" role=\"img\" title=\"Selection\"/>"
+msgstr "<i class=\"fa fa-ellipsis-v\" aria-label=\"Selección\" role=\"img\" title=\"Selección\"/>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "<span role=\"separator\">New</span>"
+msgstr "<span role=\"separator\">Nuevo</span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Application Settled\">\n"
+"                                                Payment History\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Application Settled\">\n"
+"                                                Histórico de Pagos\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Application to Settle\">\n"
+"                                                Payments made\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Application to Settle\">\n"
+"                                                Pagos Realizados\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Origin Settled\">\n"
+"                                                History of Cash Courts\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Origin Settled\">\n"
+"                                                Histórico de Cortes\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Origin to Settle\">\n"
+"                                                Cash Entries\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Origin to Settle\">\n"
+"                                                Entradas de Efectivo\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Settled\">\n"
+"                                                Cash Entries + Guard\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Settled\">\n"
+"                                                Entradas + Resguardo\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Settled\">\n"
+"                                                Deposit History\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Settled\">\n"
+"                                                Histórico de Depósitos\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"Settled\">\n"
+"                                                Previous Safekeepings\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Settled\">\n"
+"                                                Resguardo Anterior\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid ""
+"<span title=\"To Settle\">\n"
+"                                                Cash in Safekeeping\n"
+"                                            </span>"
+msgstr ""
+"<span title=\"Settled\">\n"
+"                                                Efectivo en Resguardo\n"
+"                                            </span>"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "<span>Date: </span>"
+msgstr "<span>Fecha: </span>"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:90
+#, python-format
+msgid "A negative amount is not allowed in guard"
+msgstr "No se permite un monto de resguardo negativo"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,help:origin_application_resources.field_account_move_line__move_state
+msgid "All manually created new journal entries are usually in the status 'Unposted', but you can set the option to skip that status on the related journal. In that case, they will behave as journal entries automatically created by the system on document validation (invoices, bank statements...) and will be created in 'Posted' status."
+msgstr "Todos los asientos creados manualmente suelen estar en el estado 'Sin asentar', salvo cuando se establece la opción de saltar ese estado en el diario relacionado. En ese caso, se comportarán como los asientos creados automáticamente por el sistema en la validación de documentos (facturas, extractos bancarios...) y serán creados en el estado 'Asentado'."
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__amount
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Amount"
+msgstr "Importe"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "Analytic Account"
+msgstr "Cuenta Analítica"
+
+#. module: origin_application_resources
+#: selection:account.bank.statement.line,oar_type:0
+#: selection:account.move,oar_type:0
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+#: selection:origin_application_resources.cash_receipt_wizard,oar_type:0
+msgid "Application"
+msgstr "Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__application_amount
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__application_amount
+msgid "Application Amount"
+msgstr "Importe de Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__application_journal_ids
+msgid "Application Journals"
+msgstr "Diarios de Aplicaciones"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Application Sum"
+msgstr "Suma de Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__application_to_settle
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__application_to_settle
+msgid "Application To Settle"
+msgstr "Aplicación a Liquidar"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.resources_application_menu
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.oar_liquidation_wizard_view
+msgid "Applications"
+msgstr "Aplicaciones"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.oar_liquidation_wizard_view
+msgid "Available to Deposit"
+msgstr "Disponible a Depositar"
+
+#. module: origin_application_resources
+#: selection:origin_application_resources.resources_flow,type:0
+msgid "Balance"
+msgstr "Saldo"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_account_bank_statement
+msgid "Bank Statement"
+msgstr "Extracto bancario"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_account_bank_statement_line
+msgid "Bank Statement Line"
+msgstr "Línea de extracto bancario"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "Bank deposit"
+msgstr "Depósito Bancario"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Banorte deposit"
+msgstr "Depósito Banorte"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.cash_receipt_wizard_form
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.oar_liquidation_wizard_view
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/cash_receipt_wizard.py:48
+#, python-format
+msgid "Cannot make a transaction with an amount less than or equal to zero"
+msgstr "No puede hacer una transacción por un valor menor o igual a cero"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_cash_box_out
+msgid "Cash Box Out"
+msgstr "Salida de caja"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:173
+#, python-format
+msgid "Cash Deposit: %s"
+msgstr "Deposito de Efectivo: %s"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "Cash Receipt"
+msgstr "Recibo de Efectivo"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_res_company__cash_journal_id
+msgid "Cash Receipt Journal"
+msgstr "Diario de Recibo de Efectivo"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_bank_statement.py:33
+#, python-format
+msgid "Cash difference observed during the counting (%s)"
+msgstr "Diferencia de efectivo observada durante el conteo (%s)"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Cash in Guard"
+msgstr "Efectivo en Resguardo"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__color
+msgid "Color Index"
+msgstr "Índice de Colores"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__company_currency
+msgid "Company Currency"
+msgstr "Moneda de la compañía"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_configuration_menu
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_report_wizard
+msgid "Configuration of the report dates"
+msgstr "Configuración de las fechas del reporte"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__create_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__create_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__create_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__create_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__create_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__create_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__create_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__create_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__create_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__create_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Cutoff Sum"
+msgstr "Suma de Cortes"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.dashboard_origin_application_resources_menu
+msgid "Dashboard"
+msgstr "Tablero"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Date"
+msgstr "Fecha"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Description"
+msgstr "Descripción"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__diff
+msgid "Difference"
+msgstr "Diferencia"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__display_name
+#: model:ir.model.fields,field_description:origin_application_resources.field_report_origin_application_resources_report_document__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Documents Total"
+msgstr "Total en Documentos"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.cash_receipt_wizard_form
+msgid "Generate"
+msgstr "Generar"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_cash_receipt_wizard
+msgid "Generate an accounting entry to other origin cash receipts"
+msgstr "Generar una entrada contable para otros recibos de efectivo de origen"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__guard_value
+msgid "Guard Cash"
+msgstr "Efectivo en Resguardo"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__id
+#: model:ir.model.fields,field_description:origin_application_resources.field_report_origin_application_resources_report_document__id
+msgid "ID"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__in_guard
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__in_guard
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__in_guard
+msgid "In Guard"
+msgstr "En Resguardo"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Income / Cash cutoff"
+msgstr "Ingresos / Cortes de Caja"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move__is_settled
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__is_settled
+msgid "Is Settled"
+msgstr "Esta Liquidada"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__journal_id
+msgid "Journal"
+msgstr "Diario"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_account_move
+msgid "Journal Entries"
+msgstr "Asientos contables"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_settings_form
+msgid "Journals Settings"
+msgstr "Ajustes de Diarios"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__last_guard
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__last_guard
+msgid "Last Guard"
+msgstr "Ultimo Resguardo"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings____last_update
+#: model:ir.model.fields,field_description:origin_application_resources.field_report_origin_application_resources_report_document____last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__write_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__write_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__write_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__write_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__write_uid
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__write_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__write_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__write_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__write_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__write_date
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: origin_application_resources
+#: selection:account.bank.statement.line,oar_type:0
+#: selection:account.move,oar_type:0
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__liquidation_id
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_report_wizard__liquidation_id
+#: model:ir.ui.menu,name:origin_application_resources.resources_liquidation_menu
+msgid "Liquidation"
+msgstr "Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.liquidation_account_move_act_window
+#: model:ir.actions.act_window,name:origin_application_resources.liquidation_account_move_line_act_window
+msgid "Liquidation Account Move"
+msgstr "Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__liquidation_journal_id
+msgid "Liquidation Journal"
+msgstr "Diario de Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__liquidation_move
+msgid "Liquidation Move"
+msgstr "Movimiento de Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__liquidation_origin_id
+msgid "Liquidation Origin"
+msgstr "Origen de Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.liquidation_wizard_action
+msgid "Liquidation Wizard"
+msgstr "Asistente de Liquidación"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:105
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:140
+#, python-format
+msgid "Liquidation of Origin and Application"
+msgstr "Liquidación de Origen y Aplicación"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_bank_statement.py:19
+#, python-format
+msgid "Loss"
+msgstr "Perdida"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/pos_session.py:26
+#, python-format
+msgid "Manager Withdraw Remaining Cash"
+msgstr "Retiro Gerencial de Efectivo al Corte"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.view_move_form
+msgid "Mark as Application"
+msgstr "Marcar como Aplicación"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.view_move_form
+msgid "Mark as Origin"
+msgstr "Marcar como Origen"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__mark_to_settle
+msgid "Mark to Settle"
+msgstr "Marcar como Liquidación"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__name
+msgid "Number"
+msgstr "Número"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_bank_statement_line__oar_type
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move__oar_type
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__oar_type
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__oar_type
+msgid "Oar Type"
+msgstr "OAR Tipo"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_cash_receipt_wizard__name
+msgid "Operation Type"
+msgstr "Tipo de operación"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.operation_resources_menu
+msgid "Operations"
+msgstr "Operaciones"
+
+#. module: origin_application_resources
+#: selection:account.bank.statement.line,oar_type:0
+#: selection:account.move,oar_type:0
+#: selection:origin_application_resources.cash_receipt_wizard,oar_type:0
+msgid "Origin"
+msgstr "Origen"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__origin_amount
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__origin_amount
+msgid "Origin Amount"
+msgstr "Importe de Origen"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_settings__origin_journal_ids
+msgid "Origin Journals"
+msgstr "Diarios de Origen"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__origin_to_settle
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__origin_to_settle
+msgid "Origin To Settle"
+msgstr "Origen a Liquidar"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.view_company_form
+msgid "Origin and Application"
+msgstr "Origen y Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.origin_application_show_kanban_act_window
+msgid "Origin and Application Dashboard"
+msgstr "Tablero de Origen y Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_liquidation_log
+msgid "Origin and Application Liquidation Log"
+msgstr "Registro de Liquidación de Origen y Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_liquidation_wizard
+msgid "Origin and Application Liquidation Wizard"
+msgstr "Asistente de Liquidación de Origen y Aplicación"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_resources_menu
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Origin and Application of Resources"
+msgstr "Origen y Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_resources_report_menu
+msgid "Origin and Application of Resources Report"
+msgstr "Reporte Origen y Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.actions.report,name:origin_application_resources.origin_application_resources_report
+msgid "Origin and Applications of Resources"
+msgstr "Origen y Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.resources_origin_menu
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.oar_liquidation_wizard_view
+msgid "Origins"
+msgstr "Orígenes"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+#: selection:origin_application_resources.cash_receipt_wizard,name:0
+msgid "Other Payments"
+msgstr "Otros Pagos"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Pay Relations"
+msgstr "Relación de Pagos"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Pay/Suppliers"
+msgstr "Pagos/Proveedores"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_account_payment
+msgid "Payments"
+msgstr "Pagos"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:94
+#, python-format
+msgid "Please, configure a liquidation journal."
+msgstr "Por favor, configure un diario de liquidación."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:124
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:157
+#, python-format
+msgid "Please, configure the liquidation journal."
+msgstr "Por favor, configure el diario de liquidación."
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "Pedidos del TPV"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_pos_session
+msgid "Point of Sale Session"
+msgstr "Sesión TPV"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__previous_guard
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__previous_guard
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Previous Guard"
+msgstr "Resguardo Anterior"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
+msgid "Print"
+msgstr "Imprimir"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_bank_statement.py:23
+#, python-format
+msgid "Profit"
+msgstr ""
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/cash_receipt_wizard.py:34
+#, python-format
+msgid "Received Transfer"
+msgstr "Transferencia Recibida"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.view_move_form
+msgid "Remove mark"
+msgstr "Quitar marca"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.origin_application_wizard_action
+msgid "Report Configuration"
+msgstr "Configuración del Reporte"
+
+#. module: origin_application_resources
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_report_menu
+msgid "Reports"
+msgstr "Informes"
+
+#. module: origin_application_resources
+#: selection:origin_application_resources.resources_flow,type:0
+msgid "Resources Application"
+msgstr "Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.resources_application_account_move_act_window
+#: model:ir.actions.act_window,name:origin_application_resources.resources_application_account_move_line_act_window
+#: model:ir.actions.server,name:origin_application_resources.liquidation_account_move_action
+#: model:ir.actions.server,name:origin_application_resources.liquidation_account_move_line_action
+#: model:ir.actions.server,name:origin_application_resources.resources_application_account_move_action
+#: model:ir.actions.server,name:origin_application_resources.resources_application_account_move_line_action
+msgid "Resources Application Account Move"
+msgstr "Aplicación de Recursos"
+
+#. module: origin_application_resources
+#: selection:origin_application_resources.resources_flow,type:0
+msgid "Resources Origin"
+msgstr "Origen de Recursos"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.resources_origin_account_move_act_window
+#: model:ir.actions.act_window,name:origin_application_resources.resources_origin_account_move_line_act_window
+#: model:ir.actions.server,name:origin_application_resources.resources_origin_account_move_action
+#: model:ir.actions.server,name:origin_application_resources.resources_origin_account_move_line_action
+msgid "Resources Origin Account Move"
+msgstr "Origen de Recursos"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Seal and Sign Manager of the Branch"
+msgstr "Sello y Firma Responsable de la Sucursal"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/res_company.py:15
+#, python-format
+msgid "Select a current company journal"
+msgstr "Seleccione un diario de la compañía actual"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_wizard_form
+msgid "Select the liquidation period to report"
+msgstr "Selecciona el periodo de liquidación a reportar"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "Session"
+msgstr "Sesión"
+
+#. module: origin_application_resources
+#: model:ir.actions.act_window,name:origin_application_resources.origin_application_settings_action
+#: model:ir.ui.menu,name:origin_application_resources.origin_application_settings_menu
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_dashboard_kanban_view
+msgid "Settings"
+msgstr "Ajustes"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.oar_liquidation_wizard_view
+msgid "Settle"
+msgstr "Liquidar"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "Settled"
+msgstr "Liquidado"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/cash_receipt_wizard.py:55
+#: code:addons/origin_application_resources/wizard/cash_receipt_wizard.py:65
+#, python-format
+msgid "Sorry, this functionality is don't implemented"
+msgstr "Lo sentimos, esta funcionalidad aun no está implementada"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_move_tree_view
+msgid "Source Amount"
+msgstr "Importe"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_account_move_line__move_state
+msgid "Status"
+msgstr "Estado"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_bank_statement.py:40
+#, python-format
+msgid ""
+"The ending balance is incorrect !\n"
+"The expected balance (%s) is different from the computed one. (%s)"
+msgstr ""
+"El balance final es incorrecto !\n"
+"El balance esperado (%s) es diferente al calculado. (%s)"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_move.py:30
+#, python-format
+msgid "The journal %s is not a application journal"
+msgstr "El diario %s no es un diario de aplicación"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_move.py:20
+#, python-format
+msgid "The journal %s is not a origin journal"
+msgstr "El diario %s no es un diario de origen"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/cash_box_out.py:20
+#, python-format
+msgid "The journal for this payment is not found"
+msgstr ""
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:154
+#, python-format
+msgid "The transfer account for the company %s cannot be found."
+msgstr "No se encuentra la cuenta de transferencia de la compañía %s."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/cash_receipt_wizard.py:62
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:121
+#, python-format
+msgid "The transfer account for this company cannot be found."
+msgstr "No se encuentra la cuenta de transferencia de la compañía actual."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/cash_box_out.py:23
+#, python-format
+msgid "The transfer account for this company is not found"
+msgstr ""
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_bank_statement.py:26
+#, python-format
+msgid "There is no account defined on the journal %s for %s involved in a cash difference."
+msgstr "No hay cuenta definida en el diario %s para %s involucrada en una diferencia de efectivo."
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:151
+#, python-format
+msgid "This company is not a secondary company"
+msgstr "Esta compañía no es una sucursal"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/models/account_move.py:16
+#: code:addons/origin_application_resources/models/account_move.py:26
+#: code:addons/origin_application_resources/models/account_move.py:36
+#, python-format
+msgid "This operation is settled"
+msgstr "La operación esta liquidada"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__to_deposit
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__to_deposit
+msgid "To Deposit"
+msgstr "A Depositar"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_log__to_settle
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_liquidation_wizard__to_settle
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.search_views_account_move
+msgid "To Settle"
+msgstr "A Liquidar"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.origin_application_move_tree_view
+msgid "Total"
+msgstr "Total"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total_guard
+msgid "Total Guard"
+msgstr "Resguardo Total"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__total_settled
+msgid "Total Settled"
+msgstr "Total Liquidado"
+
+#. module: origin_application_resources
+#: selection:origin_application_resources.cash_receipt_wizard,name:0
+msgid "Transfer Received"
+msgstr "Transferencia Recibida"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Turn"
+msgstr "Turno"
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: origin_application_resources
+#: model_terms:ir.ui.view,arch_db:origin_application_resources.report_document
+msgid "Vendor/Customer"
+msgstr "Proveedor/Clientes"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:88
+#, python-format
+msgid "You can not deposit a negative or zero amount"
+msgstr "No puede depositar un monto menor o igual que cero"
+
+#. module: origin_application_resources
+#: code:addons/origin_application_resources/wizard/liquidation_wizard.py:86
+#, python-format
+msgid "You can not to settle a negative value"
+msgstr "No puede liquidar un valor negativo"
+
+#. module: origin_application_resources
+#: model:ir.actions.server,name:origin_application_resources.cash_receipt_wizard_action
+msgid "cash_receipt_wizard_action"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_resources_flow
+msgid "manage the origin and application of resources"
+msgstr "gestiona el origen y la aplicación de recursos"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_origin_application_resources_settings
+msgid "origin_application_resources.settings"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.actions.server,name:origin_application_resources.other_payments_wizard_action
+msgid "other_payments_wizard_action"
+msgstr ""
+
+#. module: origin_application_resources
+#: model:ir.model.fields,field_description:origin_application_resources.field_origin_application_resources_resources_flow__percent_in_origin
+msgid "percent"
+msgstr "porciento"
+
+#. module: origin_application_resources
+#: model:ir.model,name:origin_application_resources.model_report_origin_application_resources_report_document
+msgid "report.origin_application_resources.report_document"
+msgstr ""

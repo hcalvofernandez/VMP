@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- vim:fdn=3:-->
+<odoo>
+	<data>
+        <template id="index" name="pos_category_utils_index" inherit_id="point_of_sale.index">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/pos_category_utils/static/src/js/models.js"></script>
+            </xpath>
+        </template>
+	</data>
+</odoo>

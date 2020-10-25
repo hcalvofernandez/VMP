@@ -22,9 +22,9 @@
                 </field>
                 <xpath expr="//page[3]" position="inside">
                     <group attrs="{'invisible': [('user_role', '=', 'delivery_user')]}">
-	                    <field name="default_pos" 
-	                           attrs="{'invisible': [('login_with_pos_screen', '=', False),('user_role', '!=', 'cook')],
-	                                   'required': ['|',('login_with_pos_screen', '=', True),('user_role', '=', 'cook')]}"/>
+<!--	                    <field name="default_pos" -->
+<!--	                           attrs="{'invisible': [('login_with_pos_screen', '=', False),('user_role', '!=', 'cook')],-->
+<!--	                                   'required': ['|',('login_with_pos_screen', '=', True),('user_role', '=', 'cook')]}"/>-->
 	                    <field name = "pos_category_ids" widget="many2many_tags" attrs="{'invisible' : ['|','|',('user_role', '=', False),
 	                                                                                                    ('user_role', '=', 'cashier'),
 	                                                                                                    ('user_role','=','ass_cashier')],

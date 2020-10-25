@@ -1,0 +1,171 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* stock_variants_measure
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-23 22:51+0000\n"
+"PO-Revision-Date: 2020-09-23 19:01-0400\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: es\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_purchase_order_line__qty_custom
+msgid "Cantidad x Unidad"
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_res_config_settings
+msgid "Config Settings"
+msgstr "Opciones de Configuración"
+
+#. module: stock_variants_measure
+#: model_terms:ir.ui.view,arch_db:stock_variants_measure.product_template_attribute_value_view_form_inerith
+msgid "Costo"
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,help:stock_variants_measure.field_product_template_attribute_value__cost_price
+#: model:ir.model.fields,help:stock_variants_measure.field_purchase_order_line__cost_price
+msgid "Costo por compra."
+msgstr ""
+
+#. module: stock_variants_measure
+#. openerp-web
+#: code:addons/stock_variants_measure/static/src/js/pos.js:126
+#, python-format
+msgid "Debe tener una linea seleccionada en el carrito de compra."
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_stock_move__real_quantity_done
+msgid "Done"
+msgstr "Hecho"
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_res_config_settings__inflation_cost
+msgid "Inflation Margin"
+msgstr "Margen de Inflación"
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_stock_move__product_uom_qty_purchase
+msgid "Initial Demand"
+msgstr "Demanda inicial"
+
+#. module: stock_variants_measure
+#: model:ir.module.category,name:stock_variants_measure.inventory_cost_category
+msgid "Inventory Cost Category"
+msgstr "Costo de Inventario"
+
+#. module: stock_variants_measure
+#: model:res.groups,name:stock_variants_measure.group_inventory_cost_employee
+msgid "Inventory Cost Employee"
+msgstr "Usuario de Costo de Inventario"
+
+#. module: stock_variants_measure
+#: model:res.groups,name:stock_variants_measure.group_inventory_cost_manager
+msgid "Inventory Cost Manager"
+msgstr "Administrador de Costo de Inventario"
+
+#. module: stock_variants_measure
+#. openerp-web
+#: code:addons/stock_variants_measure/static/src/js/pos.js:174
+#, python-format
+msgid "No se encontro la unidad de medida mas grande para el producto seleccionado."
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,help:stock_variants_measure.field_res_config_settings__inflation_cost
+msgid "Percentage allowed to increase or decrease the cost of the product"
+msgstr "Porcentaje permitido a incrementar el costo del producto"
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_product_template_attribute_value__cost_price
+#: model:ir.model.fields,field_description:stock_variants_measure.field_purchase_order_line__cost_price
+msgid "Precio Costo"
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_product_template_attribute_value
+msgid "Product Attribute Value"
+msgstr "Valor del atributo de producto"
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_uom_uom
+msgid "Product Unit of Measure"
+msgstr "Unidad de medida del producto"
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea de pedido de compra"
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_product_template_attribute_value__variant_ratio
+#: model:ir.model.fields,field_description:stock_variants_measure.field_purchase_order_line__product_qty
+#: model:ir.model.fields,field_description:stock_variants_measure.field_purchase_order_line__rendimiento
+#: model:ir.model.fields,field_description:stock_variants_measure.field_sale_order_line__rendimiento
+#: model_terms:ir.ui.view,arch_db:stock_variants_measure.product_template_attribute_value_view_form_inerith
+#: model_terms:ir.ui.view,arch_db:stock_variants_measure.purchase_order_form
+#: model_terms:ir.ui.view,arch_db:stock_variants_measure.purchase_order_line_form2
+#: model_terms:ir.ui.view,arch_db:stock_variants_measure.purchase_order_line_tree
+msgid "Rendimiento"
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Línea de pedido de venta"
+
+#. module: stock_variants_measure
+#: model_terms:ir.ui.view,arch_db:stock_variants_measure.res_config_settings_view_form
+msgid "Set the margin of variation in product cost"
+msgstr "Establece el margen de variación del costo de producto"
+
+#. module: stock_variants_measure
+#: model:ir.model,name:stock_variants_measure.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de existencias"
+
+#. module: stock_variants_measure
+#. openerp-web
+#: code:addons/stock_variants_measure/static/src/js/pos.js:125
+#: code:addons/stock_variants_measure/static/src/js/pos.js:173
+#, python-format
+msgid "Unidad de Medida"
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_product_template_attribute_value__variant_puom
+#: model_terms:ir.ui.view,arch_db:stock_variants_measure.product_template_attribute_value_view_form_inerith
+msgid "Unidad de medida"
+msgstr ""
+
+#. module: stock_variants_measure
+#: model:ir.model.fields,field_description:stock_variants_measure.field_purchase_order_line__price_unit
+msgid "Unit Price"
+msgstr "Costo unitario"
+
+#. module: stock_variants_measure
+#: code:addons/stock_variants_measure/models/product_template_attribute_value.py:44
+#, python-format
+msgid "You do not have permission to set the new cost value for the product"
+msgstr "Usted no tiene permisos para editar el valor de costo del producto"

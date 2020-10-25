@@ -3,13 +3,47 @@
 import logging
 
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger("______________________________________________________" + __name__)
 
 
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    @api.constrains('default_code')
+    def validate_default_code(self):
+        if self.default_code and self.default_code is not '':
+            exist = self.env['product.product'].search(
+                [('product_tmpl_id', '!=', self.id), ('product_tmpl_id.company_id', '=', self.company_id.id),
+                 ('default_code', '=', self.default_code)])
+            if exist:
+                raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+            else:
+                exist = self.env['product.template'].search(
+                    [('id', '!=', self.id), ('company_id', '=', self.company_id.id),
+                     ('default_code', '=', self.default_code)])
+                if exist:
+                    raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+
+
 class ProductProduct(models.Model):
     _inherit = 'product.product'
-    
+
+    @api.constrains('default_code')
+    def validate_default_code(self):
+        if self.default_code and self.default_code is not '':
+            exist = self.env['product.product'].search([('id', '!=', self.id), ('product_tmpl_id.company_id', '=', self.product_tmpl_id.company_id.id), ('default_code', '=', self.default_code)])
+            if exist:
+                raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+            else:
+                exist = self.env['product.template'].search(
+                    [('id', '!=', self.product_tmpl_id.id), ('company_id', '=', self.product_tmpl_id.company_id.id),
+                     ('default_code', '=', self.default_code)])
+                if exist:
+                    raise ValidationError('La referencia interna del producto debe ser única en la compañia.')
+
+
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
         if 'search_product' in self.env.context:
@@ -60,7 +94,7 @@ class ResPartner(models.Model):
     ids_schemes_sub = fields.Many2many('contract.scheme.contract',
                                        string='Esquemas de Subsidio')
     credit_s_id = fields.Many2one('credit.credit_schemes', string='Esquema de Crédito')
-    ids_schemes_contracts = fields.Many2many('credit.credit_schemes',
+    ids_schemes_contracts = fields.Many2many('credit.credit_schemes', compute='_compute_schemes_credit', store=True,
                                              string='Esquemas de Crédito')
 
     type_contract_hide = fields.Char(string='Tipo de contrato',
@@ -214,23 +248,24 @@ class ResPartner(models.Model):
         #    new_credit_limit = self.credit_s_id.quantity
         # self.update({"credit_limit":new_credit_limit})
         #
-        self.update({"credit_limit": self.credit_s_id.quantity})
+        if self.credit_s_id and self.has_credit_contract:
+            self.update({"credit_limit": self.credit_s_id.quantity})
+        else:
+            self.update({"credit_limit": 0.0})
 
         # for partner_child in self.child_ids:
         #     _partner_child = self.env['res.partner'].browse(partner_child.id)
         #     if not _partner_child.credit_s_id:
         #         _partner_child.sudo().update({"credit_limit": 0})
 
+    @api.multi
     def write(self, vals):
+        if 'ids_schemes_contracts' in vals and 'credit_s_id' not in vals:
+            if len(self) == 1:
+                if self.credit_s_id and self.credit_s_id.id not in vals['ids_schemes_contracts'][0][2]:
+                    vals['credit_s_id'] = False
+                    vals['credit_limit'] = 0
         partner = super(ResPartner, self).write(vals)
-        # for partner in self:
-        #     if (partner.child_ids):
-        #         for partner_child in partner.child_ids:
-        #             _partner_child = self.env['res.partner'].browse(partner_child.id)
-        #             if (_partner_child.schemes_sub_id):
-        #                 pass
-        #             else:
-        #                 _partner_child.sudo().update({"credit_limit": 0})
         return partner
     
 

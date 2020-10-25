@@ -6,12 +6,25 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="point_of_sale.view_partner_property_form"/>
             <field name="arch" type="xml">
-                <field name="barcode" position="before">
+                <field name="barcode" position="replace">
                     <group col="4" colspan="4">
-                        <field name="prefer_ereceipt"/>
+                        <field name="prefer_ereceipt" colspan="3"/>
+                    </group>
+                    <group col="4" colspan="4">
+                        <field name="barcode" colspan="3" string="Código de Barras"/>
                     </group>
                 </field>
             </field>
         </record>
 
+    <record id="view_res_partner_filter" model="ir.ui.view">
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="model">res.partner</field>
+        <field type="xml" name="arch">
+            <filter name="inactive" position="after">
+                <separator/>
+                <field name="barcode"/>
+            </filter>
+        </field>
+    </record>
 </odoo>

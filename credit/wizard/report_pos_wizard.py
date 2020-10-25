@@ -1,9 +1,10 @@
 # -*- coding:utf-8 -*-
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
-from dateutil import relativedelta
+from odoo.exceptions import ValidationError, UserError
+from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
 from odoo.http import request
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import pytz
 import logging
 import locale
@@ -15,7 +16,21 @@ class ReportPosWizard(models.TransientModel):
     _name = 'credit.report_pos_wizard'
     _description = 'Wizard para el reporte de las ventas en POS '
 
+    @api.depends('partner_id')
+    def _compute_last_period(self):
+        contracts = self.env['contract.contract'].search(
+            [('partner_id', '=', self.partner_id.id), ('active', '=', True)])
+        if not contracts:
+            contracts = self.env['contract.contract'].search(
+                [('partner_id', '=', self.partner_id.parent_id.id), ('active', '=', True)])
 
+        for c in contracts:
+            for lc in c.contract_line_ids:
+                if lc.next_period_date_start and lc.next_period_date_end:
+                    last_date_invoiced = lc.last_date_invoiced - relativedelta(days=1)
+                    self.last_credit_period_log = self.env['credit.invoice_period_log'].search([('start_date', '<=', last_date_invoiced), ('end_date', '>=', last_date_invoiced)], order='end_date desc', limit=1)
+
+    last_credit_period_log = fields.Many2one('credit.invoice_period_log', string=u'Útimo período de facturación', compute=_compute_last_period, readonly=True)
     start_date = fields.Datetime(string='Fecha y Hora inicial')
     end_date = fields.Datetime(string='Fecha y Hora Final')
     end_date_copy = fields.Datetime(string='Fecha y Hora Final')
@@ -40,8 +55,10 @@ class ReportPosWizard(models.TransientModel):
                                           day=lc.next_period_date_start.day, hour=0, minute=0, second=0)
                     end_date = datetime(year=lc.next_period_date_end.year, month=lc.next_period_date_end.month,
                                         day=lc.next_period_date_end.day, hour=23, minute=59, second=59)
-
-                    tz = pytz.timezone(self._context.get('tz'))
+                    time_zone = self._context.get('tz')
+                    if not time_zone:
+                        time_zone = 'Mexico/General'
+                    tz = pytz.timezone(time_zone)
                     start_date = tz.localize(start_date).astimezone(pytz.utc)
                     end_date = tz.localize(end_date).astimezone(pytz.utc)
                     self.start_date = datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S")
@@ -55,8 +72,10 @@ class ReportPosWizard(models.TransientModel):
                                            hour=0, minute=0, second=0)
                 end_date = datetime(year=self.start_date.year, month=self.start_date.month, day=self.start_date.day,
                                          hour=23, minute=59, second=59)
-
-                tz = pytz.timezone(self._context.get('tz'))
+                time_zone = self._context.get('tz')
+                if not time_zone:
+                    time_zone = 'Mexico/General'
+                tz = pytz.timezone(time_zone)
                 start_date = tz.localize(start_date).astimezone(pytz.utc)
                 end_date = tz.localize(end_date).astimezone(pytz.utc)
                 self.start_date = datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S")
@@ -64,14 +83,39 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def consult_credit_details(self):
-        one = self.start_date
-        two = self.end_date
+        time_zone = self._context.get('tz')
+        if not time_zone:
+            time_zone = 'Mexico/General'
+        tz = pytz.timezone(time_zone)
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
+
         partner_ids = self.partner_id.child_ids.mapped('id')
         partner_ids.append(self.partner_id.id)
         orders = self.env['pos.order'].search([('company_id', '=', self.company_id.id),
                                                ('partner_id', 'in', partner_ids),
                                                ('credit_amount', '>', 0),
-                                               ('date_order', '>=', one), ('date_order', '<=', two)])
+                                               ('date_order', '>=', start_date), ('date_order', '<=', end_date)])
+        last_period_amount = 0.0
+        if self.last_credit_period_log:
+            orders_last_period = self.env['pos.order'].search([('company_id', '=', self.company_id.id),
+                                                               ('partner_id', 'in', partner_ids),
+                                                               ('credit_amount', '>', 0),
+                                                               ('date_order', '>=',
+                                                                datetime(year=self.last_credit_period_log.start_date.year,
+                                                                         month=self.last_credit_period_log.start_date.month,
+                                                                         day=self.last_credit_period_log.start_date.day,
+                                                                         hour=0, minute=0, second=0)),
+                                                               ('date_order', '<=',
+                                                                datetime(year=self.last_credit_period_log.end_date.year,
+                                                                         month=self.last_credit_period_log.end_date.month,
+                                                                         day=self.last_credit_period_log.end_date.day,
+                                                                         hour=23, minute=59, second=59))])
+            for order in orders_last_period:
+                last_period_amount += order.credit_amount
+
         importes_por_persona = dict()
         res = []
         sum = 0
@@ -89,7 +133,7 @@ class ReportPosWizard(models.TransientModel):
                     'importe': value,
                     })
                 sum += value
-            return res, sum
+            return res, sum, last_period_amount
         else:
             raise ValidationError("No Tiene Información para Mostrar ")
 
@@ -102,27 +146,38 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def get_details(self):
-        res, sum = self.consult_credit_details()
-        try:
-            locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
-        except:
-            pass
+        res, sum, last_period_total = self.consult_credit_details()
+
+        time_zone = self._context.get('tz')
+        if not time_zone:
+            time_zone = 'Mexico/General'
+        tz = pytz.timezone(time_zone)
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
+        diff = end_date - start_date
         data = {
             'orders': res,
-            'total': sum,
-            'start_date': self.start_date,
-            'end_date': self.end_date,
-            'cut_date': datetime.strftime(self.end_date, '%d-%b-%Y'),
-            'days': (self.end_date - self.start_date).days,
+            'total': sum or 0.00,
+            'start_date': start_date,
+            'end_date': end_date,
+            'cut_date': datetime.strftime(end_date, '%d-%b-%Y'),
+            'client': self.partner_id,
+            'days': diff.days + (1 if diff.seconds else 0),
+            'last_period_total': last_period_total or 0.00
         }
         return self.env.ref('credit.action_report_credit_summary').report_action(self, data=data, config=False)
 
     @api.multi
     def sale_report_pos(self):
-        one = self.start_date
-        two = self.end_date
+        tz = pytz.timezone(self._context.get('tz'))
+        start_date = fields.Datetime.from_string(self.start_date)
+        start_date = pytz.utc.localize(start_date).astimezone(tz)
+        end_date = fields.Datetime.from_string(self.end_date)
+        end_date = pytz.utc.localize(end_date).astimezone(tz)
         view_id = self.env.ref('point_of_sale.view_pos_order_tree').id
-        domain = [('date_order', '>=', one), ('date_order', '<=', two)]
+        domain = [('date_order', '>=', start_date), ('date_order', '<=', end_date)]
         return {
             'type': 'ir.actions.act_window',
             'name': 'Ventas de los Clientes',
@@ -135,32 +190,41 @@ class ReportPosWizard(models.TransientModel):
 
     @api.multi
     def send_mail_report(self, action):
-        template = self.env.ref('credit.email_template_reporte_credito')
-        template.report_template = action
-        template = template.generate_email(self.id)
-
-        self.send(template) # enviar
+        data_context = {
+            'context': action['context'],
+            'orders': action['data']['orders'],
+            'total': action['data']['total'],
+            'start_date': datetime.strftime(action['data']['start_date'], '%Y-%m-%d %H:%M:%S'),
+            'end_date': datetime.strftime(action['data']['end_date'], '%Y-%m-%d %H:%M:%S'),
+            'cut_date': action['data']['cut_date'],
+            'days': action['data']['days'],
+            'last_period_total': action['data']['last_period_total'] if 'last_period_total' in action['data'] else 0.00
+        }
+        email_send = self.with_context(data_context)
+        template = email_send.env.ref('credit.email_template_reporte_credito')
+        email_send.send(template) # enviar
 
 
     def send(self, template):
         # objeto odoo de correo
-        mail = self.env['mail.mail']
         if not self.email_to:
-            raise ValidationError("No se encontraron destinatarios de correo")
+            raise ValidationError("Especifique destinatarios de correo")
+        mail_server = self.env['ir.mail_server'].sudo().search([], limit=1, order='sequence')
+        if not mail_server:
+            raise ValidationError("Configure un servidor de correo saliente")
         email_to = ""
         for partner in self.email_to:
             email_to += partner.email
             email_to += ','
         email_to = email_to[:-1]
-        print(email_to)
-        mail_data = {
-            'subject': 'Reporte de Crédito General',
-            'body_html': template['body_html'],
+        mail_data = template
+        mail_data.update({
             'email_to': email_to,
-            'email_from': template['email_from'],
-        }
-        print(self.partner_id.email)
-        mail_out=mail.create(mail_data)
-        if mail_out:
-            mail.send(mail_out)
-            _logger.info("Reporte de Pos Enviado📬")
+            'email_from': mail_server.smtp_user,
+            'mail_server_id': mail_server.id,
+        })
+        try:
+            mail_data.sudo().send_mail(self.id, raise_exception=True, force_send=True)
+        except Exception as e:
+            raise UserError(e)
+        _logger.info("Reporte de Pos Enviado📬")

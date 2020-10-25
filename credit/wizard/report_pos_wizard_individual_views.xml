@@ -8,6 +8,7 @@
                 <group>
                     <field col="4" name="start_date" required="True"/>
                     <field col="4" name="end_date" required="True"/>
+                    <field col="4" name="last_credit_period_log" forcesave="1"/>
                     <field col="4" name="partner_id" invisible="1"/>
                     <field col="4" name="check_mail" type="checkbox"/>
                     <field col="4" name="email_to" widget="many2many_tags" attrs="{'invisible':[('check_mail','=',False)]}"/>

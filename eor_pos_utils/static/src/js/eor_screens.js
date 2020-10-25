@@ -9,6 +9,7 @@ var rpc = require('web.rpc');
 var ChashierPinPopupWidget = PopupWidget.extend({
         template: 'CashierPipPopupWidget',
         show: function(options){
+            var self = this;
             this._super(options);
             this.options = options;
             $("#pin").focus(function() {
@@ -23,9 +24,8 @@ var ChashierPinPopupWidget = PopupWidget.extend({
             var order = self.pos.get_order();
             var client = order.get_client();
             var amount = order.get_total_with_tax() - order.get_total_paid();
-
             if (client_pin && pin ===client_pin){
-                self.pos.db.notification('success',"PIN correcto!"); 
+                // self.pos.db.notification('success',"PIN correcto!");
                 self.gui.close_popup();
                 if (this.options.payment)
                 {

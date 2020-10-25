@@ -661,17 +661,30 @@
         <t t-jquery="div.product-list" t-operation="append">
             <span class="header" style="color: #fff;">
                 <div class="product-img-lable">Image</div>
-                <div class="product-header-name">Product Name</div>
-                <div class="product-header-qty">On-hand Qty</div>
-                <div class="product-price-tag">Sale Price</div>
+                <div class="product-header-name">Nombre de Producto</div>
+                <div class="product-header-qty">Stock</div>
+                <div class="product-price-tag">Precio</div>
+                <div class="product-price-tag">Código de Barras</div>
             </span>
         </t>
     </t>
 
     <t t-name="CategoryButtonBack">
         <span class='category-button-back category-simple-button js-category-switch' t-att-data-category-id="category.id" >
-            <i class="fa fa-chevron-left"/>
+<!--            <i class="fa fa-chevron-left"/>-->
             <t t-if="category.name != 'Root'" t-esc="category.name"/>
+        </span>
+    </t>
+
+    <t t-name="SubCategoryButtonBack">
+        <span class='subcategory-button-back category-simple-button' style="flex: 0 0 32px;">
+            <i class="fa fa-chevron-left"/>
+        </span>
+    </t>
+
+    <t t-name="SubCategoryButtonForward">
+        <span class='subcategory-button-forward category-simple-button' style="flex: 0 0 32px;">
+            <i class="fa fa-chevron-right"/>
         </span>
     </t>
 
@@ -1032,7 +1045,7 @@
                     </span>
                     <div class="c-name">
                         <span class="c-user">
-                        	<t t-esc="widget.pos.get_client() ? widget.pos.get_client().name : 'Guest Customer'"/>
+                        	<t t-esc="widget.pos.get_client() ? widget.pos.get_client().name : 'Público General'"/>
 						</span>
                     </div>
                     <span class="customer-icon-action icon icon-plus set_customer">
@@ -1162,10 +1175,10 @@
         <t t-jquery=".product-name" t-operation="replace">
             <div class="product-name" t-attf-id="article_product_#{product.id}">
                 <t t-if="product.product_variant_count &gt; 1 and product.original_name">
-                    <t t-esc="product.original_name"/>
+                    <t t-esc="product.name"/>
                 </t>
                 <t t-if="product.product_variant_count &lt;= 1 or !product.original_name">
-                    <t t-esc="product.display_name"/>
+                    <t t-esc="product.name"/>
                 </t>
             </div>
         </t>
@@ -1193,6 +1206,11 @@
                         </t>
                         <t t-if="product.product_variant_count &lt;= 1 or !product.product_variant_count">
                             <t t-esc="widget.format_currency(product.lst_price)"/>
+                        </t>
+                    </span>
+                    <span class="price-tag price-tag1 barcode-tag">
+                        <t t-if="product.barcode">
+                            <t t-esc="product.barcode"/>
                         </t>
                     </span>
                     <t t-if="widget.pos.config.show_qty and widget.pos.get_cashier().access_show_qty">

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <act_window name="Partner Ledger"
+            res_model="account.report.partner.ledger"
+            src_model="res.partner"
+            view_mode="form"
+            view_id ="financial_reports.account_report_partner_ledger_view"
+            target="new"
+            key2="client_print_multi"
+            id="action_account_partner_ledger_report_filter"
+            context="{'default_partner_ids':active_ids}"
+        />
+        <!-- QWeb Reports -->
+        <report 
+            id="action_report_trial_balance"
+            model="account.balance.report"
+            string="Trial Balance"
+            report_type="qweb-pdf"
+            name="financial_reports.report_trialbalance"
+            file="financial_reports.report_trialbalance"
+            />
+            <report 
+            id="action_report_general_ledger"
+            model="account.report.general.ledger"
+            string="General Ledger"
+            report_type="qweb-pdf"
+            name="financial_reports.report_generalledger"
+            file="financial_reports.report_generalledger"
+            />
+            <report 
+            id="action_report_financial"
+            model="account.financial.report"
+            string="Financial report"
+            menu="False"
+            report_type="qweb-pdf"
+            name="financial_reports.report_financial"
+            file="financial_reports.report_financial"
+            />
+            <report
+            id="action_report_partnerledger"
+            model="account.report.partner.ledger"
+            string="Partner Ledger"
+            report_type="qweb-pdf"
+            name="financial_reports.report_partnerledger"
+            file="financial_reports.report_partnerledger"
+            />
+            
+            <report
+            id="action_report_aged_partner_balance"
+            model="res.partner"
+            string="Aged Partner Balance"
+            menu="False"
+            report_type="qweb-pdf"
+            name="financial_reports.report_agedpartnerbalance"
+            file="financial_reports.report_agedpartnerbalance"
+        />
+    </data>
+</odoo>

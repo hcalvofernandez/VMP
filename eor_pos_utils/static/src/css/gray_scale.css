@@ -165,7 +165,7 @@ header.rightpane-header .listview{
 }
 
 .pos .payment-screen .payment-numpad .numpad {
-    max-width: 350px !important;
+    max-width: 263px !important;
 }
 
 .pos .payment-screen .payment-numpad .numpad button{
@@ -216,7 +216,7 @@ header.rightpane-header .listview{
 }
 
 .pos .quickpay .control-button{
-    color: #898989;
+    color: black;
     font-weight: 1000;
 }
 

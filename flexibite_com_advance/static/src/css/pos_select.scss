@@ -1,0 +1,28 @@
+.pos-selector-container{
+  color: #00A09D;
+  .pos-card-content {
+    :hover{
+      text-decoration: none;
+    }
+    text-decoration: none;
+    padding: 5px;
+    height: 80px;
+    border: solid 1px #c4c4c4;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    -ms-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    -o-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    img {
+      max-height: 70px;
+    }
+
+    .badge-pill {
+      position: absolute;
+      bottom: 8px;
+      right: 23px;
+      font-size: 14px !important;
+    }
+
+  }
+}

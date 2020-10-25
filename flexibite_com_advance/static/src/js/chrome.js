@@ -138,6 +138,7 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 		build_widgets: function(){
 			var self = this;
 			this._super();
+			self.popups.cash_control.do_hide();
 			if(self.pos.user.user_role === 'cook'){
 				self.gui.set_startup_screen('kitchen_screen');
 				self.gui.show_screen('kitchen_screen');
@@ -151,7 +152,6 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
 	        			'width':'100%',
 	        		});
 	        	}
-
 				if(self.pos.user.login_with_pos_screen) {
 					var username = self.pos.user.login;
 					var pin = self.pos.user.pos_security_pin;
@@ -185,8 +185,30 @@ odoo.define('flexibite_com_advance.chrome', function (require) {
                 self.pos.chrome.screens.products.actionpad.renderElement();
                 $('.pos-login-topheader').hide();
                 self.chrome.widget.username.renderElement();
-                if(self.pos.pos_session.opening_balance){
-                    return self.gui.show_screen('openingbalancescreen');
+                if(self.pos.pos_session.opening_balance) {
+                	var params = {
+                        model: 'pos.session',
+                        method: 'open_balance',
+                        args:[self.pos.pos_session.id, 0.00]
+                    };
+                    rpc.query(params, {async: false}).then(function(res){
+                        if(res){
+                        }
+                        else {
+                        	self.gui.show_popup('error-traceback',{
+                                'title': "No se pudo entrar a la caja",
+                                'body':  "Por favor intentelo mas tarde",
+                           });
+						}
+                    }).fail(function (type, error){
+                        if(error.code === 200 ){    // Business Logic Error, not a connection problem
+                           self.gui.show_popup('error-traceback',{
+                                'title': error.data.message,
+                                'body':  error.data.debug
+                           });
+                        }
+                    });
+                    // return self.gui.show_screen('openingbalancescreen');
                 }
                 if(self.pos.config.module_pos_restaurant){
                     if (self.pos.config.iface_floorplan) {

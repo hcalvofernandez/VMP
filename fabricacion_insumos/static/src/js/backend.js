@@ -170,14 +170,15 @@ odoo.define("pos_z_report.efact_Pos", function (require) {
     screens.ReceiptScreenWidget.include({
         get_receipt_render_env: function() {            
             this.pos.last_receipt_render_env = this._super();
-            this.pos.last_receipt_render_env['groupTaxes'] = this.groupTaxes()
-            this.pos.last_receipt_render_env['pos_reference'] = this.pos_reference()
+            this.pos.last_receipt_render_env['groupTaxes'] = this.groupTaxes();
+            this.pos.last_receipt_render_env['pos_reference'] = 0;
+                // this.pos_reference();
             //console.log(this.groupTaxes())
             return this.pos.last_receipt_render_env;
         },
         pos_reference: function() {
             var pos_reference = 0;            
-            var data = { "params": {'pos_session_id':this.pos.pos_session.id } }
+            var data = { "params": {'pos_session_id':this.pos.pos_session.id } };
             $.ajax({
                         type: "POST",
                         url: '/pos_z_report/get_pos_reference',
@@ -187,22 +188,22 @@ odoo.define("pos_z_report.efact_Pos", function (require) {
                         async: false,
                         success: function(response) 
                             {
-                                pos_reference = response.result
-                                return pos_reference
+                                pos_reference = response.result;
+                                return pos_reference;
                             }
                     });
 
             return pos_reference;
         },
         groupTaxes: function() {
-            var groupTaxes = []
+            var groupTaxes = [];
             var order = this.pos.get_order();
             var orderlines = order.orderlines.models;
             
             for (var j = 0; j < orderlines.length; j++) {
                 var line = orderlines[j];
                 
-                var product = line.get_product()
+                var product = line.get_product();
                 if (product.taxes_id.length){
                     for(var i=0;i<product.taxes_id.length;i++)
                     {

@@ -54,19 +54,19 @@
 	            <button class="input-button number-char" data-action='7'>7</button>
 	            <button class="input-button number-char" data-action='8'>8</button>
 	            <button class="input-button number-char" data-action='9'>9</button>
-	            <button class="mode-button" data-action='+50'>+50</button>
+<!--	            <button class="mode-button" data-action='+50'>+50</button>-->
 	            <br />
 	            <button class="input-button number-char" data-action='4'>4</button>
 	            <button class="input-button number-char" data-action='5'>5</button>
 	            <button class="input-button number-char" data-action='6'>6</button>
-	            <button class="mode-button" data-action='+20'>+20</button>
+<!--	            <button class="mode-button" data-action='+20'>+20</button>-->
 	            <br />
                 <button class="input-button number-char" data-action='1'>1</button>
 	            <button class="input-button number-char" data-action='2'>2</button>
 	            <button class="input-button number-char" data-action='3'>3</button>
-	            <button class="mode-button" data-action='+10'>+10</button>
+<!--	            <button class="mode-button" data-action='+10'>+10</button>-->
 	            <br />
-	            <button class="input-button numpad-char numpad_border" data-action='CLEAR'>C</button>
+<!--	            <button class="input-button numpad-char numpad_border" data-action='CLEAR'>C</button>-->
 	            <button class="input-button number-char numpad_border" data-action='0'>0</button>
 	            <button class="input-button number-char numpad_border"
 					t-att-data-action='widget.decimal_point'><t t-esc='widget.decimal_point' /></button>
@@ -120,10 +120,12 @@
                                 </span>
                             </span>
                             
-                    <table class="client-amount-available">
+                    <table class="client-amount-available" t-if="widget.pos.get_client()">
                         <tr t-if="payment-of"><td><h5 class=""><span id="payment_total"/></h5></td></tr>
-                        <tr><td><h5 class="">Débito <span id="remaining_debit_amount"> $ 0.0</span></h5></td></tr>
-                        <tr><td><h5 class="">Crédito <span id="remaining_credit_amount"> $ 0.0</span></h5></td></tr>
+                        <tr>
+                            <td style="margin-right: 30px;"><h5>Débito <span id="remaining_debit_amount"> $ 0.0</span></h5></td>
+                            <td><h5>Crédito <span id="remaining_credit_amount"> $ 0.0</span></h5></td>
+                        </tr>
                         <tr t-if="widget.pos.config.enable_meal_plan"><td><h5 class="">Meal Plan <span id="remaining_meal_plan_limit"> $ 0.0</span></h5></td></tr>
                     </table>
 
@@ -379,13 +381,13 @@
         <t t-jquery="table.paymentlines thead" t-operation="replace">
             <thead>
                 <tr class='label'>
-                    <th>Due</th>
-                    <th>Entregado</th>
+                    <th>Total a Pagar</th>
+                    <th>Importe</th>
                     <t t-if="widget.pos.config.enable_card_charges and widget.pos.get_cashier().access_card_charges">
                     <th>Payment Charge</th>
                     </t>
-                    <th>Change</th>
-                    <th>Method</th>
+                    <th>Cambio</th>
+                    <th>Método de pago</th>
                     <th></th>
                 </tr>
             </thead>

@@ -29,6 +29,7 @@
         'views/credit_schemes_views.xml',
         'views/contract_contract_views.xml',
         'views/res_company_views.xml',
+        'views/account_invoice.xml',
         'views/detail_credit_partner_views.xml',
         'views/pos_config_views.xml',
         'report/credit_summary_template.xml',

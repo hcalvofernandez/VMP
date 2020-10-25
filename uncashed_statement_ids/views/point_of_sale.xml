@@ -1,0 +1,33 @@
+<odoo>
+  <data>
+    <record id="flexibite_view_pos_session_form" model="ir.ui.view">
+      <field name="name">uncashed.pos.session.form.view.flexibite</field>
+      <field name="model">pos.session</field>
+      <field name="inherit_id" ref="flexibite_com_advance.view_pos_session_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='difference_custom']" position="replace">
+          <field name="difference_custom" invisible="1"/>
+          <field name="uncashed_difference" string="Diferencia"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="view_pos_session_form" model="ir.ui.view">
+      <field name="name">uncashed.pos.session.form.view.flexibite</field>
+      <field name="model">pos.session</field>
+      <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='statement_ids']/tree/field[@name='total_entry_encoding']" position="replace">
+          <field name="total_entry_encoding" invisible="1"/>
+          <field name="uncashed_total_entry_encoding" string="Subtotal de Transacciones"/>
+        </xpath>
+
+        <xpath expr="//field[@name='statement_ids']/tree/field[@name='balance_end_real']" position="replace">
+          <field name="balance_end_real" invisible="1"/>
+<!--          <field name="uncashed_balance_end_real" string="Balance Final"/>-->
+        </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>
